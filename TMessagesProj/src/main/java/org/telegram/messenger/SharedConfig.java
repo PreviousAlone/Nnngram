@@ -39,9 +39,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.StringUtils;
-import top.qwq2333.nullgram.utils.UIUtil;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.StringUtils;
+import xyz.nextalone.nnngram.utils.UIUtil;
 
 public class SharedConfig {
     public final static int PASSCODE_TYPE_PIN = 0,

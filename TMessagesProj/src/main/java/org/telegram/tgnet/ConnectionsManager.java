@@ -54,9 +54,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import top.qwq2333.nullgram.utils.DatabaseUtils;
-import top.qwq2333.nullgram.utils.LogUtils;
-import top.qwq2333.nullgram.utils.ProxyUtils;
+import xyz.nextalone.nnngram.utils.DatabaseUtils;
+import xyz.nextalone.nnngram.utils.LogUtils;
+import xyz.nextalone.nnngram.utils.ProxyUtils;
 
 public class ConnectionsManager extends BaseController {
 

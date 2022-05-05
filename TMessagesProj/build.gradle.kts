@@ -83,11 +83,11 @@ dependencies {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
     buildToolsVersion = "32.0.0"
     ndkVersion = "21.4.7075529"
 
-    defaultConfig.applicationId = "top.qwq2333.nullgram"
+    defaultConfig.applicationId = "xyz.nextalone.nnngram"
 
     sourceSets.getByName("main") {
         java.srcDir("src/main/java")
@@ -225,7 +225,7 @@ android {
 
     applicationVariants.all {
         val outputFileName =
-            "Nullgram-${defaultConfig.versionName}-${productFlavors.first().name}.apk"
+            "Nnngram-${defaultConfig.versionName}-${productFlavors.first().name}.apk"
         outputs.all {
             val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
             output?.outputFileName = outputFileName
@@ -237,6 +237,6 @@ android {
 }
 
 
-tasks.register<ReplaceIcon>("replaceIcon") {
-}
-tasks.getByName("preBuild").dependsOn(tasks.getByName("replaceIcon"))
+//tasks.register<ReplaceIcon>("replaceIcon") {
+//}
+//tasks.getByName("preBuild").dependsOn(tasks.getByName("replaceIcon"))

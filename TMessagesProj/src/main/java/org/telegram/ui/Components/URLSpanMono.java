@@ -17,7 +17,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.Theme;
 
-import top.qwq2333.nullgram.helpers.EntitiesHelper;
+import xyz.nextalone.nnngram.helpers.EntitiesHelper;
 
 public class URLSpanMono extends MetricAffectingSpan {
 

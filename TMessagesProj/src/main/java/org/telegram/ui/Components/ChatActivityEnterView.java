@@ -150,10 +150,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.EntitiesHelper;
-import top.qwq2333.nullgram.ui.syntaxhighlight.SyntaxHighlight;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.EntitiesHelper;
+import xyz.nextalone.nnngram.ui.syntaxhighlight.SyntaxHighlight;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class ChatActivityEnterView extends BlurredFrameLayout implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate, StickersAlert.StickersAlertDelegate {
 

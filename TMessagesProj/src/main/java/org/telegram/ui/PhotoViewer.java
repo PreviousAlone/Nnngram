@@ -248,7 +248,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import top.qwq2333.nullgram.helpers.EntitiesHelper;
+import xyz.nextalone.nnngram.helpers.EntitiesHelper;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")

@@ -186,10 +186,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import kotlin.Unit;
-import top.qwq2333.nullgram.ui.AppLinkVerifyBottomSheet;
-import top.qwq2333.nullgram.ui.BottomBuilder;
-import top.qwq2333.nullgram.utils.PrivacyUtils;
-import top.qwq2333.nullgram.utils.UpdateUtil;
+import xyz.nextalone.nnngram.ui.AppLinkVerifyBottomSheet;
+import xyz.nextalone.nnngram.ui.BottomBuilder;
+import xyz.nextalone.nnngram.utils.PrivacyUtils;
+import xyz.nextalone.nnngram.utils.UpdateUtil;
 
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 

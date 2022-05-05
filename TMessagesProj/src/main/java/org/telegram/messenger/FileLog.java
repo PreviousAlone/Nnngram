@@ -13,7 +13,7 @@ import org.telegram.messenger.time.FastDateFormat;
 import java.io.File;
 import java.io.OutputStreamWriter;
 
-import top.qwq2333.nullgram.utils.LogUtils;
+import xyz.nextalone.nnngram.utils.LogUtils;
 
 /**
  * @deprecated use {@link LogUtils} instead

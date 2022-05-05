@@ -1,92 +1,33 @@
 {
   "project_info": {
-    "project_number": "218019652733",
-    "firebase_url": "https://nullgram-c415d-default-rtdb.firebaseio.com",
-    "project_id": "nullgram-c415d",
-    "storage_bucket": "nullgram-c415d.appspot.com"
+    "project_number": "286771851762",
+    "project_id": "nnngram-na",
+    "storage_bucket": "nnngram-na.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:218019652733:android:2e95d1dad87c2bc5adfd14",
+        "mobilesdk_app_id": "1:286771851762:android:e00b6e88e9d3ce55ea7b6b",
         "android_client_info": {
-          "package_name": "top.qwq2333.nullgram"
+          "package_name": "xyz.nextalone.nnngram"
         }
       },
       "oauth_client": [
         {
-          "client_id": "218019652733-s2gonc2ar19hdagkmo5fjro8vf65dna2.apps.googleusercontent.com",
+          "client_id": "286771851762-31r6p4ka9sq7vkfe9d7sqde02iiqsrvk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCPOX02ywCT9cM-KHvOTuZok77HXN8-1eI"
+          "current_key": "AIzaSyB6IJeWGrPhj3TgwMUNX3n8WTxwWYfrp2Q"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "218019652733-s2gonc2ar19hdagkmo5fjro8vf65dna2.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:218019652733:android:196d9b2c6f2bbdc7adfd14",
-        "android_client_info": {
-          "package_name": "top.qwq2333.nullgram.beta"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "218019652733-s2gonc2ar19hdagkmo5fjro8vf65dna2.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCPOX02ywCT9cM-KHvOTuZok77HXN8-1eI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "218019652733-s2gonc2ar19hdagkmo5fjro8vf65dna2.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:218019652733:android:8ebe5d1e5fae0953adfd14",
-        "android_client_info": {
-          "package_name": "top.qwq2333.nullgram.web"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "218019652733-s2gonc2ar19hdagkmo5fjro8vf65dna2.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCPOX02ywCT9cM-KHvOTuZok77HXN8-1eI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "218019652733-s2gonc2ar19hdagkmo5fjro8vf65dna2.apps.googleusercontent.com",
+              "client_id": "286771851762-31r6p4ka9sq7vkfe9d7sqde02iiqsrvk.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -47,10 +47,10 @@ import org.telegram.ui.ActionBar.Theme;
 
 import java.util.List;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.EntitiesHelper;
-import top.qwq2333.nullgram.ui.syntaxhighlight.SyntaxHighlight;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.EntitiesHelper;
+import xyz.nextalone.nnngram.ui.syntaxhighlight.SyntaxHighlight;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class EditTextCaption extends EditTextBoldCursor {
 

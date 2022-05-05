@@ -98,7 +98,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
-import top.qwq2333.nullgram.utils.AudioUtils;
+import xyz.nextalone.nnngram.utils.AudioUtils;
 
 public class MediaController implements AudioManager.OnAudioFocusChangeListener, NotificationCenter.NotificationCenterDelegate, SensorEventListener {
 

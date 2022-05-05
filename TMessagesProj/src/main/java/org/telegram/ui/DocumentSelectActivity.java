@@ -94,7 +94,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 
-import top.qwq2333.nullgram.utils.LogUtils;
+import xyz.nextalone.nnngram.utils.LogUtils;
 
 public class DocumentSelectActivity extends BaseFragment {
 

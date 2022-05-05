@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
-import top.qwq2333.nullgram.utils.LogUtils;
+import xyz.nextalone.nnngram.utils.LogUtils;
 
 public class MessagesStorage extends BaseController {
 

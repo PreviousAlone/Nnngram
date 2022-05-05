@@ -46,7 +46,7 @@ import org.telegram.ui.Components.ForegroundDetector;
 import java.io.File;
 import java.util.HashMap;
 
-import top.qwq2333.nullgram.utils.AppcenterUtils;
+import xyz.nextalone.nnngram.utils.AppcenterUtils;
 
 public class ApplicationLoader extends Application {
 

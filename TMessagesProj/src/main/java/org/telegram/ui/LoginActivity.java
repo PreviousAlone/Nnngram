@@ -158,13 +158,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import kotlin.Unit;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.ui.BottomBuilder;
-import top.qwq2333.nullgram.ui.EditTextAutoFill;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.LogUtils;
-import top.qwq2333.nullgram.utils.NumberUtils;
-import top.qwq2333.nullgram.utils.StringUtils;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.ui.BottomBuilder;
+import xyz.nextalone.nnngram.ui.EditTextAutoFill;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.LogUtils;
+import xyz.nextalone.nnngram.utils.NumberUtils;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 @SuppressLint("HardwareIds")
 public class LoginActivity extends BaseFragment {

@@ -194,12 +194,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import kotlin.Unit;
-import top.qwq2333.nullgram.activity.MainSettingActivity;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.ui.BottomBuilder;
-import top.qwq2333.nullgram.utils.APKUtils;
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.activity.MainSettingActivity;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.ui.BottomBuilder;
+import xyz.nextalone.nnngram.utils.APKUtils;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class ProfileActivity extends BaseFragment implements
     NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate,

@@ -54,7 +54,7 @@ import org.telegram.ui.Components.LayoutHelper;
 
 import java.util.ArrayList;
 
-import top.qwq2333.nullgram.utils.MessageUtils;
+import xyz.nextalone.nnngram.utils.MessageUtils;
 
 public abstract class BaseFragment {
 
