@@ -1,9 +1,6 @@
-# Nullgram
+# Nagram-reborn based on Nullgram
 
-[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=@NullgramClient&color=0088cc)](https://t.me/NullgramClient)[![CI build](https://github.com/qwq233/Nullgram/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/qwq233/Nullgram/actions/workflows/ci.yml/)[![Crowdin](https://badges.crowdin.net/nullgram/localized.svg)](https://crowdin.com/project/nullgram)
-
-[中文](README_CN.md)
-
+## What is Nullgram
 Nullgram is an **free and open source** third-party Telegram client, based on Telegram, [NekoX](https://github.com/NekoX-Dev/NekoX) and [Nekogram](https://gitlab.com/Nekogram/Nekogram).
  the official source code for [Telegram App for Android](https://play.google.com/store/apps/details?id=org.telegram.messenger).
 

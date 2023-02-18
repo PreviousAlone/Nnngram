@@ -224,7 +224,3 @@ android {
 
     dependenciesInfo.includeInApk = false
 }
-
-
-tasks.register<ReplaceIcon>("replaceIcon") {}
-tasks.getByName("preBuild").dependsOn(tasks.getByName("replaceIcon"))
