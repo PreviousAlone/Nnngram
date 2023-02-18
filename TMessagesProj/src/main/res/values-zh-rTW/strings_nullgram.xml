@@ -114,8 +114,8 @@
     <string name="ignoreReactionMention">忽略反應提示</string>
     <string name="ignoreReactionMentionInfo">它會自動將未讀的回應提及設為已讀。\n並且同步到其他裝置。\n通知仍將顯示，因為這由 TELEOFFICIAL 伺服器控制。</string>
     <string name="StickerSize">貼圖大小</string>
-    <string name="StickerSizeDialogMessageReplyTo">幫我找一些動漫相關的東西。</string>
-    <string name="StickerSizeDialogMessage">哇，好可愛的女孩！</string>
+    <string name="StickerSizeDialogMessageReplyTo">給我一些很不錯的東西。</string>
+    <string name="StickerSizeDialogMessage">wow, 是可愛的男孩子</string>
     <string name="ResetStickerSize">重置貼紙大小</string>
     <string name="EditUndo">撤銷</string>
     <string name="EditRedo">重做</string>
@@ -312,4 +312,8 @@
     <string name="CreateCodeLanguage">語言</string>
     <string name="UnsupportedMediaNullgram">您的 Nullgram 版本不支援此訊息。請更新應用程式以查看：https://t.me/NullgramClient</string>
     <string name="ignoreUserSpecifiedReplyColor">忽略用戶設定的回覆顏色</string>
+
+    <string name="AppIconColorful">繽紛</string>
+    <string name="AppIconDarkGreen">深翠</string>
+    <string name="AppIconNeon">霓虹</string>
 </resources>

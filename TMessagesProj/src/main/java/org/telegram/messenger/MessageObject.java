@@ -92,8 +92,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.utils.StringUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class MessageObject {
 

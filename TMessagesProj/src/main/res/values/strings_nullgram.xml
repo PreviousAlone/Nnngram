@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="NullgramName" translatable="false">Nullgram</string>
+    <string name="NullgramName" translatable="false">Nnngram</string>
     <string name="NullgramPushService">Nullgram Push Service</string>
     <string name="NullSettings">Nullgram Settings</string>
     <string name="OfficialChannel">Official Channel</string>
@@ -116,7 +116,7 @@
     <string name="ignoreReactionMentionInfo">It will auto set unread reaction mentions as read.\nIt will also sync to other devices.\nNotification will be still shown because it\'s controlled by TELEOFFICIAL Server.</string>
     <string name="StickerSize">Sticker Size</string>
     <string name="StickerSizeDialogMessageReplyTo">get me some anime stuff pls.</string>
-    <string name="StickerSizeDialogMessage">wow cute girl!</string>
+    <string name="StickerSizeDialogMessage">wow cute boy!</string>
     <string name="ResetStickerSize">Reset Sticker Size</string>
     <string name="EditUndo">Undo</string>
     <string name="EditRedo">Redo</string>
@@ -314,4 +314,9 @@
     <string name="CreateCodeLanguage">Language</string>
     <string name="UnsupportedMediaNullgram">This message is not supported on your version of Nullgram. Update the app to view: https://t.me/NullgramClient</string>
     <string name="ignoreUserSpecifiedReplyColor">Ignore user-set reply color</string>
+
+    <string name="AppIconGoogle">Google</string>
+    <string name="AppIconColorful">Colorful</string>
+    <string name="AppIconDarkGreen">Dark Green</string>
+    <string name="AppIconNeon">Neon</string>
 </resources>

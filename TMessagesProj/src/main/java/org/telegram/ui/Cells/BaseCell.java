@@ -16,7 +16,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 import org.telegram.ui.ActionBar.Theme;
 
 public abstract class BaseCell extends ViewGroup {

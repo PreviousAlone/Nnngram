@@ -115,7 +115,7 @@
     <string name="ignoreReactionMentionInfo">它将自动将未读反应提及设置为已读。\n它还将同步到其他设备。\n通知仍将被显示，因为它由 TELEOFFICIAL 服务器控制。</string>
     <string name="StickerSize">贴纸大小</string>
     <string name="StickerSizeDialogMessageReplyTo">给我一些很不错的东西。</string>
-    <string name="StickerSizeDialogMessage">wow 真可爱</string>
+    <string name="StickerSizeDialogMessage">wow 是可爱的男孩子</string>
     <string name="ResetStickerSize">重置贴纸大小</string>
     <string name="EditUndo">撤消</string>
     <string name="EditRedo">重做</string>
@@ -304,12 +304,17 @@
     <string name="storyStealthMode">动态隐身模式</string>
     <string name="OneMoreThing">还有一件事</string>
     <string name="NotOriginalNullgramInfo">你似乎正在使用 Nullgram 的分支。\n 你想要关注 Nullgram 的频道吗？</string>
-    <string name="Official">Official</string>
-    <string name="Before">Before...</string>
-    <string name="Custom">Custom</string>
-    <string name="MonoCode">Code</string>
-    <string name="CreateCode">Create Code</string>
-    <string name="CreateCodeLanguage">Language</string>
-    <string name="UnsupportedMediaNullgram">This message is not supported on your version of Nullgram. Update the app to view: https://t.me/NullgramClient</string>
     <string name="ignoreUserSpecifiedReplyColor">Ignore user-set reply color</string>
+
+    <string name="Official">官方</string>
+    <string name="Before">在此之前…</string>
+    <string name="Custom">自定义</string>
+    <string name="MonoCode">代码</string>
+    <string name="CreateCode">创建代码</string>
+    <string name="CreateCodeLanguage">代码语言</string>
+    <string name="UnsupportedMediaNullgram">此消息在您的版本的Nnngram上不受支持。更新应用程序以查看。</string>
+
+    <string name="AppIconColorful">缤纷</string>
+    <string name="AppIconDarkGreen">深翠</string>
+    <string name="AppIconNeon">霓虹</string>
 </resources>

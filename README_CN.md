@@ -1,6 +1,6 @@
-# Nullgram
+# Nagram-reborn 基于 Nullgram
 
-[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=@NullgramClient&color=0088cc)](https://t.me/NullgramClient)[![Debug build](https://github.com/qwq233/Nullgram/actions/workflows/debug.yml/badge.svg?branch=master)](https://github.com/qwq233/Nullgram/actions/workflows/debug.yml)[![Crowdin](https://badges.crowdin.net/nullgram/localized.svg)](https://crowdin.com/project/nullgram)
+[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=@Nagram_channel&color=0088cc)](https://t.me/NullgramClient)[![Debug build](https://github.com/PreviousAlone/Nnngram/actions/workflows/debug.yml/badge.svg?branch=master)](https://github.com/PreviousAlone/Nnngram/actions/workflows/debug.yml)[![Crowdin](https://badges.crowdin.net/nnngram/localized.svg)](https://crowdin.com/project/nnngram)
 
 [English](README.md)
 
@@ -23,7 +23,7 @@ Null的意思是*未初始化、未定义或者不存在*。以Nullgram为名，
 
 ### 我发现了个BUG!
 
-首先，确认你已经安装了最新版本的Nullgram。
+首先，确认你已经安装了最新版本的Nnngram。
 
 然后，确认这个Bug是否也出现在官方Telegram端。如果也出现，那就把这个Bug提交给官方。
 
@@ -31,7 +31,7 @@ Null的意思是*未初始化、未定义或者不存在*。以Nullgram为名，
 
 务必使用Issue Template。写详细版本号，**我不知道什么是*最新版本***。
 
-你可以用logcat抓取日志。(TAG:  `Nullgram` )
+你可以用logcat抓取日志。(TAG:  `Nnngram` )
 
 [^1]: https://telegra.ph/%E6%9C%89%E5%85%B3-Nekogram-Lite-%E7%9A%84%E6%95%85%E4%BA%8B-04-09
 

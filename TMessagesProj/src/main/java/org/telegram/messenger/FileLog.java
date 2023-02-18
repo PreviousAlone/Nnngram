@@ -17,7 +17,7 @@ import org.telegram.tgnet.TLRPC;
 import java.io.File;
 import java.io.OutputStreamWriter;
 
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.utils.Log;
 
 /**
  * @deprecated use {@link Log} instead

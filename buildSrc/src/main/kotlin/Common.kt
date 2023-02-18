@@ -57,7 +57,7 @@ object Common {
             }
             repo.close()
             println("commit Count: $commitCount")
-            val targetVersionCode = commitCount + 1645200000
+            val targetVersionCode = commitCount + 1645300000
             println("target versionCode: $targetVersionCode")
             return targetVersionCode
         } else {

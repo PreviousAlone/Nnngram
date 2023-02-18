@@ -107,9 +107,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.PermissionUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.PermissionUtils;
 
 public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayout implements NotificationCenter.NotificationCenterDelegate {
 

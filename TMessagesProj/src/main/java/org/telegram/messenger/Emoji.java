@@ -36,8 +36,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.utils.Utils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.Utils;
 
 public class Emoji {
 

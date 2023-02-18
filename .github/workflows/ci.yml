@@ -3,7 +3,7 @@ name: Build CI
 on:
   push:
     branches:
-      - master
+      - main
     paths-ignore:
         - '**.md'
         - '**.txt'
@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     name: Gradle Build
-    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
@@ -85,22 +85,22 @@ jobs:
       - uses: actions/upload-artifact@v2
         name: Upload apk (arm64-v8a)
         with:
-          name: Nullgram-arm64-v8a
+          name: Nnngram-arm64-v8a
           path: ${{ env.APK_FILE }}
       - uses: actions/upload-artifact@v2
         name: Upload apk (armeabi-v7a)
         with:
-          name: Nullgram-armeabi-v7a
+          name: Nnngram-armeabi-v7a
           path: ${{ env.APK_FILE_ARMV7 }}
       - uses: actions/upload-artifact@v2
         name: Upload apk (x86_64)
         with:
-          name: Nullgram-x86_64
+          name: Nnngram-x86_64
           path: ${{ env.APK_FILE_X64 }}
       - uses: actions/upload-artifact@v2
         name: Upload apk (x86)
         with:
-          name: Nullgram-x86
+          name: Nnngram-x86
           path: ${{ env.APK_FILE_X86 }}
       - name: Upload mapping
         uses: actions/upload-artifact@v3
@@ -112,7 +112,7 @@ jobs:
   play-build:
     name: Gradle Build (play store)
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
@@ -179,7 +179,7 @@ jobs:
           
   upload:
     name: Upload Release
-    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     needs:
       - build
