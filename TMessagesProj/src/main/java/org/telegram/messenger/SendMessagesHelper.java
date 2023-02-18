@@ -114,8 +114,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import kotlin.Pair;
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.utils.StringUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class SendMessagesHelper extends BaseController implements NotificationCenter.NotificationCenterDelegate {
 

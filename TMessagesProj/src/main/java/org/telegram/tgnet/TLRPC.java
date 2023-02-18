@@ -52,7 +52,7 @@ import org.telegram.ui.Stories.MessageMediaStoryFull_old;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Defines;
 
 @SuppressWarnings("unchecked")
 public class TLRPC {

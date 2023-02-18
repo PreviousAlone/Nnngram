@@ -139,8 +139,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.utils.MessageUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.MessageUtils;
 
 
 public class DialogCell extends BaseCell implements StoriesListPlaceProvider.AvatarOverlaysView {

@@ -405,20 +405,20 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import kotlin.Unit;
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.activity.MessageDetailActivity;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.config.DialogConfig;
-import top.qwq2333.nullgram.config.ForwardContext;
-import top.qwq2333.nullgram.helpers.QrHelper;
-import top.qwq2333.nullgram.helpers.TranslateHelper;
-import top.qwq2333.nullgram.helpers.TranslateHelper.Status;
-import top.qwq2333.nullgram.translate.LanguageDetectorTimeout;
-import top.qwq2333.nullgram.ui.TranslatorSettingsPopupWrapper;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.MessageUtils;
-import top.qwq2333.nullgram.utils.PermissionUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.activity.MessageDetailActivity;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.config.DialogConfig;
+import xyz.nextalone.nnngram.config.ForwardContext;
+import xyz.nextalone.nnngram.helpers.QrHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper.Status;
+import xyz.nextalone.nnngram.translate.LanguageDetectorTimeout;
+import xyz.nextalone.nnngram.ui.TranslatorSettingsPopupWrapper;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.MessageUtils;
+import xyz.nextalone.nnngram.utils.PermissionUtils;
 
 @SuppressWarnings("unchecked")
 public class ChatActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, LocationActivity.LocationActivityDelegate, ChatAttachAlertDocumentLayout.DocumentSelectActivityDelegate, ChatActivityInterface, FloatingDebugProvider, ForwardContext, InstantCameraView.Delegate {

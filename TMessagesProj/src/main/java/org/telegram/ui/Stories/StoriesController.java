@@ -102,7 +102,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 public class StoriesController {
 

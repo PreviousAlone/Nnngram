@@ -316,11 +316,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import kotlin.Unit;
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.helpers.QrHelper;
-import top.qwq2333.nullgram.helpers.TranslateHelper;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.MessageUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.QrHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.MessageUtils;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
