@@ -33,7 +33,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

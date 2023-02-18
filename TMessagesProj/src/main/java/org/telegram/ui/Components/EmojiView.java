@@ -155,7 +155,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 @SuppressLint("SoonBlockedPrivateApi")
 public class EmojiView extends FrameLayout implements

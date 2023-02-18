@@ -107,7 +107,7 @@ import org.telegram.ui.Stories.DarkThemeResourceProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 public class ContentPreviewViewer {
 

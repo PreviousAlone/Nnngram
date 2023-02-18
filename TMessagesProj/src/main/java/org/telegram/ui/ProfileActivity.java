@@ -322,20 +322,20 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import kotlin.Unit;
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.InlinesKt;
-import top.qwq2333.nullgram.activity.MainSettingActivity;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.TranslateHelper;
-import top.qwq2333.nullgram.translate.LanguageDetectorTimeout;
-import top.qwq2333.nullgram.ui.AutoTranslatePopupWrapper;
-import top.qwq2333.nullgram.ui.BottomBuilder;
-import top.qwq2333.nullgram.ui.SimpleTextViewSwitcher;
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.StringUtils;
-import top.qwq2333.nullgram.utils.Utils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.InlinesKt;
+import xyz.nextalone.nnngram.activity.MainSettingActivity;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.translate.LanguageDetectorTimeout;
+import xyz.nextalone.nnngram.ui.AutoTranslatePopupWrapper;
+import xyz.nextalone.nnngram.ui.BottomBuilder;
+import xyz.nextalone.nnngram.ui.SimpleTextViewSwitcher;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.StringUtils;
+import xyz.nextalone.nnngram.utils.Utils;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate {
     private final static int PHONE_OPTION_CALL = 0,
@@ -12017,7 +12017,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setText(LocaleController.getString(R.string.ReportUserLocation), false);
                         textCell.setColors(-1, Theme.key_text_RedRegular);
                     } else if (position == nullRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NullSettings", R.string.NullSettings), R.drawable.msg_settings, false);
+                        textCell.setTextAndIcon(LocaleController.getString("NnnSettings", R.string.NullgramName), R.drawable.msg_settings, false);
                     } else if (position == languageRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.Language), LocaleController.getCurrentLanguageName(), false, R.drawable.msg2_language, false);
                         textCell.setImageLeft(23);

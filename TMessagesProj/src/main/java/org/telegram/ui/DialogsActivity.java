@@ -264,14 +264,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.config.ForwardContext;
-import top.qwq2333.nullgram.helpers.PasscodeHelper;
-import top.qwq2333.nullgram.helpers.QrHelper;
-import top.qwq2333.nullgram.ui.AppLinkVerifyBottomSheet;
-import top.qwq2333.nullgram.ui.SendOptionsMenuLayout;
-import top.qwq2333.nullgram.utils.APKUtils;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ForwardContext;
+import xyz.nextalone.nnngram.helpers.PasscodeHelper;
+import xyz.nextalone.nnngram.helpers.QrHelper;
+import xyz.nextalone.nnngram.ui.AppLinkVerifyBottomSheet;
+import xyz.nextalone.nnngram.ui.SendOptionsMenuLayout;
+import xyz.nextalone.nnngram.utils.APKUtils;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FloatingDebugProvider {
 

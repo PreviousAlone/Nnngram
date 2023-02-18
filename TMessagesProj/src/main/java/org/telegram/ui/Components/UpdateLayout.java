@@ -32,7 +32,7 @@ import org.telegram.ui.IUpdateLayout;
 import java.io.File;
 import java.util.ArrayList;
 
-import top.qwq2333.nullgram.utils.APKUtils;
+import xyz.nextalone.nnngram.utils.APKUtils;
 
 
 public class UpdateLayout extends IUpdateLayout {
