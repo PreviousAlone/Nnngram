@@ -443,8 +443,6 @@ target_include_directories(breakpad PUBLIC
 #voip
 include(${CMAKE_HOME_DIRECTORY}/voip/CMakeLists.txt)
 
-include(${CMAKE_HOME_DIRECTORY}/integrity/CMakeLists.txt)
-
 set(NATIVE_LIB "tmessages.42")
 
 #tmessages
@@ -748,7 +746,6 @@ target_link_libraries(${NATIVE_LIB}
         android
         OpenSLES
         cpufeatures
-        checkSignature
         breakpad)
 
 #if (${ANDROID_ABI} STREQUAL "x86" OR ${ANDROID_ABI} STREQUAL "x86_64")

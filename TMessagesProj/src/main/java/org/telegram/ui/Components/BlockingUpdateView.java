@@ -40,7 +40,7 @@ import org.telegram.ui.Components.voip.CellFlickerDrawable;
 import java.io.File;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.utils.APKUtils;
+import xyz.nextalone.nnngram.utils.APKUtils;
 
 public class BlockingUpdateView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 

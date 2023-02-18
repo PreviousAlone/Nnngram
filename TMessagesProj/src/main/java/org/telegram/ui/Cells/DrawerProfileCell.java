@@ -74,9 +74,9 @@ import org.telegram.ui.ThemeActivity;
 
 import java.util.ArrayList;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
 
 public class DrawerProfileCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 

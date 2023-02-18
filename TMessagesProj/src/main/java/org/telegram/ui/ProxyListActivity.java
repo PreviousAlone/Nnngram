@@ -69,12 +69,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import top.qwq2333.nullgram.activity.WsSettingsActivity;
-import top.qwq2333.nullgram.helpers.WebSocketHelper;
-import top.qwq2333.nullgram.utils.APKUtils;
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.UIUtil;
+import xyz.nextalone.nnngram.activity.WsSettingsActivity;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper;
+import xyz.nextalone.nnngram.utils.APKUtils;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.UIUtil;
 
 public class ProxyListActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
     private final static boolean IS_PROXY_ROTATION_AVAILABLE = true;

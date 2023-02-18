@@ -259,11 +259,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import kotlin.Unit;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.TranslateHelper;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.MessageUtils;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.MessageUtils;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
