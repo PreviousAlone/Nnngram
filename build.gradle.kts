@@ -26,7 +26,7 @@ val verName = if (Version.isStable) {
 val androidTargetSdkVersion by extra(33)
 val androidMinSdkVersion by extra(24)
 val androidCompileSdkVersion by extra(33)
-val androidBuildToolsVersion by extra("33.0.1")
+val androidBuildToolsVersion by extra("33.0.2")
 val androidCompileNdkVersion = "21.4.7075529"
 
 fun Project.configureBaseExtension() {
@@ -43,8 +43,8 @@ fun Project.configureBaseExtension() {
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
             isCoreLibraryDesugaringEnabled = true
         }
 
