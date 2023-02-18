@@ -73,7 +73,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.helpers.PasscodeHelper;
+import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 
 public class PasscodeView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
     private final static float BACKGROUND_SPRING_STIFFNESS = 300f;

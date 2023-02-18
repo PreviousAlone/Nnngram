@@ -406,8 +406,6 @@ target_compile_definitions(sqlite PUBLIC
 #voip
 include(${CMAKE_HOME_DIRECTORY}/voip/CMakeLists.txt)
 
-include(${CMAKE_HOME_DIRECTORY}/integrity/CMakeLists.txt)
-
 set(NATIVE_LIB "tmessages.43")
 
 #tmessages
@@ -710,8 +708,7 @@ target_link_libraries(${NATIVE_LIB}
         EGL
         android
         OpenSLES
-        cpufeatures
-        checkSignature)
+        cpufeatures)
 
 #if (${ANDROID_ABI} STREQUAL "x86" OR ${ANDROID_ABI} STREQUAL "x86_64")
 #    target_link_libraries(${NATIVE_LIB}

@@ -57,10 +57,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import top.qwq2333.nullgram.helpers.WebSocketHelper;
-import top.qwq2333.nullgram.utils.DatabaseUtils;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.ProxyUtils;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper;
+import xyz.nextalone.nnngram.utils.DatabaseUtils;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.ProxyUtils;
 
 import javax.net.ssl.SSLException;
 

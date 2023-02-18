@@ -60,7 +60,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Timer;
 
-import top.qwq2333.nullgram.activity.GeneralSettingActivity;
+import xyz.nextalone.nnngram.activity.GeneralSettingActivity;
+
 
 public class LanguageSelectActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -631,7 +632,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                 case VIEW_TYPE_SETTINGS: {
                     TextSettingsCell settingsCell = (TextSettingsCell) holder.itemView;
                     settingsCell.updateRTL();
-                    settingsCell.setText(LocaleController.getString("NullSettings", R.string.NullSettings), false);
+                    settingsCell.setText(LocaleController.getString("NnngramName", R.string.NnngramName), false);
                     /*HashSet<String> langCodes = RestrictedLanguagesSelectActivity.getRestrictedLanguages();
                     final String doNotTranslateCellName = LocaleController.getString("DoNotTranslate", R.string.DoNotTranslate);
                     String doNotTranslateCellValue = null;

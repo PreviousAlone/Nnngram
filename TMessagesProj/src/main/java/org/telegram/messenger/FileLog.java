@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.utils.Log;
 
 /**
  * @deprecated use {@link Log} instead

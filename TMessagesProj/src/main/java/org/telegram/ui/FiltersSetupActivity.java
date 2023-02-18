@@ -58,7 +58,7 @@ import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
 
-import top.qwq2333.nullgram.helpers.FolderIconHelper;
+import xyz.nextalone.nnngram.helpers.FolderIconHelper;
 
 public class FiltersSetupActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 

@@ -444,7 +444,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="top.qwq2333.nullgram.utils.APKUtils$UpdateReceiver" android:exported="true">
+        <receiver android:name="xyz.nextalone.nnngram.utils.APKUtils$UpdateReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>

@@ -112,7 +112,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import top.qwq2333.nullgram.utils.PermissionUtils;
+import xyz.nextalone.nnngram.utils.PermissionUtils;
 
 public class ChatAttachAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, BottomSheet.BottomSheetDelegateInterface {
 

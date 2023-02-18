@@ -42,8 +42,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class LocaleController {
 
@@ -1038,14 +1038,14 @@ public class LocaleController {
     private String getStringInternal(String key, String fallback, int res) {
         if (key.equals("AppName")) {
             try {
-                return ApplicationLoader.applicationContext.getString(R.string.NullgramName);
+                return ApplicationLoader.applicationContext.getString(R.string.NnngramName);
             } catch (Exception e) {
                 FileLog.e(e);
             }
         }
         if (key.equals("AppNameBeta")) {
             try {
-                return ApplicationLoader.applicationContext.getString(R.string.NullgramName);
+                return ApplicationLoader.applicationContext.getString(R.string.NnngramName);
             } catch (Exception e) {
                 FileLog.e(e);
             }
@@ -1075,7 +1075,7 @@ public class LocaleController {
         }
 
         if (value.contains("Telegram"))
-            value = value.replace("Telegram", "Nullgram");
+            value = value.replace("Telegram", "Nnngram");
         if (value.contains("TELEOFFICIAL"))
             value = value.replace("TELEOFFICIAL", "Telegram");
         return value;
