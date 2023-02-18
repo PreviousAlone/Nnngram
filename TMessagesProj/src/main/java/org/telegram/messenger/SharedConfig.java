@@ -63,12 +63,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.helpers.WebSocketHelper;
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
-import top.qwq2333.nullgram.utils.StringUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class SharedConfig {
     /**
@@ -1807,10 +1807,10 @@ public class SharedConfig {
     public static void checkSaveToGalleryFiles() {
         Utilities.globalQueue.postRunnable(() -> {
             try {
-                File telegramPath = new File(Environment.getExternalStorageDirectory(), "Nullgram");
-                File imagePath = new File(telegramPath, "Nullgram Images");
+                File telegramPath = new File(Environment.getExternalStorageDirectory(), "Nnngram");
+                File imagePath = new File(telegramPath, "Nnngram Images");
                 imagePath.mkdir();
-                File videoPath = new File(telegramPath, "Nullgram Video");
+                File videoPath = new File(telegramPath, "Nnngram Video");
                 videoPath.mkdir();
 
                 if (!BuildVars.NO_SCOPED_STORAGE) {

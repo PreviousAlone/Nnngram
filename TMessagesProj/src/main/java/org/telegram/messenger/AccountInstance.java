@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.ui.Components.Paint.PersistColorPalette;
 
-import top.qwq2333.nullgram.config.CloudStorage;
-import top.qwq2333.nullgram.helpers.ConnectionsHelper;
-import top.qwq2333.nullgram.utils.MessageUtils;
+import xyz.nextalone.nnngram.config.CloudStorage;
+import xyz.nextalone.nnngram.helpers.ConnectionsHelper;
+import xyz.nextalone.nnngram.utils.MessageUtils;
 
 public class AccountInstance {
 

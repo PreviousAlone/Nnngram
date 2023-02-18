@@ -55,7 +55,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;
 import org.telegram.messenger.Utilities;
 
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.utils.Log;
 
 public class DrawerLayoutContainer extends FrameLayout {
 

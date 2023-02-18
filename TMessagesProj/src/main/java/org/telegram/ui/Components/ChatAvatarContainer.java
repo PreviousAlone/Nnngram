@@ -72,7 +72,7 @@ import org.telegram.ui.TopicsFragment;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 public class ChatAvatarContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 

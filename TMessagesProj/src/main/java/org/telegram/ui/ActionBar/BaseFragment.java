@@ -71,11 +71,11 @@ import org.telegram.ui.bots.BotWebViewAttachedSheet;
 
 import java.util.ArrayList;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.config.CloudStorage;
-import top.qwq2333.nullgram.helpers.ConnectionsHelper;
-import top.qwq2333.nullgram.utils.MessageUtils;
-import top.qwq2333.nullgram.utils.VibrationUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.CloudStorage;
+import xyz.nextalone.nnngram.helpers.ConnectionsHelper;
+import xyz.nextalone.nnngram.utils.MessageUtils;
+import xyz.nextalone.nnngram.utils.VibrationUtils;
 
 public abstract class BaseFragment {
 

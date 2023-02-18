@@ -224,9 +224,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.utils.AlertUtil;
-import top.qwq2333.nullgram.utils.AnalyticsUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.AlertUtil;
+import xyz.nextalone.nnngram.utils.AnalyticsUtils;
 
 public class AndroidUtilities {
     public final static int LIGHT_STATUS_BAR_OVERLAY = 0x0f000000, DARK_STATUS_BAR_OVERLAY = 0x33000000;
@@ -3927,10 +3927,10 @@ public class AndroidUtilities {
                     //    intent.setDataAndType(Uri.fromFile(f), realMimeType != null ? realMimeType : "text/plain");
                     //}
                     if (realMimeType != null) {
-                        if (BuildConfig.isPlay && realMimeType.equals("application/vnd.android.package-archive")) {
-                            AlertUtil.showSimpleAlert(activity, LocaleController.getString("InstallProhibitedPlay", R.string.InstallProhibitedPlay));
-                            return;
-                        }
+//                        if (BuildConfig.isPlay && realMimeType.equals("application/vnd.android.package-archive")) {
+//                            AlertUtil.showSimpleAlert(activity, LocaleController.getString("InstallProhibitedPlay", R.string.InstallProhibitedPlay));
+//                            return;
+//                        }
                         try {
                             activity.startActivityForResult(intent, 500);
                         } catch (Exception e) {
@@ -3987,10 +3987,10 @@ public class AndroidUtilities {
                     }
                 }
             }
-            if (BuildConfig.isPlay && realMimeType != null && realMimeType.equals("application/vnd.android.package-archive")) {
-                AlertUtil.showSimpleAlert(activity, LocaleController.getString("InstallProhibitedPlay", R.string.InstallProhibitedPlay));
-                return true;
-            }
+//            if (BuildConfig.isPlay && realMimeType != null && realMimeType.equals("application/vnd.android.package-archive")) {
+//                AlertUtil.showSimpleAlert(activity, LocaleController.getString("InstallProhibitedPlay", R.string.InstallProhibitedPlay));
+//                return true;
+//            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && realMimeType != null && realMimeType.equals("application/vnd.android.package-archive") && !ApplicationLoader.applicationContext.getPackageManager().canRequestPackageInstalls()) {
                 AlertsCreator.createApkRestrictedDialog(activity, resourcesProvider).show();
                 return true;

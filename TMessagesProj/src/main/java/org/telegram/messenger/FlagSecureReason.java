@@ -5,7 +5,7 @@ import android.view.WindowManager;
 
 import java.util.HashMap;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 public class FlagSecureReason {
 

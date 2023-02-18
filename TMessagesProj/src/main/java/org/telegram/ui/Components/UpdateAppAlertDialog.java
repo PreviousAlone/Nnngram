@@ -35,7 +35,7 @@ import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 
-import top.qwq2333.nullgram.ui.TextViewEffects;
+import xyz.nextalone.nnngram.ui.TextViewEffects;
 
 
 public class UpdateAppAlertDialog extends BottomSheet {

@@ -103,8 +103,8 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.helpers.PasscodeHelper;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 
 public class NotificationsController extends BaseController {
 
