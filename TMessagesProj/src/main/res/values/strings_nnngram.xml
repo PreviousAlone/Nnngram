@@ -275,4 +275,8 @@
     <string name="MarkdownAbout">Edit text in messages using markdown: ^1**bold**^1, ^2__italic__^2, ^3~~strikethrough~~^3, ^4`monospace`^4, ^5||spoiler||^5, ^6text^7url^8.</string>
     <string name="MarkdownAbout2">Edit text in messages using markdown: ^1**bold**^1, ^2__italic__^2, ^3~~strikethrough~~^3, ^4`monospace`^4, ^5||spoiler||^5.</string>
     <string name="MarkdownDisableByDefault">Disable by default</string>
+    <string name="AppIconGoogle">Google</string>
+    <string name="AppIconColorful">Colorful</string>
+    <string name="AppIconDarkGreen">Dark Green</string>
+    <string name="AppIconNeon">Neon</string>
 </resources>

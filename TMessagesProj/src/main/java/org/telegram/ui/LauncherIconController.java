@@ -34,15 +34,14 @@ public class LauncherIconController {
     }
 
     public enum LauncherIcon {
-        DEFAULT("DefaultIcon", R.drawable.icon, R.drawable.icon, R.string.AppIconDefault),
-        MAINICON("MainIcon", R.drawable.mainicon, R.drawable.mainicon, R.string.AppIconMain),
-        ICON1("ICON1", R.drawable.icon_1, R.drawable.icon_1, R.string.icon_1),
-        ICON2("ICON2", R.drawable.icon_2, R.drawable.icon_2, R.string.icon_2),
-        ICON3("ICON3", R.drawable.icon_3, R.drawable.icon_3, R.string.icon_3),
-        ICON4("ICON4", R.drawable.icon_4, R.drawable.icon_4, R.string.icon_4),
-        ICON5("ICON5", R.drawable.icon_5, R.drawable.icon_5, R.string.icon_5);
-
-
+        DEFAULT("DefaultIcon", R.mipmap.icon_background_nagram, R.mipmap.icon_foreground_nagram, R.string.AppIconDefault),
+        GOOGLE("GoogleIcon", R.mipmap.icon_background_google, R.mipmap.icon_foreground_google, R.string.AppIconGoogle),
+        COLORFUL("ColorfulIcon", R.mipmap.icon_background_colorful, R.mipmap.icon_foreground_colorful, R.string.AppIconColorful),
+        DARKGREEN("DarkGreenIcon", R.mipmap.icon_background_darkgreen, R.mipmap.icon_foreground_darkgreen, R.string.AppIconDarkGreen),
+        NEON("NeonIcon", R.mipmap.icon_background_neon, R.mipmap.icon_foreground_neon, R.string.AppIconNeon),
+        NOX("PremiumIcon", R.drawable.icon_3_background_sa, R.mipmap.icon_3_foreground_sa, R.string.AppIconPremium);
+    
+    
         public final String key;
         public final int background;
         public final int foreground;

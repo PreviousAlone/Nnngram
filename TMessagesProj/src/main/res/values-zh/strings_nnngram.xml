@@ -275,4 +275,7 @@
     <string name="MarkdownAbout">使用Markdown编辑消息中的文字：^1**粗体**^1，^2__斜体__^2，^3~~删除线~^3，^4`等宽\'^4，^5|打码||^5，^6文本^7链接^8。</string>
     <string name="MarkdownAbout2">使用Markdown编辑消息中的文字：^1**粗体**^1，^2__斜体__^2，^3~~删除线~^3，^4`等宽\'^4，^5|打码||^5。</string>
     <string name="MarkdownDisableByDefault">默认为禁用</string>
+    <string name="AppIconColorful">缤纷</string>
+    <string name="AppIconDarkGreen">深翠</string>
+    <string name="AppIconNeon">霓虹</string>
 </resources>
