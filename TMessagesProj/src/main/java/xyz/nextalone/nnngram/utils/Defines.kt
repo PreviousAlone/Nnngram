@@ -193,6 +193,8 @@ object Defines {
         457896977   // Queally rw
     )
 
+    @BooleanConfig const val doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe"
+
     /**
      * 数组中元素未找到的下标，值为-1
      */
