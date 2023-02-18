@@ -76,9 +76,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.ui.syntaxhighlight.SyntaxHighlight;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.ui.syntaxhighlight.SyntaxHighlight;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class MessageObject {
 

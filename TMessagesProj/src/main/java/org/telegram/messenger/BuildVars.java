@@ -26,16 +26,16 @@ public class BuildVars {
     public static boolean NO_SCOPED_STORAGE = Build.VERSION.SDK_INT <= 29;
     public static int BUILD_VERSION = 3237;
     public static String BUILD_VERSION_STRING = "9.5.6";
-    public static int APP_ID = 19797609;
-    public static String APP_HASH = "e8f1567dbbf38944a1391c4d23c34b60";
-    public static String APPCENTER_HASH = "e07b49da-11a5-46db-a780-f5cd7b9a1a5a";
+    public static int APP_ID = 25184524;
+    public static String APP_HASH = "0cda2e05621028b7d3836504dad86b9c";
+    public static String APPCENTER_HASH = "d2efd39b-4dbe-4ca4-896b-9b2a3ddf0957";
     public static String SAFETYNET_KEY = "";
 
     public static String SMS_HASH = "O2P2z+/jBpJ";
-    public static String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=top.qwq2333.nullgram";
+    public static String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=xyz.nextalone.nnngram";
     public static String GOOGLE_AUTH_CLIENT_ID = "760348033671-81kmi3pi84p11ub8hp9a1funsv0rn2p9.apps.googleusercontent.com";
 
-    public static String HUAWEI_APP_ID = "101184875";
+//    public static String HUAWEI_APP_ID = "101184875";
 
     // You can use this flag to disable Google Play Billing (If you're making fork and want it to be in Google Play)
     public static boolean IS_BILLING_UNAVAILABLE = BuildConfig.isPlay;

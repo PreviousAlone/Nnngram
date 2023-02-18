@@ -94,9 +94,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
 
 public class DocumentSelectActivity extends BaseFragment {
 
@@ -1460,7 +1460,7 @@ public class DocumentSelectActivity extends BaseFragment {
 
         try {
             File newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
-            File telegramPath = new File(newPath, "Nullgram");
+            File telegramPath = new File(newPath, "Nnngram");
             if (telegramPath.exists()) {
                 fs = new ListItem();
                 fs.title = "Telegram";

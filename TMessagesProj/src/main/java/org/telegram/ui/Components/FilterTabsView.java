@@ -60,9 +60,9 @@ import org.telegram.ui.ActionBar.Theme;
 
 import java.util.ArrayList;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.FolderIconHelper;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.FolderIconHelper;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class FilterTabsView extends FrameLayout {
 

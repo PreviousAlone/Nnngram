@@ -59,8 +59,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.SSLException;
 
-import top.qwq2333.nullgram.helpers.WebSocketHelper;
-import top.qwq2333.nullgram.utils.Log;
+import xyz.nextalone.nnngram.helpers.WebSocketHelper;
+import xyz.nextalone.nnngram.utils.Log;
 
 @SuppressWarnings("JavaJniMissingFunction")
 public class ConnectionsManager extends BaseController {

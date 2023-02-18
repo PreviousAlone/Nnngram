@@ -70,9 +70,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import kotlin.Unit;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.helpers.TranslateHelper;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class TranslateAlert extends Dialog {
 

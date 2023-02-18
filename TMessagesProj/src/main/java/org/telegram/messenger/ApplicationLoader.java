@@ -43,7 +43,7 @@ import org.telegram.ui.LauncherIconController;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 
-import top.qwq2333.nullgram.utils.AppcenterUtils;
+import xyz.nextalone.nnngram.utils.AppcenterUtils;
 
 public class ApplicationLoader extends Application {
 
@@ -146,7 +146,7 @@ public class ApplicationLoader extends Application {
         } catch (Exception e) {
             FileLog.e(e);
         }
-        return new File("/data/data/top.qwq2333.nullgram/files");
+        return new File("/data/data/xyz.nextalone.nnngram/files");
     }
 
     public static void postInitApplication() {
@@ -280,7 +280,7 @@ public class ApplicationLoader extends Application {
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
 
-        org.osmdroid.config.Configuration.getInstance().setUserAgentValue("Nullgram" + BuildConfig.VERSION_NAME);
+        org.osmdroid.config.Configuration.getInstance().setUserAgentValue("Nnngram" + BuildConfig.VERSION_NAME);
         org.osmdroid.config.Configuration.getInstance().setOsmdroidBasePath(new File(ApplicationLoader.applicationContext.getCacheDir(), "osmdroid"));
 
 
