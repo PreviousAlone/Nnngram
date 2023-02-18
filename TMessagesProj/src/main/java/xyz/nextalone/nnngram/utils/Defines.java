@@ -91,6 +91,9 @@ public class Defines {
     public static final String markdownParseLinks = "markdownParseLinks";
     public static final String newMarkdownParser = "newMarkdownParser";
 
+    // Nnngram
+    public static final String doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe";
+    
     // Custom API
     public static final String customAPI = "customAPI";
     public static final String customAppId = "customAppId";
