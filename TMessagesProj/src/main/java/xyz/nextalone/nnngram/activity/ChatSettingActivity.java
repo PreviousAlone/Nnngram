@@ -119,6 +119,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int hideTitleRow;
     private int messageFiltersRow;
     private int sendLargePhotoRow;
+    private int doNotUnarchiveBySwipeRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -371,6 +372,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.sendLargePhoto);
             }
+        } else if (position == doNotUnarchiveBySwipeRow) {
+            Config.toggleDoNotUnarchiveBySwipe();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.doNotUnarchiveBySwipe);
+            }
         }
     }
 
@@ -424,6 +430,7 @@ public class ChatSettingActivity extends BaseActivity {
         hideTitleRow = addRow("showHideTitle");
         messageFiltersRow = addRow("messageFilters");
         sendLargePhotoRow = addRow("sendLargePhoto");
+        doNotUnarchiveBySwipeRow = addRow("doNotUnarchiveBySwipe");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -564,6 +571,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("showHideTitle", R.string.showHideTitle), Config.showHideTitle, true);
                     } else if (position == sendLargePhotoRow) {
                         textCell.setTextAndCheck(LocaleController.getString("sendLargePhoto", R.string.sendLargePhoto), Config.sendLargePhoto, true);
+                    } else if (position == doNotUnarchiveBySwipeRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("doNotUnarchiveBySwipe", R.string.doNotUnarchiveBySwipe), Config.doNotUnarchiveBySwipe, true);
                     }
                     break;
                 }
