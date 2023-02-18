@@ -136,8 +136,8 @@
         android:restoreAnyVersion="true"
         android:backupAgent=".BackupAgent"
         android:hardwareAccelerated="@bool/useHardwareAcceleration"
-        android:icon="@mipmap/ic_launcher_icon"
-        android:roundIcon="@mipmap/ic_launcher_icon"
+        android:icon="@mipmap/ic_launcher_nagram"
+        android:roundIcon="@mipmap/ic_launcher_nagram_round"
         android:largeHeap="true"
         android:label="@string/NullgramName"
         android:theme="@style/Theme.TMessages.Start"
@@ -168,10 +168,10 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.MainIcon"
+            android:name="org.telegram.messenger.GoogleIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_mainicon"
-            android:roundIcon="@mipmap/ic_launcher_mainicon"
+            android:icon="@mipmap/ic_launcher_nagram_google"
+            android:roundIcon="@mipmap/ic_launcher_nagram_google_round"
             android:exported="true">
 
             <intent-filter>
@@ -185,10 +185,10 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.ICON1"
+            android:name="org.telegram.messenger.ColorfulIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_icon_1"
-            android:roundIcon="@mipmap/ic_launcher_icon_1"
+            android:icon="@mipmap/ic_launcher_nagram_colorful"
+            android:roundIcon="@mipmap/ic_launcher_nagram_colorful_round"
             android:exported="true">
 
             <intent-filter>
@@ -202,10 +202,10 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.ICON2"
+            android:name="org.telegram.messenger.DarkGreenIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_icon_2"
-            android:roundIcon="@mipmap/ic_launcher_icon_2"
+            android:icon="@mipmap/ic_launcher_nagram_darkgreen"
+            android:roundIcon="@mipmap/ic_launcher_nagram_darkgreen_round"
             android:exported="true">
 
             <intent-filter>
@@ -219,10 +219,10 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.ICON3"
+            android:name="org.telegram.messenger.NeonIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_icon_3"
-            android:roundIcon="@mipmap/ic_launcher_icon_3"
+            android:icon="@mipmap/ic_launcher_nagram_neon"
+            android:roundIcon="@mipmap/ic_launcher_nagram_neon_round"
             android:exported="true">
 
             <intent-filter>
@@ -236,26 +236,10 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.ICON4"
+            android:name="org.telegram.messenger.PremiumIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_icon_4"
-            android:roundIcon="@mipmap/ic_launcher_icon_4"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:enabled="false"
-            android:name="org.telegram.messenger.ICON5"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_icon_5"
-            android:roundIcon="@mipmap/ic_launcher_icon_5"
+            android:icon="@mipmap/icon_3_launcher"
+            android:roundIcon="@mipmap/icon_3_launcher_round"
             android:exported="true">
 
             <intent-filter>
@@ -336,7 +320,7 @@
                 <data android:host="t.me" android:scheme="http" />
                 <data android:host="t.me" android:scheme="https" />
             </intent-filter>
-            <intent-filter android:icon="@drawable/icon" android:roundIcon="@drawable/icon" android:priority="1">
+            <intent-filter android:priority="1">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -384,7 +368,7 @@
             android:stateNotNeeded="true"
             android:theme="@style/Theme.TMessages.Transparent"
             android:exported="true">
-            <intent-filter android:icon="@drawable/icon" android:roundIcon="@drawable/icon" android:priority="1">
+            <intent-filter android:priority="1">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -397,7 +381,7 @@
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
-            <intent-filter android:icon="@drawable/icon" android:roundIcon="@drawable/icon">
+            <intent-filter>
                 <action android:name="org.telegram.passport.AUTHORIZE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
@@ -408,7 +392,7 @@
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
-            <intent-filter android:icon="@drawable/icon" android:roundIcon="@drawable/icon">
+            <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
@@ -418,7 +402,7 @@
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
-            <intent-filter android:icon="@drawable/icon" android:roundIcon="@drawable/icon">
+            <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
@@ -512,15 +496,15 @@ e            <intent-filter>
             </intent-filter>
         </receiver>
 
-        <receiver android:name="top.qwq2333.nullgram.utils.APKUtils$UpdateReceiver" android:exported="true">
+        <receiver android:name="xyz.nextalone.nnngram.utils.APKUtils$UpdateReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name="top.qwq2333.nullgram.SaveToDownloadReceiver" android:exported="false">
+        <receiver android:name="xyz.nextalone.nnngram.SaveToDownloadReceiver" android:exported="false">
             <intent-filter>
-                <action android:name="top.qwq2333.nullgram.SAVE_TO_DOWNLOAD_CANCEL" />
+                <action android:name="xyz.nextalone.nnngram.SAVE_TO_DOWNLOAD_CANCEL" />
             </intent-filter>
         </receiver>
 

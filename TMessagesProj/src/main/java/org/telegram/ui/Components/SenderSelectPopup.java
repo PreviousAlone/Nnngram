@@ -71,7 +71,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import top.qwq2333.gen.Config;
+import xyz.nextalone.gen.Config;
 
 public class SenderSelectPopup extends ActionBarPopupWindow {
     public final static float SPRING_STIFFNESS = 750f;

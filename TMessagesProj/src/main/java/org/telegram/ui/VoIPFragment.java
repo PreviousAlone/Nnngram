@@ -130,7 +130,7 @@ import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.qwq2333.nullgram.utils.PermissionUtils;
+import xyz.nextalone.nnngram.utils.PermissionUtils;
 
 public class VoIPFragment implements VoIPService.StateListener, NotificationCenter.NotificationCenterDelegate {
 

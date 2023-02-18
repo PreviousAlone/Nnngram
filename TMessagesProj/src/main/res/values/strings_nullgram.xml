@@ -19,9 +19,9 @@
   -->
 
 <resources>
-    <string name="NullgramName" translatable="false">Nullgram</string>
-    <string name="NullgramPushService">Nullgram Push Service</string>
-    <string name="NullSettings">Nullgram Settings</string>
+    <string name="NullgramName" translatable="false">Nnngram</string>
+    <string name="NullgramPushService">Nnngram Push Service</string>
+    <string name="NullSettings">Nnngram Settings</string>
     <string name="OfficialChannel">Official Channel</string>
     <string name="Chat">Chat</string>
     <string name="Experiment">Experiment</string>
@@ -135,7 +135,7 @@
     <string name="ignoreReactionMentionInfo">It will auto set unread reaction mentions as read.\nIt will also sync to other devices.\nNotification will be still shown because it\'s controlled by TELEOFFICIAL Server.</string>
     <string name="StickerSize">Sticker Size</string>
     <string name="StickerSizeDialogMessageReplyTo">get me some anime stuff pls.</string>
-    <string name="StickerSizeDialogMessage">wow cute girl!</string>
+    <string name="StickerSizeDialogMessage">wow cute boy!</string>
     <string name="ResetStickerSize">Reset Sticker Size</string>
     <string name="EditUndo">Undo</string>
     <string name="EditRedo">Redo</string>
@@ -348,9 +348,9 @@
     <string name="SaveToDownloadCount_few">Saving %1$d files to Download</string>
     <string name="SaveToDownloadCount_many">Saving %1$d files to Download</string>
     <string name="SaveToDownloadCount_other">Saving %1$d files to Download</string>
-  <string name="InvalidPattern">Invalid Pattern</string>
-  <string name="sendLargePhoto">Send large photo</string>
-  <string name="Details">Details</string>
+    <string name="InvalidPattern">Invalid Pattern</string>
+    <string name="sendLargePhoto">Send large photo</string>
+    <string name="Details">Details</string>
   <string name="DontAskAgain">Don\'t ask again</string>
     <string name="NoFilesFound">No files found</string>
     <string name="NoFilesInfo">No file\'s info</string>
@@ -358,4 +358,9 @@
     <string name="FileUploadLimit">File must not exceed %1$s</string>
     <string name="ViewStats">View stats</string>
     <string name="NoFilesFoundInfo">No results for **%1$s** in the current folder.</string>
+
+    <string name="AppIconGoogle">Google</string>
+    <string name="AppIconColorful">Colorful</string>
+    <string name="AppIconDarkGreen">Dark Green</string>
+    <string name="AppIconNeon">Neon</string>
 </resources>

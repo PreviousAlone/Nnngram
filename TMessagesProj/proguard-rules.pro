@@ -124,11 +124,11 @@
      public <init>();
   }
 -keep class * extends org.telegram.ui.Components.UItem$UItemFactory { public <init>(...); }
--keepclassmembernames class top.qwq2333.nullgram.activity.DatacenterActivity$DatacenterCell { <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activity.DatacenterActivity$DatacenterHeaderCell { <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activity.MessageDetailActivity$TextDetailSimpleCell { <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activity.PasscodeSettingActivity$AccountCell { <fields>; }
--keepclassmembernames class top.qwq2333.nullgram.activity.ChatSettingActivity$StickerSizeCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.DatacenterActivity$DatacenterCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.DatacenterActivity$DatacenterHeaderCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.MessageDetailActivity$TextDetailSimpleCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.PasscodeSettingActivity$AccountCell { <fields>; }
+-keepclassmembernames class xyz.nextalone.nnngram.activity.ChatSettingActivity$StickerSizeCell { <fields>; }
 
 -keepclassmembernames class androidx.core.widget.NestedScrollView {
     private android.widget.OverScroller mScroller;
@@ -147,7 +147,7 @@
     public static *** d(...);
 }
 
--assumenosideeffects class top.qwq2333.nullgram.utils.Log {
+-assumenosideeffects class xyz.nextalone.nnngram.utils.Log {
     public static *** d(...);
 }
 
@@ -180,7 +180,7 @@
    kotlinx.serialization.KSerializer serializer(...);
 }
 
--keep class top.qwq2333.nullgram.utils.Log {
+-keep class xyz.nextalone.nnngram.utils.Log {
     public static *** nativeLog(...);
 }
 

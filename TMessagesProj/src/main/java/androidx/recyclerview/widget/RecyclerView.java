@@ -97,10 +97,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
-import top.qwq2333.nullgram.utils.VibrationUtils;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.VibrationUtils;
 
 /**
  * A flexible view for providing a limited window into a large data set.
