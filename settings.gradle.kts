@@ -18,7 +18,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Nullgram"
+rootProject.name = "Nnngram"
 include(
     ":TMessagesProj",
     ":tcp2ws",

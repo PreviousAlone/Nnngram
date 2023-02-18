@@ -62,7 +62,7 @@ import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
 
-import top.qwq2333.nullgram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
 
 public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.SelectableView> {
 

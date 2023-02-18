@@ -204,14 +204,14 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import kotlin.Unit;
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.config.ForwardContext;
-import top.qwq2333.nullgram.helpers.PasscodeHelper;
-import top.qwq2333.nullgram.ui.AppLinkVerifyBottomSheet;
-import top.qwq2333.nullgram.ui.BottomBuilder;
-import top.qwq2333.nullgram.ui.SendOptionsMenuLayout;
-import top.qwq2333.nullgram.utils.APKUtils;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.config.ForwardContext;
+import xyz.nextalone.nnngram.helpers.PasscodeHelper;
+import xyz.nextalone.nnngram.ui.AppLinkVerifyBottomSheet;
+import xyz.nextalone.nnngram.ui.BottomBuilder;
+import xyz.nextalone.nnngram.ui.SendOptionsMenuLayout;
+import xyz.nextalone.nnngram.utils.APKUtils;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FloatingDebugProvider {
 

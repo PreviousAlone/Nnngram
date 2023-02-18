@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">Nullgram</string>
-    <string name="AppNameBeta">Nullgram Beta</string>
+    <string name="AppName">Nnngram</string>
+    <string name="AppNameBeta">Nnngram Beta</string>
     <string name="LanguageName">English</string>
     <string name="English">English</string>
     <string name="LanguageNameInEnglish">English</string>
@@ -41,7 +41,7 @@
     <string name="OpenFragment">Open Fragment</string>
     <string name="SentCallCode">We\'re calling your phone **%1$s**.\n\nDon\'t accept the call, Telegram will process everything automatically.</string>
     <string name="SentCallOnly">Calling your phone **%1$s** to dictate the code.</string>
-    <string name="CallText">Nullgram will call you in %1$d:%2$02d</string>
+    <string name="CallText">Nnngram will call you in %1$d:%2$02d</string>
     <string name="SmsText">Sending you an SMS in %1$d:%2$02d</string>
     <string name="Calling">Calling you...</string>
     <string name="SendingSms">Sending SMS...</string>
@@ -51,7 +51,7 @@
     <string name="DidNotGetTheCode">Didn\'t get the code?</string>
     <string name="DidNotGetTheCodeSms">Send the code as an SMS</string>
     <string name="CancelAccountReset">Cancel account reset</string>
-    <string name="CancelAccountResetInfo2">Somebody with access to **%1$s** has requested to delete your Nullgram account and reset your 2-Step Verification password.\n\nIf this wasn\'t you, please enter the code we\'ve just sent you via SMS. You can also cancel this by *changing your phone number*.</string>
+    <string name="CancelAccountResetInfo2">Somebody with access to **%1$s** has requested to delete your Nnngram account and reset your 2-Step Verification password.\n\nIf this wasn\'t you, please enter the code we\'ve just sent you via SMS. You can also cancel this by *changing your phone number*.</string>
     <string name="ResetAccount">Reset account</string>
     <string name="ResetAccountInfo">Since the account **%1$s** is active and protected by a password, we will delete it in 1 week for security purposes.\n\nYou can cancel this process at any time.</string>
     <string name="ResetAccountStatus">You\'ll be able to reset your account in:</string>
@@ -132,7 +132,7 @@
     <string name="PaymentFailed">Sorry, the payment was declined.</string>
     <string name="PaymentConnectionFailed">Unable to reach payment server. Please check your internet connection and try again.</string>
     <string name="PaymentWarning">Warning</string>
-    <string name="PaymentWarningText">Neither Nullgram, nor %1$s will have access to your credit card information. Credit card details will be handled only by the payment system, %2$s.\n\nPayments will go directly to the developer of %1$s. Nullgram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of %1$s or your bank.</string>
+    <string name="PaymentWarningText">Neither Nnngram, nor %1$s will have access to your credit card information. Credit card details will be handled only by the payment system, %2$s.\n\nPayments will go directly to the developer of %1$s. Nnngram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of %1$s or your bank.</string>
     <string name="PaymentPassword">Password &amp; Email</string>
     <string name="PaymentPasswordTitle">Password</string>
     <string name="PaymentPasswordEnter">Enter a password</string>
@@ -156,7 +156,7 @@
     <string name="NewGroup">New Group</string>
     <string name="Yesterday">yesterday</string>
     <string name="NoResult">No results</string>
-    <string name="NoChats">Welcome to Nullgram</string>
+    <string name="NoChats">Welcome to Nnngram</string>
     <string name="NoResultFoundFor">No results found for \"%s\".</string>
     <string name="RecentlyViewed">Recently viewed</string>
     <string name="RecentlyViewedHide">HIDE</string>
@@ -246,7 +246,7 @@
     <string name="DisappearingPhoto">Secret Photo</string>
     <string name="DisappearingVideo">Secret Video</string>
     <string name="DisappearingGif">Secret GIF</string>
-    <string name="CompatibilityChat">%1$s is using an older version of Nullgram, so secret photos will be shown in compatibility mode.\n\nOnce %2$s updates Nullgram, photos with timers for 1 minute or less will start working in \'Tap and hold to view\' mode, and you will be notified whenever the other party takes a screenshot.</string>
+    <string name="CompatibilityChat">%1$s is using an older version of Nnngram, so secret photos will be shown in compatibility mode.\n\nOnce %2$s updates Nnngram, photos with timers for 1 minute or less will start working in \'Tap and hold to view\' mode, and you will be notified whenever the other party takes a screenshot.</string>
     <string name="SearchMessages">Messages</string>
     <string name="SearchMessagesIn">Messages in %s</string>
     <string name="Search">Search</string>
@@ -362,11 +362,11 @@
     <string name="ImportedInfo">This message was imported from another app. We can\'t guarantee it\'s real.</string>
     <string name="ImportUploading">Importing messages and media... **%d%%**</string>
     <string name="ImportImportingTitle">Importing chat</string>
-    <string name="ImportImportingInfo">Please keep Nullgram open\nuntil the import is completed.</string>
+    <string name="ImportImportingInfo">Please keep Nnngram open\nuntil the import is completed.</string>
     <string name="ImportCount">%1$s of %2$s</string>
     <string name="ImportDone">Done</string>
     <string name="ImportDoneTitle">Chat imported successfully!</string>
-    <string name="ImportDoneInfo">Save space on your device by importing more chats to Nullgram.</string>
+    <string name="ImportDoneInfo">Save space on your device by importing more chats to Nnngram.</string>
     <string name="ImporImportingService">Importing messages and media...</string>
     <string name="ImporImportingStickersService">Importing stickers...</string>
     <string name="ImportHeader">Import messages and media to...</string>
@@ -404,7 +404,7 @@
     <string name="MegaLeaveAlertWithName">Are you sure you want to leave **%1$s**?</string>
     <string name="GroupUserCantAdd">Sorry, you can\'t add this user to groups.</string>
     <string name="GroupUserAddLimit">Sorry, this group is full.</string>
-    <string name="GroupUserLeftError">Sorry, if a person is no longer part of a group, you need to be in their Nullgram contacts in order to add them back.\n\nNote that they can still join via the group\'s invite link as long as they are not in the Removed Users list.</string>
+    <string name="GroupUserLeftError">Sorry, if a person is no longer part of a group, you need to be in their Nnngram contacts in order to add them back.\n\nNote that they can still join via the group\'s invite link as long as they are not in the Removed Users list.</string>
     <string name="GroupUserCantAdmin">Sorry, too many administrators in this group.</string>
     <string name="PublicChannelsTooMuch">Sorry, the target user has too many public groups or channels already. Please ask them to make one of their existing groups or channels private first.</string>
     <string name="LocatedChannelsTooMuch">Sorry, the target user owns too many location-based groups. Please ask them to delete or transfer an existing one first.</string>
@@ -536,7 +536,7 @@
     <string name="ChannelHideMembersInfo">Switch on to hide the list of members in this group. Admins will remain visible.</string>
     <string name="ChannelAntiSpamFalsePositiveReported">Telegram moderators will review your report. Thank you!</string>
     <string name="ChannelMembersInfo">Only channel administrators can see this list.</string>
-    <string name="ChannelLinkInfo">Anyone on Nullgram will be able to join your channel by following this link.</string>
+    <string name="ChannelLinkInfo">Anyone on Nnngram will be able to join your channel by following this link.</string>
     <string name="ChannelAdminsInfo">You can add administrators to help you manage your channel. Tap and hold to remove admins.</string>
     <string name="ChannelJoinTo">Do you want to join the channel \'%1$s\'?</string>
     <string name="ChannelCantOpenPrivate">Sorry, this channel is private, so you can’t view its content.</string>
@@ -545,7 +545,7 @@
     <string name="ChannelCantOpenBanned">Unfortunately, you were banned from participating in public groups.</string>
     <string name="ChannelCantOpenNa">Sorry, this chat is no longer accessible.</string>
     <string name="ChannelAddTo">Add %1$s to the channel?</string>
-    <string name="ChannelUserLeftError">Sorry, if a person is no longer part of a channel, you need to be in their Nullgram contacts in order to add them back.\n\nNote that they could still join via the channel\'s invite link as long as they are not in the Removed users list.</string>
+    <string name="ChannelUserLeftError">Sorry, if a person is no longer part of a channel, you need to be in their Nnngram contacts in order to add them back.\n\nNote that they could still join via the channel\'s invite link as long as they are not in the Removed users list.</string>
     <string name="ChannelUserCantAdd">Sorry, you can\'t add this user to channels.</string>
     <string name="ChannelUserCantAdmin">Sorry, too many admins in this channel.</string>
     <string name="ChannelUserCantBot">Sorry, too many bots in this channel.</string>
@@ -1024,9 +1024,9 @@
     <string name="SponsoredMessage">sponsored</string>
     <string name="SponsoredMessageRecommended">recommended</string>
     <string name="SponsoredMessageInfo">What are sponsored\nmessages?</string>
-    <string name="SponsoredMessageInfoDescription1">Unlike other apps, Nullgram never uses your private data to target ads. You are seeing this message only because someone chose this public one-to-many channel as a space to promote their messages. This means that no user data is mined or analyzed to display ads, and every user viewing a channel on Nullgram sees the same sponsored message.</string>
-    <string name="SponsoredMessageInfoDescription2">Unlike other apps, Nullgram doesn\'t track whether you tapped on a sponsored message and doesn\'t profile you based on your activity. We also prevent external links in sponsored messages to ensure that third parties can’t spy on our users. We believe that everyone has the right to privacy, and technological platforms should respect that.</string>
-    <string name="SponsoredMessageInfoDescription3">Nullgram offers free and unlimited service to hundreds of millions of users, which involves significant server and traffic costs. In order to remain independent and stay true to its values, Nullgram developed a paid tool to promote messages with user privacy in mind. We welcome responsible advertisers at:</string>
+    <string name="SponsoredMessageInfoDescription1">Unlike other apps, Nnngram never uses your private data to target ads. You are seeing this message only because someone chose this public one-to-many channel as a space to promote their messages. This means that no user data is mined or analyzed to display ads, and every user viewing a channel on Nnngram sees the same sponsored message.</string>
+    <string name="SponsoredMessageInfoDescription2">Unlike other apps, Nnngram doesn\'t track whether you tapped on a sponsored message and doesn\'t profile you based on your activity. We also prevent external links in sponsored messages to ensure that third parties can’t spy on our users. We believe that everyone has the right to privacy, and technological platforms should respect that.</string>
+    <string name="SponsoredMessageInfoDescription3">Nnngram offers free and unlimited service to hundreds of millions of users, which involves significant server and traffic costs. In order to remain independent and stay true to its values, Nnngram developed a paid tool to promote messages with user privacy in mind. We welcome responsible advertisers at:</string>
     <string name="SponsoredMessageInfoDescription4">Ads should no longer be synonymous with abuse of user privacy. Let us redefine how a tech company should operate – together.</string>
     <string name="SponsoredMessageAlertTitle">Sponsored messages</string>
     <string name="SponsoredMessageAlertText">See https://telegram.org</string>
@@ -1050,7 +1050,7 @@
     <string name="SendingVideoStatus">sending a video...</string>
     <string name="RecordingVideoStatus">recording a video...</string>
     <string name="SendingFile">sending a file...</string>
-    <string name="GotAQuestion">Got a question\nabout Nullgram?</string>
+    <string name="GotAQuestion">Got a question\nabout Nnngram?</string>
     <string name="ChatGallery">Gallery</string>
     <string name="ChatLocation">Location</string>
     <string name="ChatVideo">Video</string>
@@ -1105,7 +1105,7 @@
     <string name="OpenUrlOption1">Log in to %1$s as **%2$s**</string>
     <string name="OpenUrlOption2">Allow **%1$s** to send me messages</string>
     <string name="CancelSending">Cancel sending</string>
-    <string name="BotPermissionGameAlert">Allow %1$s to pass your Nullgram name and id (not your phone number) to pages you open with this bot?</string>
+    <string name="BotPermissionGameAlert">Allow %1$s to pass your Nnngram name and id (not your phone number) to pages you open with this bot?</string>
     <string name="ReportSpamLocation">GROUP UNRELATED TO LOCATION?</string>
     <string name="ReportUnrelatedGroup">Report unrelated group</string>
     <string name="ReportUnrelatedGroupText">Please let us know if this group is not related to this location:\n\n**%1$s**</string>
@@ -1118,7 +1118,7 @@
     <string name="AddContactChat">ADD CONTACT</string>
     <string name="AddContactFullChat">ADD %1$s TO CONTACTS</string>
     <string name="ViewContact">VIEW CONTACT</string>
-    <string name="BlockUserAlert">Do you want to block **%1$s** from messaging and calling you on Nullgram?</string>
+    <string name="BlockUserAlert">Do you want to block **%1$s** from messaging and calling you on Nnngram?</string>
     <string name="BlockUserReplyAlert">Do you want to block messages from **%1$s**?</string>
     <string name="ReportSpamAlert">Are you sure you want to report spam from this user?</string>
     <string name="ReportSpamAlertGroup">Are you sure you want to report spam from this group?</string>
@@ -1177,7 +1177,7 @@
     <string name="ReportInfo">Please enter any additional details relevant to your report.</string>
     <string name="ReportHint">Additional details...</string>
     <string name="ReportSend">Send Report</string>
-    <string name="ReportSentInfo">Nullgram moderators will study your report.\nThank you for your cooperation!</string>
+    <string name="ReportSentInfo">Nnngram moderators will study your report.\nThank you for your cooperation!</string>
     <string name="ReportChatSpam">Spam</string>
     <string name="ReportChatFakeAccount">Fake Account</string>
     <string name="ReportChatViolence">Violence</string>
@@ -1285,7 +1285,7 @@
     <string name="URL">URL</string>
     <string name="MapPreviewProvider">Map Preview Provider</string>
     <string name="MapPreviewProviderTitle">Map preview provider</string>
-    <string name="MapPreviewProviderTelegram">Nullgram</string>
+    <string name="MapPreviewProviderTelegram">Nnngram</string>
     <string name="MapPreviewProviderGoogle">Google</string>
     <string name="MapPreviewProviderYandex">Yandex</string>
     <string name="MapPreviewProviderNobody">No previews</string>
@@ -1477,15 +1477,15 @@
     <string name="NotificationGroupKickMember">%1$s removed %3$s from the group %2$s</string>
     <string name="NotificationGroupKickYou">%1$s removed you from the group %2$s</string>
     <string name="NotificationGroupLeftMember">%1$s left the group %2$s</string>
-    <string name="NotificationContactJoined">%1$s joined Nullgram!</string>
-    <string name="NotificationUnrecognizedDevice">%1$s,\nWe detected a login into your account from a new device on %2$s\n\nDevice: %3$s\nLocation: %4$s\n\nIf this wasn\'t you, you can go to Settings - Privacy and Security - Sessions and terminate that session.\n\nIf you think that somebody logged in to your account against your will, you can enable two-step verification in Privacy and Security settings.\n\nSincerely,\nThe Nullgram Team</string>
+    <string name="NotificationContactJoined">%1$s joined Nnngram!</string>
+    <string name="NotificationUnrecognizedDevice">%1$s,\nWe detected a login into your account from a new device on %2$s\n\nDevice: %3$s\nLocation: %4$s\n\nIf this wasn\'t you, you can go to Settings - Privacy and Security - Sessions and terminate that session.\n\nIf you think that somebody logged in to your account against your will, you can enable two-step verification in Privacy and Security settings.\n\nSincerely,\nThe Nnngram Team</string>
     <string name="NotificationContactNewPhoto">%1$s updated profile photo</string>
     <string name="NotificationInvitedToGroupByLink">%1$s joined to the group %2$s via invite link</string>
     <string name="NotificationGroupFew">%1$s sent %3$s to the group %2$s</string>
     <string name="NotificationGroupAlbum">%1$s sent an album to the group %2$s</string>
     <string name="NotificationGroupForwardedFew">%1$s forwarded %3$s to the group %2$s</string>
-    <string name="NotificationHiddenName">Nullgram</string>
-    <string name="NotificationHiddenChatName">Nullgram</string>
+    <string name="NotificationHiddenName">Nnngram</string>
+    <string name="NotificationHiddenChatName">Nnngram</string>
     <string name="NotificationHiddenChatUserName">User</string>
     <string name="NotificationHiddenMessage">New message</string>
     <string name="Reply">Reply</string>
@@ -1550,7 +1550,7 @@
     <string name="NotificationActionPinnedGeoLiveUser">%1$s pinned a live location</string>
     <string name="NotificationActionPinnedGifUser">%1$s pinned a GIF</string>
     <string name="NotificationActionPinnedMusicUser">%1$s pinned an audio file</string>
-    <string name="SecretChatName">Nullgram</string>
+    <string name="SecretChatName">Nnngram</string>
     <!--contacts view-->
     <string name="SelectContact">Select Contact</string>
     <string name="SelectContacts">Select Contacts</string>
@@ -1558,7 +1558,7 @@
     <string name="ShareContactTitle">Share Contact</string>
     <string name="AddContactPhonebookTitle">Add Contact</string>
     <string name="NoContacts">No contacts yet</string>
-    <string name="InviteText2">Hey, I\'m using Nullgram to chat. Join me! Download it here: %1$s</string>
+    <string name="InviteText2">Hey, I\'m using Nnngram to chat. Join me! Download it here: %1$s</string>
     <string name="TodayAt">at</string>
     <string name="YesterdayAt">yesterday at</string>
     <string name="TodayAtFormatted">at %1$s</string>
@@ -1579,17 +1579,17 @@
     <string name="WithinAMonth">last seen within a month</string>
     <string name="ALongTimeAgo">last seen a long time ago</string>
     <string name="NewMessageTitle">New Message</string>
-    <string name="InviteFriendsHelp">Select contacts to invite them to Nullgram</string>
-    <string name="InviteToTelegram">INVITE TO NULLGRAM</string>
-    <string name="ShareTelegram">Share Nullgram...</string>
+    <string name="InviteFriendsHelp">Select contacts to invite them to Nnngram</string>
+    <string name="InviteToTelegram">INVITE TO Nnngram</string>
+    <string name="ShareTelegram">Share Nnngram...</string>
     <string name="UpdateContactsTitle">Update contacts?</string>
-    <string name="UpdateContactsMessage">Nullgram has detected many unsynced contacts, would you like to sync them now? Choose \'OK\' if you\'re using your own device, SIM card and Google account.</string>
+    <string name="UpdateContactsMessage">Nnngram has detected many unsynced contacts, would you like to sync them now? Choose \'OK\' if you\'re using your own device, SIM card and Google account.</string>
     <string name="SortedByName">Sorted by name</string>
     <string name="SortedByLastSeen">Sorted by last seen time</string>
     <string name="AddContactByPhone">Add %1$s</string>
     <string name="PhoneNumberSearch">Phone number</string>
-    <string name="NoContactsYet">You have no contacts on Nullgram yet</string>
-    <string name="NoContactsYetLine1">Invite friends to try Nullgram</string>
+    <string name="NoContactsYet">You have no contacts on Nnngram yet</string>
+    <string name="NoContactsYetLine1">Invite friends to try Nnngram</string>
     <string name="NoContactsYetLine2">Find people nearby to chat with</string>
     <string name="NoContactsYetLine3">Search people by username</string>
     <string name="NewContactAlertTitle">New contact</string>
@@ -1672,16 +1672,16 @@
     <string name="ShareContact">Share contact</string>
     <string name="AddContact">Add to contacts</string>
     <string name="AddContactTitle">Add Contact</string>
-    <string name="ContactNotRegisteredTitle">Invite to Nullgram</string>
-    <string name="ContactNotRegistered">%1$s is not on Nullgram yet, would you like to invite them to join?</string>
+    <string name="ContactNotRegisteredTitle">Invite to Nnngram</string>
+    <string name="ContactNotRegistered">%1$s is not on Nnngram yet, would you like to invite them to join?</string>
     <string name="Invite">Invite</string>
     <string name="Block">BLOCK</string>
     <string name="BlockAndDeleteReplies">BLOCK AND DELETE REPLIES</string>
     <string name="BlockContact">Block user</string>
     <string name="BlockUser">Block user</string>
     <string name="BlockUsers">Block users</string>
-    <string name="BlockUserMessage">Do you want to block **%1$s** from messaging and calling you on Nullgram?</string>
-    <string name="BlockUsersMessage">Do you want to block **%1$s** from messaging and calling you on Nullgram?</string>
+    <string name="BlockUserMessage">Do you want to block **%1$s** from messaging and calling you on Nnngram?</string>
+    <string name="BlockUsersMessage">Do you want to block **%1$s** from messaging and calling you on Nnngram?</string>
     <string name="UserBlocked">User blocked</string>
     <string name="UserUnblocked">User unblocked</string>
     <string name="EditContact">Edit contact</string>
@@ -1711,7 +1711,7 @@
     <string name="MessageLifetimePhoto">If you set a timer, the photo will self-destruct after it was viewed.</string>
     <string name="MessageLifetimeVideo">If you set a timer, the video will self-destruct after it was viewed.</string>
     <string name="ShortMessageLifetimeForever">Off</string>
-    <string name="EncryptionKeyDescription">This image and text were derived from the encryption key for this secret chat with **%1$s**.\n\nIf they look the same on **%2$s\'s** device, end-to-end encryption is guaranteed.\n\nLearn more at Nullgram.org</string>
+    <string name="EncryptionKeyDescription">This image and text were derived from the encryption key for this secret chat with **%1$s**.\n\nIf they look the same on **%2$s\'s** device, end-to-end encryption is guaranteed.\n\nLearn more at Nnngram.org</string>
     <string name="EncryptionKeyLink">https://telegram.org/faq#secret-chats</string>
     <string name="NumberUnknown">Unknown</string>
     <string name="PhoneHidden">Unknown</string>
@@ -1751,7 +1751,7 @@
     <string name="UsernameInvalidShortPurchase">A username must have at least 5 characters.\nHowever, it is currently available for purchase. **Learn more…**</string>
     <string name="UsernameInvalidLong">The username must not exceed 32 characters.</string>
     <string name="UsernameInvalidStartNumber">Sorry, a username can\'t start with a number.</string>
-    <string name="UsernameHelp">You can choose a username on **Nullgram**. If you do, other people will be able to find you by this username and contact you without knowing your phone number.\n\nYou can use **a–z**, **0–9** and underscores. Minimum length is **5** characters.</string>
+    <string name="UsernameHelp">You can choose a username on **Nnngram**. If you do, other people will be able to find you by this username and contact you without knowing your phone number.\n\nYou can use **a–z**, **0–9** and underscores. Minimum length is **5** characters.</string>
     <string name="UsernameHelpLink">This link opens a chat with you:\n%1$s</string>
     <string name="UsernameChecking">Checking username...</string>
     <string name="UsernameAvailable">%1$s is available.</string>
@@ -1865,7 +1865,7 @@
     <string name="NoReactionsFound">No reactions found</string>
     <string name="NoMasks">No masks yet</string>
     <string name="EmojiSuggestions">Emoji suggestions</string>
-    <string name="EmojiSuggestionsInfo">**Nullgram** lets you find emoji by thousands of keywords, but there is always something missing. If you want to suggest a new emoji replacement, you can help us by visiting:</string>
+    <string name="EmojiSuggestionsInfo">**Nnngram** lets you find emoji by thousands of keywords, but there is always something missing. If you want to suggest a new emoji replacement, you can help us by visiting:</string>
     <string name="EmojiSuggestionsUrl">https://translations.telegram.org/%1$s/emoji</string>
     <string name="Masks">Masks</string>
     <string name="MasksInfo">You can add masks to photos you send. To do this, open the photo editor before sending a photo.</string>
@@ -1915,7 +1915,7 @@
     <string name="ImportStickersLinkTaken">Sorry, this link is already taken.</string>
     <string name="ImportStickersImportingTitle">Importing stickers</string>
     <string name="ImportStickersDoneTitle">Stickers imported successfully!</string>
-    <string name="ImportStickersDoneInfo">Import more stickers to Nullgram and share them with your friends.</string>
+    <string name="ImportStickersDoneInfo">Import more stickers to Nnngram and share them with your friends.</string>
     <!--theme view-->
     <string name="Theme">Theme</string>
     <string name="AutoNightTheme">Auto-Night Mode</string>
@@ -1970,7 +1970,7 @@
     <string name="NewThemeTitle">New Theme</string>
     <string name="EditThemeTitle">Edit Theme</string>
     <string name="CreateNewThemeHelp">Tap on the palette icon to view the list of elements on each screen - and edit them.</string>
-    <string name="CreateNewThemeAlert">You can create your own theme by changing colors within the app.\n\nYou can always switch back to the default Nullgram theme here.</string>
+    <string name="CreateNewThemeAlert">You can create your own theme by changing colors within the app.\n\nYou can always switch back to the default Nnngram theme here.</string>
     <string name="ThemeSetUrlHelp">You can use a-z, 0-9 and underscores.\nMinimum length is 5 characters.</string>
     <string name="ThemeHelpLink">Your theme will be updated for all users each time you change it. Anyone can install it using this link:\n%1$s</string>
     <string name="ThemeCreateHelp">Anyone can install your theme using this link. When you change the theme, it will be updated for all users who installed it.\n\nThe theme will be based on your currently selected theme and wallpaper.</string>
@@ -2071,7 +2071,7 @@
     <string name="NotificationsAndSounds">Notifications and Sounds</string>
     <string name="CustomNotifications">Custom Notifications</string>
     <string name="ProfilePopupNotification">Popup notifications</string>
-    <string name="ProfilePopupNotificationInfo">New messages from this contact will appear on your screen when you are not using Nullgram.</string>
+    <string name="ProfilePopupNotificationInfo">New messages from this contact will appear on your screen when you are not using Nnngram.</string>
     <string name="NotificationsLed">LED</string>
     <string name="NotificationsLedColor">Color</string>
     <string name="ColorBlue">Blue</string>
@@ -2161,7 +2161,7 @@
     <string name="MessagesSettings">Messages</string>
     <string name="SendByEnter">Send by Enter</string>
     <string name="Events">Events</string>
-    <string name="ContactJoined">Contact joined Nullgram</string>
+    <string name="ContactJoined">Contact joined Nnngram</string>
     <string name="PinnedMessages">Pinned Messages</string>
     <string name="TranslateMessages">Translate Messages</string>
     <string name="ShowTranslateButton">Show Translate Button</string>
@@ -2186,12 +2186,12 @@
     <string name="LanguageUnofficial">Unofficial languages</string>
     <string name="LanguageUnsupportedError">There is no such language.</string>
     <string name="LanguageSame">You are already using this language pack (**%1$s**). You can change your language at any time in Settings.</string>
-    <string name="LanguageUnknownCustomAlert">Unfortunately, this custom language pack (**%1$s**) doesn\'t contain data for Nullgram Android.</string>
-    <string name="AskAQuestionInfo">Please note that Nullgram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlease take a look at the <![CDATA[<a href=\"https://Nullgram.org/faq#general-questions\">Nullgram FAQ</a>]]>: it has answers to most questions and important tips for <![CDATA[<a href=\"https://telegram.org/faq#troubleshooting\">troubleshooting</a>]]>.</string>
+    <string name="LanguageUnknownCustomAlert">Unfortunately, this custom language pack (**%1$s**) doesn\'t contain data for Nnngram Android.</string>
+    <string name="AskAQuestionInfo">Please note that Nnngram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlease take a look at the <![CDATA[<a href=\"https://Nnngram.org/faq#general-questions\">Nnngram FAQ</a>]]>: it has answers to most questions and important tips for <![CDATA[<a href=\"https://telegram.org/faq#troubleshooting\">troubleshooting</a>]]>.</string>
     <string name="AskButton">Ask a volunteer</string>
-    <string name="TelegramFAQ">Nullgram FAQ</string>
-    <string name="TelegramFaq">Nullgram FAQ</string>
-    <string name="TelegramFeatures">Nullgram Features</string>
+    <string name="TelegramFAQ">Nnngram FAQ</string>
+    <string name="TelegramFaq">Nnngram FAQ</string>
+    <string name="TelegramFeatures">Nnngram Features</string>
     <string name="TelegramFeaturesUrl">https://t.me/TelegramTips</string>
     <string name="AddAccount">Add Account</string>
     <string name="SelectAccount">Select Account</string>
@@ -2206,7 +2206,7 @@
     <string name="NotificationsService">Keep-Alive Service</string>
     <string name="NotificationsServiceInfo">Relaunch app when shut down. Enable for reliable notifications.</string>
     <string name="NotificationsServiceConnection">Background Connection</string>
-    <string name="NotificationsServiceConnectionInfo">Keep a low impact background connection to Nullgram for reliable notifications.</string>
+    <string name="NotificationsServiceConnectionInfo">Keep a low impact background connection to Nnngram for reliable notifications.</string>
     <string name="SortBy">Sort By</string>
     <string name="ImportContacts">Import Contacts</string>
     <string name="SortFirstName">First name</string>
@@ -2294,14 +2294,14 @@
     <string name="NotificationsPriorityUrgent">Urgent</string>
     <string name="RepeatNotificationsNever">Never</string>
     <string name="RepeatNotifications">Repeat Notifications</string>
-    <string name="PhoneNumberHelp">You can change your Nullgram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.</string>
+    <string name="PhoneNumberHelp">You can change your Nnngram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.</string>
     <string name="PhoneNumberAlert">Users will see your new number if they have it in their address book or your privacy settings allow them to see it. You can modify this in Settings &gt; Privacy and Security &gt; Phone number.</string>
     <string name="PhoneNumberChange2">Change Number</string>
     <string name="PhoneNumberChangeTitle">Change number</string>
     <string name="PhoneNumberKeepButton">Keep %1$s</string>
     <string name="ChangePhoneNewNumber">New Number</string>
     <string name="ChangePhoneHelp">We will send an SMS with a confirmation code to your new number.</string>
-    <string name="ChangePhoneNumberOccupied">The number %1$s is already connected to a Nullgram account. Please delete that account before migrating to the new number.</string>
+    <string name="ChangePhoneNumberOccupied">The number %1$s is already connected to a Nnngram account. Please delete that account before migrating to the new number.</string>
     <string name="NotificationsOther">Other</string>
     <string name="VibrationDisabled">Disabled</string>
     <string name="PopupEnabled">Enabled</string>
@@ -2329,7 +2329,7 @@
     <string name="SmartNotificationsAlert">Sound Alert Frequency</string>
     <string name="SmartNotificationsDetail">%1$s within %2$s</string>
     <string name="SecretWebPage">Link Previews</string>
-    <string name="SecretWebPageInfo">Link previews will be generated on Nullgram servers. We do not store data about the links you send.</string>
+    <string name="SecretWebPageInfo">Link previews will be generated on Nnngram servers. We do not store data about the links you send.</string>
     <string name="SecretChat">Secret chats</string>
     <string name="ChromeCustomTabs">In-App Browser</string>
     <string name="ChromeCustomTabsInfo">Open external links within the app</string>
@@ -2338,7 +2338,7 @@
     <string name="Emoji">Emoji</string>
     <string name="LargeEmoji">Large Emoji</string>
     <string name="EmojiUseDefault">Use system default emoji</string>
-    <string name="TelegramVersion">Nullgram for Android %1$s</string>
+    <string name="TelegramVersion">Nnngram for Android %1$s</string>
     <string name="DebugMenu">Debug Menu</string>
     <string name="DebugSendLogs">Send Logs</string>
     <string name="DebugSendLastLogs">Send Last Logs</string>
@@ -2390,10 +2390,10 @@
     <string name="UseProxyTelegram">MTProto Proxy</string>
     <string name="UseProxyTelegramError">The proxy you are using is not configured correctly and will be disabled. Please find another one.</string>
     <string name="UseProxySponsor">Proxy sponsor</string>
-    <string name="UseProxySponsorInfo">This channel is shown by your proxy server. To remove this channel from your chat list, disable the proxy in Nullgram Settings.</string>
+    <string name="UseProxySponsorInfo">This channel is shown by your proxy server. To remove this channel from your chat list, disable the proxy in Nnngram Settings.</string>
     <string name="UseProxyInfo">SOCKS5 proxy settings.</string>
     <string name="UseProxyTelegramInfo">MTProto proxy settings.</string>
-    <string name="UseProxyTelegramInfo2">This proxy may display a sponsored channel in your chat list. This doesn\'t reveal any of your Nullgram traffic.</string>
+    <string name="UseProxyTelegramInfo2">This proxy may display a sponsored channel in your chat list. This doesn\'t reveal any of your Nnngram traffic.</string>
     <string name="UseProxyForCalls">Use proxy for calls</string>
     <string name="UseProxyForCallsInfo">Proxy servers may degrade the quality of your calls.</string>
     <string name="ConnectingToProxyEnable">Enable</string>
@@ -2411,7 +2411,7 @@
     <string name="AutodownloadSizeLimitUpTo">up to %1$s</string>
     <string name="Streaming">Streaming</string>
     <string name="EnableStreaming">Stream Videos and Audio Files</string>
-    <string name="EnableAllStreamingInfo">Some videos can\'t be streamed – e.g., all videos that were sent from Android using Nullgram 4.7 and earlier versions.\n</string>
+    <string name="EnableAllStreamingInfo">Some videos can\'t be streamed – e.g., all videos that were sent from Android using Nnngram 4.7 and earlier versions.\n</string>
     <string name="TapToChangePhone">Tap to change phone number</string>
     <string name="Appearance">Appearance</string>
     <string name="StickersAndMasks">Stickers and Masks</string>
@@ -2432,7 +2432,7 @@
     <string name="TapToChange">Tap to change</string>
     <string name="AlternativeOptions">Alternative options</string>
     <string name="AddAnotherAccount">Add another account</string>
-    <string name="AddAnotherAccountInfo">Connect other Nullgram accounts and easily switch between them.</string>
+    <string name="AddAnotherAccountInfo">Connect other Nnngram accounts and easily switch between them.</string>
     <string name="SetPasscode">Set a Passcode</string>
     <string name="SetPasscodeInfo">Lock the app with a passcode so that others can\'t open it.</string>
     <string name="ClearCache">Clear Cache</string>
@@ -2463,8 +2463,8 @@
     <string name="AuthAnotherClientOk">Auth successfull</string>
     <string name="AuthAnotherClientDownloadClientUrl">https://getdesktop.telegram.org/</string>
     <string name="AuthAnotherWebClientUrl">https://web.telegram.org/</string>
-    <string name="AuthAnotherClientInfo1">Download Nullgram on your computer from *getdesktop.telegram.org*.</string>
-    <string name="AuthAnotherClientInfo2">Run Nullgram Desktop to get the QR code.</string>
+    <string name="AuthAnotherClientInfo1">Download Nnngram on your computer from *getdesktop.telegram.org*.</string>
+    <string name="AuthAnotherClientInfo2">Run Nnngram Desktop to get the QR code.</string>
     <string name="AuthAnotherClientInfo3">Scan the QR code to connect your account.</string>
     <string name="AuthAnotherClientUrl">This code can be used to allow someone to log in to your Telegram account.\n\nTo confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and scan the code.</string>
     <string name="QRCodePermissionNoCameraWithHint">**Telegram** needs camera access so that you can scan QR codes. Tap Settings -> Permissions, and turn **Camera** on.</string>
@@ -2506,7 +2506,7 @@
     <string name="ChannelTitleChanged">Channel title updated.</string>
     <string name="ChannelDescriptionChanged">Channel description updated.</string>
     <string name="CheckPhoneNumber">Is %1$s still your number?</string>
-    <string name="CheckPhoneNumberInfo">Keep your number up to date to ensure you can always log into Nullgram. **Learn more**</string>
+    <string name="CheckPhoneNumberInfo">Keep your number up to date to ensure you can always log into Nnngram. **Learn more**</string>
     <string name="CheckPhoneNumberLearnMoreUrl">https://telegram.org/faq#q-i-have-a-new-phone-number-what-do-i-do</string>
     <string name="CheckPhoneNumberYes">Yes</string>
     <string name="CheckPhoneNumberNo">No</string>
@@ -2538,17 +2538,17 @@
     <string name="AudioAutodownload">Voice messages</string>
     <string name="VideoMessagesAutodownload">Video messages</string>
     <!--passport view-->
-    <string name="TelegramPassport">Nullgram Passport</string>
+    <string name="TelegramPassport">Nnngram Passport</string>
     <string name="PassportRequestedInformation">Requested Information</string>
     <string name="PassportProvidedInformation">Provided Information</string>
-    <string name="PassportInfoTitle">What is Nullgram Passport?</string>
-    <string name="PassportInfo2">With Nullgram Passport you can easily sign up for websites and services that require identity verification.\n\nYour information, personal data, and documents are protected by end-to-end encryption. Nobody, including Nullgram, can access them without your permission.\n\nYou can visit our *FAQ* to learn more.</string>
+    <string name="PassportInfoTitle">What is Nnngram Passport?</string>
+    <string name="PassportInfo2">With Nnngram Passport you can easily sign up for websites and services that require identity verification.\n\nYour information, personal data, and documents are protected by end-to-end encryption. Nobody, including Nnngram, can access them without your permission.\n\nYou can visit our *FAQ* to learn more.</string>
     <string name="PassportInfoUrl">https://telegram.org/faq#passport</string>
-    <string name="TelegramPassportCreatePasswordInfo">Please create a password to secure your personal data with end-to-end encryption.\n\nThis password will also be required whenever you log in to Nullgram on a new device.</string>
+    <string name="TelegramPassportCreatePasswordInfo">Please create a password to secure your personal data with end-to-end encryption.\n\nThis password will also be required whenever you log in to Nnngram on a new device.</string>
     <string name="TelegramPassportCreatePassword">CREATE A PASSWORD</string>
-    <string name="TelegramPassportDelete">Delete Nullgram Passport</string>
-    <string name="TelegramPassportDeleteTitle">Delete Nullgram passport</string>
-    <string name="TelegramPassportDeleteAlert">Are you sure you want to delete your Nullgram Passport?</string>
+    <string name="TelegramPassportDelete">Delete Nnngram Passport</string>
+    <string name="TelegramPassportDeleteTitle">Delete Nnngram passport</string>
+    <string name="TelegramPassportDeleteAlert">Are you sure you want to delete your Nnngram Passport?</string>
     <string name="PassportUseLatinOnly">Please use latin characters only.</string>
     <string name="PassportAddPassportInfo">Upload scans of a certified English translation of your passport.</string>
     <string name="PassportAddInternalPassportInfo">Upload scans of a certified English translation of your internal passport.</string>
@@ -2584,8 +2584,8 @@
     <string name="PassportDeletePhoneAlert">Delete phone number?</string>
     <string name="PassportPhoneInfo">Enter your phone number</string>
     <string name="PassportPhoneUseSame">Use %1$s</string>
-    <string name="PassportPhoneUseSameInfo">Use the same phone number as on Nullgram.</string>
-    <string name="PassportPhoneUseSameEmailInfo">Use the same email as on Nullgram.</string>
+    <string name="PassportPhoneUseSameInfo">Use the same phone number as on Nnngram.</string>
+    <string name="PassportPhoneUseSameEmailInfo">Use the same email as on Nnngram.</string>
     <string name="PassportPhoneUseOther">Or enter a new phone number</string>
     <string name="PassportPhoneUploadInfo">Note: You will receive a confirmation code on the phone number you provide.</string>
     <string name="PassportEmail">Email</string>
@@ -2596,7 +2596,7 @@
     <string name="PassportEmailVerifyInfo">Please enter the confirmation code we\'ve just sent to %1$s.</string>
     <string name="PassportSelfRequest">Please enter your password to access your personal data.</string>
     <string name="PassportRequest">**%1$s** requests access to your personal data to sign you up for their services.</string>
-    <string name="PassportRequestPasswordInfo">Please enter your Nullgram Password to decrypt your data.</string>
+    <string name="PassportRequestPasswordInfo">Please enter your Nnngram Password to decrypt your data.</string>
     <string name="PassportPolicy">You accept the *%1$s Privacy Policy* and allow their @%2$s to send you messages.</string>
     <string name="PassportNoPolicy">You are sending your documents directly to %1$s and allowing their @%2$s to send you messages.</string>
     <string name="PassportAuthorize">AUTHORIZE</string>
@@ -2728,7 +2728,7 @@
     <string name="SessionsTitle">Active Sessions</string>
     <string name="CurrentSession">Current session</string>
     <string name="NoOtherSessions">No other active sessions</string>
-    <string name="NoOtherSessionsInfo">You can log in to Nullgram from other mobile, tablet and desktop devices, using the same phone number. All your data will be instantly synchronized.</string>
+    <string name="NoOtherSessionsInfo">You can log in to Nnngram from other mobile, tablet and desktop devices, using the same phone number. All your data will be instantly synchronized.</string>
     <string name="OtherSessions">Active sessions</string>
     <string name="SessionsInfo">Control your sessions on other devices.</string>
     <string name="TerminateSessionQuestion">Terminate this session?</string>
@@ -2741,18 +2741,18 @@
     <string name="TerminateAllSessions">Terminate All Other Sessions</string>
     <string name="UnofficialApp">unofficial app</string>
     <string name="NoOtherWebSessions">No active logins.</string>
-    <string name="NoOtherWebSessionsInfo">You can log in on websites that support signing in with Nullgram.</string>
+    <string name="NoOtherWebSessionsInfo">You can log in on websites that support signing in with Nnngram.</string>
     <string name="OtherWebSessions">Connected websites</string>
-    <string name="WebSessionsTitle">Logged in with Nullgram</string>
-    <string name="TerminateWebSessionInfo">Tap to disconnect from your Nullgram account.</string>
+    <string name="WebSessionsTitle">Logged in with Nnngram</string>
+    <string name="TerminateWebSessionInfo">Tap to disconnect from your Nnngram account.</string>
     <string name="TerminateWebSessionText">Are you sure you want to disconnect %1$s?</string>
     <string name="TerminateWebSessionTitle">Disconnect website</string>
     <string name="TerminateWebSessionsTitle">Disconnect websites</string>
     <string name="Disconnect">Disconnect</string>
     <string name="TerminateWebSessionStop">Block %1$s</string>
     <string name="TerminateAllWebSessions">Disconnect All Websites</string>
-    <string name="AreYouSureWebSessions">Are you sure you want to disconnect all websites where you used Nullgram to log in?</string>
-    <string name="ClearOtherWebSessionsHelp">You can log in on websites that support signing in with Nullgram.</string>
+    <string name="AreYouSureWebSessions">Are you sure you want to disconnect all websites where you used Nnngram to log in?</string>
+    <string name="ClearOtherWebSessionsHelp">You can log in on websites that support signing in with Nnngram.</string>
     <string name="LoginAttempts">Incomplete login attempts</string>
     <string name="LoginAttemptsInfo">The devices above have no access to your messages. The code was entered correctly, but no correct password was given.</string>
     <!--filters-->
@@ -2862,7 +2862,7 @@
     <string name="EnterCurrentPasscode">Enter your current passcode</string>
     <string name="EnterNewFirstPasscode">Enter a passcode</string>
     <string name="EnterNewPasscode">Enter your new passcode</string>
-    <string name="EnterYourTelegramPasscode">Enter your Nullgram passcode</string>
+    <string name="EnterYourTelegramPasscode">Enter your Nnngram passcode</string>
     <string name="ReEnterYourPasscode">Re-enter your new passcode</string>
     <string name="PasscodeDoNotMatch">Passcodes do not match</string>
     <string name="AutoLock">Auto-lock</string>
@@ -2877,7 +2877,7 @@
     <string name="ScreenCaptureHeader">App Content in Task Switcher</string>
     <string name="ScreenCaptureShowContent">Show Content</string>
     <string name="ScreenCaptureInfo">If disabled, you won\'t be able to take screenshots in the app but chat content will be hidden in the task switcher.</string>
-    <string name="ScreenCaptureAlert">This will hide the contents of your chats or chat list from the task switcher, but you will not be able to take screenshots on Nullgram.\n\nYou may need to restart the app for this to take effect.</string>
+    <string name="ScreenCaptureAlert">This will hide the contents of your chats or chat list from the task switcher, but you will not be able to take screenshots on Nnngram.\n\nYou may need to restart the app for this to take effect.</string>
     <string name="TooManyTries">Too many tries.\nPlease try again in %1$s.</string>
     <!--media view-->
     <string name="January">January</string>
@@ -3207,7 +3207,7 @@
     <string name="YourEmailInfo">Please add your valid email. It is the only way to recover a forgotten password.</string>
     <string name="YourEmailSkip">Skip</string>
     <string name="YourEmailSkipWarning">Warning</string>
-    <string name="YourEmailSkipWarningText">No, seriously.\n\nIf you forget your password, you will lose access to your Nullgram account. There will be no way to restore it.</string>
+    <string name="YourEmailSkipWarningText">No, seriously.\n\nIf you forget your password, you will lose access to your Nnngram account. There will be no way to restore it.</string>
     <string name="YourEmailAlmostThere">Almost there!</string>
     <string name="YourEmailAlmostThereText">Please check your email (don\'t forget the spam folder) to complete Two-Step Verification setup.</string>
     <string name="YourPasswordSuccess">Success!</string>
@@ -3228,7 +3228,7 @@
     <string name="CancelPasswordResetNo">NO</string>
     <string name="CancelReset">Cancel reset</string>
     <string name="CancelEmailQuestionTitle">Abort setup</string>
-    <string name="TurnPasswordOffPassport">Warning! All data saved in your Nullgram Passport will be lost!</string>
+    <string name="TurnPasswordOffPassport">Warning! All data saved in your Nnngram Passport will be lost!</string>
     <string name="PasswordHint">Password Hint</string>
     <string name="PasswordHintDescription">You can create an optional hint for your password.</string>
     <string name="PasswordHintPlaceholder">Hint</string>
@@ -3368,8 +3368,8 @@
     <string name="PrivacyPhone">Phone Number</string>
     <string name="PrivacyPhoneTitle">Who can see my phone number?</string>
     <string name="PrivacyPhoneTitle2">Who can find me by my number?</string>
-    <string name="PrivacyPhoneInfo">Users who have your number saved in their contacts will also see it on Nullgram.</string>
-    <string name="PrivacyPhoneInfo3">Users who add your number to their contacts will see it on Nullgram only if they are your contacts.</string>
+    <string name="PrivacyPhoneInfo">Users who have your number saved in their contacts will also see it on Nnngram.</string>
+    <string name="PrivacyPhoneInfo3">Users who add your number to their contacts will see it on Nnngram only if they are your contacts.</string>
     <string name="PrivacyPhoneInfo2">You can add users or entire groups as exceptions that will override the settings above.</string>
     <string name="PrivacyForwards">Forwarded Messages</string>
     <string name="PrivacyForwardsEverybody">Link to your account</string>
@@ -3386,11 +3386,11 @@
     <string name="PrivacyPaymentsClear">Clear Payment and Shipping Info</string>
     <string name="PrivacyPaymentsClearAlertTitle">Clear payment info</string>
     <string name="PrivacyPaymentsClearAlertText">Are you sure you want to clear your payment and shipping info?</string>
-    <string name="PrivacyPaymentsClearAlert">Delete your shipping info and instruct all payment providers to remove your saved credit cards? Note that Nullgram never stores your credit card data.</string>
+    <string name="PrivacyPaymentsClearAlert">Delete your shipping info and instruct all payment providers to remove your saved credit cards? Note that Nnngram never stores your credit card data.</string>
     <string name="PrivacyPaymentsPaymentInfoCleared">Payment info cleared.</string>
     <string name="PrivacyPaymentsShippingInfoCleared">Shipping info cleared.</string>
     <string name="PrivacyPaymentsPaymentShippingCleared">Payment and shipping info cleared.</string>
-    <string name="PrivacyBotsInfo">Websites where you used Nullgram to log in.</string>
+    <string name="PrivacyBotsInfo">Websites where you used Nnngram to log in.</string>
     <string name="PrivacyClearShipping">Shipping info</string>
     <string name="PrivacyClearPayment">Payment info</string>
     <string name="PrivacyDeleteCloudDrafts">Delete All Cloud Drafts</string>
@@ -3449,7 +3449,7 @@
     <string name="InviteToGroupErrorMessageMultipleSome">Sorry, you can\'t add some of these users to groups because of their privacy settings.</string>
     <string name="InviteToGroupErrorMessageMultipleAll">Sorry, you can\'t add these users to groups because of their privacy settings.</string>
     <string name="CreateGroupError">Sorry, you can\'t create a group with these users because of their privacy settings.</string>
-    <string name="PrivacyCallsP2PHelp">Disabling peer-to-peer will relay all calls through Nullgram servers to avoid revealing your IP address, but may slightly decrease audio quality.</string>
+    <string name="PrivacyCallsP2PHelp">Disabling peer-to-peer will relay all calls through Nnngram servers to avoid revealing your IP address, but may slightly decrease audio quality.</string>
     <string name="SyncContactsDelete">Delete Synced Contacts</string>
     <string name="SuggestContacts">Suggest Frequent Contacts</string>
     <string name="SuggestContactsInfo">Display people you message frequently at the top of the search section for quick access.</string>
@@ -3459,7 +3459,7 @@
     <string name="PrivacyExceptions">Exceptions</string>
     <string name="BlockedEmpty">None</string>
     <string name="SyncContactsDeleteTitle">Delete contacts</string>
-    <string name="SyncContactsDeleteText">This will remove your contacts from the Nullgram servers.\n\nIf \'**Sync Contacts**\' is enabled, contacts will be re-synced.</string>
+    <string name="SyncContactsDeleteText">This will remove your contacts from the Nnngram servers.\n\nIf \'**Sync Contacts**\' is enabled, contacts will be re-synced.</string>
     <!--edit video view-->
     <string name="SendingVideo">Sending video...</string>
     <string name="SendingGif">Sending GIF...</string>
@@ -3609,7 +3609,7 @@
     <string name="ActionBotDocumentRentalAgreement">Rental Agreement</string>
     <string name="ActionBotDocumentPhone">Phone Number</string>
     <string name="ActionBotDocumentEmail">Email Address</string>
-    <string name="UnsupportedMedia">This message is not supported on your version of Nullgram. Update the app to view: https://telegram.org/update</string>
+    <string name="UnsupportedMedia">This message is not supported on your version of Nnngram. Update the app to view: https://telegram.org/update</string>
     <string name="AttachPhoto">Photo</string>
     <string name="AttachVideo">Video</string>
     <string name="AttachDestructingPhoto">Self-Destructing Photo</string>
@@ -3651,7 +3651,7 @@
     <string name="UpdateTelegram">Update Telegram</string>
     <string name="UpdateAppAlert">Sorry, your Telegram app is out of date and can\'t handle this request. Please update Telegram.</string>
     <string name="InvalidPhoneNumber">Invalid phone number. Please check the number and try again.</string>
-    <string name="PleaseLoginPassport">Please log in to your Nullgram account to use Nullgram Passport.</string>
+    <string name="PleaseLoginPassport">Please log in to your Nnngram account to use Nnngram Passport.</string>
     <string name="BannedPhoneNumber">This phone number is banned.</string>
     <string name="CodeExpired">Code expired, please retry login.</string>
     <string name="WrongCodeTitle">Wrong code</string>
@@ -3672,7 +3672,7 @@
     <string name="NoPlayerInstalled">You don\'t have a video player, please install one to continue</string>
     <string name="NoMailInstalled">Please send an email describing your problem to sms@telegram.org</string>
     <string name="NoHandleAppInstalled">You don\'t have applications that can handle the file type \'%1$s\', please install one to continue</string>
-    <string name="InviteUser">This user does not have Nullgram yet, send an invitation?</string>
+    <string name="InviteUser">This user does not have Nnngram yet, send an invitation?</string>
     <string name="AreYouSure">Are you sure?</string>
     <string name="AddToTheGroupAlertTitle">Add bot</string>
     <string name="AddToTheGroupAlertText">Do you want to add **%1$s** to the group **%2$s**?</string>
@@ -3696,7 +3696,7 @@
     <string name="SendMessagesToText">Do you want to send this message to **%1$s**?</string>
     <string name="SendGameToText">Do you want to share this game to **%1$s**?</string>
     <string name="SendContactToText">Do you want to send this contact to **%1$s**?</string>
-    <string name="AreYouSureLogout">Are you sure you want to log out?\n\nNote that you can seamlessly use Nullgram on all your devices at once.\n\nRemember, logging out kills all your Secret Chats.</string>
+    <string name="AreYouSureLogout">Are you sure you want to log out?\n\nNote that you can seamlessly use Nnngram on all your devices at once.\n\nRemember, logging out kills all your Secret Chats.</string>
     <string name="DeleteFewChatsTitle">Delete %1$s</string>
     <string name="ClearFewChatsTitle">Clear %1$s</string>
     <string name="ClearCacheFewChatsTitle">Empty cache for %1$s</string>
@@ -3754,16 +3754,16 @@
     <string name="SendMessagesToGroupText">Do you want to send this message to **%1$s**?</string>
     <string name="SendGameToGroupText">Do you want to share this game to **%1$s**?</string>
     <string name="SendContactToGroupText">Do you want to send this contact to **%1$s**?</string>
-    <string name="NoUsernameFound">There is no Nullgram account with this username.</string>
-    <string name="NoPhoneFound">There is no Nullgram account with this phone number.</string>
+    <string name="NoUsernameFound">There is no Nnngram account with this username.</string>
+    <string name="NoPhoneFound">There is no Nnngram account with this phone number.</string>
     <string name="BotCantJoinGroups">This bot can\'t join groups.</string>
-    <string name="SecretLinkPreviewAlert">Would you like to enable extended link previews in Secret Chats? Note that link previews are generated on Nullgram servers.</string>
+    <string name="SecretLinkPreviewAlert">Would you like to enable extended link previews in Secret Chats? Note that link previews are generated on Nnngram servers.</string>
     <string name="SecretChatContextBotAlert">Please note that inline bots are provided by third-party developers. For the bot to work, the symbols you type after the bot\'s username are sent to the respective developer.</string>
     <string name="EditMessageError">Sorry, you can\'t edit this message.</string>
-    <string name="AllowReadCall">Please allow Nullgram to receive calls so that we can automatically enter your code for you.</string>
-    <string name="AllowReadCallAndLog">Please allow Nullgram to receive calls and read the call log so that we can automatically enter your code for you.</string>
-    <string name="AllowReadCallLog">Please allow Nullgram to read the call log so that we can automatically enter your code for you.</string>
-    <string name="AllowFillNumber">Please allow Nullgram to receive calls so that we can automatically confirm your phone number.</string>
+    <string name="AllowReadCall">Please allow Nnngram to receive calls so that we can automatically enter your code for you.</string>
+    <string name="AllowReadCallAndLog">Please allow Nnngram to receive calls and read the call log so that we can automatically enter your code for you.</string>
+    <string name="AllowReadCallLog">Please allow Nnngram to read the call log so that we can automatically enter your code for you.</string>
+    <string name="AllowFillNumber">Please allow Nnngram to receive calls so that we can automatically confirm your phone number.</string>
     <string name="UserRestricted">Sorry, you are not allowed to do this.</string>
     <string name="YouBlockedUser">Sorry, you can\'t add this user or bot to groups because you\'ve blocked them. Please unblock to proceed.</string>
     <string name="JoinGroup">JOIN GROUP</string>
@@ -3796,8 +3796,8 @@
     <string name="TosAgeTitle">Age Verification</string>
     <string name="PrivacyPolicyAndTerms">Privacy Policy and Terms of Service</string>
     <string name="TosAgeText">Tap Agree to confirm that you are %1$s or over.</string>
-    <string name="TosUpdateDecline">We\'re very sorry, but this means we must part ways here. Unlike others, we don\'t use your data for ad targeting or other commercial purposes. Nullgram only stores the information it needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in Privacy &amp; Security settings.\n\nBut if you\'re generally not OK with Nullgram\'s modest needs, it won\'t be possible for us to provide this service. You can deactivate your account now — or look around some more and deactivate it later if you feel you\'re not happy with the way we use your data.</string>
-    <string name="TosDeclineDeleteAccount">Warning, this will irreversibly delete your Nullgram account along with all the data you store in the Nullgram cloud.\n\nImportant: You can Cancel now and export your data before deleting your account instead of losing it all. (To do this, open the latest version of Nullgram Desktop and go to Settings &gt; Export Nullgram Data.)</string>
+    <string name="TosUpdateDecline">We\'re very sorry, but this means we must part ways here. Unlike others, we don\'t use your data for ad targeting or other commercial purposes. Nnngram only stores the information it needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in Privacy &amp; Security settings.\n\nBut if you\'re generally not OK with Nnngram\'s modest needs, it won\'t be possible for us to provide this service. You can deactivate your account now — or look around some more and deactivate it later if you feel you\'re not happy with the way we use your data.</string>
+    <string name="TosDeclineDeleteAccount">Warning, this will irreversibly delete your Nnngram account along with all the data you store in the Nnngram cloud.\n\nImportant: You can Cancel now and export your data before deleting your account instead of losing it all. (To do this, open the latest version of Nnngram Desktop and go to Settings &gt; Export Nnngram Data.)</string>
     <!--permissions-->
     <string name="PermissionContacts">To let you connect with friends across all your devices, your contacts will be continuously synced with Telegram\'s heavily encrypted cloud servers.</string>
     <string name="PermissionStorageWithHint">**Telegram** needs storage access so you can send and save photos, videos, music and other media. Tap Settings -> Permissions, and turn **Files and media** on.</string>
@@ -3815,8 +3815,8 @@
     <string name="PermissionDrawAboveOtherApps">Telegram needs access to draw above other apps to play videos in Picture-in-Picture mode.</string>
     <string name="PermissionDrawAboveOtherAppsGroupCall">Overlay mode lets you use push-to-talk and see who is talking even when you are outside of Telegram.</string>
     <string name="PermissionOpenSettings">SETTINGS</string>
-    <string name="PermissionXiaomiLockscreen">Please allow Nullgram to be shown on the lock screen so that calls can work properly.</string>
-    <string name="PermissionBackgroundLocation">To share your live location in this chat, Nullgram needs access to your location all the time, including while the app is in the background.\n\nWe will access your location only for the duration you choose, and you can stop sharing it any time. We won\'t use your location for any purpose other than sharing it in this chat.</string>
+    <string name="PermissionXiaomiLockscreen">Please allow Nnngram to be shown on the lock screen so that calls can work properly.</string>
+    <string name="PermissionBackgroundLocation">To share your live location in this chat, Nnngram needs access to your location all the time, including while the app is in the background.\n\nWe will access your location only for the duration you choose, and you can stop sharing it any time. We won\'t use your location for any purpose other than sharing it in this chat.</string>
     <string name="PermissionDrawAboveOtherAppsTitle">Picture-in-Picture</string>
     <string name="PermissionDrawAboveOtherAppsGroupCallTitle">Voice Chat Overlay</string>
     <!--charts-->
@@ -3836,14 +3836,14 @@
     <string name="NotificationsChartTitle">Notifications</string>
     <string name="DeviceStorage">Device storage</string>
     <string name="TotalDeviceFreeSize">%s Free</string>
-    <string name="ClearTelegramCache">Clear Nullgram Cache</string>
+    <string name="ClearTelegramCache">Clear Nnngram Cache</string>
     <string name="StatisticOverview">Overview</string>
     <string name="ViewsPerPost">Views Per Post</string>
     <string name="SharesPerPost">Shares Per Post</string>
     <string name="EnabledNotifications">Enabled Notifications</string>
     <string name="ClearLocalDatabase">Clear Local Database</string>
-    <string name="TelegramCacheSize">%s Nullgram Cache</string>
-    <string name="LocalDatabaseSize">%s Nullgram Local Database</string>
+    <string name="TelegramCacheSize">%s Nnngram Cache</string>
+    <string name="LocalDatabaseSize">%s Nnngram Local Database</string>
     <string name="CacheWasCleared">%s freed on your device!</string>
     <string name="TotalDeviceSize">%s Other Data</string>
     <string name="GroupMembersChartTitle">Group members</string>
@@ -3902,7 +3902,7 @@
     <string name="ViewMessageStatistic">Message Statistic</string>
     <string name="ViewMessage">Open Message</string>
     <!--Intro view-->
-    <string name="Page1Title">Nullgram</string>
+    <string name="Page1Title">Nnngram</string>
     <string name="Page2Title">Fast</string>
     <string name="Page3Title">Free</string>
     <string name="Page4Title">Secure</string>
@@ -3928,9 +3928,9 @@
     <string name="VoipFailed">Failed to connect</string>
     <string name="VoipRinging">Ringing</string>
     <string name="VoipBusy">Line busy</string>
-    <string name="VoipInCallBranding">Nullgram Call</string>
-    <string name="VoipInVideoCallBranding">Nullgram Video Call</string>
-    <string name="VoipOutgoingCall">Ongoing Nullgram call</string>
+    <string name="VoipInCallBranding">Nnngram Call</string>
+    <string name="VoipInVideoCallBranding">Nnngram Video Call</string>
+    <string name="VoipOutgoingCall">Ongoing Nnngram call</string>
     <string name="VoipVoiceChat">Ongoing Voice Chat</string>
     <string name="VoipLiveStream">Ongoing Live Stream</string>
     <string name="VoipEndCall">End call</string>
@@ -3942,7 +3942,7 @@
     <string name="VoipOngoingChatAlert2">Leave voice chat in **%1$s** and call **%2$s**?</string>
     <string name="VoipNotificationSettings">Voice calls</string>
     <string name="VoipSettingsRingtone">Ringtone</string>
-    <string name="VoipRingtoneInfo">You can customize the ringtone used when this contact calls you on Nullgram.</string>
+    <string name="VoipRingtoneInfo">You can customize the ringtone used when this contact calls you on Nnngram.</string>
     <string name="Calls">Calls</string>
     <string name="DeleteAllCalls">Delete all calls</string>
     <string name="DeleteCalls">Delete calls</string>
@@ -3982,7 +3982,7 @@
     <string name="NoRecentCallsInfo">Your recent voice and video calls\nwill appear here.</string>
     <string name="VoipPeerIncompatible">**%1$s**\'s app is using an incompatible protocol. They need to update their app before you can call them.</string>
     <string name="VoipPeerOutdated">**%1$s**\'s app does not support calls. They need to update their app before you can call them.</string>
-    <string name="VoipPeerVideoOutdated">Sorry, **%1$s** is using an old version of Nullgram that doesn\'t support video calls.</string>
+    <string name="VoipPeerVideoOutdated">Sorry, **%1$s** is using an old version of Nnngram that doesn\'t support video calls.</string>
     <string name="VoipPeerVideoOutdatedMakeVoice">Make a voice call</string>
     <string name="VoipRateCallAlert">Please rate the quality of your Telegram call</string>
     <string name="VoipNeedMicPermissionWithHint">**Telegram** needs microphone access so that you can make calls. Tap Settings -> Permissions, and turn **Microphone** on.</string>
@@ -3993,8 +3993,8 @@
     <string name="CallAgain">Call Again</string>
     <string name="DefaultRingtone">Default</string>
     <string name="ConfirmDeleteCallLog">Do you want to delete this entry from the calls log?</string>
-    <string name="CallViaTelegram">Nullgram Call</string>
-    <string name="VideoCallViaTelegram">Nullgram Video Call</string>
+    <string name="CallViaTelegram">Nnngram Call</string>
+    <string name="VideoCallViaTelegram">Nnngram Video Call</string>
     <string name="VoipAudioRoutingEarpiece">Earpiece</string>
     <string name="VoipAudioRoutingHeadset">Headset</string>
     <string name="VoipAudioRoutingSpeaker">Speaker</string>
@@ -4012,16 +4012,16 @@
     <string name="TranscriptionReportSent">Thank you for your feedback.</string>
     <string name="VoipAnsweringAsAccount">answering as %s</string>
     <string name="VoipQuickReplies">Respond with Text</string>
-    <string name="VoipQuickRepliesExplain">These quick responses will be available when you respond to an incoming call with a Nullgram message. Change them to say anything you like.</string>
+    <string name="VoipQuickRepliesExplain">These quick responses will be available when you respond to an incoming call with a Nnngram message. Change them to say anything you like.</string>
     <string name="QuickReplyDefault1">Can\'t talk now. What\'s up?</string>
     <string name="QuickReplyDefault2">I\'ll call you right back.</string>
     <string name="QuickReplyDefault3">I\'ll call you later.</string>
     <string name="QuickReplyDefault4">Can\'t talk now. Call me later?</string>
     <string name="QuickReplyCustom">Custom Message...</string>
     <string name="AllowCustomQuickReply">Allow Custom</string>
-    <string name="VoipInCallBrandingWithName">Nullgram Call to %s</string>
-    <string name="VoipInVideoCallBrandingWithName">Nullgram Video Call to %s</string>
-    <string name="VoipErrorUnknown">Can\'t place a Nullgram call at the moment.</string>
+    <string name="VoipInCallBrandingWithName">Nnngram Call to %s</string>
+    <string name="VoipInVideoCallBrandingWithName">Nnngram Video Call to %s</string>
+    <string name="VoipErrorUnknown">Can\'t place a Nnngram call at the moment.</string>
     <string name="RateCallEcho">I heard my own voice</string>
     <string name="RateCallNoise">I heard background noise</string>
     <string name="RateCallInterruptions">The other side kept disappearing</string>
@@ -4261,8 +4261,8 @@
     <string name="VoipNoiseCancellationEnabled">Enabled</string>
     <string name="VoipNoiseCancellationDisabled">Disabled</string>
     <string name="VoipVideoNotAvailable">Video is only available\nfor the first %1$s</string>
-    <string name="VoipVideoNotAvailableAdmin">The video chat has over %1$s.\nNew participants must use the latest version of Nullgram to view video.</string>
-    <string name="VoipChannelVideoNotAvailableAdmin">The live stream is over %1$s.\nNew participants must use the latest version of Nullgram to view video.</string>
+    <string name="VoipVideoNotAvailableAdmin">The video chat has over %1$s.\nNew participants must use the latest version of Nnngram to view video.</string>
+    <string name="VoipChannelVideoNotAvailableAdmin">The live stream is over %1$s.\nNew participants must use the latest version of Nnngram to view video.</string>
     <string name="VoipRecordAudio">AUDIO ONLY</string>
     <string name="VoipRecordPortrait">PORTRAIT VIDEO</string>
     <string name="VoipRecordLandscape">LANDSCAPE VIDEO</string>
@@ -4275,8 +4275,8 @@
     <!--invite links-->
     <string name="ManageInviteLinks">Manage Invite Links</string>
     <string name="ManageLinksInfoHelp">You can create additional invite links that have a limited time or number of uses</string>
-    <string name="PrimaryLinkHelp">Anyone on Nullgram will be able to join your group by following this link.</string>
-    <string name="PrimaryLinkHelpChannel">Anyone on Nullgram will be able to join your channel by following this link.</string>
+    <string name="PrimaryLinkHelp">Anyone on Nnngram will be able to join your group by following this link.</string>
+    <string name="PrimaryLinkHelpChannel">Anyone on Nnngram will be able to join your channel by following this link.</string>
     <string name="EditLink">Edit link</string>
     <string name="SaveLink">Save Link</string>
     <string name="NoLimit">No limit</string>
@@ -4307,7 +4307,7 @@
     <string name="DeleteAllRevokedLinks">Delete All Revoked Links</string>
     <string name="NoOneJoined">No one joined</string>
     <string name="LinkLimitReached">Limit reached</string>
-    <string name="QRCodeLinkHelpGroup">Everyone on Nullgram can scan this code to join your group.</string>
+    <string name="QRCodeLinkHelpGroup">Everyone on Nnngram can scan this code to join your group.</string>
     <string name="DeleteLinkHelp">This will delete link.</string>
     <string name="DeleteAllRevokedLinkHelp">This will delete all revoked links.</string>
     <string name="CreateNewLinkHelp">You can generate invite links that expire after they are used.</string>
@@ -4402,18 +4402,18 @@
     <string name="OnlineCount_few">%1$d online</string>
     <string name="OnlineCount_many">%1$d online</string>
     <string name="OnlineCount_other">%1$d online</string>
-    <string name="TelegramContacts_zero">%1$d contacts on Nullgram</string>
-    <string name="TelegramContacts_one">%1$d contact on Nullgram</string>
-    <string name="TelegramContacts_two">%1$d contacts on Nullgram</string>
-    <string name="TelegramContacts_few">%1$d contacts on Nullgram</string>
-    <string name="TelegramContacts_many">%1$d contacts on Nullgram</string>
-    <string name="TelegramContacts_other">%1$d contacts on Nullgram</string>
-    <string name="InviteTextNum_zero">Hey, I\'m using Nullgram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
-    <string name="InviteTextNum_one">Hey, I\'m using Nullgram to chat – and so are %1$d of our other contact. Join us! Download it here: %2$s</string>
-    <string name="InviteTextNum_two">Hey, I\'m using Nullgram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
-    <string name="InviteTextNum_few">Hey, I\'m using Nullgram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
-    <string name="InviteTextNum_many">Hey, I\'m using Nullgram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
-    <string name="InviteTextNum_other">Hey, I\'m using Nullgram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
+    <string name="TelegramContacts_zero">%1$d contacts on Nnngram</string>
+    <string name="TelegramContacts_one">%1$d contact on Nnngram</string>
+    <string name="TelegramContacts_two">%1$d contacts on Nnngram</string>
+    <string name="TelegramContacts_few">%1$d contacts on Nnngram</string>
+    <string name="TelegramContacts_many">%1$d contacts on Nnngram</string>
+    <string name="TelegramContacts_other">%1$d contacts on Nnngram</string>
+    <string name="InviteTextNum_zero">Hey, I\'m using Nnngram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
+    <string name="InviteTextNum_one">Hey, I\'m using Nnngram to chat – and so are %1$d of our other contact. Join us! Download it here: %2$s</string>
+    <string name="InviteTextNum_two">Hey, I\'m using Nnngram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
+    <string name="InviteTextNum_few">Hey, I\'m using Nnngram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
+    <string name="InviteTextNum_many">Hey, I\'m using Nnngram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
+    <string name="InviteTextNum_other">Hey, I\'m using Nnngram to chat – and so are %1$d of our other contacts. Join us! Download it here: %2$s</string>
     <string name="PeopleJoined_zero">%1$d people joined</string>
     <string name="PeopleJoined_one">%1$d people joined</string>
     <string name="PeopleJoined_two">%1$d people joined</string>
@@ -5333,7 +5333,7 @@
     <string name="ChatThemeSaveDialogText">Do you want to apply the new theme for this chat?</string>
     <string name="ChatThemeSaveDialogApply">Apply</string>
     <string name="ChatThemeSaveDialogDiscard">Discard</string>
-    <string name="OptimizingTelegram">Optimizing Nullgram...</string>
+    <string name="OptimizingTelegram">Optimizing Nnngram...</string>
     <string name="OptimizingTelegramDescription1">This may take a while, depending on the size of the database. Please keep the app open until the process is finished.</string>
     <string name="OptimizingTelegramDescription2">Sorry for the inconvenience.</string>
     <string name="DoNoSetTheme">Do No Set Theme</string>
@@ -5452,12 +5452,12 @@
     <string name="AcceptSecretChats">Accept Secret Chats</string>
     <string name="AcceptSecretChatsDescription">Use this device for Secret Chats</string>
     <string name="TerminateSession">Terminate Session</string>
-    <string name="AuthAnotherClientInfo4">Link *Nullgram Desktop* or *Nullgram Web* by scanning the QR.</string>
+    <string name="AuthAnotherClientInfo4">Link *Nnngram Desktop* or *Nnngram Web* by scanning the QR.</string>
     <string name="LinkDesktopDevice">Link Desktop Device</string>
     <string name="TerminateOldSessionHeader">Automatically terminate old sessions</string>
     <string name="IfInactiveFor">if inactive for</string>
     <string name="AuthAnotherClientInfo5">Go to *getdesktop.telegram.org* or *web.telegram.org* to get a QR code</string>
-    <string name="SessionsListInfo">The official Nullgram app is available for Android, iPhone, iPad, Windows, macOS and Linux.</string>
+    <string name="SessionsListInfo">The official Nnngram app is available for Android, iPhone, iPad, Windows, macOS and Linux.</string>
     <string name="MigrateOldFolder">Migrate old folder to Scoped Storage</string>
     <string name="SelectThisDay">Select this day</string>
     <string name="NoMessagesForThisDay">No messages for this day</string>

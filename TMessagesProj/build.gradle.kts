@@ -94,7 +94,7 @@ dependencies {
 }
 
 android {
-    defaultConfig.applicationId = "top.qwq2333.nullgram"
+    defaultConfig.applicationId = "xyz.nextalone.nnngram"
 
     sourceSets.getByName("main") {
         java.srcDir("src/main/java")
@@ -181,40 +181,40 @@ android {
                 abiFilters.add("arm64-v8a")
             }
         }
-        create("arm32") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "false")
-            ndk {
-                abiFilters.add("armeabi-v7a")
-            }
-        }
-        create("x86") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "false")
-            ndk {
-                abiFilters.add("x86")
-            }
-        }
-        create("x86_64") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "false")
-            ndk {
-                abiFilters.add("x86_64")
-            }
-        }
+//        create("arm32") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "false")
+//            ndk {
+//                abiFilters.add("armeabi-v7a")
+//            }
+//        }
+//        create("x86") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "false")
+//            ndk {
+//                abiFilters.add("x86")
+//            }
+//        }
+//        create("x86_64") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "false")
+//            ndk {
+//                abiFilters.add("x86_64")
+//            }
+//        }
 
-        create("play") {
-            dimension = "abi"
-            buildConfigField("boolean", "isPlay", "true")
-            ndk {
-                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
-            }
-        }
+//        create("play") {
+//            dimension = "abi"
+//            buildConfigField("boolean", "isPlay", "true")
+//            ndk {
+//                abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+//            }
+//        }
     }
 
     applicationVariants.all {
         val outputFileName =
-            "Nullgram-${defaultConfig.versionName}-${productFlavors.first().name}.apk"
+            "Nnngram-${defaultConfig.versionName}-${productFlavors.first().name}.apk"
         outputs.all {
             val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
             output?.outputFileName = outputFileName
@@ -224,7 +224,3 @@ android {
 
     dependenciesInfo.includeInApk = false
 }
-
-
-tasks.register<ReplaceIcon>("replaceIcon") {}
-tasks.getByName("preBuild").dependsOn(tasks.getByName("replaceIcon"))

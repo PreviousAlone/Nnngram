@@ -179,8 +179,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import top.qwq2333.nullgram.config.ConfigManager;
-import top.qwq2333.nullgram.utils.Defines;
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
 
 public class ArticleViewer implements NotificationCenter.NotificationCenterDelegate {
 
