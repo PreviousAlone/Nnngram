@@ -90,6 +90,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int scrollableChatPreviewRow;
     private int showTabsOnForwardRow;
     private int disableStickersAutoReorderRow;
+    private int doNotUnarchiveBySwipeRow;
     private int chat2Row;
 
 
@@ -310,6 +311,11 @@ public class ChatSettingActivity extends BaseActivity {
                 ProcessPhoenix.triggerRebirth(getContext(), new Intent(getContext(), LaunchActivity.class));
             });
             restart.show();
+        } else if (position == doNotUnarchiveBySwipeRow) {
+            ConfigManager.toggleBoolean(Defines.doNotUnarchiveBySwipe);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.doNotUnarchiveBySwipe));
+            }
         }
 
     }
@@ -361,6 +367,7 @@ public class ChatSettingActivity extends BaseActivity {
         scrollableChatPreviewRow = rowCount++;
         showTabsOnForwardRow = rowCount++;
         disableStickersAutoReorderRow = rowCount++;
+        doNotUnarchiveBySwipeRow = rowCount++;
         chat2Row = rowCount++;
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
@@ -455,6 +462,9 @@ public class ChatSettingActivity extends BaseActivity {
                     } else if (position == disableStickersAutoReorderRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disableStickersAutoReorder", R.string.disableStickersAutoReorder),
                             ConfigManager.getBooleanOrDefault(Defines.disableStickersAutoReorder, true), true);
+                    } else if (position == doNotUnarchiveBySwipeRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("doNotUnarchiveBySwipe", R.string.doNotUnarchiveBySwipe),
+                            ConfigManager.getBooleanOrFalse(Defines.doNotUnarchiveBySwipe), true);
                     }
                     break;
                 }
