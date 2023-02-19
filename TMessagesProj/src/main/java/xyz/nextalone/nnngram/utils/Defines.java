@@ -114,6 +114,7 @@ public class Defines {
     public static final String showViewHistory = "showViewHistory";
     public static final String showRepeat = "showRepeat";
     public static final String showCopyPhoto = "showCopyPhoto";
+    public static final String showReactions = "showReaction";
 
     // custom double tap
     public static final String doubleTab = "doubleTab";
