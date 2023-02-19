@@ -91,6 +91,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int showTabsOnForwardRow;
     private int disableStickersAutoReorderRow;
     private int doNotUnarchiveBySwipeRow;
+    private int hideInputFieldBotButtonRow;
     private int chat2Row;
 
 
@@ -316,8 +317,12 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.doNotUnarchiveBySwipe));
             }
+        } else if (position == hideInputFieldBotButtonRow) {
+            ConfigManager.toggleBoolean(Defines.hideInputFieldBotButton);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideInputFieldBotButton));
+            }
         }
-
     }
 
     @Override
@@ -368,6 +373,7 @@ public class ChatSettingActivity extends BaseActivity {
         showTabsOnForwardRow = rowCount++;
         disableStickersAutoReorderRow = rowCount++;
         doNotUnarchiveBySwipeRow = rowCount++;
+        hideInputFieldBotButtonRow = rowCount++;
         chat2Row = rowCount++;
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
@@ -465,6 +471,9 @@ public class ChatSettingActivity extends BaseActivity {
                     } else if (position == doNotUnarchiveBySwipeRow) {
                         textCell.setTextAndCheck(LocaleController.getString("doNotUnarchiveBySwipe", R.string.doNotUnarchiveBySwipe),
                             ConfigManager.getBooleanOrFalse(Defines.doNotUnarchiveBySwipe), true);
+                    } else if (position == hideInputFieldBotButtonRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("hideInputFieldBotButton", R.string.hideInputFieldBotButton),
+                            ConfigManager.getBooleanOrFalse(Defines.hideInputFieldBotButton), true);
                     }
                     break;
                 }
