@@ -9731,7 +9731,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     botButton.setContentDescription(getString("AccDescrBotKeyboard", R.string.AccDescrBotKeyboard));
                 }
             } else {
-                if (!canShowBotsMenu) {
+                if (!canShowBotsMenu && !Config.hideInputFieldBotButton) {
                     createBotButton();
                     botButtonDrawable.setIcon(R.drawable.input_bot1, true);
                     botButton.setContentDescription(getString("AccDescrBotCommands", R.string.AccDescrBotCommands));
