@@ -793,7 +793,7 @@ public class ChatSettingActivity extends BaseActivity {
                     }
                     case 8: {
                         Config.toggleShowReport();
-                        textCell.setChecked(Config.showRepeat);
+                        textCell.setChecked(Config.showReport);
                         break;
                     }
                 }
