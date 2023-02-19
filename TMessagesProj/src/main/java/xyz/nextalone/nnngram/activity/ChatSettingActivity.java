@@ -661,7 +661,7 @@ public class ChatSettingActivity extends BaseActivity {
         linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
-        int count = 8;
+        int count = 9;
         for (int a = 0; a < count; a++) {
             TextCheckCell textCell = new TextCheckCell(context);
             switch (a) {
@@ -696,6 +696,9 @@ public class ChatSettingActivity extends BaseActivity {
                 case 7: {
                     textCell.setTextAndCheck(LocaleController.getString("Reactions", R.string.Reactions), ConfigManager.getBooleanOrDefault(Defines.showReactions, true), false);
                     break;
+                }
+                case 8: {
+                    textCell.setTextAndCheck(LocaleController.getString("ReportChat", R.string.ReportChat), ConfigManager.getBooleanOrFalse(Defines.showReport), false);
                 }
             }
             textCell.setTag(a);
@@ -742,6 +745,11 @@ public class ChatSettingActivity extends BaseActivity {
                     case 7: {
                         ConfigManager.putBoolean(Defines.showReactions, !ConfigManager.getBooleanOrDefault(Defines.showReactions, true));
                         textCell.setChecked(ConfigManager.getBooleanOrDefault(Defines.showReactions, true));
+                        break;
+                    }
+                    case 8: {
+                        ConfigManager.toggleBoolean(Defines.showReport);
+                        textCell.setChecked(ConfigManager.getBooleanOrFalse(Defines.showReport));
                         break;
                     }
                 }
