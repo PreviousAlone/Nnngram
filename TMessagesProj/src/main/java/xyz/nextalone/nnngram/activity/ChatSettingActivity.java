@@ -50,6 +50,7 @@ import java.util.ArrayList;
 
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.ui.BottomBuilder;
+import xyz.nextalone.nnngram.ui.PopupBuilder;
 import xyz.nextalone.nnngram.ui.StickerSizePreviewMessagesCell;
 import xyz.nextalone.nnngram.utils.AlertUtil;
 import xyz.nextalone.nnngram.utils.Defines;
@@ -397,7 +398,6 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setText(LocaleController.getString("MessageMenu", R.string.MessageMenu), false);
                     } else if (position == maxRecentStickerRow) {
                         textCell.setTextAndValue(LocaleController.getString("maxRecentSticker", R.string.maxRecentSticker), String.valueOf(ConfigManager.getIntOrDefault(Defines.maxRecentSticker, 30)), payload, true);
-
                     } else if (position == customDoubleClickTapRow) {
                         String value;
                         switch (ConfigManager.getIntOrDefault(Defines.doubleTab, Defines.doubleTabReaction)) {
