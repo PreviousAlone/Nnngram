@@ -268,4 +268,5 @@
     <string name="AppIconNeon">Neon</string>
     <string name="doNotUnarchiveBySwipe">Do not unarchive by swipe</string>
     <string name="hideInputFieldBotButton">Hide input field bot button</string>
+    <string name="hideMessageSeenTooltip">Hide message seen tooltip</string>
 </resources>

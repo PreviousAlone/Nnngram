@@ -96,6 +96,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int disableStickersAutoReorderRow;
     private int doNotUnarchiveBySwipeRow;
     private int hideInputFieldBotButtonRow;
+    private int hideMessageSeenTooltipRow;
     private int chat2Row;
 
 
@@ -310,6 +311,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideInputFieldBotButton));
             }
+        } else if (position == hideMessageSeenTooltipRow) {
+            ConfigManager.toggleBoolean(Defines.hideMessageSeenTooltip);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.hideMessageSeenTooltip));
+            }
         }
     }
 
@@ -362,6 +368,7 @@ public class ChatSettingActivity extends BaseActivity {
         disableStickersAutoReorderRow = rowCount++;
         doNotUnarchiveBySwipeRow = rowCount++;
         hideInputFieldBotButtonRow = rowCount++;
+        hideMessageSeenTooltipRow = rowCount++;
         chat2Row = rowCount++;
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
@@ -484,6 +491,9 @@ public class ChatSettingActivity extends BaseActivity {
                     } else if (position == hideInputFieldBotButtonRow) {
                         textCell.setTextAndCheck(LocaleController.getString("hideInputFieldBotButton", R.string.hideInputFieldBotButton),
                             ConfigManager.getBooleanOrFalse(Defines.hideInputFieldBotButton), true);
+                    } else if (position == hideMessageSeenTooltipRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("hideMessageSeenTooltip", R.string.hideMessageSeenTooltip),
+                            ConfigManager.getBooleanOrFalse(Defines.hideMessageSeenTooltip), true);
                     }
                     break;
                 }
