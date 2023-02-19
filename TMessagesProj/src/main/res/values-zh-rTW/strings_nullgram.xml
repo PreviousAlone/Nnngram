@@ -351,4 +351,5 @@
     <string name="AppIconDarkGreen">深翠</string>
     <string name="AppIconNeon">霓虹</string>
     <string name="doNotUnarchiveBySwipe">禁用滑動取消歸檔</string>
+    <string name="hideInputFieldBotButton">隱藏輸入框機器人按鈕</string>
 </resources>
