@@ -375,6 +375,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private boolean searchItemVisible;
     private RadialProgressView progressBar;
     private ActionBarMenuSubItem addContactItem;
+    private ActionBarMenuSubItem toTheBeginningItem;
     private ActionBarMenuSubItem clearHistoryItem;
     private ActionBarMenuSubItem viewAsTopics;
     private ActionBarMenuSubItem closeTopicItem;
@@ -1250,7 +1251,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int save_to = 25;
     private final static int auto_delete_timer = 26;
     private final static int change_colors = 27;
-
+    private final static int to_the_beginning = 28;
     private final static int bot_help = 30;
     private final static int bot_settings = 31;
     private final static int call = 32;
@@ -2523,6 +2524,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (currentUser != null && getParentActivity() != null) {
                         VoIPHelper.startCall(currentUser, id == video_call, userInfo != null && userInfo.video_calls_available, getParentActivity(), getMessagesController().getUserFull(currentUser.id), getAccountInstance());
                     }
+                } else if (id == to_the_beginning) {
+                    scrollToMessageId(1, 0, false, 0, true, 0);
                 } else if (id == text_bold) {
                     if (chatActivityEnterView != null) {
                         chatActivityEnterView.getEditField().setSelectionOverride(editTextStart, editTextEnd);
@@ -3037,6 +3040,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (currentChat != null && !isTopic) {
                 viewAsTopics = headerItem.addSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString("TopicViewAsTopics", R.string.TopicViewAsTopics), themeDelegate);
             }
+            toTheBeginningItem = headerItem.addSubItem(to_the_beginning, R.drawable.msg_go_up, LocaleController.getString("ToTheBeginning", R.string.ToTheBeginning));
             if (!isTopic) {
                 clearHistoryItem = headerItem.addSubItem(clear_history, R.drawable.msg_clear, LocaleController.getString("ClearHistory", R.string.ClearHistory), themeDelegate);
             }
