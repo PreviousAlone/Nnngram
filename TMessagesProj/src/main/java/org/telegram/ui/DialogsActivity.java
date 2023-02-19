@@ -3002,9 +3002,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             }
                         } else if (a == 2) {
                             if (N == 3) continue;
-                            cell.setTextAndIcon(LocaleController.getString("FilterDeleteItem", R.string.FilterDeleteItem), R.drawable.baseline_delete_24);
+                            cell.setTextAndIcon(LocaleController.getString("FilterDeleteItem", R.string.FilterDeleteItem), R.drawable.msg_delete);
                         } else {
-                            cell.setTextAndIcon(LocaleController.getString("MarkAllAsRead", R.string.MarkAllAsRead), R.drawable.baseline_done_all_24);
+                            cell.setTextAndIcon(LocaleController.getString("MarkAllAsRead", R.string.MarkAllAsRead), R.drawable.msg_markread);
                         }
                         scrimPopupWindowItems[a] = cell;
                         linearLayout.addView(cell);
