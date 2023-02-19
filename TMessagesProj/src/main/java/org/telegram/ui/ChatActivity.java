@@ -25759,9 +25759,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             }
 
                             if (SharedConfig.messageSeenHintCount > 0 && contentView.getKeyboardHeight() < AndroidUtilities.dp(20)) {
-                                messageSeenPrivacyBulletin = BulletinFactory.of(Bulletin.BulletinWindow.make(getContext()), themeDelegate).createErrorBulletin(AndroidUtilities.replaceTags(LocaleController.getString("MessageSeenTooltipMessage", R.string.MessageSeenTooltipMessage)));
-                                messageSeenPrivacyBulletin.setDuration(4000);
-                                messageSeenPrivacyBulletin.show();
+                                if (Config.hideMessageSeenTooltip) {
+                                    messageSeenPrivacyBulletin = BulletinFactory.of(Bulletin.BulletinWindow.make(getContext()), themeDelegate).createErrorBulletin(AndroidUtilities.replaceTags(LocaleController.getString("MessageSeenTooltipMessage", R.string.MessageSeenTooltipMessage)));
+                                    messageSeenPrivacyBulletin.setDuration(4000);
+                                    messageSeenPrivacyBulletin.show();
+                                }
                                 SharedConfig.updateMessageSeenHintCount(SharedConfig.messageSeenHintCount - 1);
                             }
 
