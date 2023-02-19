@@ -705,7 +705,7 @@ public class ChatSettingActivity extends BaseActivity {
         linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
-        int count = 7;
+        int count = 8;
         for (int a = 0; a < count; a++) {
             TextCheckCell textCell = new TextCheckCell(context);
             switch (a) {
@@ -735,6 +735,10 @@ public class ChatSettingActivity extends BaseActivity {
                 }
                 case 6: {
                     textCell.setTextAndCheck(LocaleController.getString("CopyPhoto", R.string.CopyPhoto), Config.showCopyPhoto, false);
+                    break;
+                }
+                case 7: {
+                    textCell.setTextAndCheck(LocaleController.getString("Reactions", R.string.Reactions), Config.showReactions, false);
                     break;
                 }
             }
@@ -777,6 +781,11 @@ public class ChatSettingActivity extends BaseActivity {
                     case 6: {
                         Config.toggleShowCopyPhoto();
                         textCell.setChecked(Config.showCopyPhoto);
+                        break;
+                    }
+                    case 7: {
+                        Config.toggleShowReactions();
+                        textCell.setChecked(Config.showReactions);
                         break;
                     }
                 }

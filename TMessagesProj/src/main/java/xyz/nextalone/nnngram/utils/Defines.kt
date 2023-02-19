@@ -131,6 +131,7 @@ object Defines {
     @BooleanConfig(true) const val showViewHistory = "showViewHistory"
     @BooleanConfig(true) const val showRepeat = "showRepeat"
     @BooleanConfig const val showCopyPhoto = "showCopyPhoto"
+    @BooleanConfig(true) const val showReactions = "showReactions"
 
     // custom double tap
     @IntConfig(doubleTabReaction)
