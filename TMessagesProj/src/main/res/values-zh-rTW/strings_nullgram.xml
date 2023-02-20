@@ -353,4 +353,5 @@
     <string name="doNotUnarchiveBySwipe">禁用滑動取消歸檔</string>
     <string name="hideInputFieldBotButton">隱藏輸入框機器人按鈕</string>
     <string name="hideMessageSeenTooltip">隱藏訊息已讀提示</string>
+    <string name="disableNotificationBubble">禁用通知氣泡</string>
 </resources>
