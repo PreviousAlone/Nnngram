@@ -263,4 +263,5 @@
     <string name="hideInputFieldBotButton">隐藏输入框机器人按钮</string>
     <string name="hideMessageSeenTooltip">隐藏消息已读提示</string>
     <string name="ToTheBeginning">回到顶部</string>
+    <string name="disableNotificationBubble">禁用通知气泡</string>
 </resources>
