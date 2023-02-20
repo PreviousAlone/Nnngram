@@ -24,14 +24,18 @@ import java.util.regex.Pattern
 
 
 object Utils {
-
     @JvmStatic
-    fun showForwardDate(obj: MessageObject, orig: CharSequence): String = if (ConfigManager.getBooleanOrFalse(Defines.dateOfForwardedMsg) &&
-        obj.messageOwner.fwd_from.date.toLong() != 0L
-    ) {
-        "$orig • ${LocaleController.formatDate(obj.messageOwner.fwd_from.date.toLong())}"
-    } else {
-        orig.toString()
+    fun showForwardDate(obj: MessageObject, orig: CharSequence): String {
+        val date: Long = obj.messageOwner.fwd_from.date.toLong()
+        val day: String = LocaleController.formatDate(date)
+        val time: String = LocaleController.getInstance().formatterDay.format(date * 1000)
+        return if (!ConfigManager.getBooleanOrFalse(Defines.dateOfForwardedMsg) || date == 0L) {
+            orig.toString()
+        } else {
+            if (day == time) {
+                "$orig · $day"
+            } else "$orig · $day $time"
+        }
     }
 
     @JvmStatic
