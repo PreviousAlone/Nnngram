@@ -3045,14 +3045,16 @@ public class NotificationsController extends BaseController {
             } else {
                 icon = IconCompat.createWithResource(ApplicationLoader.applicationContext, R.drawable.book_group);
             }
-            NotificationCompat.BubbleMetadata.Builder bubbleBuilder =
-                    new NotificationCompat.BubbleMetadata.Builder(
-                            PendingIntent.getActivity(ApplicationLoader.applicationContext, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT),
-                            icon);
-            bubbleBuilder.setSuppressNotification(openedDialogId == did);
-            bubbleBuilder.setAutoExpandBubble(false);
-            bubbleBuilder.setDesiredHeight(AndroidUtilities.dp(640));
-            builder.setBubbleMetadata(bubbleBuilder.build());
+            if (!ConfigManager.getBooleanOrFalse(Defines.disableNotificationBubble)) {
+                NotificationCompat.BubbleMetadata.Builder bubbleBuilder =
+                        new NotificationCompat.BubbleMetadata.Builder(
+                                PendingIntent.getActivity(ApplicationLoader.applicationContext, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT),
+                                icon);
+                bubbleBuilder.setSuppressNotification(openedDialogId == did);
+                bubbleBuilder.setAutoExpandBubble(false);
+                bubbleBuilder.setDesiredHeight(AndroidUtilities.dp(640));
+                builder.setBubbleMetadata(bubbleBuilder.build());
+            }
             return id;
         } catch (Exception e) {
             FileLog.e(e);
