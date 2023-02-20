@@ -5999,7 +5999,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         if (updateVisibility) {
                             imageReceiver.setVisible(true, false);
                         }
-                        imageReceiver.draw(canvas);
+                        cell.drawStatusWithImage(canvas, imageReceiver, AndroidUtilities.dp(7));
                         canvas.restore();
 
                         if (!replaceAnimation && child.getTranslationY() != 0) {
