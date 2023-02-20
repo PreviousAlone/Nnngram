@@ -117,6 +117,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int doNotUnarchiveBySwipeRow;
     private int hideInputFieldBotButtonRow;
     private int hideMessageSeenTooltipRow;
+    private int disableNotificationBubbleRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -372,6 +373,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.hideMessageSeenTooltip);
             }
+        } else if (position == disableNotificationBubbleRow) {
+            Config.toggleDisableNotificationBubble();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.disableNotificationBubble);
+            }
         }
     }
 
@@ -425,6 +431,7 @@ public class ChatSettingActivity extends BaseActivity {
         doNotUnarchiveBySwipeRow = addRow("doNotUnarchiveBySwipe");
         hideInputFieldBotButtonRow = addRow("hideInputFieldBotButton");
         hideMessageSeenTooltipRow = addRow("hideMessageSeenTooltip");
+        disableNotificationBubbleRow = addRow("disableNotificationBubble");
         chat2Row = addRow();
         markdownRow = addRow();
         markdownDisableRow = addRow("markdownDisabled");
@@ -565,6 +572,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("hideInputFieldBotButton", R.string.hideInputFieldBotButton), Config.hideInputFieldBotButton, true);
                     } else if (position == hideMessageSeenTooltipRow) {
                         textCell.setTextAndCheck(LocaleController.getString("hideMessageSeenTooltip", R.string.hideMessageSeenTooltip), Config.hideMessageSeenTooltip, true);
+                    } else if (position == disableNotificationBubbleRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("disableNotificationBubble", R.string.disableNotificationBubble), Config.disableNotificationBubble, true);
                     }
                     break;
                 }
