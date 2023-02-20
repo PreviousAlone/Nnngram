@@ -263,4 +263,5 @@
     <string name="hideInputFieldBotButton">隐藏输入框机器人按钮</string>
     <string name="hideMessageSeenTooltip">隐藏消息已读提示</string>
     <string name="disableNotificationBubble">禁用通知气泡</string>
+    <string name="showOnlineStatus">显示在线状态</string>
 </resources>

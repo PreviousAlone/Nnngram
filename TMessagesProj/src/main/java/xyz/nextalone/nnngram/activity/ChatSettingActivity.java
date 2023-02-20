@@ -97,6 +97,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int hideInputFieldBotButtonRow;
     private int hideMessageSeenTooltipRow;
     private int disableNotificationBubbleRow;
+    private int showOnlineStatusRow;
     private int chat2Row;
 
 
@@ -321,6 +322,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disableNotificationBubble));
             }
+        } else if (position == showOnlineStatusRow) {
+            ConfigManager.toggleBoolean(Defines.showOnlineStatus);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.showOnlineStatus));
+            }
         }
     }
 
@@ -375,6 +381,7 @@ public class ChatSettingActivity extends BaseActivity {
         hideInputFieldBotButtonRow = rowCount++;
         hideMessageSeenTooltipRow = rowCount++;
         disableNotificationBubbleRow = rowCount++;
+        showOnlineStatusRow = rowCount++;
         chat2Row = rowCount++;
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
@@ -503,6 +510,9 @@ public class ChatSettingActivity extends BaseActivity {
                     } else if (position == disableNotificationBubbleRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disableNotificationBubble", R.string.disableNotificationBubble),
                             ConfigManager.getBooleanOrFalse(Defines.disableNotificationBubble), false);
+                    } else if (position == showOnlineStatusRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("showOnlineStatus", R.string.showOnlineStatus),
+                            ConfigManager.getBooleanOrFalse(Defines.showOnlineStatus), true);
                     }
                     break;
                 }
