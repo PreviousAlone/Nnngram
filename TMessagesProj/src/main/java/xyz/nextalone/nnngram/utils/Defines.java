@@ -95,6 +95,7 @@ public class Defines {
     public static final String doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe";
     public static final String hideInputFieldBotButton = "hideInputFieldBotButton";
     public static final String hideMessageSeenTooltip = "hideMessageSeenTooltip";
+    public static final String disableNotificationBubble = "disableNotificationBubble";
 
     // Custom API
     public static final String customAPI = "customAPI";
