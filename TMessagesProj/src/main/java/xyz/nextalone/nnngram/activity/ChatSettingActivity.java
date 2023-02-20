@@ -118,6 +118,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int hideInputFieldBotButtonRow;
     private int hideMessageSeenTooltipRow;
     private int disableNotificationBubbleRow;
+    private int showOnlineStatusRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -378,6 +379,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.disableNotificationBubble);
             }
+        } else if (position == showOnlineStatusRow) {
+            Config.toggleShowOnlineStatus();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.showOnlineStatus);
+            }
         }
     }
 
@@ -432,6 +438,7 @@ public class ChatSettingActivity extends BaseActivity {
         hideInputFieldBotButtonRow = addRow("hideInputFieldBotButton");
         hideMessageSeenTooltipRow = addRow("hideMessageSeenTooltip");
         disableNotificationBubbleRow = addRow("disableNotificationBubble");
+        showOnlineStatusRow = addRow("showOnlineStatus");
         chat2Row = addRow();
         markdownRow = addRow();
         markdownDisableRow = addRow("markdownDisabled");
@@ -574,6 +581,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("hideMessageSeenTooltip", R.string.hideMessageSeenTooltip), Config.hideMessageSeenTooltip, true);
                     } else if (position == disableNotificationBubbleRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disableNotificationBubble", R.string.disableNotificationBubble), Config.disableNotificationBubble, true);
+                    } else if (position == showOnlineStatusRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("showOnlineStatus", R.string.showOnlineStatus), Config.showOnlineStatus, true);
                     }
                     break;
                 }
