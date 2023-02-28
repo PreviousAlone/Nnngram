@@ -747,6 +747,8 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
             messageTextView.setLines(1);
             messageTextView.setEllipsize(TextUtils.TruncateAt.END);
             progressViewContainer.addView(messageTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, (LocaleController.isRTL ? 0 : 62), 0, (LocaleController.isRTL ? 62 : 0), 0));
+            backgroundColor = getThemedColor(Theme.key_dialog_inlineProgressBackground);
+            containerView.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), backgroundColor));
         } else if (progressViewStyle == ALERT_TYPE_LOADING) {
             containerView.addView(messageTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 24, title == null ? 19 : 0, 24, 20));
 
@@ -763,6 +765,8 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
             lineProgressViewPercent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             containerView.addView(lineProgressViewPercent, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 23, 4, 23, 24));
             updateLineProgressTextView();
+            backgroundColor = getThemedColor(Theme.key_dialog_inlineProgressBackground);
+            containerView.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), backgroundColor));
         } else if (progressViewStyle == ALERT_TYPE_SPINNER) {
             setCanceledOnTouchOutside(false);
             setCancelable(false);
