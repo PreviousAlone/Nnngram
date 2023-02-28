@@ -810,6 +810,8 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
             lineProgressViewPercent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             containerView.addView(lineProgressViewPercent, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 23, 4, 23, 24));
             updateLineProgressTextView();
+            backgroundColor = getThemedColor(Theme.key_dialog_inlineProgressBackground);
+            containerView.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), backgroundColor));
         } else if (progressViewStyle == ALERT_TYPE_SPINNER) {
             setCanceledOnTouchOutside(false);
             setCancelable(false);
