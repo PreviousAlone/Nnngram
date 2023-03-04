@@ -10,7 +10,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("com.github.triplet.play") version "3.8.0"
-    kotlin("plugin.serialization") version Version.kotlin
+    kotlin("plugin.serialization") version 1.8.10
 }
 
 configurations {
