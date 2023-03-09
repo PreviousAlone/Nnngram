@@ -196,6 +196,7 @@ object Defines {
     @BooleanConfig const val hideMessageSeenTooltip = "hideMessageSeenTooltip"
     @BooleanConfig const val disableNotificationBubble = "disableNotificationBubble"
     @BooleanConfig const val showOnlineStatus = "showOnlineStatus"
+    @BooleanConfig const val disablePhotoSideAction = "disablePhotoSideAction"
 
     /**
      * 数组中元素未找到的下标，值为-1
