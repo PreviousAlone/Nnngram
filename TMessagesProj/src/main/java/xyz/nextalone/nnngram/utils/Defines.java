@@ -97,6 +97,7 @@ public class Defines {
     public static final String hideMessageSeenTooltip = "hideMessageSeenTooltip";
     public static final String disableNotificationBubble = "disableNotificationBubble";
     public static final String showOnlineStatus = "showOnlineStatus";
+    public static final String disablePhotoSideAction = "disablePhotoSideAction";
 
     // Custom API
     public static final String customAPI = "customAPI";

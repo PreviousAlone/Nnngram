@@ -284,4 +284,5 @@
     <string name="hideMessageSeenTooltip">Hide message seen tooltip</string>
     <string name="disableNotificationBubble">Disable notification bubble</string>
     <string name="showOnlineStatus">Show online status</string>
+    <string name="disablePhotoSideAction">Disable photo side action</string>
 </resources>
