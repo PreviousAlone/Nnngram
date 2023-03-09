@@ -124,6 +124,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int hideMessageSeenTooltipRow;
     private int disableNotificationBubbleRow;
     private int showOnlineStatusRow;
+    private int disablePhotoSideActionRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -401,6 +402,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.showOnlineStatus);
             }
+        } else if (position == disablePhotoSideActionRow) {
+            Config.toggleDisablePhotoSideAction();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.disablePhotoSideAction);
+            }
         }
     }
 
@@ -459,6 +465,7 @@ public class ChatSettingActivity extends BaseActivity {
         hideMessageSeenTooltipRow = addRow("hideMessageSeenTooltip");
         disableNotificationBubbleRow = addRow("disableNotificationBubble");
         showOnlineStatusRow = addRow("showOnlineStatus");
+        disablePhotoSideActionRow = addRow("disablePhotoSideAction");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -609,6 +616,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("disableNotificationBubble", R.string.disableNotificationBubble), Config.disableNotificationBubble, true);
                     } else if (position == showOnlineStatusRow) {
                         textCell.setTextAndCheck(LocaleController.getString("showOnlineStatus", R.string.showOnlineStatus), Config.showOnlineStatus, true);
+                    } else if (position == disablePhotoSideActionRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("disablePhotoSideAction", R.string.disablePhotoSideAction), Config.disablePhotoSideAction, true);
                     }
                     break;
                 }
