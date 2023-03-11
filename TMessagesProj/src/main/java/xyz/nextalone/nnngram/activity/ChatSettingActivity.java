@@ -125,6 +125,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int disableNotificationBubbleRow;
     private int showOnlineStatusRow;
     private int disablePhotoSideActionRow;
+    private int mergeMessageRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -407,6 +408,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.disablePhotoSideAction);
             }
+        } else if (position == mergeMessageRow) {
+            Config.toggleMergeMessage();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.mergeMessage);
+            }
         }
     }
 
@@ -466,6 +472,7 @@ public class ChatSettingActivity extends BaseActivity {
         disableNotificationBubbleRow = addRow("disableNotificationBubble");
         showOnlineStatusRow = addRow("showOnlineStatus");
         disablePhotoSideActionRow = addRow("disablePhotoSideAction");
+        mergeMessageRow = addRow("mergeMessage");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -618,6 +625,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("showOnlineStatus", R.string.showOnlineStatus), Config.showOnlineStatus, true);
                     } else if (position == disablePhotoSideActionRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disablePhotoSideAction", R.string.disablePhotoSideAction), Config.disablePhotoSideAction, true);
+                    } else if (position == mergeMessageRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("MergeMessage", R.string.MergeMessage), Config.mergeMessage, true);
                     }
                     break;
                 }
