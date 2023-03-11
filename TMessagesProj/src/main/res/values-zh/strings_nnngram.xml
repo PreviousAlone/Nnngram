@@ -284,4 +284,5 @@
     <string name="disableNotificationBubble">禁用通知气泡</string>
     <string name="showOnlineStatus">显示在线状态</string>
     <string name="disablePhotoSideAction">禁用点按切换图片</string>
+    <string name="MergeMessage">合并消息</string>
 </resources>

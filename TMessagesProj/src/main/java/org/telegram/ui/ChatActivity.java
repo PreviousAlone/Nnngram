@@ -1293,6 +1293,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int view_as_topics = 58;
 
     private final static int search = 40;
+    
+    private final static int merge_message = 200;
 
     private final static int topic_close = 60;
     private final static int open_forum = 61;
@@ -2932,6 +2934,53 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         AndroidUtilities.addToClipboard(str);
                         createUndoView();
                         undoView.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null);
+                    }
+                    clearSelectionMode();
+                } else if (id == merge_message) {
+                    StringBuilder str = new StringBuilder();
+                    ArrayList<Integer> toDeleteMessagesIds = new ArrayList<>();
+                    MessageObject toEdit = null;
+                    
+                    for (int a = 1; a >= 0; a--) {
+                        ArrayList<Integer> ids = new ArrayList<>();
+                        for (int b = 0; b < selectedMessagesIds[a].size(); b++) {
+                            ids.add(selectedMessagesIds[a].keyAt(b));
+                        }
+                        if (currentEncryptedChat == null) {
+                            Collections.sort(ids);
+                        } else {
+                            ids.sort(Collections.reverseOrder());
+                        }
+                        for (int b = 0; b < ids.size(); b++) {
+
+                            Integer messageId = ids.get(b);
+                            MessageObject messageObject = selectedMessagesIds[a].get(messageId);
+                            if (messageObject.isDocument() || messageObject.isSticker() || messageObject.isPhoto()){
+                                continue;
+                            }
+                            if (str.length() != 0) {
+                                str.append("  ");
+                            }
+                            str.append(messageObject.messageText);
+                            if (messageObject.getSenderId() == UserConfig.getInstance(currentAccount).getClientUserId()) {
+                                if (b == 0) {
+                                    toEdit = messageObject;
+                                } else {
+                                    toDeleteMessagesIds.add(messageId);
+                                }
+                            }
+                        }
+                    }
+                    if (str.length() != 0 && toEdit != null) {
+                        if (toEdit.canEditMessage(currentChat)) {
+                            toEdit.editingMessage = str;
+                            SendMessagesHelper.getInstance(currentAccount).editMessage(toEdit, null, null, null, null, null, false, toEdit.hasMediaSpoilers(), null);
+                        } else {
+                            MessageObject replyTo = toEdit.replyMessageObject;
+                            toDeleteMessagesIds.add(toEdit.getId());
+                            SendMessagesHelper.getInstance(currentAccount).sendMessage(str.toString(), dialog_id, replyTo, getThreadMessage(), null, false, null, null, null, true, 0, null, false);
+                        }
+                        MessagesController.getInstance(currentAccount).deleteMessages(toDeleteMessagesIds, null, null, dialog_id, true, false);
                     }
                     clearSelectionMode();
                 } else if (id == delete) {
@@ -7593,6 +7642,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             actionModeViews.add(actionMode.addItemWithWidth(save_to, R.drawable.msg_download, AndroidUtilities.dp(54), LocaleController.getString("SaveToMusic", R.string.SaveToMusic)));
             actionModeViews.add(actionMode.addItemWithWidth(edit, R.drawable.msg_edit, AndroidUtilities.dp(54), LocaleController.getString("Edit", R.string.Edit)));
             actionModeViews.add(actionMode.addItemWithWidth(star, R.drawable.msg_fave, AndroidUtilities.dp(54), LocaleController.getString("AddToFavorites", R.string.AddToFavorites)));
+            actionModeViews.add(actionMode.addItemWithWidth(merge_message, R.drawable.msg_replace, AndroidUtilities.dp(54), LocaleController.getString("MergeMessage", R.string.MergeMessage)));
             actionModeViews.add(actionMode.addItemWithWidth(copy, R.drawable.msg_copy, AndroidUtilities.dp(54), LocaleController.getString("Copy", R.string.Copy)));
             actionModeViews.add(actionMode.addItemWithWidth(forward, R.drawable.msg_forward, AndroidUtilities.dp(54), LocaleController.getString("Forward", R.string.Forward)));
             if (ConfigManager.getBooleanOrDefault(Defines.showNoQuoteForward, true)) {
@@ -7602,12 +7652,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         } else {
             actionModeViews.add(actionMode.addItemWithWidth(edit, R.drawable.msg_edit, AndroidUtilities.dp(54), LocaleController.getString("Edit", R.string.Edit)));
             actionModeViews.add(actionMode.addItemWithWidth(star, R.drawable.msg_fave, AndroidUtilities.dp(54), LocaleController.getString("AddToFavorites", R.string.AddToFavorites)));
+            actionModeViews.add(actionMode.addItemWithWidth(merge_message, R.drawable.msg_replace, AndroidUtilities.dp(54), LocaleController.getString("MergeMessage", R.string.MergeMessage)));
             actionModeViews.add(actionMode.addItemWithWidth(copy, R.drawable.msg_copy, AndroidUtilities.dp(54), LocaleController.getString("Copy", R.string.Copy)));
             actionModeViews.add(actionMode.addItemWithWidth(delete, R.drawable.msg_delete, AndroidUtilities.dp(54), LocaleController.getString("Delete", R.string.Delete)));
         }
         actionMode.getItem(edit).setVisibility(canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
         actionMode.getItem(star).setVisibility(selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
         actionMode.getItem(delete).setVisibility(cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
+        actionMode.getItem(merge_message).setVisibility(selectedMessagesIds[0].size() + selectedMessagesIds[1].size() != 0 ? View.VISIBLE : View.GONE);
     }
 
     private void createSearchContainer() {
@@ -14334,6 +14386,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 ActionBarMenuItem saveItem = actionBar.createActionMode().getItem(save_to);
                 ActionBarMenuItem copyItem = actionBar.createActionMode().getItem(copy);
                 ActionBarMenuItem starItem = actionBar.createActionMode().getItem(star);
+                ActionBarMenuItem mergeMessageItem = actionBar.createActionMode().getItem(merge_message);
                 ActionBarMenuItem editItem = actionBar.createActionMode().getItem(edit);
                 ActionBarMenuItem forwardItem = actionBar.createActionMode().getItem(forward);
                 ActionBarMenuItem forwardNoQuoteItem = actionBar.createActionMode().getItem(forward_noquote);
@@ -14429,6 +14482,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
                 if (deleteItem != null) {
                     deleteItem.setVisibility(cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
+                }
+                if (mergeMessageItem != null) {
+                    mergeMessageItem.setVisibility(selectedMessagesIds[0].size() + selectedMessagesIds[1].size() != 0 ? View.VISIBLE : View.GONE);
                 }
                 hasUnfavedSelected = false;
                 for (int a = 0; a < 2; a++) {
