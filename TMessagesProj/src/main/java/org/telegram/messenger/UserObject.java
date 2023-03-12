@@ -26,6 +26,8 @@ import androidx.annotation.NonNull;
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.tgnet.TLRPC;
 
+import xyz.nextalone.nnngram.utils.StringUtils;
+
 public class UserObject {
 
     public static final long REPLY_BOT = 1271266957L;
@@ -123,7 +125,7 @@ public class UserObject {
         } else if (!allowShort && name.length() <= 2) {
             return ContactsController.formatName(user.first_name, user.last_name);
         }
-        return !TextUtils.isEmpty(name) ? name : LocaleController.getString(R.string.HiddenName);
+        return !TextUtils.isEmpty(name) ? StringUtils.zalgoFilter(name) : LocaleController.getString(R.string.HiddenName);
     }
 
     public static String getForcedFirstName(TLRPC.User user) {
@@ -141,7 +143,7 @@ public class UserObject {
         if (index >= 0) {
             name = name.substring(0, index);
         }
-        return name;
+        return StringUtils.zalgoFilter(name);
     }
 
     public static boolean hasPhoto(TLRPC.User user) {

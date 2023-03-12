@@ -75,6 +75,7 @@ import org.telegram.ui.TopicsFragment;
 import java.util.concurrent.atomic.AtomicReference;
 
 import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class ChatAvatarContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -844,6 +845,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
 
     public void setTitle(CharSequence value, boolean scam, boolean fake, boolean verified, boolean premium, TLRPC.EmojiStatus emojiStatus, boolean animated) {
         if (value != null) {
+            value = StringUtils.zalgoFilter(value);
             value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
         }
         titleTextView.setText(value);

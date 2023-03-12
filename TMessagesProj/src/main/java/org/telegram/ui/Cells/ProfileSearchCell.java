@@ -73,6 +73,8 @@ import org.telegram.ui.Stories.StoriesUtilities;
 
 import java.util.Locale;
 
+import xyz.nextalone.nnngram.utils.StringUtils;
+
 public class ProfileSearchCell extends BaseCell implements NotificationCenter.NotificationCenterDelegate, Theme.Colorable {
 
     private CharSequence currentName;
@@ -789,6 +791,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
                 } else {
                     newName = chat.title;
                 }
+                newName = StringUtils.zalgoFilter(newName);
                 if (!newName.equals(lastName)) {
                     continueUpdate = true;
                 }
@@ -816,6 +819,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             lastName = chat.title;
         }
 
+        lastName = StringUtils.zalgoFilter(lastName);
         lastAvatar = photo;
 
         if (getMeasuredWidth() != 0 || getMeasuredHeight() != 0) {
