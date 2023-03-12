@@ -18,9 +18,10 @@
  */
 package xyz.nextalone.nnngram.utils
 
+import kotlin.math.ceil
 import org.telegram.tgnet.TLRPC
 import ws.vinta.pangu.Pangu
-import kotlin.math.ceil
+import xyz.nextalone.gen.Config
 
 object StringUtils {
     private val pangu = Pangu()
@@ -141,5 +142,21 @@ object StringUtils {
         }
 
         return Pair(panguText, entities)
+    }
+
+    @JvmStatic
+    fun zalgoFilter(text: String?): String {
+        return if (text == null) {
+            ""
+        } else if (Config.filterZalgo && text.matches(".*\\p{Mn}{4}.*".toRegex())) {
+            text.replace("(?i)([aeiouy]̈)|[̀-ͯ҉]".toRegex(), "").replace("\\p{Mn}".toRegex(), "")
+        } else {
+            text
+        }
+    }
+
+    @JvmStatic
+    fun zalgoFilter(text: CharSequence?): String {
+        return zalgoFilter(text.toString())
     }
 }
