@@ -98,6 +98,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int ignoreMutedCountRow;
     private int disableSharePhoneWithContactByDefaultRow;
     private int ignoreUserSpecifiedReplyColorRow;
+    private int ignoreFolderUnreadCountRow;
 
     private int devicesRow;
     private int useSystemEmojiRow;
@@ -265,7 +266,11 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.ignoreUserSpecifiedReplyColor);
             }
-
+        } else if (position == ignoreFolderUnreadCountRow) {
+            Config.toggleIgnoreFolderUnreadCount();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.ignoreFolderUnreadCount);
+            }
         } else if (position == autoDisableBuiltInProxyRow) {
             Config.toggleAutoDisableBuiltInProxy();
             if (view instanceof TextCheckCell) {
@@ -428,6 +433,7 @@ public class GeneralSettingActivity extends BaseActivity {
         disableSharePhoneWithContactByDefaultRow = addRow("disableSharePhoneWithContactByDefault");
         ignoreUserSpecifiedReplyColorRow = addRow("ignoreUserSpecifiedReplyColor");
         tabsTitleTypeRow = addRow("tabsTitleType");
+        ignoreFolderUnreadCountRow = addRow("ignoreFolderUnreadCount");
         general2Row = addRow();
 
         devicesRow = addRow();
@@ -621,6 +627,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("TranslatorShowOriginal", R.string.TranslatorShowOriginal), TranslateHelper.getShowOriginal(), true);
                     } else if (position == hideStoriesRow) {
                         textCell.setTextAndCheck(LocaleController.getString("HideStories", R.string.HideStories), Config.hideStories, true);
+                    } else if (position == ignoreFolderUnreadCountRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("ignoreFolderUnreadCount", R.string.ignoreFolderUnreadCount), Config.ignoreFolderUnreadCount, true);
                     }
                     break;
                 }
