@@ -114,6 +114,7 @@ import java.util.Stack;
 
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 
 public class DialogCell extends BaseCell {
@@ -831,7 +832,7 @@ public class DialogCell extends BaseCell {
             }
             String title;
             if (currentChat != null) {
-                title = currentChat.title.replace('\n', ' ');
+                title = StringUtils.zalgoFilter(currentChat.title.replace('\n', ' '));
             } else if (currentUser != null) {
                 if (UserObject.isDeleted(currentUser)) {
                     title = LocaleController.getString("HiddenName", R.string.HiddenName);
@@ -1671,7 +1672,7 @@ public class DialogCell extends BaseCell {
                 }
             }
         }
-
+        nameString = StringUtils.zalgoFilter(nameString);
         int timeWidth;
         if (drawTime) {
             timeWidth = (int) Math.ceil(Theme.dialogs_timePaint.measureText(timeString));
@@ -4626,7 +4627,7 @@ public class DialogCell extends BaseCell {
             }
         } else if (captionMessage != null && captionMessage.caption != null) {
             MessageObject message = captionMessage;
-            CharSequence mess = message.caption.toString();
+            CharSequence mess = StringUtils.zalgoFilter(message.caption.toString());
             String emoji;
             if (!needEmoji) {
                 emoji = "";

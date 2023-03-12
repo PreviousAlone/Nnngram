@@ -2,6 +2,8 @@ package xyz.nextalone.nnngram.utils;
 
 import androidx.annotation.NonNull;
 
+import xyz.nextalone.nnngram.config.ConfigManager;
+
 public class StringUtils {
     /**
      * <p>字符串是否为空白，空白的定义如下：</p>
@@ -83,5 +85,19 @@ public class StringUtils {
         }
 
         return text;
+    }
+    
+    public static String zalgoFilter(final CharSequence text) {
+        return zalgoFilter(text.toString());
+    }
+    
+    public static String zalgoFilter(final String text) {
+        if (text == null) {
+            return "";
+        } else if (ConfigManager.getBooleanOrFalse(Defines.filterZalgo) && text.matches(".*\\p{Mn}{4}.*")) {
+            return text.replaceAll("(?i)([aeiouy]̈)|[̀-ͯ҉]", "").replaceAll("\\p{Mn}", "");
+        } else {
+            return text;
+        }
     }
 }

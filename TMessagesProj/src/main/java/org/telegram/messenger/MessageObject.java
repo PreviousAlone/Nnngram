@@ -79,6 +79,7 @@ import java.util.regex.Pattern;
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.ui.syntaxhighlight.SyntaxHighlight;
 import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class MessageObject {
 
@@ -3873,6 +3874,8 @@ public class MessageObject {
 
         if (messageText == null) {
             messageText = "";
+        } else {
+            messageText = StringUtils.zalgoFilter(messageText);
         }
     }
 

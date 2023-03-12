@@ -100,6 +100,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int disableNotificationBubbleRow;
     private int showOnlineStatusRow;
     private int disablePhotoSideActionRow;
+    private int filterZalgoRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -372,6 +373,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.disablePhotoSideAction));
             }
+        } else if (position == filterZalgoRow) {
+            ConfigManager.toggleBoolean(Defines.filterZalgo);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.filterZalgo));
+            }
         }
     }
 
@@ -428,6 +434,7 @@ public class ChatSettingActivity extends BaseActivity {
         disableNotificationBubbleRow = rowCount++;
         showOnlineStatusRow = rowCount++;
         disablePhotoSideActionRow = rowCount++;
+        filterZalgoRow = rowCount++;
         chat2Row = rowCount++;
         markdownRow = rowCount++;
         markdownDisableRow = rowCount++;
@@ -579,6 +586,9 @@ public class ChatSettingActivity extends BaseActivity {
                     } else if (position == disablePhotoSideActionRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disablePhotoSideAction", R.string.disablePhotoSideAction),
                             ConfigManager.getBooleanOrFalse(Defines.disablePhotoSideAction), true);
+                    } else if (position == filterZalgoRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("filterZalgo", R.string.filterZalgo),
+                            ConfigManager.getBooleanOrFalse(Defines.filterZalgo), true);
                     }
                     break;
                 }
