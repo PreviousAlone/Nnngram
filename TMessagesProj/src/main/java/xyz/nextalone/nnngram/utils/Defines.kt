@@ -199,6 +199,7 @@ object Defines {
     @BooleanConfig const val disablePhotoSideAction = "disablePhotoSideAction"
     @BooleanConfig const val mergeMessage = "mergeMessage"
     @BooleanConfig const val filterZalgo = "filterZalgo"
+    @BooleanConfig const val ignoreFolderUnreadCount = "ignoreFolderUnreadCount"
 
     /**
      * 数组中元素未找到的下标，值为-1
