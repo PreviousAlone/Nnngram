@@ -286,4 +286,5 @@
     <string name="disablePhotoSideAction">禁用点按切换图片</string>
     <string name="MergeMessage">合并消息</string>
     <string name="filterZalgo">过滤 \"Zalgo\" 符号</string>
+    <string name="ignoreFolderUnreadCount">忽略文件夹标签上的未读计数</string>
 </resources>

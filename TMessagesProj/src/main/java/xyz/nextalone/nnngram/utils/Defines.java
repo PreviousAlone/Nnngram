@@ -99,6 +99,7 @@ public class Defines {
     public static final String showOnlineStatus = "showOnlineStatus";
     public static final String disablePhotoSideAction = "disablePhotoSideAction";
     public static final String filterZalgo = "filterZalgo";
+    public static final String ignoreFolderUnreadCount = "ignoreFolderUnreadCount";
 
     // Custom API
     public static final String customAPI = "customAPI";

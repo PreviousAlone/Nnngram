@@ -71,6 +71,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int tabsTitleTypeRow;
     private int openArchiveOnPullRow;
     private int hideAllTabRow;
+    private int ignoreFolderUnreadCountRow;
 
 
     private int devicesRow;
@@ -284,8 +285,12 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(TranslateHelper.getShowOriginal());
             }
+        } else if (position == ignoreFolderUnreadCountRow) {
+            ConfigManager.toggleBoolean(Defines.ignoreFolderUnreadCount);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.ignoreFolderUnreadCount));
+            }
         }
-
     }
 
     @Override
@@ -342,6 +347,7 @@ public class GeneralSettingActivity extends BaseActivity {
         openArchiveOnPullRow = rowCount++;
         hideAllTabRow = rowCount++;
         tabsTitleTypeRow = rowCount++;
+        ignoreFolderUnreadCountRow = rowCount++;
         general2Row = rowCount++;
 
         devicesRow = rowCount++;
@@ -517,6 +523,8 @@ public class GeneralSettingActivity extends BaseActivity {
                                 R.string.AutoTranslateAbout), TranslateHelper.getAutoTranslate(), true, false);
                     } else if (position == showOriginalRow) {
                         textCell.setTextAndCheck(LocaleController.getString("TranslatorShowOriginal", R.string.TranslatorShowOriginal), TranslateHelper.getShowOriginal(), true);
+                    } else if (position == ignoreFolderUnreadCountRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("ignoreFolderUnreadCount", R.string.ignoreFolderUnreadCount), ConfigManager.getBooleanOrFalse(Defines.ignoreFolderUnreadCount), true);
                     }
                     break;
                 }
