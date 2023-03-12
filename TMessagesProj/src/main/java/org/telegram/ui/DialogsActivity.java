@@ -3499,6 +3499,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (initialDialogsType == DIALOGS_TYPE_FORWARD) {
                         return 0;
                     }
+                    if (Config.ignoreFolderUnreadCount) {
+                        return 0;
+                    }
                     if (tabId == filterTabsView.getDefaultTabId()) {
                         return getMessagesStorage().getMainUnreadCount();
                     }
