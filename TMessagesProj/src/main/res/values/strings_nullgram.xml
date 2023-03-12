@@ -370,4 +370,5 @@
     <string name="showOnlineStatus">Show online status</string>
     <string name="disablePhotoSideAction">Disable photo side action</string>
     <string name="MergeMessage">Merge message</string>
+    <string name="filterZalgo">Filter \"Zalgo\" symbols</string>
 </resources>
