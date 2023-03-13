@@ -167,6 +167,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 
+import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.utils.Defines;
 
@@ -3236,7 +3237,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
         if (forwardItem == null) {
             return;
         }
-        boolean noforwards = profileActivity.getMessagesController().isChatNoForwards(-dialog_id) || hasNoforwardsMessage();
+        boolean noforwards = !Config.ignoreChatStrict && profileActivity.getMessagesController().isChatNoForwards(-dialog_id) || hasNoforwardsMessage();
         forwardItem.setAlpha(noforwards ? 0.5f : 1f);
         if (forwardNoQuoteItem != null) forwardNoQuoteItem.setAlpha(noforwards ? 0.5f : 1f);
         if (noforwards && forwardItem.getBackground() != null) {
