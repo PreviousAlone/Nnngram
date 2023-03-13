@@ -32,6 +32,7 @@ import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1701,6 +1702,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
                     }
                 }
             } else {
+                Toast.makeText(ApplicationLoader.applicationContext, error.getErrorCodeName(), Toast.LENGTH_LONG).show();
                 delegate.onError(this, error);
             }
         });
