@@ -103,6 +103,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.utils.Defines;
+
 public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, DownloadController.FileDownloadProgressListener {
 
     private ActionBar actionBar;
@@ -2002,7 +2005,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 optionsButton.setVisibility(View.VISIBLE);
             }
             optionsButton.showSubItem(5);
-            if (MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId())) {
+            if (!ConfigManager.getBooleanOrFalse(Defines.ignoreChatStrict) && MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId())) {
                 optionsButton.hideSubItem(1);
                 optionsButton.hideSubItem(2);
                 optionsButton.setAdditionalYOffset(-AndroidUtilities.dp(16));

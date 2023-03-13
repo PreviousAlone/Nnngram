@@ -100,6 +100,7 @@ public class Defines {
     public static final String disablePhotoSideAction = "disablePhotoSideAction";
     public static final String filterZalgo = "filterZalgo";
     public static final String ignoreFolderUnreadCount = "ignoreFolderUnreadCount";
+    public static final String ignoreChatStrict = "ignoreChatStrict";
 
     // Custom API
     public static final String customAPI = "customAPI";

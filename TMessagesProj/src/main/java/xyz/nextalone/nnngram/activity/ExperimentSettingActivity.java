@@ -45,6 +45,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int hidePremiumStickerAnimRow;
     private int fastSpeedUploadRow;
     private int modifyDownloadSpeedRow;
+    private int ignoreChatStrictRow;
     private int premium2Row;
     private int alwaysSendWithoutSoundRow;
 
@@ -156,6 +157,11 @@ public class ExperimentSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.alwaysSendWithoutSound));
             }
+        } else if (position == ignoreChatStrictRow) {
+            ConfigManager.toggleBoolean(Defines.ignoreChatStrict);
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(ConfigManager.getBooleanOrFalse(Defines.ignoreChatStrict));
+            }
         }
 
     }
@@ -200,6 +206,7 @@ public class ExperimentSettingActivity extends BaseActivity {
             hidePremiumStickerAnimRow = rowCount++;
             fastSpeedUploadRow = rowCount++;
             modifyDownloadSpeedRow = rowCount++;
+            ignoreChatStrictRow = rowCount++;
         }
 
         experiment2Row = rowCount++;
@@ -286,6 +293,8 @@ public class ExperimentSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("fastSpeedUpload", R.string.fastSpeedUpload), ConfigManager.getBooleanOrFalse(Defines.fastSpeedUpload), true);
                     } else if (position == alwaysSendWithoutSoundRow) {
                         textCell.setTextAndCheck(LocaleController.getString("alwaysSendWithoutSound", R.string.alwaysSendWithoutSound), ConfigManager.getBooleanOrFalse(Defines.alwaysSendWithoutSound), true);
+                    } else if (position == ignoreChatStrictRow) {
+                        textCell.setTextAndCheck("", ConfigManager.getBooleanOrFalse(Defines.ignoreChatStrict), true);
                     }
                     break;
                 }
