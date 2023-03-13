@@ -200,6 +200,7 @@ object Defines {
     @BooleanConfig const val mergeMessage = "mergeMessage"
     @BooleanConfig const val filterZalgo = "filterZalgo"
     @BooleanConfig const val ignoreFolderUnreadCount = "ignoreFolderUnreadCount"
+    @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
 
     /**
      * 数组中元素未找到的下标，值为-1

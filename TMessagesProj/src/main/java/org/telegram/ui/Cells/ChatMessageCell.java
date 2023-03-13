@@ -4884,7 +4884,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             animatingNoSound = 0;
             if (messageObject.isSponsored()) {
                 drawSideButton = 4;
-            } else if (MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId()) || (messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) {
+            } else if (!Config.ignoreChatStrict && MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId()) || (messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) {
                 drawSideButton = 0;
             } else {
                 drawSideButton = !isRepliesChat && checkNeedDrawShareButton(messageObject) && (currentPosition == null || currentPosition.last) ? 1 : 0;
@@ -21565,7 +21565,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     changed = true;
                 }
             }
-            
+
             if (mediaOffsetY != lastMediaOffsetY) {
                 animateFromMediaOffsetY = lastMediaOffsetY;
                 animateMediaOffsetY = true;
