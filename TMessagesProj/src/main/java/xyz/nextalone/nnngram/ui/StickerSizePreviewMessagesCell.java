@@ -90,7 +90,7 @@ public class StickerSizePreviewMessagesCell extends LinearLayout {
         message.out = false;
         message.peer_id = new TLRPC.TL_peerUser();
         message.peer_id.user_id = 1;
-        messageObjects[0].customReplyName = "James Clef";
+        messageObjects[0].customReplyName = "NextAlone";
         messageObjects[0].replyMessageObject = new MessageObject(UserConfig.selectedAccount, message, true, false);
 
         message = new TLRPC.TL_message();

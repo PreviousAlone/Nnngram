@@ -116,7 +116,7 @@
     <string name="ignoreReactionMentionInfo">它將自動將未讀反應提及設定為已讀。\n它還將同步到其他裝置。\n通知仍將被顯示，因為它由 Telegram 伺服器控制。</string>
     <string name="StickerSize">貼紙大小</string>
     <string name="StickerSizeDialogMessageReplyTo">給我一些很不錯的東西。</string>
-    <string name="StickerSizeDialogMessage">wow 真可愛</string>
+    <string name="StickerSizeDialogMessage">wow, 是可愛的男孩</string>
     <string name="ResetStickerSize">重置貼紙大小</string>
     <string name="EditUndo">撤消</string>
     <string name="EditRedo">重做</string>
