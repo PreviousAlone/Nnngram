@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting bug to Nullgram
+        Thanks for reporting bug to Nnngram
         For further processing please fill in blanks.
   - type: textarea
     attributes:
@@ -43,7 +43,7 @@ body:
       required: true
   - type: input
     attributes:
-      label: Nullgram Version
+      label: Nnngram Version
       placeholder:  vX.X.X.XXXXXXX
     validations:
       required: true
@@ -52,7 +52,7 @@ body:
     attributes:
       label: Version requirement
       options:
-        - label: I am using latest debug CI version of Nullgram and enable verbose log/我正在使用最新 CI 调试版本且启用详细日志
+        - label: I am using latest debug CI version of Nnngram and enable verbose log/我正在使用最新 CI 调试版本且启用详细日志
           required: true
   - type: textarea
     id: logs

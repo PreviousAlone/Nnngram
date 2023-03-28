@@ -33,7 +33,7 @@ Then, please detail your issue (ENGLISH ONLY), create an issue or submit it to o
 
 Make sure using the issue template and writing the detailed version number I DO NOT KNOW WTF IS _I HAVE BEEN USING THE LATEST VERSION_
 
-If you experience a crash, you can use logcat to catch the log (TAG: `Nullgram` ).
+If you experience a crash, you can use logcat to catch the log (TAG: `Nnngram` ).
 
 ### Compilation Guide
 
@@ -41,13 +41,16 @@ If you experience a crash, you can use logcat to catch the log (TAG: `Nullgram` 
 
 You will require Android Studio 3.4, Android NDK rev. 20 and Android SDK 8.1
 
-1. Download the Telegram source code from https://github.com/qwq233/Nullgram
+1. Download the Telegram source code from https://github.com/NextAlone/Nnngram
 2. Copy your release.keystore into TMessagesProj/config
 3. Fill out RELEASE_KEY_PASSWORD, RELEASE_KEY_ALIAS, RELEASE_STORE_PASSWORD in gradle.properties to access your release.keystore
-4. Go to https://console.firebase.google.com/, create two android apps with application IDs `top.qwq2333.nullgram` and `top.qwq2333.nullgram.beta`, turn on firebase messaging and download google-services.json, which should be copied to the same folder as TMessagesProj.
+4. Go to https://console.firebase.google.com/, create two android apps with application IDs `xyz.nextalone.nnngram` and `xyz.nextalone.nnngram.beta`, turn on firebase messaging 
+   and 
+   download google-services.json, which should be copied to the same folder as TMessagesProj.
 5. Open the project in the Studio (note that it should be opened, NOT imported).
 6. Fill out values in TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java – there’s a link for each of the variables showing where and which data to obtain.
-7. You are ready to compile Telegram.
+7. **MAKE SURE YOU HAVE CCACHE INSTALLLED**
+8. You are ready to compile Telegram.
 
 [^1]: https://telegra.ph/%E6%9C%89%E5%85%B3-Nekogram-Lite-%E7%9A%84%E6%95%85%E4%BA%8B-04-09
 

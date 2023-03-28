@@ -21,11 +21,11 @@
 2. Encode in UTF-8, with LF as the end of line sequence.
 
 3. Config Key should be defined
-   in [Defines.java](../TMessagesProj/src/main/java/top/qwq2333/nullgram/utils/Defines.java).
+   in [Defines.java](../TMessagesProj/src/main/java/xyz/nextalone/nnngram/utils/Defines.java).
 
 4. Variable naming adopts camelcase.
 
-5. DO NOT USE FileLog. Use [Log](../TMessagesProj/src/main/java/top/qwq2333/nullgram/utils/Log.kt)
+5. DO NOT USE FileLog. Use [Log](../TMessagesProj/src/main/java/xyz/nextalone/nnngram/utils/Log.kt)
    instead.
 
 6. Indent with 4 spaces.
