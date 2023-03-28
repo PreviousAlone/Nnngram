@@ -27,16 +27,14 @@ jobs:
         with:
           submodules: 'recursive'
           fetch-depth: 0
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.12
-        with:
-          cmake-version: '3.22.1'
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
+
       - name: Cache Gradle Build
         uses: actions/cache@v3
         with:
@@ -46,13 +44,22 @@ jobs:
           key: gradle-builds-${{ github.sha }}
           restore-keys: |
             gradle-builds
+
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ccache
           restore-keys: ccache
+
       - name: Setup Android SDK Tools
         uses: android-actions/setup-android@v2
+
+      - name: Install Android NDK
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+
       - name: Prepare Environment
         run: |
             echo "Removing large packages"
@@ -72,10 +79,9 @@ jobs:
             sudo rm -rf /usr/local/share/chromium
             sudo rm -rf /usr/local/lib/node_modules
             df -h
-            
+
             sudo apt-get install bison gcc make curl ninja-build ccache -y
-            echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
-            ln -s  ${ANDROID_HOME}/cmake/3.22.1/bin/ninja /opt/hostedtoolcache/cmake/3.22.1/x64/cmake-3.22.1-linux-x86_64/bin/
+
       - name: Debug Build
         run: |
           echo -e "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}\nRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}\nRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}">>local.properties
@@ -90,90 +96,13 @@ jobs:
         with:
           name: Nnngram-arm64-v8a
           path: ${{ env.APK_FILE }}
+
       - name: Upload mapping
         uses: actions/upload-artifact@v3
         with:
           name: mapping
           path: TMessagesProj/build/outputs/mapping
 
-
-  play-build:
-    name: Gradle Build (play store)
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
-    env:
-      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
-      CCACHE_NOHASHDIR: "true"
-      CCACHE_MAXSIZE: "5G"
-      CCACHE_HARDLINK: "true"
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: 'recursive'
-          fetch-depth: 0
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.12
-        with:
-          cmake-version: '3.22.1'
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-      - name: Cache Gradle Build
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-            ~/.gradle/buildOutputCleanup/cache.properties
-          key: gradle-builds-${{ github.sha }}
-          restore-keys: |
-            gradle-builds
-      - name: Set up ccache
-        uses: hendrikmuhs/ccache-action@v1.2
-        with:
-          key: ccache
-          restore-keys: ccache
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2
-      - name: Prepare Environment
-        run: |
-            echo "Removing large packages"
-            sudo apt-get remove -y '^dotnet-.*'
-            sudo apt-get remove -y '^llvm-.*'
-            sudo apt-get remove -y 'php.*'
-            sudo apt-get remove -y '^mongodb-.*'
-            sudo apt-get remove -y '^mysql-.*'
-            sudo apt-get remove -y azure-cli google-cloud-sdk google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri
-            sudo apt-get autoremove -y
-            sudo apt-get clean
-            echo "Removing large directories"
-            sudo rm -rf /usr/share/dotnet/
-            sudo rm -rf /usr/local/graalvm/
-            sudo rm -rf /usr/local/.ghcup/
-            sudo rm -rf /usr/local/share/powershell
-            sudo rm -rf /usr/local/share/chromium
-            sudo rm -rf /usr/local/lib/node_modules
-            df -h
-            
-            sudo apt-get install bison gcc make curl ninja-build ccache -y
-            echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
-            ln -s  ${ANDROID_HOME}/cmake/3.22.1/bin/ninja /opt/hostedtoolcache/cmake/3.22.1/x64/cmake-3.22.1-linux-x86_64/bin/
-
-      - name: Debug Build
-        run: |
-          echo -e "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}\nRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}\nRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}">>local.properties
-          cat > service_account_credentials.json << EOF
-          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
-          EOF
-          ccache -o max_size=10G
-          ccache -o hash_dir=false
-          ccache -o compiler_check='%compiler% -dumpmachine; %compiler% -dumpversion'
-          ./gradlew :TMessagesProj:publishPlayBundle
-
-
-          
   upload:
     name: Upload Release
     if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
@@ -186,6 +115,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: artifacts
+
       - name: Download Telegram Bot API Binary
         uses: actions/download-artifact@master
         with:
@@ -197,6 +127,7 @@ jobs:
             mkdir apks
             find artifacts -name "*.apk" -exec cp {} apks \;
             echo "APK_FILE_UPLOAD=$(find apks -name '*arm64*.apk')" >> $GITHUB_ENV
+
       - name: Get Apk Info
         id: apk
         uses: JantHsueh/get-apk-info-action@master
@@ -221,16 +152,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Clone Telegram Bot API
         run: |
           git clone --recursive https://github.com/tdlib/telegram-bot-api.git
           git status telegram-bot-api >> telegram-bot-api-status
+
       - name: Cache Bot API Binary
         id: cache-bot-api
         uses: actions/cache@v2
         with:
           path: telegram-bot-api-binary
           key: CI-telegram-bot-api-${{ hashFiles('telegram-bot-api-status') }}
+
       - name: Compile Telegram Bot API
         if: steps.cache-bot-api.outputs.cache-hit != 'true'
         run: |
@@ -245,6 +179,7 @@ jobs:
           cd ../..
           ls -l telegram-bot-api/bin/telegram-bot-api*
           cp telegram-bot-api/bin/telegram-bot-api telegram-bot-api-binary
+
       - name: Upload Binary
         uses: actions/upload-artifact@master
         with:
