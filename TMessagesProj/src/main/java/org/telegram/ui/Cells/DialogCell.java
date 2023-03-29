@@ -1672,7 +1672,9 @@ public class DialogCell extends BaseCell {
                 }
             }
         }
-        nameString = StringUtils.zalgoFilter(nameString);
+        if (ConfigManager.getBooleanOrFalse(Defines.filterZalgo) && topicIconInName == null) {
+            nameString = StringUtils.zalgoFilter(nameString);
+        }
         int timeWidth;
         if (drawTime) {
             timeWidth = (int) Math.ceil(Theme.dialogs_timePaint.measureText(timeString));
