@@ -1517,6 +1517,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     case Defines.doubleTabSaveMessages:
                         return !message.isSponsored() && chatMode != MODE_SCHEDULED && (!message.needDrawBluredPreview() || message.hasExtendedMediaPreview()) && !message.isLiveLocation() && message.type != MessageObject.TYPE_PHONE_CALL && !noforwards && message.type != MessageObject.TYPE_GIFT_PREMIUM && !UserObject.isUserSelf(currentUser);
                     case Defines.doubleTabRepeat:
+                    case Defines.doubleTabRepeatAsCopy:
                         boolean allowRepeat = allowChatActions &&
                             (!isThreadChat() && !noforwards || getMessageUtils().getMessageForRepeat(message, messageGroup) != null);
                         return allowChatActions && (!(isThreadChat() && !isTopic) && !noforwards || getMessageUtils().getMessageForRepeat(message,
@@ -1587,6 +1588,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         break;
                     case Defines.doubleTabRepeat:
                         processSelectedOption(94);
+                        break;
+                    case Defines.doubleTabRepeatAsCopy:
+                        processSelectedOption(96);
                         break;
                     case Defines.doubleTabEdit:
                         processSelectedOption(OPTION_EDIT);
@@ -23856,6 +23860,19 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 }
                             }
                         }
+                        if (ConfigManager.getBooleanOrDefault(Defines.showRepeatAsCopy, true)) {
+                            if (!selectedObject.isSponsored() && chatMode != MODE_SCHEDULED && (!selectedObject.needDrawBluredPreview() || selectedObject.hasExtendedMediaPreview()) &&
+                                !selectedObject.isLiveLocation() && selectedObject.type != MessageObject.TYPE_PHONE_CALL &&
+                                selectedObject.type != MessageObject.TYPE_GIFT_PREMIUM) {
+                                boolean allowRepeat = allowChatActions && (!(isThreadChat() && !isTopic) || getMessageUtils().getMessageForRepeat(selectedObject,
+                                    selectedObjectGroup) != null);
+                                if (allowRepeat) {
+                                    items.add(LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy));
+                                    options.add(96);
+                                    icons.add(R.drawable.msg_repeat);
+                                }
+                            }
+                        }
                         if (ConfigManager.getBooleanOrFalse(Defines.customQuickMessageEnabled)) {
                             boolean allowCustomQuickMessage = chatMode != MODE_SCHEDULED;
                             if (allowCustomQuickMessage) {
@@ -26267,6 +26284,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     return;
                 }
                 processRepeatMessage();
+                break;
+            }
+            case 96: {
+                if (checkSlowMode(chatActivityEnterView.getSendButton())) {
+                    return;
+                }
+                processRepeatMessage(true);
                 break;
             }
             case Defines.customQuickMessageRow: {
@@ -32196,8 +32220,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         return super.hideKeyboardOnShow();
     }
 
-    public boolean processRepeatMessage() {
-        if ((isThreadChat() && !isTopic) || getMessagesController().isChatNoForwards(currentChat) || selectedObject.messageOwner.noforwards) {
+    public boolean processRepeatMessage(){
+        return processRepeatMessage(false);
+    }
+    public boolean processRepeatMessage(boolean asCopy) {
+        if (asCopy || (isThreadChat() && !isTopic) || getMessagesController().isChatNoForwards(currentChat) || selectedObject.messageOwner.noforwards) {
             var messageObject = getMessageUtils().getMessageForRepeat(selectedObject, selectedObjectGroup);
             if (messageObject != null) {
                 if (messageObject.isAnyKindOfSticker() && !messageObject.isAnimatedEmojiStickers() && !messageObject.isAnimatedEmoji() && !messageObject.isDice()) {
