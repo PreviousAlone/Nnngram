@@ -29879,7 +29879,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             icons.add(R.drawable.msg_forward);
                             if (Config.showNoQuoteForward && !UserObject.isUserSelf(currentUser)) {
                                 items.add(LocaleController.getString("NoQuoteForward", R.string.NoQuoteForward));
-                                options.add(95);
+                                options.add(forward_noquote);
                                 icons.add(R.drawable.msg_noquote_forward);
                             }
                             if (Config.showSaveMessages && !UserObject.isUserSelf(currentUser)) {
@@ -33005,6 +33005,21 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             return;
         }
         switch (option) {
+            case OPTION_FORWARD -> {
+                setForwardParams(true);
+                forwardingMessage = selectedObject;
+                forwardingMessageGroup = selectedObjectGroup;
+                Bundle args = new Bundle();
+                args.putBoolean("onlySelect", true);
+                args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
+                args.putInt("messagesCount", forwardingMessageGroup == null ? 1 : forwardingMessageGroup.messages.size());
+                args.putInt("hasPoll", forwardingMessage.isPoll() ? (forwardingMessage.isPublicPoll() ? 2 : 1) : 0);
+                args.putBoolean("hasInvoice", forwardingMessage.isInvoice());
+                args.putBoolean("canSelectTopics", true);
+                DialogsActivity fragment = new DialogsActivity(args);
+                fragment.setDelegate(this);
+                presentFragment(fragment);
+            }
             case 94 -> {
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
