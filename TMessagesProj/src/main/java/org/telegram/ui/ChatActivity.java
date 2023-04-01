@@ -968,6 +968,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int OPTION_TRANSCRIBE = 30;
     private final static int OPTION_HIDE_SPONSORED_MESSAGE = 31;
     private final static int OPTION_VIEW_IN_TOPIC = 32;
+    private final static int OPTION_COPY_PHOTO = 86;
+    private final static int OPTION_SAVE_STICKER_TO_GALLERY = 87;
+    private final static int OPTION_DETAIL = 89;
+    private final static int OPTION_VIEW_HISTORY = 90;
+    private final static int OPTION_DELETE_DOWNLOADED_FILE = 91;
+    private final static int OPTION_SAVE_MESSAGE = 93;
+    private final static int OPTION_REPEAT = 94;
+    private final static int OPTION_NOQUOTE_FORWARD = 95;
+    private final static int OPTION_REPEAT_AS_COPY = 96;
     private final static int OPTION_SEND_NOW = 100;
     private final static int OPTION_EDIT_SCHEDULE_TIME = 102;
     private final static int OPTION_SPEED_PROMO = 103;
@@ -1584,13 +1593,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         processSelectedOption(OPTION_REPLY);
                         break;
                     case Defines.doubleTabSaveMessages:
-                        processSelectedOption(93);
+                        processSelectedOption(OPTION_SAVE_MESSAGE);
                         break;
                     case Defines.doubleTabRepeat:
-                        processSelectedOption(94);
+                        processSelectedOption(OPTION_REPEAT);
                         break;
                     case Defines.doubleTabRepeatAsCopy:
-                        processSelectedOption(96);
+                        processSelectedOption(OPTION_REPEAT_AS_COPY);
                         break;
                     case Defines.doubleTabEdit:
                         processSelectedOption(OPTION_EDIT);
@@ -23665,11 +23674,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 if (!selectedObject.needDrawBluredPreview()) {
                                     items.add(LocaleController.getString("SaveToGallery",
                                         R.string.SaveToGallery));
-                                    options.add(4);
+                                    options.add(OPTION_SAVE_TO_GALLERY);
                                     icons.add(R.drawable.msg_gallery);
                                     items.add(LocaleController.getString("ShareFile",
                                         R.string.ShareFile));
-                                    options.add(6);
+                                    options.add(OPTION_SHARE);
                                     icons.add(R.drawable.msg_shareout);
                                 }
                             } else if (selectedObject.isMusic()) {
@@ -23677,28 +23686,28 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 options.add(OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC);
                                 icons.add(R.drawable.msg_download);
                                 items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
-                                options.add(6);
+                                options.add(OPTION_SHARE);
                                 icons.add(R.drawable.msg_shareout);
                             } else if (selectedObject.getDocument() != null) {
                                 if (MessageObject.isNewGifDocument(selectedObject.getDocument())) {
                                     items.add(LocaleController.getString("SaveToGIFs", R.string.SaveToGIFs));
-                                    options.add(11);
+                                    options.add(OPTION_ADD_TO_GIFS);
                                     icons.add(R.drawable.msg_gif);
                                 }
                                 items.add(LocaleController.getString("SaveToDownloads", R.string.SaveToDownloads));
                                 options.add(OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC);
                                 icons.add(R.drawable.msg_download);
                                 items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
-                                options.add(6);
+                                options.add(OPTION_SHARE);
                                 icons.add(R.drawable.msg_shareout);
                             } else {
                                 if (!selectedObject.needDrawBluredPreview()) {
                                     items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
-                                    options.add(4);
+                                    options.add(OPTION_SAVE_TO_GALLERY);
                                     icons.add(R.drawable.msg_gallery);
                                     if (ConfigManager.getBooleanOrFalse(Defines.showCopyPhoto)) {
                                         items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
-                                        options.add(86);
+                                        options.add(OPTION_COPY_PHOTO);
                                         icons.add(R.drawable.msg_copy);
                                     }
                                 }
@@ -23725,25 +23734,25 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             if (!noforwards) {
                                 items.add(
                                     LocaleController.getString("ShareFile", R.string.ShareFile));
-                                options.add(6);
+                                options.add(OPTION_SHARE);
                                 icons.add(R.drawable.msg_shareout);
                             }
                         } else if (type == 100) {
                             items.add(LocaleController.getString("SaveToDownloads",
                                 R.string.SaveToDownloads));
-                            options.add(10);
+                            options.add(OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC);
                             icons.add(R.drawable.msg_download);
                             if (ConfigManager.getBooleanOrFalse(Defines.ignoreChatStrict) || !getMessagesController().isChatNoForwards(currentChat)) {
                                 items.add(
                                     LocaleController.getString("ShareFile", R.string.ShareFile));
-                                options.add(6);
+                                options.add(OPTION_SHARE);
                                 icons.add(R.drawable.msg_shareout);
                             }
                         } else if (type == 6 && !selectedObject.hasRevealedExtendedMedia()) {
                             if (ConfigManager.getBooleanOrFalse(Defines.showDeleteDownloadFiles)) {
                                 items.add(LocaleController.getString("DeleteDownloadedFile",
                                     R.string.DeleteDownloadedFile));
-                                options.add(91);
+                                options.add(OPTION_DELETE_DOWNLOADED_FILE);
                                 icons.add(R.drawable.msg_clear);
                             }
                             items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
@@ -23761,18 +23770,18 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             if (selectedObject.isMask()) {
                                 items.add(
                                     LocaleController.getString("AddToMasks", R.string.AddToMasks));
-                                options.add(9);
+                                options.add(OPTION_ADD_TO_STICKERS_OR_MASKS);
                                 icons.add(R.drawable.msg_sticker);
                             } else {
                                 if (!selectedObject.isAnimatedSticker()) {
                                     items.add(LocaleController.getString("SaveToGallery",
                                         R.string.SaveToGallery));
-                                    options.add(87);
+                                    options.add(OPTION_SAVE_STICKER_TO_GALLERY);
                                     icons.add(R.drawable.msg_gallery);
                                 }
                                 items.add(LocaleController.getString("AddToStickers",
                                     R.string.AddToStickers));
-                                options.add(9);
+                                options.add(OPTION_ADD_TO_STICKERS_OR_MASKS);
                                 icons.add(R.drawable.msg_sticker);
                                 TLRPC.Document document = selectedObject.getDocument();
                                 if (!getMediaDataController().isStickerInFavorites(document)) {
@@ -23780,7 +23789,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                         && MessageObject.isStickerHasSet(document)) {
                                         items.add(LocaleController.getString("AddToFavorites",
                                             R.string.AddToFavorites));
-                                        options.add(20);
+                                        options.add(OPTION_ADD_STICKER_TO_FAVORITES);
                                         icons.add(R.drawable.msg_fave);
                                     }
                                 } else {
@@ -23802,7 +23811,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             }
                             if (!TextUtils.isEmpty(selectedObject.messageOwner.media.phone_number)) {
                                 items.add(LocaleController.getString("Copy", R.string.Copy));
-                                options.add(16);
+                                options.add(OPTION_COPY_PHONE_NUMBER);
                                 icons.add(R.drawable.msg_copy);
                                 items.add(LocaleController.getString("Call", R.string.Call));
                                 options.add(OPTION_CALL);
@@ -23812,7 +23821,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             if (!selectedObject.isAnimatedSticker()) {
                                 items.add(LocaleController.getString("SaveToGallery",
                                     R.string.SaveToGallery));
-                                options.add(87);
+                                options.add(OPTION_SAVE_STICKER_TO_GALLERY);
                                 icons.add(R.drawable.msg_gallery);
                             }
                             TLRPC.Document document = selectedObject.getDocument();
@@ -23820,13 +23829,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 if (MessageObject.isStickerHasSet(document)) {
                                     items.add(LocaleController.getString("AddToFavorites",
                                         R.string.AddToFavorites));
-                                    options.add(20);
+                                    options.add(OPTION_ADD_STICKER_TO_FAVORITES);
                                     icons.add(R.drawable.msg_fave);
                                 }
                             } else {
                                 items.add(LocaleController.getString("DeleteFromFavorites",
                                     R.string.DeleteFromFavorites));
-                                options.add(21);
+                                options.add(OPTION_DELETE_STICKER_FROM_FAVORITES);
                                 icons.add(R.drawable.msg_unfave);
                             }
                         }
@@ -23838,12 +23847,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             icons.add(R.drawable.msg_forward);
                             if (ConfigManager.getBooleanOrDefault(Defines.showNoQuoteForward, true) && !UserObject.isUserSelf(currentUser)) {
                                 items.add(LocaleController.getString("NoQuoteForward", R.string.NoQuoteForward));
-                                options.add(forward_noquote);
+                                options.add(OPTION_NOQUOTE_FORWARD);
                                 icons.add(R.drawable.msg_noquote_forward);
                             }
                             if (ConfigManager.getBooleanOrFalse(Defines.showSaveMessages) && !UserObject.isUserSelf(currentUser)) {
                                 items.add(LocaleController.getString("saveMessages", R.string.saveMessages));
-                                options.add(93);
+                                options.add(OPTION_SAVE_MESSAGE);
                                 icons.add(R.drawable.msg_saved);
                             }
                         }
@@ -23855,7 +23864,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     selectedObjectGroup) != null);
                                 if (allowRepeat) {
                                     items.add(LocaleController.getString("Repeat", R.string.Repeat));
-                                    options.add(94);
+                                    options.add(OPTION_REPEAT);
                                     icons.add(R.drawable.msg_repeat);
                                 }
                             }
@@ -23868,7 +23877,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     selectedObjectGroup) != null);
                                 if (allowRepeat) {
                                     items.add(LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy));
-                                    options.add(96);
+                                    options.add(OPTION_REPEAT_AS_COPY);
                                     icons.add(R.drawable.msg_repeat);
                                 }
                             }
@@ -23884,14 +23893,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         if (ConfigManager.getBooleanOrDefault(Defines.showViewHistory, true)) {
                             boolean allowViewHistory = currentChat != null && chatMode == 0 && !currentChat.broadcast && !(threadMessageObjects != null && threadMessageObjects.contains(message));
                             if (allowViewHistory) {
-                                items.add(LocaleController.getString("ViewUserHistory", R.string.ViewHistory));
-                                options.add(90);
+                                items.add(LocaleController.getString("ViewHistory", R.string.ViewHistory));
+                                options.add(OPTION_VIEW_HISTORY);
                                 icons.add(R.drawable.msg_recent);
                             }
                         }
                         if (ConfigManager.getBooleanOrFalse(Defines.showMessagesDetail)) {
                             items.add(LocaleController.getString("MessageDetails", R.string.MessageDetails));
-                            options.add(89);
+                            options.add(OPTION_DETAIL);
                             icons.add(R.drawable.msg_info);
                         }
                         boolean canViewStats = false;
@@ -23905,7 +23914,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         }
                         if (canViewStats) {
                             items.add(LocaleController.getString("ViewStats", R.string.ViewStats));
-                            options.add(28);
+                            options.add(OPTION_STATISTICS);
                             icons.add(R.drawable.msg_stats);
                         }
                         if (allowUnpin) {
@@ -24003,7 +24012,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_download);
                                 if (!noforwards) {
                                     items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
-                                    options.add(6);
+                                    options.add(OPTION_SHARE);
                                     icons.add(R.drawable.msg_shareout);
                                 }
                             } else {
@@ -24036,7 +24045,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             }
                             if (!TextUtils.isEmpty(selectedObject.messageOwner.media.phone_number)) {
                                 items.add(LocaleController.getString("Copy", R.string.Copy));
-                                options.add(16);
+                                options.add(OPTION_COPY_PHONE_NUMBER);
                                 icons.add(R.drawable.msg_copy);
                                 items.add(LocaleController.getString("Call", R.string.Call));
                                 options.add(OPTION_CALL);
@@ -25635,8 +25644,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 break;
             }
             case OPTION_FORWARD:
-            case forward_noquote: {
-                setForwardParams(option == 95);
+            case OPTION_NOQUOTE_FORWARD: {
+                setForwardParams(option == OPTION_NOQUOTE_FORWARD);
                 forwardingMessage = selectedObject;
                 forwardingMessageGroup = selectedObjectGroup;
                 Bundle args = new Bundle();
@@ -26177,7 +26186,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 showDialog(builder.create());
                 break;
             }
-            case 86: {
+            case OPTION_COPY_PHOTO: {
                 getMessageUtils().addMessageToClipboard(selectedObject, () -> {
                     if (BulletinFactory.canShowBulletin(ChatActivity.this)) {
                         BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied)).show();
@@ -26185,7 +26194,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 });
                 break;
             }
-            case 87: {
+            case OPTION_SAVE_STICKER_TO_GALLERY: {
                 if (Build.VERSION.SDK_INT >= 23 && (Build.VERSION.SDK_INT <= 28
                     || BuildVars.NO_SCOPED_STORAGE) && getParentActivity().checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -26206,11 +26215,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 });
                 break;
             }
-            case 89: {
+            case OPTION_DETAIL: {
                 presentFragment(new MessageDetailActivity(selectedObject));
                 break;
             }
-            case 90: {
+            case OPTION_VIEW_HISTORY: {
                 TLRPC.Peer peer = selectedObject.messageOwner.from_id;
                 openSearchWithText("");
                 if (peer.user_id != 0) {
@@ -26226,7 +26235,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 showMessagesSearchListView(true);
                 break;
             }
-            case 91: {
+            case OPTION_DELETE_DOWNLOADED_FILE: {
                 if (Build.VERSION.SDK_INT >= 23 && (Build.VERSION.SDK_INT <= 28
                     || BuildVars.NO_SCOPED_STORAGE) && getParentActivity().checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -26272,7 +26281,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 break;
             }
-            case 93: {
+            case OPTION_SAVE_MESSAGE: {
                 ArrayList<MessageObject> messages = new ArrayList<>();
                 if (selectedObjectGroup != null) {
                     messages.addAll(selectedObjectGroup.messages);
@@ -26286,14 +26295,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 break;
             }
-            case 94: {
+            case OPTION_REPEAT: {
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
                 processRepeatMessage();
                 break;
             }
-            case 96: {
+            case OPTION_REPEAT_AS_COPY: {
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
@@ -26418,7 +26427,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 fragment.setDelegate(this);
                 presentFragment(fragment);
             }
-            case 94 -> {
+            case OPTION_REPEAT -> {
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
