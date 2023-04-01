@@ -26183,6 +26183,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         }
                         processSelectedOption(options.get(i));
                     });
+                    cell.setOnLongClickListener(v2 -> {
+                        if (selectedObject == null || i >= options.size()) {
+                            return false;
+                        }
+                        processLongClickSelectedOption(options.get(i));
+                        return true;
+                    });
                     if (option == OPTION_TRANSLATE) {
                         // "Translate" button
                         MessageObject messageObject = getMessageUtils().getMessageForTranslate(selectedObject, selectedObjectGroup);
@@ -27978,6 +27985,25 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         selectedObjectGroup = null;
         selectedObjectToEditCaption = null;
         closeMenu(!preserveDim);
+    }
+
+    private void processLongClickSelectedOption(int option) {
+        if (selectedObject == null || getParentActivity() == null) {
+            return;
+        }
+        switch (option) {
+            case 94 -> {
+                if (checkSlowMode(chatActivityEnterView.getSendButton())) {
+                    return;
+                }
+                processRepeatMessage(false, true);
+            }
+            default -> processSelectedOption(option);
+        }
+        selectedObject = null;
+        selectedObjectGroup = null;
+        selectedObjectToEditCaption = null;
+        closeMenu();
     }
 
     @Override
@@ -34697,14 +34723,20 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     public boolean processRepeatMessage(){
-        return processRepeatMessage(false);
+        return processRepeatMessage(false, false);
     }
+
     public boolean processRepeatMessage(boolean asCopy) {
-        if (asCopy || (isThreadChat() && !isTopic) || getMessagesController().isChatNoForwards(currentChat) || selectedObject.messageOwner.noforwards) {
+        return processRepeatMessage(asCopy, false);
+    }
+
+    public boolean processRepeatMessage(boolean asCopy, boolean longClick) {
+        if (asCopy || longClick || (isThreadChat() && !isTopic) || getMessagesController().isChatNoForwards(currentChat) || selectedObject.messageOwner.noforwards) {
             var messageObject = getMessageUtils().getMessageForRepeat(selectedObject, selectedObjectGroup);
             if (messageObject != null) {
+                var replyToMsg = longClick ? messageObject.replyMessageObject : threadMessageObject;
                 if (messageObject.isAnyKindOfSticker() && !messageObject.isAnimatedEmojiStickers() && !messageObject.isAnimatedEmoji() && !messageObject.isDice()) {
-                    getSendMessagesHelper().sendSticker(selectedObject.getDocument(), null, dialog_id, threadMessageObject, threadMessageObject, null, null, null, true, 0, false, null);
+                    getSendMessagesHelper().sendSticker(selectedObject.getDocument(), null, dialog_id, replyToMsg, threadMessageObject, null, null, null, true, 0, false, null);
                     return true;
                 } else {
                     var message = messageObject.messageOwner.message;
@@ -34726,7 +34758,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         } else {
                             entities = null;
                         }
-                        getSendMessagesHelper().sendMessage(SendMessageParams.of(message, dialog_id, threadMessageObject, threadMessageObject, null, false, entities, null, null, true, 0, null, false));
+                        getSendMessagesHelper().sendMessage(SendMessageParams.of(message, dialog_id, replyToMsg, threadMessageObject, null, false, entities, null, null, true, 0, null, false));
                         return true;
                     }
                 }
