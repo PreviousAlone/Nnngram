@@ -130,6 +130,7 @@ object Defines {
     @BooleanConfig const val showSaveMessages = "showSaveMessages"
     @BooleanConfig(true) const val showViewHistory = "showViewHistory"
     @BooleanConfig(true) const val showRepeat = "showRepeat"
+    @BooleanConfig const val showRepeatAsCopy = "showRepeatAsCopy"
     @BooleanConfig const val showCopyPhoto = "showCopyPhoto"
     @BooleanConfig(true) const val showReport = "showReport"
     @BooleanConfig(true) const val showReactions = "showReactions"
@@ -142,8 +143,9 @@ object Defines {
     const val doubleTabReply = 2
     const val doubleTabSaveMessages = 3
     const val doubleTabRepeat = 4
-    const val doubleTabEdit = 5
-    const val doubleTabTranslate = 6
+    const val doubleTabRepeatAsCopy = 5
+    const val doubleTabEdit = 6
+    const val doubleTabTranslate = 7
 
     // Auto Update
     const val lastCheckUpdateTime = "lastCheckUpdateTime"
