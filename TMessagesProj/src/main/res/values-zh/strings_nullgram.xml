@@ -44,6 +44,7 @@
     <string name="formatterDay24HSec">HH:mm:ss</string>
     <string name="DeleteDownloadedFile">删除已缓存的文件</string>
     <string name="Repeat">复读</string>
+    <string name="RepeatAsCopy">无引用复读</string>
     <string name="saveMessages">保存信息</string>
     <string name="ViewHistory">查看历史记录</string>
     <string name="NoQuoteForward">无引用转发</string>
