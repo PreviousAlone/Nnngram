@@ -23860,7 +23860,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 }
                             }
                         }
-                        if (ConfigManager.getBooleanOrDefault(Defines.showRepeatAsCopy, true)) {
+                        if (ConfigManager.getBooleanOrDefault(Defines.showRepeatAsCopy, false)) {
                             if (!selectedObject.isSponsored() && chatMode != MODE_SCHEDULED && (!selectedObject.needDrawBluredPreview() || selectedObject.hasExtendedMediaPreview()) &&
                                 !selectedObject.isLiveLocation() && selectedObject.type != MessageObject.TYPE_PHONE_CALL &&
                                 selectedObject.type != MessageObject.TYPE_GIFT_PREMIUM) {
