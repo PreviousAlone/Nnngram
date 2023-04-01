@@ -6,3 +6,9 @@ TMessagesProj/.cxx
 *.iml
 local.properties
 service_account_credentials.json
+.project
+.settings
+.classpath
+History.md
+apks
+dprint.json
