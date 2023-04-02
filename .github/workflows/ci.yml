@@ -144,12 +144,13 @@ jobs:
         run: |
           chmod +x telegram-bot-api-binary
           ./telegram-bot-api-binary --api-id=21724 --api-hash=3e0cb5efcd52300aec5994fdfc5bdc16 --local 2>&1 > /dev/null &
-          curl https://raw.githubusercontent.com/nextalone/nextalone/master/uploadCI.py -o uploadCI.py
+          curl https://raw.githubusercontent.com/QueallyTech/QueallyTech/master/uploadCI.py -o uploadCI.py
           python uploadCI.py
           echo "VERSION_CODE: ${{ env.VERSION_CODE }}"
           echo "VERSION_NAME: ${{ env.VERSION_NAME }}"
           echo "COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}"
         env:
+            CHAT_ID: ${{ secrets.TELEGRAM_CHATID }}
             TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
             VERSION_CODE: ${{ steps.apk.outputs.versionCode }}
             VERSION_NAME: ${{ steps.apk.outputs.versionNum }}
