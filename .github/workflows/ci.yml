@@ -136,7 +136,7 @@ jobs:
 
       - name: Get Apk Info
         id: apk
-        uses: JantHsueh/get-apk-info-action@master
+        uses: QueallyTech/get-apk-info-action@v1
         with:
           apkPath: ${{ env.APK_FILE_UPLOAD }}
 
