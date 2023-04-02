@@ -32,7 +32,7 @@ jobs:
       - name: Get short SHA
         run: | 
           echo "SHA7=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
-          echo SHA7: ${{ env.SHA7 }}  
+          echo "SHA7: ${{ env.SHA7 }}"
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -136,7 +136,7 @@ jobs:
 
       - name: Get Apk Info
         id: apk
-        uses: QueallyTech/get-apk-info-action@v1
+        uses: QueallyTech/read-apk-info-action@v1
         with:
           apkPath: ${{ env.APK_FILE_UPLOAD }}
 
@@ -146,10 +146,13 @@ jobs:
           ./telegram-bot-api-binary --api-id=21724 --api-hash=3e0cb5efcd52300aec5994fdfc5bdc16 --local 2>&1 > /dev/null &
           curl https://raw.githubusercontent.com/nextalone/nextalone/master/uploadCI.py -o uploadCI.py
           python uploadCI.py
+          echo "VERSION_CODE: ${{ env.VERSION_CODE }}"
+          echo "VERSION_NAME: ${{ env.VERSION_NAME }}"
+          echo "COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}"
         env:
             TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-            VERSION_CODE: ${{steps.apk.outputs.versionCode}}
-            VERSION_NAME: ${{steps.apk.outputs.versionNum}}
+            VERSION_CODE: ${{ steps.apk.outputs.versionCode }}
+            VERSION_NAME: ${{ steps.apk.outputs.versionNum }}
             COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
   telegram-bot-api:
