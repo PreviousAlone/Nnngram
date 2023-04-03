@@ -28968,12 +28968,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_shareout);
                             }
                         } else if (type == 6 && !selectedObject.hasRevealedExtendedMedia()) {
-                            if (ConfigManager.getBooleanOrFalse(Defines.showDeleteDownloadFiles)) {
-                                items.add(LocaleController.getString("DeleteDownloadedFile",
-                                    R.string.DeleteDownloadedFile));
-                                options.add(OPTION_DELETE_DOWNLOADED_FILE);
-                                icons.add(R.drawable.msg_clear);
-                            }
                             items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
                             options.add(OPTION_SAVE_TO_GALLERY2);
                             icons.add(R.drawable.msg_gallery);
@@ -28984,6 +28978,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
                                 options.add(OPTION_SHARE);
                                 icons.add(R.drawable.msg_shareout);
+                            }
+                            if (ConfigManager.getBooleanOrFalse(Defines.showDeleteDownloadFiles)) {
+                                items.add(LocaleController.getString("DeleteDownloadedFile",
+                                    R.string.DeleteDownloadedFile));
+                                options.add(OPTION_DELETE_DOWNLOADED_FILE);
+                                icons.add(R.drawable.msg_clear);
                             }
                         } else if (type == 7) {
                             if (selectedObject.isMask()) {
