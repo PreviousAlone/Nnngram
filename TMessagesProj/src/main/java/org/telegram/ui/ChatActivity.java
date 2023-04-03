@@ -29648,6 +29648,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 options.add(OPTION_SHARE);
                                 icons.add(R.drawable.msg_shareout);
                             }
+                            if (ConfigManager.getBooleanOrFalse(Defines.showDeleteDownloadFiles)) {
+                                items.add(LocaleController.getString("DeleteDownloadedFile",
+                                    R.string.DeleteDownloadedFile));
+                                options.add(OPTION_DELETE_DOWNLOADED_FILE);
+                                icons.add(R.drawable.msg_clear);
+                            }
                         } else if (type == 7) {
                             if (selectedObject.isMask()) {
                                 items.add(LocaleController.getString(R.string.AddToMasks));
