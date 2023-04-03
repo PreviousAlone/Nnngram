@@ -16996,9 +16996,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     } else if (messageObject.replyMessageObject == null && messageObject.messageOwner.reply_to != null && messageObject.messageOwner.reply_to.reply_from != null) {
                         name = messageObject.getReplyQuoteNameWithIcon();
                     } else if (messageObject.replyMessageObject != null) {
-                        if (drawForwardedName) {
-                            name = AndroidUtilities.removeDiacritics(messageObject.replyMessageObject.getForwardedName());
-                        }
+//                        if (drawForwardedName) {
+//                            name = AndroidUtilities.removeDiacritics(messageObject.replyMessageObject.getForwardedName());
+//                        }
 
                         if (name == null) {
                             long fromId = messageObject.replyMessageObject.getFromChatId();
