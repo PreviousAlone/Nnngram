@@ -419,6 +419,7 @@ import xyz.nextalone.nnngram.utils.Log;
 import xyz.nextalone.nnngram.utils.MessageUtils;
 import xyz.nextalone.nnngram.utils.PermissionUtils;
 import xyz.nextalone.nnngram.utils.StringUtils;
+import xyz.nextalone.nnngram.utils.WordUtils;
 
 @SuppressWarnings("unchecked")
 public class ChatActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, LocationActivity.LocationActivityDelegate, ChatAttachAlertDocumentLayout.DocumentSelectActivityDelegate, ChatActivityInterface, FloatingDebugProvider, ForwardContext, InstantCameraView.Delegate {
@@ -1213,6 +1214,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int OPTION_REPEAT = 94;
     private final static int OPTION_NOQUOTE_FORWARD = 95;
     private final static int OPTION_REPEAT_AS_COPY = 96;
+    private final static int OPTION_REVERSE = 97;
     private final static int OPTION_ABOUT_REVENUE_SHARING_ADS = 33;
     private final static int OPTION_REPORT_AD = 34;
     private final static int OPTION_REMOVE_ADS = 35;
@@ -1897,6 +1899,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         }
                         break;
                     case Defines.doubleTabReply:
+                    case Defines.doubleTabReverse:
                         return message.getId() > 0 && allowChatActions;
                     case Defines.doubleTabSaveMessages:
                         return !message.isSponsored() && chatMode != MODE_SCHEDULED && (!message.needDrawBluredPreview() || message.hasExtendedMediaPreview()) && !message.isLiveLocation() && message.type != MessageObject.TYPE_PHONE_CALL && !noforwards && message.type != MessageObject.TYPE_GIFT_PREMIUM && !UserObject.isUserSelf(currentUser);
@@ -1984,6 +1987,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         break;
                     case Defines.doubleTabRepeatAsCopy:
                         processSelectedOption(OPTION_REPEAT_AS_COPY);
+                        break;
+                    case Defines.doubleTabReverse:
+                        processSelectedOption(OPTION_REVERSE);
                         break;
                     case Defines.doubleTabEdit:
                         processSelectedOption(OPTION_EDIT);
@@ -29759,6 +29765,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 }
                             }
                         }
+                        if (Config.showReverse) {
+                            if (allowChatActions) {
+                                items.add(LocaleController.getString("Reverse", R.string.Reverse));
+                                options.add(OPTION_REVERSE);
+                                icons.add(R.drawable.msg_reset);
+                            }
+                        }
                         if (Config.customQuickMessageEnabled) {
                             if (allowChatActions) {
                                 items.add(ConfigManager.getStringOrDefault(Defines.customQuickMessageDisplayName, "NULL"));
@@ -32652,6 +32665,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 processRepeatMessage(true);
                 break;
             }
+            case OPTION_REVERSE:
+                if (checkSlowMode(chatActivityEnterView.getSendButton())) {
+                    return;
+                }
+                processReverseMessage(false);
+                break;
             case Defines.customQuickMessageRow: {
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
@@ -32822,6 +32841,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     return;
                 }
                 processRepeatMessage(false, true);
+            }
+            case OPTION_REVERSE -> {
+                processReverseMessage(true);
             }
             default -> processSelectedOption(option);
         }
@@ -41255,6 +41277,43 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 messages.add(selectedObject);
             }
             forwardMessages(messages, false, false, true, 0);
+        }
+        return false;
+    }
+
+    public boolean processReverseMessage(boolean longClick) {
+        var messageObject = getMessageUtils().getMessageForRepeat(selectedObject, selectedObjectGroup);
+        if (messageObject != null) {
+            var replyToMsg = longClick ? messageObject : threadMessageObject;
+            if (!messageObject.isAnyKindOfSticker() || messageObject.isAnimatedEmojiStickers() || messageObject.isAnimatedEmoji() || messageObject.isDice()) {
+                var message = messageObject.messageOwner.message;
+                if (!TextUtils.isEmpty(message)) {
+                    message = WordUtils.INSTANCE.replaceAntonyms(message);
+                    ArrayList<TLRPC.MessageEntity> entities;
+                    if (messageObject.messageOwner.entities != null && !messageObject.messageOwner.entities.isEmpty()) {
+                        entities = new ArrayList<>();
+                        for (TLRPC.MessageEntity entity : messageObject.messageOwner.entities) {
+                            if (entity instanceof TLRPC.TL_messageEntityMentionName) {
+                                TLRPC.TL_inputMessageEntityMentionName mention = new TLRPC.TL_inputMessageEntityMentionName();
+                                mention.length = entity.length;
+                                mention.offset = entity.offset;
+                                mention.user_id = getMessagesController().getInputUser(((TLRPC.TL_messageEntityMentionName) entity).user_id);
+                                entities.add(mention);
+                            } else {
+                                entities.add(entity);
+                            }
+                        }
+                    } else {
+                        entities = null;
+                    }
+                    getSendMessagesHelper().sendMessage(SendMessageParams.of(
+                        message, dialog_id, replyToMsg,
+                        threadMessageObject, null, false, entities,
+                        null, null, true, 0, null, false));
+                    return true;
+                }
+                return false;
+            }
         }
         return false;
     }
