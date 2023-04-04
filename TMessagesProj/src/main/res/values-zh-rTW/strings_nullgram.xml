@@ -45,6 +45,7 @@
     <string name="DeleteDownloadedFile">刪除已下載的文件</string>
     <string name="Repeat">復讀</string>
     <string name="RepeatAsCopy">無引用復讀</string>
+    <string name="Reverse">反轉</string>
     <string name="saveMessages">儲存訊息</string>
     <string name="ViewHistory">查閱歷史記錄</string>
     <string name="NoQuoteForward">無引用轉發</string>
