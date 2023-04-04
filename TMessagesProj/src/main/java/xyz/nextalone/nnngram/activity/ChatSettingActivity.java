@@ -258,6 +258,8 @@ public class ChatSettingActivity extends BaseActivity {
             types.add(Defines.doubleTabRepeat);
             arrayList.add(LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy));
             types.add(Defines.doubleTabRepeatAsCopy);
+            arrayList.add(LocaleController.getString("Reverse", R.string.Reverse));
+            types.add(Defines.doubleTabReverse);
             arrayList.add(LocaleController.getString("TranslateMessage", R.string.TranslateMessage));
             types.add(Defines.doubleTabTranslate);
             PopupBuilder.show(arrayList, LocaleController.getString("customDoubleTap", R.string.customDoubleTap), types.indexOf(Config.getDoubleTab()), getParentActivity(), view, i -> {
@@ -550,6 +552,9 @@ public class ChatSettingActivity extends BaseActivity {
                             case Defines.doubleTabRepeatAsCopy:
                                 value = LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy);
                                 break;
+                            case Defines.doubleTabReverse:
+                                value = LocaleController.getString("Reverse", R.string.Reverse);
+                                break;
                             case Defines.doubleTabTranslate:
                                 value = LocaleController.getString("TranslateMessage", R.string.TranslateMessage);
                                 break;
@@ -755,7 +760,7 @@ public class ChatSettingActivity extends BaseActivity {
         linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
-        int count = 9 + 1;
+        int count = 9 + 2;
         for (int a = 0; a < count; a++) {
             TextCheckCell textCell = new TextCheckCell(context);
             switch (a) {
@@ -779,23 +784,27 @@ public class ChatSettingActivity extends BaseActivity {
                     textCell.setTextAndCheck(LocaleController.getString("RepeatAsCopy", R.string.RepeatAsCopy), Config.showRepeatAsCopy, false);
                     break;
                 }
-                case 4 + 1 : {
+                case 4 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("Reverse", R.string.Reverse), Config.showReverse, false);
+                    break;
+                }
+                case 4 + 1 + 1: {
                     textCell.setTextAndCheck(LocaleController.getString("ViewHistory", R.string.ViewHistory), Config.showViewHistory, false);
                     break;
                 }
-                case 5+ 1: {
+                case 5+ 1 + 1: {
                     textCell.setTextAndCheck(LocaleController.getString("MessageDetails", R.string.MessageDetails), Config.showMessagesDetail, false);
                     break;
                 }
-                case 6+ 1: {
+                case 6+ 1 + 1: {
                     textCell.setTextAndCheck(LocaleController.getString("CopyPhoto", R.string.CopyPhoto), Config.showCopyPhoto, false);
                     break;
                 }
-                case 7+ 1: {
+                case 7+ 1 + 1: {
                     textCell.setTextAndCheck(LocaleController.getString("Reactions", R.string.Reactions), Config.showReactions, false);
                     break;
                 }
-                case 8+ 1: {
+                case 8+ 1 + 1: {
                     textCell.setTextAndCheck(LocaleController.getString("ReportChat", R.string.ReportChat), Config.showReport, false);
                 }
             }
@@ -830,27 +839,32 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setChecked(Config.showRepeatAsCopy);
                         break;
                     }
-                    case 4 + 1: {
+                    case 4+ 1: {
+                        Config.toggleShowReverse();
+                        textCell.setChecked(Config.showReverse);
+                        break;
+                    }
+                    case 4 + 1 + 1: {
                         Config.toggleShowViewHistory();
                         textCell.setChecked(Config.showViewHistory);
                         break;
                     }
-                    case 5 + 1: {
+                    case 5 + 1 + 1: {
                         Config.toggleShowMessagesDetail();
                         textCell.setChecked(Config.showMessagesDetail);
                         break;
                     }
-                    case 6 + 1: {
+                    case 6 + 1 + 1: {
                         Config.toggleShowCopyPhoto();
                         textCell.setChecked(Config.showCopyPhoto);
                         break;
                     }
-                    case 7 + 1: {
+                    case 7 + 1 + 1: {
                         Config.toggleShowReactions();
                         textCell.setChecked(Config.showReactions);
                         break;
                     }
-                    case 8 + 1: {
+                    case 8 + 1 + 1: {
                         Config.toggleShowReport();
                         textCell.setChecked(Config.showReport);
                         break;
