@@ -29101,7 +29101,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             if (allowChatActions) {
                                 items.add(ConfigManager.getStringOrDefault(Defines.customQuickMessageDisplayName, "NULL"));
                                 options.add(Defines.customQuickMessageRow);
-                                icons.add(R.drawable.msg_fave);
+                                icons.add(R.drawable.msg_prpr);
                             }
                         }
                         if (Config.showViewHistory) {
