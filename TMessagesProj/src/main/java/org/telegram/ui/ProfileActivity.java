@@ -11667,10 +11667,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     } else if (position == numberRow) {
                         TLRPC.User user = UserConfig.getInstance(currentAccount).getCurrentUser();
                         String value;
-                        if (user != null && user.phone != null && user.phone.length() != 0) {
-                            value = PhoneFormat.getInstance().format("+" + user.phone);
-                        } else {
+                        if (!Config.hidePhone) {
+                            if (user != null && user.phone != null && !user.phone.isEmpty()) {
+                                value = PhoneFormat.getInstance().format("+" + user.phone);
+                            } else {
                             value = LocaleController.getString(R.string.NumberUnknown);
+                            }
+                        } else if (!TextUtils.isEmpty(user.username)) {
+                            value = "@" + user.username;
+                        } else {
+                            value = "@???";
                         }
                         detailCell.setTextAndValue(value, LocaleController.getString(R.string.TapToChangePhone), true);
                         detailCell.setContentDescriptionValueFirst(false);
