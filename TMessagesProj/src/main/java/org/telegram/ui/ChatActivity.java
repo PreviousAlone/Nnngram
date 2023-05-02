@@ -32634,17 +32634,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 break;
             }
             case OPTION_SAVE_MESSAGE: {
-                ArrayList<MessageObject> messages = new ArrayList<>();
-                if (selectedObjectGroup != null) {
-                    messages.addAll(selectedObjectGroup.messages);
-                } else {
-                    messages.add(selectedObject);
-                }
-                forwardMessages(messages, false, false, true, 0, getUserConfig().getClientUserId());
-                createUndoView();
-                if (undoView != null) {
-                    undoView.showWithAction(getUserConfig().getClientUserId(), UndoView.ACTION_FWD_MESSAGES, messages.size());
-                }
+                processSaveMessage();
                 break;
             }
             case OPTION_QR: {
@@ -32813,6 +32803,49 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             removeMessageWithThanos(selectedObject);
         } else {
             showDialog(new PremiumFeatureBottomSheet(ChatActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_ADS, true));
+        }
+    }
+
+    private void processSaveMessage() {
+        ArrayList<MessageObject> messages = new ArrayList<>();
+        boolean noforwards = getMessagesController().isChatNoForwards(currentChat) || selectedObject.messageOwner.noforwards;
+        if (selectedObjectGroup != null) {
+            messages.addAll(selectedObjectGroup.messages);
+        } else {
+            messages.add(selectedObject);
+        }
+        if (noforwards) {
+            // todo send message link along
+            for (MessageObject message : messages) {
+                String path = message.messageOwner.attachPath;
+                if (path != null && path.length() > 0) {
+                    File temp = new File(path);
+                    if (!temp.exists()) {
+                        path = null;
+                    }
+                }
+                if (path == null || path.length() == 0) {
+                    path = getFileLoader().getPathToMessage(message.messageOwner).toString();
+                }
+                ArrayList<SendMessagesHelper.SendingMediaInfo> media = new ArrayList<>();
+                SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
+                media.add(info);
+                info.path = path;
+                info.thumbPath = null;
+                info.videoEditedInfo = null;
+                info.isVideo = false;
+                info.caption = null;
+                info.entities = null;
+                info.masks = null;
+                info.ttl = 0;
+                SendMessagesHelper.prepareSendingMedia(getAccountInstance(), media, getUserConfig().getClientUserId(), null, null, null, null, false, false, null, false, 0, 0, false, null, quickReplyShortcut, getQuickReplyId(), 0, false);
+            }
+        } else {
+            forwardMessages(messages, false, false, true, 0, getUserConfig().getClientUserId());
+            createUndoView();
+            if (undoView != null) {
+                undoView.showWithAction(getUserConfig().getClientUserId(), UndoView.ACTION_FWD_MESSAGES, messages.size());
+            }
         }
     }
 
