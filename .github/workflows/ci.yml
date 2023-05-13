@@ -10,6 +10,7 @@ on:
         - '.github/**'
         - '!.github/workflows/**'
         - "TMessagesProj/src/main/res/values**/**"
+        - '.gitignore'
   workflow_dispatch:
 
 jobs:
@@ -33,6 +34,9 @@ jobs:
         uses: jwlawson/actions-setup-cmake@v1.12
         with:
           cmake-version: '3.22.1'
+      - name: Get short SHA
+        run: | 
+          echo "SHA7=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -67,7 +71,7 @@ jobs:
             sudo rm -rf /usr/local/share/chromium
             sudo rm -rf /usr/local/lib/node_modules
             df -h
-            
+
             sudo apt-get install bison gcc make curl ninja-build -y
             echo "y" | sdkmanager --install "ndk;27.0.12077973" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
             echo "sdk.dir=${ANDROID_HOME}" >> local.properties
@@ -82,109 +86,19 @@ jobs:
           echo ${{ secrets.GOOGLE_SERVICES_JSON }} | base64 -d > TMessagesProj/google-services.json
           ./gradlew :TMessagesProj:assembleRelease :TMessagesProj:uploadCrashlyticsSymbolFileRelease
           echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
-          echo "APK_FILE_ARMV7=$(find TMessagesProj/build/outputs/apk -name '*arm32*.apk')" >> $GITHUB_ENV
-          echo "APK_FILE_X86=$(find TMessagesProj/build/outputs/apk -name '*x86.apk')" >> $GITHUB_ENV
-          echo "APK_FILE_X64=$(find TMessagesProj/build/outputs/apk -name '*x86_64*.apk')" >> $GITHUB_ENV
 
       - uses: actions/upload-artifact@v3
         name: Upload apk (arm64-v8a)
         with:
-          name: Nnngram-arm64-v8a
+          name: Nnngram-arm64-v8a-${{ env.SHA7 }}
           path: ${{ env.APK_FILE }}
-      - uses: actions/upload-artifact@v3
-        name: Upload apk (armeabi-v7a)
-        with:
-          name: Nnngram-armeabi-v7a
-          path: ${{ env.APK_FILE_ARMV7 }}
-      - uses: actions/upload-artifact@v2
-        name: Upload apk (x86_64)
-        with:
-          name: Nnngram-x86_64
-          path: ${{ env.APK_FILE_X64 }}
-      - uses: actions/upload-artifact@v2
-        name: Upload apk (x86)
-        with:
-          name: Nnngram-x86
-          path: ${{ env.APK_FILE_X86 }}
+
       - name: Upload mapping
         uses: actions/upload-artifact@v3
         with:
           name: mapping
           path: TMessagesProj/build/outputs/mapping
 
-
-  play-build:
-    name: Gradle Build (play store)
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
-    env:
-      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
-      CCACHE_NOHASHDIR: "true"
-      CCACHE_MAXSIZE: "5G"
-      CCACHE_HARDLINK: "true"
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Check out submodules
-        run: |
-          git -c submodule."libs/rust".update=none submodule update --init --recursive
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.12
-        with:
-          cmake-version: '3.22.1'
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2.4.2
-      - name: Set up ccache
-        uses: hendrikmuhs/ccache-action@v1.2
-        with:
-          key: ccache
-          restore-keys: ccache
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2
-      - name: Prepare Environment
-        run: |
-            echo "Removing large packages"
-            sudo apt-get remove -y '^dotnet-.*' aspnetcore-targeting-pack-6.0 aspnetcore-targeting-pack-7.0
-            sudo apt-get remove -y '^llvm-.*'
-            sudo apt-get remove -y 'php.*'
-            sudo apt-get remove -y '^mongodb-.*'
-            sudo apt-get remove -y '^mysql-.*'
-            sudo apt-get remove -y azure-cli google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri
-            sudo apt-get autoremove -y
-            sudo apt-get clean
-            echo "Removing large directories"
-            sudo rm -rf /usr/share/dotnet/
-            sudo rm -rf /usr/local/graalvm/
-            sudo rm -rf /usr/local/.ghcup/
-            sudo rm -rf /usr/local/share/powershell
-            sudo rm -rf /usr/local/share/chromium
-            sudo rm -rf /usr/local/lib/node_modules
-            df -h
-            
-            sudo apt-get install bison gcc make curl ninja-build -y
-            echo "y" | sdkmanager --install "ndk;27.0.12077973" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
-            echo "sdk.dir=${ANDROID_HOME}" >> local.properties
-
-      - name: Debug Build
-        run: |
-          echo -e "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}\nRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}\nRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}">>local.properties
-          cat > service_account_credentials.json << EOF
-          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
-          EOF
-          mkdir TMessagesProj/config/
-          echo ${{ secrets.KEYSTORE }} | base64 -d > TMessagesProj/config/release.keystore
-          echo ${{ secrets.GOOGLE_SERVICES_JSON }} | base64 -d > TMessagesProj/google-services.json
-          ./gradlew :TMessagesProj:publishPlayBundle
-
-
-          
   upload:
     name: Upload Release
     if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
@@ -194,7 +108,7 @@ jobs:
       - telegram-bot-api
     steps:
       - name: Donwload Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@master
         with:
           path: artifacts
       - name: Download Telegram Bot API Binary
@@ -218,12 +132,13 @@ jobs:
         run: |
           chmod +x telegram-bot-api-binary
           ./telegram-bot-api-binary --api-id=21724 --api-hash=3e0cb5efcd52300aec5994fdfc5bdc16 --local 2>&1 > /dev/null &
-          curl https://raw.githubusercontent.com/qwq233/qwq233/master/uploadCI.py -o uploadCI.py
+          curl https://raw.githubusercontent.com/PreviousAlone/ActionScript/main/uploadCI.py -o uploadCI.py
           python uploadCI.py
         env:
+            CHAT_ID: ${{ secrets.TELEGRAM_CHATID }}
             TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-            VERSION_CODE: ${{steps.apk.outputs.versionCode}}
-            VERSION_NAME: ${{steps.apk.outputs.versionNum}}
+            VERSION_CODE: ${{ steps.apk.outputs.versionCode }}
+            VERSION_NAME: ${{ steps.apk.outputs.versionNum }}
             COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
   telegram-bot-api:
@@ -231,14 +146,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Clone Telegram Bot API
         run: |
           git clone --recursive https://github.com/tdlib/telegram-bot-api.git
           git status telegram-bot-api >> telegram-bot-api-status
       - name: Cache Bot API Binary
         id: cache-bot-api
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: telegram-bot-api-binary
           key: CI-telegram-bot-api-${{ hashFiles('telegram-bot-api-status') }}
