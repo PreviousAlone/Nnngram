@@ -23,18 +23,24 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.transition.TransitionManager;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LanguageDetector;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.DrawerLayoutContainer;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
@@ -45,6 +51,7 @@ import org.telegram.ui.Cells.TextDetailSettingsCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
@@ -85,7 +92,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int autoTranslateRow;
     private int translator2Row;
 
-
+    private int customTitleRow;
     private int showBotAPIRow;
     private int showExactNumberRow;
     private int showExactTimeRow;
@@ -127,7 +134,11 @@ public class GeneralSettingActivity extends BaseActivity {
 
     @Override
     protected void onItemClick(View view, int position, float x, float y) {
-        if (position == showBotAPIRow) {
+        if (position == customTitleRow) {
+            setCustomTitle(view, position);
+            listAdapter.notifyItemChanged(position, PARTIAL);
+        }
+        else if (position == showBotAPIRow) {
             Config.toggleShowBotAPIID();
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.showBotAPIID);
@@ -421,6 +432,7 @@ public class GeneralSettingActivity extends BaseActivity {
 
 
         generalRow = addRow();
+        customTitleRow = addRow("customTitle");
         showBotAPIRow = addRow("showBotAPI");
         showExactNumberRow = addRow("showExactNumber");
         showExactTimeRow = addRow("showExactTime");
@@ -569,6 +581,8 @@ public class GeneralSettingActivity extends BaseActivity {
                             value = LocaleController.formatPluralString("Languages", langCodes.size());
                         }
                         textCell.setTextAndValue(LocaleController.getString("DoNotTranslate", R.string.DoNotTranslate), value, payload, true);
+                    } else if (position == customTitleRow) {
+                        textCell.setTextAndValue(LocaleController.getString("customTitle", R.string.customTitle), Config.customTitle, payload, true);
                     }
                     break;
                 }
@@ -718,7 +732,7 @@ public class GeneralSettingActivity extends BaseActivity {
             if (position == general2Row || position == drawer2Row || position == translator2Row || position == devices2Row || position == stories2Row) {
                 return 1;
             } else if (position == tabsTitleTypeRow || position == translationProviderRow || position == deepLFormalityRow || position == translationTargetRow ||
-                position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow) {
+                position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow) {
                 return 2;
             } else if (position == generalRow || position == translatorRow || position == devicesRow || position == storiesRow) {
                 return 4;
@@ -744,5 +758,55 @@ public class GeneralSettingActivity extends BaseActivity {
             langCodes.add(currentLang);
         }
         return langCodes;
+    }
+
+    private void setCustomTitle(View view, int pos) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+        builder.setTitle(LocaleController.getString("setCustomTitle", R.string.setCustomTitle));
+
+        final EditTextBoldCursor editText = new EditTextBoldCursor(getParentActivity()) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(64), MeasureSpec.EXACTLY));
+            }
+        };
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
+        editText.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
+        editText.setHintText("Nnngram");
+        editText.setText(Config.customTitle);
+        editText.setHeaderHintColor(getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader));
+        editText.setSingleLine(true);
+        editText.setFocusable(true);
+        editText.setTransformHintToHeader(true);
+        editText.setLineColors(getThemedColor(Theme.key_windowBackgroundWhiteInputField), getThemedColor(Theme.key_windowBackgroundWhiteInputFieldActivated), getThemedColor(Theme.key_text_RedRegular));
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        editText.setBackgroundDrawable(null);
+        editText.requestFocus();
+        editText.setPadding(0, 0, 0, 0);
+        builder.setView(editText);
+
+        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (dialogInterface, i) -> {
+            if (editText.getText().toString().trim().isEmpty()) {
+                Config.customTitle = "Nnngram";
+            } else {
+                Config.customTitle = editText.getText().toString().trim();
+            }
+            listAdapter.notifyItemChanged(pos, PARTIAL);
+        });
+        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+        builder.show().setOnShowListener(dialog -> {
+            editText.requestFocus();
+            AndroidUtilities.showKeyboard(editText);
+        });
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) editText.getLayoutParams();
+        if (layoutParams != null) {
+            if (layoutParams instanceof FrameLayout.LayoutParams) {
+                ((FrameLayout.LayoutParams) layoutParams).gravity = Gravity.CENTER_HORIZONTAL;
+            }
+            layoutParams.rightMargin = layoutParams.leftMargin = AndroidUtilities.dp(24);
+            layoutParams.height = AndroidUtilities.dp(36);
+            editText.setLayoutParams(layoutParams);
+        }
+        editText.setSelection(0, editText.getText().length());
     }
 }

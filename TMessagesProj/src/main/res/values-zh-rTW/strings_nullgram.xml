@@ -327,4 +327,6 @@
     <string name="MergeMessage">合併訊息</string>
     <string name="filterZalgo">過濾 \"Zalgo\" 符號</string>
     <string name="ignoreFolderUnreadCount">忽略資料夾標籤上的未讀計數</string>
+    <string name="customTitle">自定义标题</string>
+    <string name="setCustomTitle">设置自定义标题</string>
 </resources>

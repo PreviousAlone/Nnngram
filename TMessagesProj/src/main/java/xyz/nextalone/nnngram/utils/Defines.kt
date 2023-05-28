@@ -205,6 +205,7 @@ object Defines {
     @BooleanConfig const val filterZalgo = "filterZalgo"
     @BooleanConfig const val ignoreFolderUnreadCount = "ignoreFolderUnreadCount"
     @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
+    @StringConfig("Nnngram") const val customTitle = "customTitle"
 
     /**
      * 数组中元素未找到的下标，值为-1
