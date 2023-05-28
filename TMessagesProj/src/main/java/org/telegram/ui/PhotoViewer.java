@@ -849,6 +849,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private ActionBarMenuItem shareItem;
     private ActionBarMenuSubItem qrItem;
     private ActionBarMenuSubItem translateItem;
+    private ActionBarMenuSubItem copyItem;
     private AlertDialog progressDialog;
     private LinearLayout itemsLayout;
     private SpeedButtonsLayout chooseSpeedLayout;
@@ -2076,6 +2077,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private final static int gallery_menu_qr = 84;
     private final static int gallery_menu_translate = 91;
     private final static int gallery_menu_save_messages = 92;
+    private final static int gallery_menu_copy_photo = 93;
 
     private final static int gallery_menu_reply = 21;
     private final static int gallery_menu_loop = 22;
@@ -5560,6 +5562,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 } else if (id == gallery_menu_save_messages) {
                     var accountInstance = AccountInstance.getInstance(currentAccount);
                     accountInstance.getSendMessagesHelper().sendMessage(new ArrayList<>(Collections.singletonList(currentMessageObject)),accountInstance.getUserConfig().getClientUserId(),false, false, true, 0);
+                } else if (id == gallery_menu_copy_photo) {
+                    MessageUtils.getInstance(currentAccount).addMessageToClipboard(currentMessageObject, () -> {
+                        if (BulletinFactory.canShowBulletin(parentFragment)) {
+                            BulletinFactory.of(parentFragment).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied)).show();
+                        }
+                    });
                 }
             }
 
@@ -5683,6 +5691,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         //menuItem.addSubItem(gallery_menu_edit_avatar, R.drawable.photo_paint, LocaleController.getString("EditPhoto", R.string.EditPhoto)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_set_as_main, R.drawable.msg_openprofile, LocaleController.getString("SetAsMain", R.string.SetAsMain)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_save_messages, R.drawable.msg_saved, LocaleController.getString("SaveMessages", R.string.saveMessages)).setColors(0xfffafafa, 0xfffafafa);
+        menuItem.addSubItem(gallery_menu_copy_photo, R.drawable.msg_copy, LocaleController.getString("CopyPhoto", R.string.CopyPhoto)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_delete, R.drawable.msg_delete, LocaleController.getString("Delete", R.string.Delete)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_cancel_loading, R.drawable.msg_cancel, LocaleController.getString("StopDownload", R.string.StopDownload)).setColors(0xfffafafa, 0xfffafafa);
         translateItem = menuItem.addSubItem(gallery_menu_translate, R.drawable.msg_translate, LocaleController.getString("TranslateMessage", R.string.TranslateMessage));
