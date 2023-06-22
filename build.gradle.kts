@@ -47,7 +47,7 @@ val verName = if (Version.isStable) {
 val androidTargetSdkVersion by extra(35)
 val androidMinSdkVersion by extra(27)
 val androidCompileSdkVersion by extra(35)
-val androidBuildToolsVersion by extra("34.0.0")
+val androidBuildToolsVersion = Version.findBuildToolsVersion()
 val androidCompileNdkVersion = "27.2.12479018"
 
 fun Project.configureBaseExtension() {
