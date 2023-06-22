@@ -49,6 +49,7 @@ import org.telegram.ui.Components.SideMenultItemAnimator;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 
 public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
@@ -315,20 +316,20 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         }
         UserConfig me = UserConfig.getInstance(UserConfig.selectedAccount);
         boolean showDivider = false;
-        items.add(new Item(16, LocaleController.getString(R.string.MyProfile), R.drawable.left_status_profile));
-        if (me != null && me.isPremium()) {
-            if (me.getEmojiStatus() != null) {
-                items.add(new Item(15, LocaleController.getString(R.string.ChangeEmojiStatus), R.drawable.msg_status_edit));
-            } else {
-                items.add(new Item(15, LocaleController.getString(R.string.SetEmojiStatus), R.drawable.msg_status_set));
-            }
+        if (Config.showProfileMyStories) {
+            items.add(new Item(16, LocaleController.getString(R.string.MyProfile), R.drawable.left_status_profile));
             showDivider = true;
         }
-//        if (MessagesController.getInstance(UserConfig.selectedAccount).storiesEnabled()) {
-//            items.add(new Item(17, LocaleController.getString(R.string.ProfileStories), R.drawable.msg_menu_stories));
-//            showDivider = true;
-//        }
-        showDivider = true;
+        if (Config.showChangeEmojiStatus) {
+            if (me != null && me.isPremium()) {
+                if (me.getEmojiStatus() != null) {
+                items.add(new Item(15, LocaleController.getString(R.string.ChangeEmojiStatus), R.drawable.msg_status_edit));
+                } else {
+                items.add(new Item(15, LocaleController.getString(R.string.SetEmojiStatus), R.drawable.msg_status_set));
+                }
+                showDivider = true;
+            }
+        }
         if (ApplicationLoader.applicationLoaderInstance != null) {
             if (ApplicationLoader.applicationLoaderInstance.extendDrawer(items)) {
                 showDivider = true;
@@ -347,12 +348,26 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         if (showDivider) {
             items.add(null); // divider
         }
-        items.add(new Item(2, LocaleController.getString(R.string.NewGroup), newGroupIcon));
-        //items.add(new Item(3, LocaleController.getString(R.string.NewSecretChat), newSecretIcon));
-        //items.add(new Item(4, LocaleController.getString(R.string.NewChannel), newChannelIcon));
-        items.add(new Item(6, LocaleController.getString(R.string.Contacts), contactsIcon));
-        items.add(new Item(10, LocaleController.getString(R.string.Calls), callsIcon));
-        items.add(new Item(11, LocaleController.getString(R.string.SavedMessages), savedIcon));
+        if (Config.showNewGroup) {
+            items.add(new Item(2, LocaleController.getString(R.string.NewGroup), newGroupIcon));
+        }
+        //items.add(new Item(3, LocaleController.getString("NewSecretChat", R.string.NewSecretChat), newSecretIcon));
+        //items.add(new Item(4, LocaleController.getString("NewChannel", R.string.NewChannel), newChannelIcon));
+        if (Config.showContacts) {
+            items.add(new Item(6, LocaleController.getString(R.string.Contacts), contactsIcon));
+        }
+        if (Config.showCalls) {
+            items.add(new Item(10, LocaleController.getString(R.string.Calls), callsIcon));
+        }
+//        if (Config.showPeopleNearby && hasGps) {
+//            items.add(new Item(12, LocaleController.getString(R.string.PeopleNearby), peopleNearbyIcon));
+//        }
+        if (Config.showSavedMessages) {
+            items.add(new Item(11, LocaleController.getString(R.string.SavedMessages), savedIcon));
+        }
+        if (Config.showArchivedChats) {
+            items.add(new Item(17, LocaleController.getString(R.string.ArchivedChats), R.drawable.msg_archive));
+        }
         items.add(new Item(8, LocaleController.getString(R.string.Settings), settingsIcon));
 //        items.add(null); // divider
 //        items.add(new Item(7, LocaleController.getString(R.string.InviteFriends), inviteIcon));
