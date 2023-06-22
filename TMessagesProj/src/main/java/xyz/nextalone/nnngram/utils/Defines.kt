@@ -211,6 +211,16 @@ object Defines {
     @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
     @StringConfig("Nnngram") const val customTitle = "customTitle"
 
+    // Drawer List
+    @BooleanConfig(true) const val showNewGroup = "showNewGroup"
+    @BooleanConfig(true) const val showContacts = "showContacts"
+    @BooleanConfig(true) const val showCalls = "showCalls"
+    @BooleanConfig(true) const val showPeopleNearby = "showPeopleNearby"
+    @BooleanConfig(true) const val showSavedMessages = "showSavedMessages"
+    @BooleanConfig const val showArchivedChats = "showArchivedChats"
+    @BooleanConfig(true) const val showChangeEmojiStatus = "showChangeEmojiStatus"
+    @BooleanConfig(true) const val showProfileMyStories = "showProfileMyStories"
+
     /**
      * 数组中元素未找到的下标，值为-1
      */
