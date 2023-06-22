@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
@@ -40,6 +41,7 @@ import org.telegram.messenger.LanguageDetector;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.DrawerLayoutContainer;
 import org.telegram.ui.ActionBar.Theme;
@@ -52,6 +54,7 @@ import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.EditTextBoldCursor;
+import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
@@ -80,6 +83,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int avatarBackgroundDarkenRow;
     private int largeAvatarAsBackgroundRow;
     private int hidePhoneRow;
+    private int drawerListRow;
     private int drawer2Row;
 
     private int translatorRow;
@@ -151,6 +155,8 @@ public class GeneralSettingActivity extends BaseActivity {
             parentLayout.rebuildAllFragmentViews(false, false);
             getNotificationCenter().postNotificationName(NotificationCenter.mainUserInfoChanged);
             listAdapter.notifyItemChanged(drawerRow, PARTIAL);
+        } else if (position == drawerListRow) {
+            showDrawerListAlert();
         } else if (position == avatarAsDrawerBackgroundRow) {
             Config.toggleAvatarAsDrawerBackground();
             if (view instanceof TextCheckCell) {
@@ -409,6 +415,7 @@ public class GeneralSettingActivity extends BaseActivity {
             largeAvatarAsBackgroundRow = -1;
         }
         hidePhoneRow = addRow("hidePhone");
+        drawerListRow = addRow("drawerList");
         drawer2Row = addRow();
 
         translatorRow = addRow();
@@ -583,6 +590,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndValue(LocaleController.getString("DoNotTranslate", R.string.DoNotTranslate), value, payload, true);
                     } else if (position == customTitleRow) {
                         textCell.setTextAndValue(LocaleController.getString("customTitle", R.string.customTitle), Config.getCustomTitle(), payload, true);
+                    } else if (position == drawerListRow) {
+                        textCell.setText(LocaleController.getString("drawerList", R.string.drawerList), false);
                     }
                     break;
                 }
@@ -732,7 +741,8 @@ public class GeneralSettingActivity extends BaseActivity {
             if (position == general2Row || position == drawer2Row || position == translator2Row || position == devices2Row || position == stories2Row) {
                 return 1;
             } else if (position == tabsTitleTypeRow || position == translationProviderRow || position == deepLFormalityRow || position == translationTargetRow ||
-                position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow) {
+                position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow ||
+                position == drawerListRow) {
                 return 2;
             } else if (position == generalRow || position == translatorRow || position == devicesRow || position == storiesRow) {
                 return 4;
@@ -812,5 +822,80 @@ public class GeneralSettingActivity extends BaseActivity {
             editText.setLayoutParams(layoutParams);
         }
         editText.setSelection(0, editText.getText().length());
+    }
+
+    private void showDrawerListAlert() {
+        if (getParentActivity() == null) {
+            return;
+        }
+        Context context = getParentActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(LocaleController.getString("drawerList", R.string.drawerList));
+
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout linearLayoutInviteContainer = new LinearLayout(context);
+        linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
+        boolean isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium();
+        int count = isPremium ? 8 : 6;
+        for (int a = 0; a < count; a++) {
+            TextCheckCell textCell = new TextCheckCell(context);
+            switch (a) {
+                case 0 -> textCell.setTextAndCheck(LocaleController.getString("NewGroup", R.string.NewGroup), Config.showNewGroup,  false);
+                case 1 -> textCell.setTextAndCheck(LocaleController.getString("Contacts", R.string.Contacts), Config.showContacts,  false);
+                case 2 -> textCell.setTextAndCheck(LocaleController.getString("Calls", R.string.Calls), Config.showCalls,  false);
+//                case 3 -> textCell.setTextAndCheck(LocaleController.getString("PeopleNearby", R.string.PeopleNearby), Config.showPeopleNearby,  false);
+                case 4 -> textCell.setTextAndCheck(LocaleController.getString("SavedMessages", R.string.SavedMessages), Config.showSavedMessages,  false);
+                case 5 -> textCell.setTextAndCheck(LocaleController.getString("ArchivedChats", R.string.ArchivedChats), Config.showArchivedChats, false);
+                case 6 -> textCell.setTextAndCheck(LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), Config.showChangeEmojiStatus,  false);
+                case 7 -> textCell.setTextAndCheck(LocaleController.getString("MyProfile", R.string.MyProfile), Config.showProfileMyStories,  false);
+            }
+            textCell.setTag(a);
+            textCell.setBackground(Theme.getSelectorDrawable(false));
+            linearLayoutInviteContainer.addView(textCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+            textCell.setOnClickListener(v2 -> {
+                Integer tag = (Integer) v2.getTag();
+                switch (tag) {
+                    case 0 -> {
+                        Config.toggleShowNewGroup();
+                        textCell.setChecked(Config.showNewGroup);
+                    }
+                    case 1 -> {
+                        Config.toggleShowContacts();
+                        textCell.setChecked(Config.showContacts);
+                    }
+                    case 2 -> {
+                        Config.toggleShowCalls();
+                        textCell.setChecked(Config.showCalls);
+                    }
+                    case 3 -> {
+                        Config.toggleShowPeopleNearby();
+                        textCell.setChecked(Config.showPeopleNearby);
+                    }
+                    case 4 -> {
+                        Config.toggleShowSavedMessages();
+                        textCell.setChecked(Config.showSavedMessages);
+                    }
+                    case 5 -> {
+                        Config.toggleShowArchivedChats();
+                        textCell.setChecked(Config.showArchivedChats);
+                    }
+                    case 6 -> {
+                        Config.toggleShowChangeEmojiStatus();
+                        textCell.setChecked(Config.showChangeEmojiStatus);
+                    }
+                    case 7 -> {
+                        Config.toggleShowProfileMyStories();
+                        textCell.setChecked(Config.showProfileMyStories);
+                    }
+                }
+            });
+        }
+        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
+        builder.setView(linearLayout);
+        showDialog(builder.create());
     }
 }

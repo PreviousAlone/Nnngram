@@ -363,4 +363,5 @@
     <string name="ignoreFolderUnreadCount">忽略資料夾標籤上的未讀計數</string>
     <string name="customTitle">自定义标题</string>
     <string name="setCustomTitle">设置自定义标题</string>
+    <string name="drawerList">側邊欄列表</string>
 </resources>
