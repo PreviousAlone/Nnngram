@@ -412,6 +412,7 @@ import xyz.nextalone.nnngram.helpers.TranslateHelper;
 import xyz.nextalone.nnngram.helpers.TranslateHelper.Status;
 import xyz.nextalone.nnngram.translate.LanguageDetectorTimeout;
 import xyz.nextalone.nnngram.ui.TranslatorSettingsPopupWrapper;
+import xyz.nextalone.nnngram.ui.sortList.items.TextStyleItems;
 import xyz.nextalone.nnngram.utils.Defines;
 import xyz.nextalone.nnngram.utils.Log;
 import xyz.nextalone.nnngram.utils.MessageUtils;
@@ -10346,39 +10347,72 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
         ActionBarMenuItem item = editTextItem.createView();
-        item.addSubItem(text_spoiler, LocaleController.getString(R.string.Spoiler));
-        if (chatMode == 0) {
-            item.addSubItem(text_quote, LocaleController.getString(R.string.Quote));
+        SpannableStringBuilder stringBuilder;
+        TextStyleSpan.TextStyleRun run;
+        List<Integer> enabledOrder = TextStyleItems.INSTANCE.getEnabledOrder();
+        for (int i : enabledOrder) {
+            switch (i) {
+                case 0:
+                    item.addSubItem(text_spoiler, LocaleController.getString(R.string.Spoiler));
+                    break;
+                case 1:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Bold));
+                    run = new TextStyleSpan.TextStyleRun();
+                    run.flags |= TextStyleSpan.FLAG_STYLE_BOLD;
+                    stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    item.addSubItem(text_bold, stringBuilder);
+                    break;
+                case 2:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Italic));
+                    run = new TextStyleSpan.TextStyleRun();
+                    run.flags |= TextStyleSpan.FLAG_STYLE_ITALIC;
+                    stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    item.addSubItem(text_italic, stringBuilder);
+                    break;
+                case 3:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Mono));
+                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    item.addSubItem(text_mono, stringBuilder);
+                    break;
+                case 4:
+                    if (currentEncryptedChat == null || AndroidUtilities.getPeerLayerVersion(currentEncryptedChat.layer) >= 101) {
+                        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Strike));
+                        run = new TextStyleSpan.TextStyleRun();
+                        run.flags |= TextStyleSpan.FLAG_STYLE_STRIKE;
+                        stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        item.addSubItem(text_strike, stringBuilder);
+                    }
+                    break;
+                case 5:
+                    if (currentEncryptedChat == null || AndroidUtilities.getPeerLayerVersion(currentEncryptedChat.layer) >= 101) {
+                        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Underline));
+                        run = new TextStyleSpan.TextStyleRun();
+                        run.flags |= TextStyleSpan.FLAG_STYLE_UNDERLINE;
+                        stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        item.addSubItem(text_underline, stringBuilder);
+                    }
+                    break;
+                case 6:
+                    item.addSubItem(text_link, LocaleController.getString(R.string.CreateLink));
+                    break;
+                case 7:
+                    item.addSubItem(text_mention, LocaleController.getString(R.string.CreateMention));
+                    break;
+                case 8:
+                    item.addSubItem(text_regular, LocaleController.getString(R.string.Regular));
+                    break;
+                case 9:
+                    if (chatMode == 0) {
+                        item.addSubItem(text_quote, LocaleController.getString(R.string.Quote));
+                    }
+                    break;
+                case 10:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.MonoCode));
+                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    item.addSubItem(text_code, stringBuilder);
+                    break;
+            }
         }
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Bold));
-        stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        item.addSubItem(text_bold, stringBuilder);
-        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Italic));
-        stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/ritalic.ttf")), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        item.addSubItem(text_italic, stringBuilder);
-        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Mono));
-        stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        item.addSubItem(text_mono, stringBuilder);
-        stringBuilder = new SpannableStringBuilder(LocaleController.getString("MonoCode", R.string.MonoCode));
-        stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        item.addSubItem(text_code, stringBuilder);
-        if (currentEncryptedChat == null || AndroidUtilities.getPeerLayerVersion(currentEncryptedChat.layer) >= 101) {
-            stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Strike));
-            TextStyleSpan.TextStyleRun run = new TextStyleSpan.TextStyleRun();
-            run.flags |= TextStyleSpan.FLAG_STYLE_STRIKE;
-            stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            item.addSubItem(text_strike, stringBuilder);
-
-            stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Underline));
-            run = new TextStyleSpan.TextStyleRun();
-            run.flags |= TextStyleSpan.FLAG_STYLE_UNDERLINE;
-            stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            item.addSubItem(text_underline, stringBuilder);
-        }
-        item.addSubItem(text_link, LocaleController.getString(R.string.CreateLink));
-        item.addSubItem(text_mention, LocaleController.getString(R.string.CreateMention));
-        item.addSubItem(text_regular, LocaleController.getString(R.string.Regular));
-
         filledEditTextItemMenu = true;
     }
 
@@ -25526,38 +25560,69 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             menu.removeItem(android.R.id.shareText);
         }
         int order = 6;
-        if (chat) {
-            menu.add(R.id.menu_groupbolditalic, R.id.menu_quote, order++, LocaleController.getString(R.string.Quote));
-        }
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_spoiler, order++, LocaleController.getString(R.string.Spoiler));
 
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Bold));
-        stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_bold, order++, stringBuilder);
-        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Italic));
-        stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/ritalic.ttf")), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_italic, order++, stringBuilder);
-        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Mono));
-        stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_mono, order++, stringBuilder);
-        stringBuilder = new SpannableStringBuilder(LocaleController.getString("MonoCode", R.string.MonoCode));
-        stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_code, order++, stringBuilder);
-        if (encryptedChat == null || AndroidUtilities.getPeerLayerVersion(encryptedChat.layer) >= 101) {
-            stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Strike));
-            TextStyleSpan.TextStyleRun run = new TextStyleSpan.TextStyleRun();
-            run.flags |= TextStyleSpan.FLAG_STYLE_STRIKE;
-            stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            menu.add(R.id.menu_groupbolditalic, R.id.menu_strike, order++, stringBuilder);
-            stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Underline));
-            run = new TextStyleSpan.TextStyleRun();
-            run.flags |= TextStyleSpan.FLAG_STYLE_UNDERLINE;
-            stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            menu.add(R.id.menu_groupbolditalic, R.id.menu_underline, order++, stringBuilder);
+        SpannableStringBuilder stringBuilder;
+        TextStyleSpan.TextStyleRun run;
+        List<Integer> enabledOrder = TextStyleItems.INSTANCE.getEnabledOrder();
+        for (int i : enabledOrder) {
+            switch (i) {
+                case 0:
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_spoiler, order++, LocaleController.getString(R.string.Spoiler));
+                    break;
+                case 1:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Bold));
+                    stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_bold, order++, stringBuilder);
+                    break;
+                case 2:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Italic));
+                    stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/ritalic.ttf")), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_italic, order++, stringBuilder);
+                    break;
+                case 3:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Mono));
+                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_mono, order++, stringBuilder);
+                    break;
+                case 4:
+                    if (encryptedChat == null || AndroidUtilities.getPeerLayerVersion(encryptedChat.layer) >= 101) {
+                        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Strike));
+                        run = new TextStyleSpan.TextStyleRun();
+                        run.flags |= TextStyleSpan.FLAG_STYLE_STRIKE;
+                        stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        menu.add(R.id.menu_groupbolditalic, R.id.menu_strike, order++, stringBuilder);
+                        break;
+                    }
+                case 5:
+                    if (encryptedChat == null || AndroidUtilities.getPeerLayerVersion(encryptedChat.layer) >= 101) {
+                        stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Underline));
+                        run = new TextStyleSpan.TextStyleRun();
+                        run.flags |= TextStyleSpan.FLAG_STYLE_UNDERLINE;
+                        stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        menu.add(R.id.menu_groupbolditalic, R.id.menu_underline, order++, stringBuilder);
+                    }
+                    break;
+                case 6:
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_link, order++, LocaleController.getString(R.string.CreateLink));
+                    break;
+                case 7:
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_mention, order++, LocaleController.getString(R.string.CreateMention));
+                    break;
+                case 8:
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_regular, order++, LocaleController.getString(R.string.Regular));
+                    break;
+                case 9:
+                    if (chat) {
+                        menu.add(R.id.menu_groupbolditalic, R.id.menu_quote, order++, LocaleController.getString(R.string.Quote));
+                    }
+                    break;
+                case 10:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.MonoCode));
+                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_code, order++, stringBuilder);
+                    break;
+            }
         }
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_link, order++, LocaleController.getString(R.string.CreateLink));
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_mention, order++, LocaleController.getString(R.string.CreateMention));
-        menu.add(R.id.menu_groupbolditalic, R.id.menu_regular, order++, LocaleController.getString(R.string.Regular));
     }
 
     private void updateScheduledInterface(boolean animated) {
