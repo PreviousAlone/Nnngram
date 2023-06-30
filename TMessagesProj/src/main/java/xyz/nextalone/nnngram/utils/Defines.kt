@@ -206,6 +206,7 @@ object Defines {
     @BooleanConfig const val ignoreFolderUnreadCount = "ignoreFolderUnreadCount"
     @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
     @StringConfig("Nnngram") const val customTitle = "customTitle"
+    const val textStyleSettings = "textStyleSettings"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
@@ -216,6 +217,19 @@ object Defines {
     @BooleanConfig const val showArchivedChats = "showArchivedChats"
     @BooleanConfig(true) const val showChangeEmojiStatus = "showChangeEmojiStatus"
     @BooleanConfig(true) const val showProfileMyStories = "showProfileMyStories"
+
+    // Text Style
+    @BooleanConfig(true) const val showTextSpoiler = "showTextSpoiler"
+    @BooleanConfig(true) const val showTextBold = "showTextBold"
+    @BooleanConfig(true) const val showTextItalic = "showTextItalic"
+    @BooleanConfig(true) const val showTextMono = "showTextMono"
+    @BooleanConfig(true) const val showTextStrike = "showTextStrike"
+    @BooleanConfig(true) const val showTextUnderline = "showTextUnderline"
+    @BooleanConfig(true) const val showTextCreateMention = "showTextCreateMention"
+    @BooleanConfig(true) const val showTextCreateLink = "showTextCreateLink"
+    @BooleanConfig(true) const val showTextRegular = "showTextRegular"
+    @BooleanConfig(true) const val showTextQuote = "showTextQuote"
+    @BooleanConfig(true) const val showTextMonoCode = "showTextMonoCode"
 
     /**
      * 数组中元素未找到的下标，值为-1

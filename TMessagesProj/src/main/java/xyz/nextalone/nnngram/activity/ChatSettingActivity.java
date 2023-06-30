@@ -22,6 +22,7 @@ package xyz.nextalone.nnngram.activity;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -39,6 +40,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -73,6 +76,9 @@ import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.helpers.EntitiesHelper;
 import xyz.nextalone.nnngram.ui.PopupBuilder;
 import xyz.nextalone.nnngram.ui.StickerSizePreviewMessagesCell;
+import xyz.nextalone.nnngram.ui.sortList.ItemTouchHelperCallback;
+import xyz.nextalone.nnngram.ui.sortList.SortListAdapter;
+import xyz.nextalone.nnngram.ui.sortList.TextStyleListAdapter;
 import xyz.nextalone.nnngram.utils.AlertUtil;
 import xyz.nextalone.nnngram.utils.Defines;
 import xyz.nextalone.nnngram.utils.StringUtils;
@@ -93,6 +99,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int hideGroupStickerRow;
     private int disablePremiumStickerRow;
     private int messageMenuRow;
+    private int textStyleSettingsRow;
     private int allowScreenshotOnNoForwardChatRow;
     private int labelChannelUserRow;
     private int displaySpoilerDirectlyRow;
@@ -201,6 +208,8 @@ public class ChatSettingActivity extends BaseActivity {
             }
         } else if (position == messageMenuRow) {
             showMessageMenuAlert();
+        } else if (position == textStyleSettingsRow) {
+            showTextStyleSettingsAlert();
         } else if (position == allowScreenshotOnNoForwardChatRow) {
             Config.toggleAllowScreenshotOnNoForwardChat();
             if (view instanceof TextCheckCell) {
@@ -433,6 +442,7 @@ public class ChatSettingActivity extends BaseActivity {
         hideGroupStickerRow = addRow("hideGroupSticker");
         disablePremiumStickerRow = addRow("disablePremiumSticker");
         messageMenuRow = addRow();
+        textStyleSettingsRow = addRow("textStyleSettings");
         if (Config.showHiddenSettings) {
             allowScreenshotOnNoForwardChatRow = addRow("allowScreenshotOnNoForwardChat");
         }
@@ -505,6 +515,8 @@ public class ChatSettingActivity extends BaseActivity {
                             String.valueOf(Math.round(ConfigManager.getFloatOrDefault(Defines.stickerSize, 14.0f))), payload, true);
                     } else if (position == messageMenuRow) {
                         textCell.setText(LocaleController.getString("MessageMenu", R.string.MessageMenu), false);
+                    } else if (position == textStyleSettingsRow) {
+                        textCell.setText(LocaleController.getString("TextStyleSettings", R.string.TextStyleSettings), false);
                     } else if (position == maxRecentStickerRow) {
                         textCell.setTextAndValue(LocaleController.getString("maxRecentSticker", R.string.maxRecentSticker), String.valueOf(Config.maxRecentSticker), payload, true);
 
@@ -694,7 +706,7 @@ public class ChatSettingActivity extends BaseActivity {
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
             }
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
         }
@@ -703,7 +715,7 @@ public class ChatSettingActivity extends BaseActivity {
         public int getItemViewType(int position) {
             if (position == chat2Row || position == stickerSize2Row) {
                 return TYPE_SHADOW;
-            } else if (position == messageMenuRow || position == customDoubleClickTapRow || position == maxRecentStickerRow || position == customQuickMessageRow || position == markdownParserRow) {
+            } else if (position == messageMenuRow || position == customDoubleClickTapRow || position == maxRecentStickerRow || position == customQuickMessageRow || position == markdownParserRow || position == textStyleSettingsRow) {
                 return TYPE_SETTINGS;
             } else if (position == chatRow || position == stickerSizeHeaderRow || position == markdownRow) {
                 return TYPE_HEADER;
@@ -850,6 +862,28 @@ public class ChatSettingActivity extends BaseActivity {
         showDialog(builder.create());
     }
 
+    private void showTextStyleSettingsAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+        builder.setTitle(LocaleController.getString("TextStyleSettings", R.string.TextStyleSettings));
+
+        RecyclerView recyclerView = new RecyclerView(getParentActivity());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getParentActivity()));
+        recyclerView.setPadding(AndroidUtilities.dp(16), 0, AndroidUtilities.dp(16), 0);
+
+        SortListAdapter adapter = new TextStyleListAdapter();
+        recyclerView.setAdapter(adapter);
+
+        ItemTouchHelperCallback itemTouchHelperCallback = new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        builder.setNeutralButton(LocaleController.getString("Default", R.string.Default), (dialog, which) -> adapter.reset());
+
+        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
+        builder.setView(recyclerView);
+        showDialog(builder.create());
+    }
+
     @SuppressLint("SetTextI18n")
     private void setMaxRecentSticker(View view, int pos) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
@@ -973,7 +1007,7 @@ public class ChatSettingActivity extends BaseActivity {
 
 
         builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (dialogInterface, i) -> {
-            if (StringUtils.isBlank(setDisplayNameEditText.getText().toString()) || StringUtils.isBlank(setMessageEditText.getText().toString())) {
+            if (StringUtils.isBlank(setDisplayNameEditText.getText().toString())|| StringUtils.isBlank(setMessageEditText.getText().toString())) {
                 AlertUtil.showToast(LocaleController.getString("emptyInput", R.string.emptyInput));
             } else {
                 ConfigManager.putString(Defines.customQuickMessageDisplayName, setDisplayNameEditText.getText().toString());
@@ -1067,7 +1101,7 @@ public class ChatSettingActivity extends BaseActivity {
         @Override
         protected void onDraw(Canvas canvas) {
             textPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText));
-            canvas.drawText(String.valueOf(Math.round(ConfigManager.getFloatOrDefault(Defines.stickerSize, 14.0f))), getMeasuredWidth() - AndroidUtilities.dp(39), AndroidUtilities.dp(28), textPaint);
+            canvas.drawText(String.valueOf(Math.round(ConfigManager.getFloatOrDefault(Defines.stickerSize, 14.0f))), getMeasuredWidth()- AndroidUtilities.dp(39), AndroidUtilities.dp(28), textPaint);
         }
 
         @Override
@@ -1075,7 +1109,7 @@ public class ChatSettingActivity extends BaseActivity {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             int width = MeasureSpec.getSize(widthMeasureSpec);
             if (lastWidth != width) {
-                sizeBar.setProgress((ConfigManager.getFloatOrDefault(Defines.stickerSize, 14.0f) - startStickerSize) / (float) (endStickerSize - startStickerSize));
+                sizeBar.setProgress((ConfigManager.getFloatOrDefault(Defines.stickerSize, 14.0f) - startStickerSize)/ (float) (endStickerSize - startStickerSize));
                 lastWidth = width;
             }
         }
