@@ -331,4 +331,5 @@
     <string name="setCustomTitle">设置自定义标题</string>
     <string name="drawerList">側邊欄列表</string>
     <string name="TextStyleSettings">文本样式</string>
+    <string name="hideSendAsButton">隐藏发送者按钮</string>
 </resources>
