@@ -745,6 +745,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     private Runnable recordAudioVideoRunnable = new Runnable() {
         @Override
         public void run() {
+            if (Config.hideQuickSendMediaBottom) {
+                return;
+            }
             if (delegate == null || parentActivity == null) {
                 return;
             }
@@ -2561,7 +2564,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             }
         };
         audioVideoButtonContainer.setSoundEffectsEnabled(false);
-        sendButtonContainer.addView(audioVideoButtonContainer, LayoutHelper.createFrame(48, 48));
+        if (!Config.hideQuickSendMediaBottom)
+            sendButtonContainer.addView(audioVideoButtonContainer, LayoutHelper.createFrame(48, 48));
+        else
+            audioVideoButtonContainer.setVisibility(GONE);
         audioVideoButtonContainer.setFocusable(true);
         audioVideoButtonContainer.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 //        audioVideoButtonContainer.setOnTouchListener((view, motionEvent) -> {
@@ -2891,16 +2897,23 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 return super.onTouchEvent(event);
             }
         };
-        sendButton.setVisibility(INVISIBLE);
+        if (Config.hideQuickSendMediaBottom)
+            sendButton.setVisibility(VISIBLE);
+        else
+            sendButton.setVisibility(INVISIBLE);
         int color = getThemedColor(Theme.key_chat_messagePanelSend);
         sendButton.setContentDescription(LocaleController.getString("Send", R.string.Send));
         sendButton.setSoundEffectsEnabled(false);
-        sendButton.setScaleX(0.1f);
-        sendButton.setScaleY(0.1f);
-        sendButton.setAlpha(0.0f);
-        if (Build.VERSION.SDK_INT >= 21) {
-            sendButton.setBackgroundDrawable(Theme.createSelectorDrawable(ColorUtils.setAlphaComponent(color, 24), 1));
+        if (Config.hideQuickSendMediaBottom) {
+            sendButton.setScaleX(1.0f);
+            sendButton.setScaleY(1.0f);
+            sendButton.setAlpha(1.0f);
+        } else {
+            sendButton.setScaleX(0.1f);
+            sendButton.setScaleY(0.1f);
+            sendButton.setAlpha(0.0f);
         }
+        sendButton.setBackgroundDrawable(Theme.createSelectorDrawable(ColorUtils.setAlphaComponent(color, 24), 1));
         sendButtonContainer.addView(sendButton, LayoutHelper.createFrame(48, 48));
         sendButton.setOnClickListener(view -> {
             if ((sendPopupWindow != null && sendPopupWindow.isShowing()) || (runningAnimationAudio != null && runningAnimationAudio.isRunning()) || moveToSendStateRunnable != null) {
@@ -6515,7 +6528,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 Theme.setSelectorDrawableColor(sendButton.getBackground(), Color.argb(24, Color.red(color), Color.green(color), Color.blue(color)), true);
             }
 
-            if (audioVideoButtonContainer.getVisibility() == VISIBLE || slowModeButton.getVisibility() == VISIBLE || showBotButton || showSendButton) {
+            if (audioVideoButtonContainer.getVisibility() == VISIBLE || (Config.hideQuickSendMediaBottom && sendButton.getVisibility() == VISIBLE) || slowModeButton.getVisibility() == VISIBLE || showBotButton || showSendButton) {
                 if (animated) {
                     if (runningAnimationType == 1 && caption == null || runningAnimationType == 3 && caption != null) {
                         return;
@@ -6935,15 +6948,21 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         delegate.onAttachButtonShow();
                     }
                 }
-
-                audioVideoButtonContainer.setVisibility(VISIBLE);
+                if (Config.hideQuickSendMediaBottom) {
+                    sendButton.setVisibility(VISIBLE);
+                }else {
+                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                }
                 runningAnimation = new AnimatorSet();
                 runningAnimationType = 2;
 
                 ArrayList<Animator> animators = new ArrayList<>();
+                if (Config.hideQuickSendMediaBottom) {
+                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_X, 1.0f));
+                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_Y, 1.0f));
+                }
                 animators.add(ObjectAnimator.ofFloat(audioVideoButtonContainer, View.SCALE_X, 1.0f));
                 animators.add(ObjectAnimator.ofFloat(audioVideoButtonContainer, View.SCALE_Y, 1.0f));
-
                 float alpha = 1.0f;
                 TLRPC.Chat chat = parentFragment == null ? null : parentFragment.getCurrentChat();
                 TLRPC.UserFull userFull = parentFragment == null ? userInfo : parentFragment.getCurrentUserInfo();
@@ -6953,6 +6972,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     alpha = userFull.voice_messages_forbidden ? 0.5f : 1.0f;
                 }
 
+                if (Config.hideQuickSendMediaBottom)
+                    animators.add(ObjectAnimator.ofFloat(sendButton, View.ALPHA, alpha));
                 animators.add(ObjectAnimator.ofFloat(audioVideoButtonContainer, View.ALPHA, alpha));
                 if (cancelBotButton.getVisibility() == VISIBLE) {
                     animators.add(ObjectAnimator.ofFloat(cancelBotButton, View.SCALE_X, 0.1f));
@@ -6967,9 +6988,11 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     animators.add(ObjectAnimator.ofFloat(slowModeButton, View.SCALE_Y, 0.1f));
                     animators.add(ObjectAnimator.ofFloat(slowModeButton, View.ALPHA, 0.0f));
                 } else {
-                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_X, 0.1f));
-                    animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_Y, 0.1f));
-                    animators.add(ObjectAnimator.ofFloat(sendButton, View.ALPHA, 0.0f));
+                    if (!Config.hideQuickSendMediaBottom) {
+                        animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_X, 0.1f));
+                        animators.add(ObjectAnimator.ofFloat(sendButton, View.SCALE_Y, 0.1f));
+                        animators.add(ObjectAnimator.ofFloat(sendButton, View.ALPHA, 0.0f));
+                    }
                 }
 
                 runningAnimation.playTogether(animators);
@@ -6982,8 +7005,12 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             runningAnimation = null;
                             runningAnimationType = 0;
 
-                            if (audioVideoButtonContainer != null) {
-                                audioVideoButtonContainer.setVisibility(VISIBLE);
+                            if (Config.hideQuickSendMediaBottom) {
+                                sendButton.setVisibility(VISIBLE);
+                            } else {
+                                if (audioVideoButtonContainer != null) {
+                                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                                }
                             }
                         }
                     }
@@ -7001,10 +7028,17 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 slowModeButton.setScaleY(0.1f);
                 slowModeButton.setAlpha(0.0f);
                 setSlowModeButtonVisible(false);
-                sendButton.setScaleX(0.1f);
-                sendButton.setScaleY(0.1f);
-                sendButton.setAlpha(0.0f);
-                sendButton.setVisibility(GONE);
+                if (!Config.hideQuickSendMediaBottom) {
+                    sendButton.setScaleX(0.1f);
+                    sendButton.setScaleY(0.1f);
+                    sendButton.setAlpha(0.0f);
+                    sendButton.setVisibility(GONE);
+                } else {
+                    sendButton.setScaleX(1.0f);
+                    sendButton.setScaleY(1.0f);
+                    sendButton.setAlpha(1.0f);
+                    sendButton.setVisibility(VISIBLE);
+                }
                 cancelBotButton.setScaleX(0.1f);
                 cancelBotButton.setScaleY(0.1f);
                 cancelBotButton.setAlpha(0.0f);
@@ -7015,13 +7049,17 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     expandStickersButton.setAlpha(0.0f);
                     expandStickersButton.setVisibility(GONE);
                 }
-                audioVideoButtonContainer.setScaleX(1.0f);
-                audioVideoButtonContainer.setScaleY(1.0f);
-                audioVideoButtonContainer.setAlpha(1.0f);
-                audioVideoButtonContainer.setVisibility(VISIBLE);
+                if (!Config.hideQuickSendMediaBottom) {
+                    audioVideoButtonContainer.setScaleX(1.0f);
+                    audioVideoButtonContainer.setScaleY(1.0f);
+                    audioVideoButtonContainer.setAlpha(1.0f);
+                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                }
                 if (attachLayout != null) {
                     if (getVisibility() == VISIBLE) {
-                        delegate.onAttachButtonShow();
+                        if (delegate != null) {
+                            delegate.onAttachButtonShow();
+                        }
                     }
                     attachLayoutAlpha = 1.0f;
                     updateAttachLayoutParams();
@@ -8104,10 +8142,17 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 audioVideoButtonContainer.setAlpha(0.0f);
                 audioVideoButtonContainer.setVisibility(GONE);
             } else {
-                sendButton.setScaleX(0.1f);
-                sendButton.setScaleY(0.1f);
-                sendButton.setAlpha(0.0f);
-                sendButton.setVisibility(GONE);
+                if (Config.hideQuickSendMediaBottom) {
+                    sendButton.setScaleX(1.0f);
+                    sendButton.setScaleY(1.0f);
+                    sendButton.setAlpha(1.0f);
+                    sendButton.setVisibility(VISIBLE);
+                } else {
+                    sendButton.setScaleX(0.1f);
+                    sendButton.setScaleY(0.1f);
+                    sendButton.setAlpha(0.0f);
+                    sendButton.setVisibility(GONE);
+                }
                 slowModeButton.setScaleX(0.1f);
                 slowModeButton.setScaleY(0.1f);
                 slowModeButton.setAlpha(0.0f);
@@ -8116,10 +8161,12 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 attachLayoutAlpha = 1.0f;
                 updateAttachLayoutParams();
                 attachLayout.setVisibility(VISIBLE);
-                audioVideoButtonContainer.setScaleX(1.0f);
-                audioVideoButtonContainer.setScaleY(1.0f);
-                audioVideoButtonContainer.setAlpha(1.0f);
-                audioVideoButtonContainer.setVisibility(VISIBLE);
+                if (!Config.hideQuickSendMediaBottom) {
+                    audioVideoButtonContainer.setScaleX(1.0f);
+                    audioVideoButtonContainer.setScaleY(1.0f);
+                    audioVideoButtonContainer.setAlpha(1.0f);
+                    audioVideoButtonContainer.setVisibility(VISIBLE);
+                }
             }
             createScheduledButton();
             if (scheduledButton != null && scheduledButton.getTag() != null) {
@@ -8158,7 +8205,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     }
 
     public View getSendButton() {
-        return sendButton.getVisibility() == VISIBLE ? sendButton : audioVideoButtonContainer;
+        return sendButton.getVisibility() == VISIBLE || Config.hideQuickSendMediaBottom ? sendButton : audioVideoButtonContainer;
     }
 
     public View getAudioVideoButtonContainer() {
