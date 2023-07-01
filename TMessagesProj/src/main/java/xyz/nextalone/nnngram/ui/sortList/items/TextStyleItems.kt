@@ -37,4 +37,5 @@ object TextStyleItems : SortListItems() {
     )
 
     override var define = Defines.textStyleSettings
+    override val itemDefaultConfig: Boolean = true
 }

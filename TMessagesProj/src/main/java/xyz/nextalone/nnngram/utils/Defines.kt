@@ -210,7 +210,7 @@ object Defines {
     @BooleanConfig const val ignoreFolderUnreadCount = "ignoreFolderUnreadCount"
     @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
     @StringConfig("Nnngram") const val customTitle = "customTitle"
-    const val textStyleSettings = "textStyleSettings"
+    @StringConfig("") const val textStyleSettings = "textStyleSettings"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
