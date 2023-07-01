@@ -211,6 +211,7 @@ object Defines {
     @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
     @StringConfig("Nnngram") const val customTitle = "customTitle"
     @StringConfig("") const val textStyleSettings = "textStyleSettings"
+    @BooleanConfig const val hideSendAsButton = "hideSendAsButton"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
