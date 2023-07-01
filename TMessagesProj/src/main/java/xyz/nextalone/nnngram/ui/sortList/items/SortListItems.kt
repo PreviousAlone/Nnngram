@@ -6,6 +6,7 @@ abstract class SortListItems {
     abstract val itemDefines: Array<String>
     abstract val itemNames: Array<String>
     abstract val define: String
+    abstract val itemDefaultConfig: Boolean
 
     private fun getSavedOrder(): MutableList<Int> {
         val originToAdjusted: MutableList<Int> = (TextStyleItems.itemDefines.indices).toMutableList()
@@ -23,7 +24,7 @@ abstract class SortListItems {
     private fun getEnabledIndices(): MutableList<Int> {
         val enabledIndices = mutableListOf<Int>()
         for (i in TextStyleItems.itemDefines.indices) {
-            if (ConfigManager.getBooleanOrFalse(TextStyleItems.itemDefines[i])) {
+            if (ConfigManager.getBooleanOrDefault(TextStyleItems.itemDefines[i], itemDefaultConfig)) {
                 enabledIndices.add(i)
             }
         }
