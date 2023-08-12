@@ -267,6 +267,9 @@ public class StoriesController {
         if (isLastUploadingFailed(dialogId)) {
             return true;
         }
+        if (Config.hideStories) {
+            return false;
+        }
         TL_stories.PeerStories stories = allStoriesMap.get(dialogId);
         if (stories == null) {
             stories = getStoriesFromFullPeer(dialogId);
