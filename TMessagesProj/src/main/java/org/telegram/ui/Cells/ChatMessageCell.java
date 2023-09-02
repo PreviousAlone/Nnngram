@@ -16285,7 +16285,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 && currentChat != null && currentMessageObject.isSenderChannel()) {
                 if (Config.channelAlias) {
                     String aliasName = ConfigManager.getStringOrDefault(Defines.channelAliasPrefix
-                        + currentMessageObject.messageOwner.from_id.channel_id, null);
+                        + currentMessageObject.messageOwner.from_id.channel_id, "");
 
                     String nickname = null;
                     if (Config.linkedUser
