@@ -19,8 +19,8 @@ abstract class SortListAdapter(
     private var originToAdjusted: MutableList<Int> = (itemDefines.indices).toMutableList()
 
     init {
-        val savedOrder = ConfigManager.getStringOrDefault(define, "") ?: ""
-        if (savedOrder.isNotEmpty()) {
+        val savedOrder = ConfigManager.getStringOrDefault(define, "")
+        if (savedOrder?.isNotEmpty() == true) {
             val savedOrderList = savedOrder.split(",").map { it.toInt() }
             for (i in itemDefines.indices) {
                 originToAdjusted[i] = savedOrderList[i]
