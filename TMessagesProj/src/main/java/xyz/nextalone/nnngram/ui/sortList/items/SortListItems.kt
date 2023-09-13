@@ -10,8 +10,8 @@ abstract class SortListItems {
 
     private fun getSavedOrder(): MutableList<Int> {
         val originToAdjusted: MutableList<Int> = (TextStyleItems.itemDefines.indices).toMutableList()
-        val savedOrder = ConfigManager.getStringOrDefault(TextStyleItems.define, "") ?: ""
-        if (savedOrder.isNotEmpty()) {
+        val savedOrder = ConfigManager.getStringOrDefault(TextStyleItems.define, "")
+        if (savedOrder?.isNotEmpty() == true) {
             val savedOrderList = savedOrder.split(",").map { it.toInt() }
             for (i in 0 until TextStyleItems.itemDefines.size) {
                 originToAdjusted[i] = savedOrderList[i]
