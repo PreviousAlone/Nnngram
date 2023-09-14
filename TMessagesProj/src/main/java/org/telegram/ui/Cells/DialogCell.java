@@ -1915,7 +1915,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 }
             }
         }
-        nameString = StringUtils.zalgoFilter(nameString);
+        if (topicIconInName == null)
+            nameString = StringUtils.zalgoFilter(nameString);
         int timeWidth;
         if (drawTime) {
             timeWidth = (int) Math.ceil(Theme.dialogs_timePaint.measureText(timeString));
