@@ -110,6 +110,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int disableSharePhoneWithContactByDefaultRow;
     private int ignoreUserSpecifiedReplyColorRow;
     private int ignoreFolderUnreadCountRow;
+    private int hideFilterMuteAllRow;
 
     private int devicesRow;
     private int useSystemEmojiRow;
@@ -386,6 +387,11 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.hideStories);
             }
+        } else if (position == hideFilterMuteAllRow) {
+            Config.toggleHideFilterMuteAll();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.hideFilterMuteAll);
+            }
         }
 
     }
@@ -453,6 +459,7 @@ public class GeneralSettingActivity extends BaseActivity {
         ignoreUserSpecifiedReplyColorRow = addRow("ignoreUserSpecifiedReplyColor");
         tabsTitleTypeRow = addRow("tabsTitleType");
         ignoreFolderUnreadCountRow = addRow("ignoreFolderUnreadCount");
+        hideFilterMuteAllRow = addRow("hideFilterMuteAll");
         general2Row = addRow();
 
         devicesRow = addRow();
@@ -652,6 +659,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("HideStories", R.string.HideStories), Config.hideStories, true);
                     } else if (position == ignoreFolderUnreadCountRow) {
                         textCell.setTextAndCheck(LocaleController.getString("ignoreFolderUnreadCount", R.string.ignoreFolderUnreadCount), Config.ignoreFolderUnreadCount, true);
+                    } else if (position == hideFilterMuteAllRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("hideFilterMuteAll", R.string.hideFilterMuteAll), Config.hideFilterMuteAll, true);
                     }
                     break;
                 }

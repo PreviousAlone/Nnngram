@@ -333,4 +333,5 @@
     <string name="drawerList">侧边栏列表</string>
     <string name="TextStyleSettings">文本样式</string>
     <string name="hideSendAsButton">隐藏发送者按钮</string>
+    <string name="hideFilterMuteAll">隐藏文件夹中的\"全部取消静音\"</string>
 </resources>
