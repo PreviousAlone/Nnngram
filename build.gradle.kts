@@ -25,7 +25,7 @@ val verName = if (Version.isStable) {
     "v" + Version.officialVersionName + "-preview-" + (Common.getGitHeadRefsSuffix(rootProject))
 }
 
-val androidTargetSdkVersion by extra(34)
+val androidTargetSdkVersion by extra(33)
 val androidMinSdkVersion by extra(24)
 val androidCompileSdkVersion by extra(34)
 val androidBuildToolsVersion = Version.findBuildToolsVersion()
