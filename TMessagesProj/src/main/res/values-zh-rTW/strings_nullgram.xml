@@ -333,4 +333,6 @@
     <string name="TextStyleSettings">文本样式</string>
     <string name="hideSendAsButton">隐藏发送者按钮</string>
     <string name="hideFilterMuteAll">隱藏文件夾中的\"全部取消靜音\"</string>
+
+    <string name="Quote">引用</string>
 </resources>
