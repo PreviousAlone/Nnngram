@@ -9,7 +9,7 @@
     <string name="ViewSourceCode">View Source Code</string>
     <string name="Categories">دسته‌ها</string>
     <string name="About">درباره‌ی ما</string>
-    <string name="OfficialChannelName">NullgramClient</string>
+    <string name="OfficialChannelName">nagram_group</string>
     <string name="noAvailableUpdate">هیچ به‌روزرسانی‌ای موجود نیست.</string>
     <string name="updateAvailable">بروزرسانی جدید در دسترس است</string>
     <string name="variantsNotFound">همخوانی نسخه دیگر به صورت خودکار ناموفق بود.\nلطفا به صورت دستی از گیتهاب دانلود کنید.</string>

@@ -9,7 +9,7 @@
     <string name="ViewSourceCode">Manba kodini ko\'rish</string>
     <string name="Categories">Kategoriyalar</string>
     <string name="About">Haqida</string>
-    <string name="OfficialChannelName">NullgramClient</string>
+    <string name="OfficialChannelName">nagram_group</string>
     <string name="noAvailableUpdate">Sizda oxirgi versiya</string>
     <string name="updateAvailable">Yangilanish mavjud</string>
     <string name="variantsNotFound">Release variants fail to match automatically.\nPlease download manually from GitHub.</string>

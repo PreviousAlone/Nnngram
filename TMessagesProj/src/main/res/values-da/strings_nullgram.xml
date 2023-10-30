@@ -9,7 +9,7 @@
     <string name="ViewSourceCode">View Source Code</string>
     <string name="Categories">Categories</string>
     <string name="About">About</string>
-    <string name="OfficialChannelName">NullgramClient</string>
+    <string name="OfficialChannelName">nagram_group</string>
     <string name="noAvailableUpdate">No Update.</string>
     <string name="updateAvailable">New Update Available</string>
     <string name="variantsNotFound">Release variants fail to match automatically.\nPlease download manually from GitHub.</string>

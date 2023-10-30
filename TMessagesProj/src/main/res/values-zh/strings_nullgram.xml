@@ -9,7 +9,7 @@
     <string name="ViewSourceCode">查看源代码</string>
     <string name="Categories">类别</string>
     <string name="About">关于</string>
-    <string name="OfficialChannelName">NullgramClient</string>
+    <string name="OfficialChannelName">nagram_group</string>
     <string name="noAvailableUpdate">无可用更新</string>
     <string name="updateAvailable">新更新可用</string>
     <string name="variantsNotFound">发布变量无法自动匹配。\n请从GitHub 手动下载。</string>

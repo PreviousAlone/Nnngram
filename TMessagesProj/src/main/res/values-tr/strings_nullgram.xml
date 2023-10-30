@@ -9,7 +9,7 @@
     <string name="ViewSourceCode">Kaynak Kodunu Görüntüle</string>
     <string name="Categories">Kategoriler</string>
     <string name="About">Hakkında</string>
-    <string name="OfficialChannelName">NullgramClient</string>
+    <string name="OfficialChannelName">nagram_group</string>
     <string name="noAvailableUpdate">Güncelleme Yok.</string>
     <string name="updateAvailable">Yeni Güncelleştirme Mevcut</string>
     <string name="variantsNotFound">Sürüm varyantları otomatik olarak eşleşmiyor.\nLütfen GitHub\'dan manuel olarak indirin.</string>

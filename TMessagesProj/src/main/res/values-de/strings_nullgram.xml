@@ -9,7 +9,7 @@
     <string name="ViewSourceCode">Quellcode anzeigen</string>
     <string name="Categories">Kategorien</string>
     <string name="About">Über uns</string>
-    <string name="OfficialChannelName">NullgramClient</string>
+    <string name="OfficialChannelName">nagram_group</string>
     <string name="noAvailableUpdate">Kein Update verfügbar.</string>
     <string name="updateAvailable">Ein neues Update ist verfügbar</string>
     <string name="variantsNotFound">Die Release-Varianten stimmen nicht automatisch überein.\nBitte laden Sie sie sich manuell von GitHub herunter.</string>

@@ -9,7 +9,7 @@
     <string name="ViewSourceCode">Zobrazit zdrojový kód</string>
     <string name="Categories">Kategorie</string>
     <string name="About">Informace</string>
-    <string name="OfficialChannelName">NullgramClient</string>
+    <string name="OfficialChannelName">nagram_group</string>
     <string name="noAvailableUpdate">Žádné aktualizace.</string>
     <string name="updateAvailable">Nová aktualizace k dispozici</string>
     <string name="variantsNotFound">Varianty vydání se neshodují automaticky. Stáhněte si je prosím ručně z GitHubu.</string>
