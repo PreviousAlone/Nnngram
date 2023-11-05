@@ -10454,28 +10454,38 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         for (int i : enabledOrder) {
             switch (i) {
                 case 0:
-                    item.addSubItem(text_spoiler, LocaleController.getString(R.string.Spoiler));
+                    if (chatMode == 0) {
+                        item.addSubItem(text_quote, LocaleController.getString(R.string.Quote));
+                    }
                     break;
                 case 1:
+                    item.addSubItem(text_spoiler, LocaleController.getString(R.string.Spoiler));
+                    break;
+                case 2:
                     stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Bold));
                     run = new TextStyleSpan.TextStyleRun();
                     run.flags |= TextStyleSpan.FLAG_STYLE_BOLD;
                     stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     item.addSubItem(text_bold, stringBuilder);
                     break;
-                case 2:
+                case 3:
                     stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Italic));
                     run = new TextStyleSpan.TextStyleRun();
                     run.flags |= TextStyleSpan.FLAG_STYLE_ITALIC;
                     stringBuilder.setSpan(new TextStyleSpan(run), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     item.addSubItem(text_italic, stringBuilder);
                     break;
-                case 3:
+                case 4:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.MonoCode));
+                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    item.addSubItem(text_code, stringBuilder);
+                    break;
+                case 5:
                     stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Mono));
                     stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     item.addSubItem(text_mono, stringBuilder);
                     break;
-                case 4:
+                case 6:
                     if (currentEncryptedChat == null || AndroidUtilities.getPeerLayerVersion(currentEncryptedChat.layer) >= 101) {
                         stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Strike));
                         run = new TextStyleSpan.TextStyleRun();
@@ -10484,7 +10494,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         item.addSubItem(text_strike, stringBuilder);
                     }
                     break;
-                case 5:
+                case 7:
                     if (currentEncryptedChat == null || AndroidUtilities.getPeerLayerVersion(currentEncryptedChat.layer) >= 101) {
                         stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Underline));
                         run = new TextStyleSpan.TextStyleRun();
@@ -10493,24 +10503,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         item.addSubItem(text_underline, stringBuilder);
                     }
                     break;
-                case 6:
+                case 8:
                     item.addSubItem(text_link, LocaleController.getString(R.string.CreateLink));
                     break;
-                case 7:
+                case 9:
                     item.addSubItem(text_mention, LocaleController.getString(R.string.CreateMention));
                     break;
-                case 8:
-                    item.addSubItem(text_regular, LocaleController.getString(R.string.Regular));
-                    break;
-                case 9:
-                    if (chatMode == 0) {
-                        item.addSubItem(text_quote, LocaleController.getString(R.string.Quote));
-                    }
-                    break;
                 case 10:
-                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.MonoCode));
-                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    item.addSubItem(text_code, stringBuilder);
+                    item.addSubItem(text_regular, LocaleController.getString(R.string.Regular));
                     break;
             }
         }
@@ -26081,24 +26081,34 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         for (int i : enabledOrder) {
             switch (i) {
                 case 0:
-                    menu.add(R.id.menu_groupbolditalic, R.id.menu_spoiler, order++, LocaleController.getString(R.string.Spoiler));
+                    if (chat) {
+                        menu.add(R.id.menu_groupbolditalic, R.id.menu_quote, order++, LocaleController.getString(R.string.Quote));
+                    }
                     break;
                 case 1:
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_spoiler, order++, LocaleController.getString(R.string.Spoiler));
+                    break;
+                case 2:
                     stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Bold));
                     stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     menu.add(R.id.menu_groupbolditalic, R.id.menu_bold, order++, stringBuilder);
                     break;
-                case 2:
+                case 3:
                     stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Italic));
                     stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/ritalic.ttf")), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     menu.add(R.id.menu_groupbolditalic, R.id.menu_italic, order++, stringBuilder);
                     break;
-                case 3:
+                case 4:
+                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.MonoCode));
+                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_code, order++, stringBuilder);
+                    break;
+                case 5:
                     stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Mono));
                     stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     menu.add(R.id.menu_groupbolditalic, R.id.menu_mono, order++, stringBuilder);
                     break;
-                case 4:
+                case 6:
                     if (encryptedChat == null || AndroidUtilities.getPeerLayerVersion(encryptedChat.layer) >= 101) {
                         stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Strike));
                         run = new TextStyleSpan.TextStyleRun();
@@ -26107,7 +26117,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         menu.add(R.id.menu_groupbolditalic, R.id.menu_strike, order++, stringBuilder);
                         break;
                     }
-                case 5:
+                case 7:
                     if (encryptedChat == null || AndroidUtilities.getPeerLayerVersion(encryptedChat.layer) >= 101) {
                         stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.Underline));
                         run = new TextStyleSpan.TextStyleRun();
@@ -26116,24 +26126,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         menu.add(R.id.menu_groupbolditalic, R.id.menu_underline, order++, stringBuilder);
                     }
                     break;
-                case 6:
+                case 8:
                     menu.add(R.id.menu_groupbolditalic, R.id.menu_link, order++, LocaleController.getString(R.string.CreateLink));
                     break;
-                case 7:
+                case 9:
                     menu.add(R.id.menu_groupbolditalic, R.id.menu_mention, order++, LocaleController.getString(R.string.CreateMention));
                     break;
-                case 8:
-                    menu.add(R.id.menu_groupbolditalic, R.id.menu_regular, order++, LocaleController.getString(R.string.Regular));
-                    break;
-                case 9:
-                    if (chat) {
-                        menu.add(R.id.menu_groupbolditalic, R.id.menu_quote, order++, LocaleController.getString(R.string.Quote));
-                    }
-                    break;
                 case 10:
-                    stringBuilder = new SpannableStringBuilder(LocaleController.getString(R.string.MonoCode));
-                    stringBuilder.setSpan(new TypefaceSpan(Typeface.MONOSPACE), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    menu.add(R.id.menu_groupbolditalic, R.id.menu_code, order++, stringBuilder);
+                    menu.add(R.id.menu_groupbolditalic, R.id.menu_regular, order++, LocaleController.getString(R.string.Regular));
                     break;
             }
         }
