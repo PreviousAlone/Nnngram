@@ -3169,7 +3169,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     StringBuilder str = new StringBuilder();
                     ArrayList<Integer> toDeleteMessagesIds = new ArrayList<>();
                     MessageObject toEdit = null;
-                    
+                    ArrayList<TLRPC.MessageEntity> entities;
+                    entities = new ArrayList<>();
                     for (int a = 1; a >= 0; a--) {
                         ArrayList<Integer> ids = new ArrayList<>();
                         for (int b = 0; b < selectedMessagesIds[a].size(); b++) {
@@ -3188,7 +3189,21 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 continue;
                             }
                             if (str.length() != 0) {
-                                str.append("  ");
+                                str.append(" ");
+                            }
+                            if (messageObject.messageOwner.entities != null && !messageObject.messageOwner.entities.isEmpty()) {
+                                for (TLRPC.MessageEntity entity : messageObject.messageOwner.entities) {
+                                    if (entity instanceof TLRPC.TL_messageEntityMentionName) {
+                                        TLRPC.TL_inputMessageEntityMentionName mention = new TLRPC.TL_inputMessageEntityMentionName();
+                                        mention.length = entity.length;
+                                        mention.offset = str.length() + entity.offset;
+                                        mention.user_id = getMessagesController().getInputUser(((TLRPC.TL_messageEntityMentionName) entity).user_id);
+                                        entities.add(mention);
+                                    } else {
+                                        entity.offset += str.length();
+                                        entities.add(entity);
+                                    }
+                                }
                             }
                             str.append(messageObject.messageText);
                             if (messageObject.getSenderId() == UserConfig.getInstance(currentAccount).getClientUserId()) {
@@ -3203,11 +3218,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (str.length() != 0 && toEdit != null) {
                         if (toEdit.canEditMessage(currentChat)) {
                             toEdit.editingMessage = str;
+                            toEdit.editingMessageEntities = entities;
                             SendMessagesHelper.getInstance(currentAccount).editMessage(toEdit, null, null, null, null, null, false, toEdit.hasMediaSpoilers(), null);
                         } else {
                             MessageObject replyTo = toEdit.replyMessageObject;
                             toDeleteMessagesIds.add(toEdit.getId());
-                            SendMessagesHelper.getInstance(currentAccount).sendMessage(SendMessagesHelper.SendMessageParams.of(str.toString(), dialog_id, replyTo, getThreadMessage(), null, false, null, null, null, true, 0, null, false));
+                            SendMessagesHelper.getInstance(currentAccount)
+                                .sendMessage(SendMessagesHelper.SendMessageParams.of(str.toString(), dialog_id, replyTo, getThreadMessage(), null, false, entities, null, null, true, 0, null, false));
                         }
                         MessagesController.getInstance(currentAccount).deleteMessages(toDeleteMessagesIds, null, null, dialog_id, true, false);
                     }
