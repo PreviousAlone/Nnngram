@@ -135,6 +135,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int disablePhotoSideActionRow;
     private int mergeMessageRow;
     private int filterZalgoRow;
+    private int hideKeyboardWhenScrollingRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -438,6 +439,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.filterZalgo);
             }
+        } else if (position == hideKeyboardWhenScrollingRow) {
+            Config.toggleHideKeyboardWhenScrolling();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.hideKeyboardWhenScrolling);
+            }
         }
     }
 
@@ -501,6 +507,7 @@ public class ChatSettingActivity extends BaseActivity {
         disablePhotoSideActionRow = addRow("disablePhotoSideAction");
         mergeMessageRow = addRow("mergeMessage");
         filterZalgoRow = addRow("filterZalgo");
+        hideKeyboardWhenScrollingRow = addRow("hideKeyboardWhenScrolling");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -667,6 +674,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("MergeMessage", R.string.MergeMessage), Config.mergeMessage, true);
                     } else if (position == filterZalgoRow) {
                         textCell.setTextAndCheck(LocaleController.getString("filterZalgo", R.string.filterZalgo), Config.filterZalgo, true);
+                    } else if (position == hideKeyboardWhenScrollingRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("hideKeyboardWhenScrolling", R.string.hideKeyboardWhenScrolling), Config.hideKeyboardWhenScrolling, true);
                     }
                     break;
                 }
