@@ -209,6 +209,7 @@ object Defines {
     @StringConfig("") const val textStyleSettings = "textStyleSettings"
     @BooleanConfig const val hideSendAsButton = "hideSendAsButton"
     @BooleanConfig const val hideFilterMuteAll = "hideFilterMuteAll"
+    @BooleanConfig const val hideKeyboardWhenScrolling = "hideKeyboardWhenScrolling"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
