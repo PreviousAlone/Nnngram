@@ -812,6 +812,11 @@ public class GeneralSettingActivity extends BaseActivity {
             }
             listAdapter.notifyItemChanged(pos, PARTIAL);
         });
+        builder.setNeutralButton(LocaleController.getString("Default", R.string.Default), (dialogInterface, i) -> {
+            ConfigManager.deleteValue(Defines.customTitle);
+            Config.customTitle = "Nnngram";
+            listAdapter.notifyItemChanged(pos, PARTIAL);
+        });
         builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
         builder.show().setOnShowListener(dialog -> {
             editText.requestFocus();
