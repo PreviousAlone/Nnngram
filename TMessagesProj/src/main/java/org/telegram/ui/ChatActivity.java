@@ -34892,12 +34892,30 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     getSendMessagesHelper().sendSticker(selectedObject.getDocument(), null, dialog_id, replyToMsg, threadMessageObject, null, null, null, true, 0, false, null);
                     return true;
                 } else {
-                    var message = messageObject.messageOwner.message;
+                    String message;
+                    ArrayList<TLRPC.MessageEntity> origin_entities;
+                    if (messageObject.translated) {
+                        if (messageObject.originalMessage instanceof String) {
+                            message = (String) messageObject.originalMessage;
+                            origin_entities = messageObject.messageOwner.entities;
+                        } else if (messageObject.originalMessage instanceof Pair) {
+                            Pair<String, ArrayList<TLRPC.MessageEntity>> pair =
+                                (Pair<String, ArrayList<TLRPC.MessageEntity>>) messageObject.originalMessage;
+                            message = pair.first;
+                            origin_entities = pair.second;
+                        } else {
+                            message = messageObject.messageOwner.message;
+                            origin_entities = messageObject.messageOwner.entities;
+                        }
+                    } else {
+                        message = messageObject.messageOwner.message;
+                        origin_entities = messageObject.messageOwner.entities;
+                    }
                     if (!TextUtils.isEmpty(message)) {
                         ArrayList<TLRPC.MessageEntity> entities;
-                        if (messageObject.messageOwner.entities != null && !messageObject.messageOwner.entities.isEmpty()) {
+                        if (origin_entities != null && !origin_entities.isEmpty()) {
                             entities = new ArrayList<>();
-                            for (TLRPC.MessageEntity entity : messageObject.messageOwner.entities) {
+                            for (TLRPC.MessageEntity entity : origin_entities) {
                                 if (entity instanceof TLRPC.TL_messageEntityMentionName) {
                                     TLRPC.TL_inputMessageEntityMentionName mention = new TLRPC.TL_inputMessageEntityMentionName();
                                     mention.length = entity.length;
