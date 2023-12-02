@@ -9210,7 +9210,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                 photoImage.setOrientation(currentMessageObject.sendPreviewEntry.orientation, currentMessageObject.sendPreviewEntry.invert, true);
                                 photoImage.setImage(ImageLocation.getForPath("thumb://" + currentMessageObject.sendPreviewEntry.imageId + ":" + currentMessageObject.sendPreviewEntry.path), null, null, null, null, null, currentMessageObject.sendPreviewEntry.thumb, 0, null, messageObject, 0);
                             }
-                            
+
                         }
                     } else if (autoPlayingMedia) {
                         photoImage.setAllowStartAnimation(true);
@@ -16819,9 +16819,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     } else if (messageObject.replyMessageObject == null && messageObject.messageOwner.reply_to != null && messageObject.messageOwner.reply_to.reply_from != null) {
                         name = messageObject.getReplyQuoteNameWithIcon();
                     } else if (messageObject.replyMessageObject != null) {
-//                        if (drawForwardedName) {
-//                            name = AndroidUtilities.removeDiacritics(messageObject.replyMessageObject.getForwardedName());
-//                        }
+                        if (drawForwardedName && messageObject.getForwardedName() != null) {
+                            name = AndroidUtilities.removeDiacritics(messageObject.replyMessageObject.getForwardedName());
+                        }
 
                         if (name == null) {
                             long fromId = messageObject.replyMessageObject.getFromChatId();
