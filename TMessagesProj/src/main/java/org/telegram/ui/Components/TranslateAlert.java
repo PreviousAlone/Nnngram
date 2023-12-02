@@ -273,7 +273,7 @@ public class TranslateAlert extends Dialog {
         this.onLinkPress = onLinkPress;
         this.noforwards = noforwards;
         this.fragment = fragment;
-        this.fromLanguage = /*fromLanguage != null && fromLanguage.equals("und") ? "auto" : */fromLanguage;
+        this.fromLanguage = fromLanguage == null || fromLanguage.equals("und") ? "auto" : fromLanguage;
         this.toLanguage = toLanguage;
         this.text = text;
         this.textBlocks = new ArrayList<>();
