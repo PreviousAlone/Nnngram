@@ -1450,7 +1450,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
 
             private String translateFromLanguage = null;
             private void updateTranslateButton(Menu menu) {
-                menu.getItem(3).setVisible(!LanguageDetector.hasSupport() || translateFromLanguage != null && !TranslateHelper.isLanguageRestricted(translateFromLanguage));
+                menu.getItem(3).setVisible(!LanguageDetector.hasSupport() || translateFromLanguage == null || !TranslateHelper.isLanguageRestricted(translateFromLanguage));
             }
 
             @Override
