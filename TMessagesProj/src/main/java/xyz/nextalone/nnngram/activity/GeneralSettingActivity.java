@@ -791,7 +791,7 @@ public class GeneralSettingActivity extends BaseActivity {
         };
         editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         editText.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
-        editText.setHintText("Nnngram");
+        editText.setHintText(LocaleController.getString("AppName", R.string.AppName));
         editText.setText(Config.customTitle);
         editText.setHeaderHintColor(getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader));
         editText.setSingleLine(true);
@@ -806,15 +806,14 @@ public class GeneralSettingActivity extends BaseActivity {
 
         builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (dialogInterface, i) -> {
             if (editText.getText().toString().trim().isEmpty()) {
-                Config.customTitle = "Nnngram";
+                Config.setCustomTitle(LocaleController.getString("AppName", R.string.AppName));
             } else {
-                Config.customTitle = editText.getText().toString().trim();
+                Config.setCustomTitle(editText.getText().toString().trim());
             }
             listAdapter.notifyItemChanged(pos, PARTIAL);
         });
         builder.setNeutralButton(LocaleController.getString("Default", R.string.Default), (dialogInterface, i) -> {
-            ConfigManager.deleteValue(Defines.customTitle);
-            Config.customTitle = "Nnngram";
+            Config.setCustomTitle(LocaleController.getString("AppName", R.string.AppName));
             listAdapter.notifyItemChanged(pos, PARTIAL);
         });
         builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
