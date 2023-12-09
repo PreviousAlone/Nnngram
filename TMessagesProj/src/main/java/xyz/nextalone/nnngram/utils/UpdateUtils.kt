@@ -44,9 +44,9 @@ import java.util.Arrays
 
 object UpdateUtils {
 
-    private const val channelUsername = "NullgramClient"
+    private const val channelUsername = "Nnngram"
 
-    private val originalChannelUsername = String(Base64.decode("TnVsbGdyYW1DbGllbnQK", Base64.DEFAULT))
+    private val originalChannelUsername = String(Base64.decode("Tm5uZ3JhbQo=", Base64.DEFAULT))
 
     @JvmStatic
     fun postCheckFollowChannel(ctx: Context, currentAccount: Int) = CoroutineScope(Dispatchers.IO).launch {
@@ -122,7 +122,7 @@ object UpdateUtils {
             return
         }
 
-        if (BuildConfig.APPLICATION_ID != Arrays.toString(Base64.decode("dG9wLnF3cTIzMzMubnVsbGdyYW0=", Base64.DEFAULT))) {
+        if (BuildConfig.APPLICATION_ID != Arrays.toString(Base64.decode("eHl6Lm5leHRhbG9uZS5ubm5ncmFtCg==", Base64.DEFAULT))) {
             ApplicationLoader.applicationHandler.post {
                 val messagesCollector = MessagesController.getInstance(currentAccount)
                 val userConfig = UserConfig.getInstance(currentAccount)
@@ -150,22 +150,18 @@ object UpdateUtils {
     }
 
     private const val maxReadCount = 50
-    private const val stableMetadataChannelID: Long = 1514826137
-    private const val stableMetadataChannelName = "NullgramMetaData"
-    private const val previewMetadataChannelID: Long = 1524514483
-    private const val previewMetadataChannelName = "PreviewMetaData"
-    private const val stableChannelAPKsID: Long = 1645976613
-    private const val stableChannelAPKsName = "NullgramAPKs"
-    private const val previewChannelAPKsID: Long = 1714986438
-    private const val previewChannelAPKsName = "NullgramCI"
+//    private const val stableMetadataChannelID: Long = 1514826137
+//    private const val stableMetadataChannelName = "NullgramMetaData"
+    private const val previewMetadataChannelID: Long = 2135305446
+    private const val previewMetadataChannelName = "NnngramMetaData"
+//    private const val stableChannelAPKsID: Long = 1645976613
+//    private const val stableChannelAPKsName = "NullgramAPKs"
+    private const val previewChannelAPKsID: Long = 1848519901
+    private const val previewChannelAPKsName = "Nnngram"
 
     @JvmStatic
     fun retrieveUpdateMetadata(callback: (UpdateMetadata?, Boolean) -> Unit) {
-        val (metadataChannelID, metadataChannelName) = when (ConfigManager.getIntOrDefault(Defines.updateChannel, -1)) {
-            Defines.stableChannel -> stableMetadataChannelID to stableMetadataChannelName
-            Defines.ciChannel -> previewMetadataChannelID to previewMetadataChannelName
-            else -> if (BuildConfig.VERSION_NAME.contains("preview")) previewMetadataChannelID to previewMetadataChannelName else stableMetadataChannelID to stableMetadataChannelName
-        }
+        val (metadataChannelID, metadataChannelName) = previewMetadataChannelID to  previewMetadataChannelName
         val localVersionCode = BuildConfig.VERSION_CODE
         val accountInstance = AccountInstance.getInstance(UserConfig.selectedAccount)
         TLRPC.TL_messages_getHistory().apply {
@@ -278,11 +274,7 @@ object UpdateUtils {
     @JvmStatic
     fun checkUpdate(callback: (TLRPC.TL_help_appUpdate?, Boolean) -> Unit) {
         if (!UserConfig.getInstance(UserConfig.selectedAccount).isClientActivated) return
-        val (apksChannelID, apksChannelName) = when (ConfigManager.getIntOrDefault(Defines.updateChannel, -1)) {
-            Defines.stableChannel -> stableChannelAPKsID to stableChannelAPKsName
-            Defines.ciChannel -> previewChannelAPKsID to previewChannelAPKsName
-            else -> if (BuildConfig.VERSION_NAME.contains("preview")) previewChannelAPKsID to previewChannelAPKsName else stableChannelAPKsID to stableChannelAPKsName
-        }
+        val (apksChannelID, apksChannelName) = previewChannelAPKsID to previewChannelAPKsName
         val accountInstance = AccountInstance.getInstance(UserConfig.selectedAccount)
         retrieveUpdateMetadata { metadata, error ->
             if (metadata == null) {
