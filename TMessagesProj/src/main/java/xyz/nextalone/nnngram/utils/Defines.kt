@@ -150,7 +150,7 @@ object Defines {
     const val updateChannel = "updateChannel"
     const val stableChannel = 1
     const val disableAutoUpdate = 0
-    const val ciChannel = 2
+//    const val ciChannel = 2
     const val updateChannelSkip = "updateChannelSkip"
 
     // Tab Menu
