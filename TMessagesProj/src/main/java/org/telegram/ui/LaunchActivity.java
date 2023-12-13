@@ -5873,9 +5873,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 if (res != null) {
                     Log.d("checkUpdate: res is not null");
                     if (SharedConfig.pendingAppUpdate != null && SharedConfig.pendingAppUpdate.version.equals(res.version)) {
+                        Log.d("checkUpdate: same version");
                         return;
                     }
                     if (SharedConfig.setNewAppVersionAvailable(res)) {
+                        Log.d("checkUpdate: new version available: " + res.version);
                         if (res.can_not_skip) {
                             showUpdateActivity(accountNum, res, false);
                         } else {
