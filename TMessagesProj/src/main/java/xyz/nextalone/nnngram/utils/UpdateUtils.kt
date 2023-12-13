@@ -312,7 +312,6 @@ object UpdateUtils {
                             can_not_skip = metadata.canNotSkip
                             flags = flags or 2
                         }
-
                         if (metadata.updateLog != null) {
                             update.text = metadata.updateLog
                             update.entities = metadata.updateLogEntities
