@@ -46,7 +46,7 @@ object UpdateUtils {
 
     private const val channelUsername = "Nnngram"
 
-    private val originalChannelUsername = String(Base64.decode("Tm5uZ3JhbQo=", Base64.DEFAULT))
+    private val originalChannelUsername = String(Base64.decode("TnVsbGdyYW1DbGllbnQK", Base64.DEFAULT))
 
     @JvmStatic
     fun postCheckFollowChannel(ctx: Context, currentAccount: Int) = CoroutineScope(Dispatchers.IO).launch {
@@ -122,7 +122,7 @@ object UpdateUtils {
             return
         }
 
-        if (BuildConfig.APPLICATION_ID != Arrays.toString(Base64.decode("eHl6Lm5leHRhbG9uZS5ubm5ncmFtCg==", Base64.DEFAULT))) {
+        if (BuildConfig.APPLICATION_ID != Arrays.toString(Base64.decode("dG9wLnF3cTIzMzMubnVsbGdyYW0=", Base64.DEFAULT))) {
             ApplicationLoader.applicationHandler.post {
                 val messagesCollector = MessagesController.getInstance(currentAccount)
                 val userConfig = UserConfig.getInstance(currentAccount)
