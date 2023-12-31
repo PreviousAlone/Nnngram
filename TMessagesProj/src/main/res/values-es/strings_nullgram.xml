@@ -159,7 +159,7 @@
     <string name="Command">Orden</string>
     <string name="setCustomQuickMessage">Definir mensaje rápido personalizado</string>
     <string name="emptyInput">No puedes escribir nada aquí</string>
-    <string name="numberInvalid"><![CDATA[El número debe ser >20 y 150<]]></string>
+    <string name="numberInvalid"><![CDATA[El número debe ser >20 y 200<]]></string>
     <string name="notANumber">¡Debes introducir un número!</string>
     <string name="notACommand">¡Debes introducir una cadena!</string>
     <string name="SendAsReply">Enviar como respuesta</string>
