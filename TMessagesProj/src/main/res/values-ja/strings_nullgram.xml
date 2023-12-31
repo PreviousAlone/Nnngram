@@ -159,7 +159,7 @@
     <string name="Command">コマンド</string>
     <string name="setCustomQuickMessage">カスタムクイックメッセージを設定</string>
     <string name="emptyInput">ここには何も入力できません</string>
-    <string name="numberInvalid"><![CDATA[番号は20文字以上150文字以内です]]></string>
+    <string name="numberInvalid"><![CDATA[番号は20文字以上200文字以内です]]></string>
     <string name="notANumber">番号を入力する必要があります!</string>
     <string name="notACommand">文字列を入力する必要があります!</string>
     <string name="SendAsReply">返信として送信</string>

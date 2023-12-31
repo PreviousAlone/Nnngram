@@ -161,7 +161,7 @@
     <string name="Command">命令</string>
     <string name="setCustomQuickMessage">設定自訂快速訊息</string>
     <string name="emptyInput">這裡不能輸入空值</string>
-    <string name="numberInvalid"><![CDATA[數字應該大於 20 且小於 150]]></string>
+    <string name="numberInvalid"><![CDATA[數字應該大於 20 且小於 200]]></string>
     <string name="notANumber">你必須輸入一個數字！</string>
     <string name="notACommand">你必須輸入一個字串！</string>
     <string name="SendAsReply">以回覆方式發送</string>

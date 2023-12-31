@@ -161,7 +161,7 @@
     <string name="Command">الأمر</string>
     <string name="setCustomQuickMessage">تعيين رسالة سريعة مخصصة</string>
     <string name="emptyInput">لا يمكنك إدخال أي شيء هنا</string>
-    <string name="numberInvalid"><![CDATA[يجب أن يكون الرقم >20 و 150<]]></string>
+    <string name="numberInvalid"><![CDATA[يجب أن يكون الرقم >20 و 200<]]></string>
     <string name="notANumber">يجب عليك إدخال رقم!</string>
     <string name="notACommand">يجب عليك إدخال سلسلة!</string>
     <string name="SendAsReply">إرسال كـ رد</string>

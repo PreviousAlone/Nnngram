@@ -973,7 +973,7 @@ public class ChatSettingActivity extends BaseActivity {
                     AlertUtil.showToast(LocaleController.getString("notANumber", R.string.notANumber));
                 } else {
                     final int targetNum = Integer.parseInt(editText.getText().toString().trim());
-                    if (targetNum > 150 || targetNum < 20)
+                    if (targetNum > 200 || targetNum < 20)
                         AlertUtil.showToast(LocaleController.getString("numberInvalid", R.string.numberInvalid));
                     else
                         Config.setMaxRecentSticker(Integer.parseInt(editText.getText().toString()));
