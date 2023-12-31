@@ -210,6 +210,7 @@ object Defines {
     @BooleanConfig const val hideSendAsButton = "hideSendAsButton"
     @BooleanConfig const val hideFilterMuteAll = "hideFilterMuteAll"
     @BooleanConfig const val hideKeyboardWhenScrolling = "hideKeyboardWhenScrolling"
+    @BooleanConfig const val searchInPlace =  "searchInPlace"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"

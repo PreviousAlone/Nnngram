@@ -334,6 +334,7 @@
     <string name="hideSendAsButton">隐藏发送者按钮</string>
     <string name="hideFilterMuteAll">隱藏文件夾中的\"全部取消靜音\"</string>
     <string name="hideKeyboardWhenScrolling">滑動時隱藏鍵盤</string>
+    <string name="searchInPlace">在当前位置中开始搜索</string>
 
     <string name="Quote">引用</string>
 </resources>

@@ -34,7 +34,6 @@ import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 
@@ -3385,9 +3384,13 @@ public class MediaDataController extends BaseController {
     public boolean isMessageFound(int messageId, boolean mergeDialog) {
         return searchResultMessagesMap[mergeDialog ? 1 : 0].indexOfKey(messageId) >= 0;
     }
-
+    
     public void searchMessagesInChat(String query, long dialogId, long mergeDialogId, int guid, int direction, int replyMessageId, TLRPC.User user, TLRPC.Chat chat) {
-        searchMessagesInChat(query, dialogId, mergeDialogId, guid, direction, replyMessageId, false, user, chat, true);
+        searchMessagesInChat(query, dialogId, mergeDialogId, guid, direction, replyMessageId, user, chat, false);
+    }
+    
+    public void searchMessagesInChat(String query, long dialogId, long mergeDialogId, int guid, int direction, int replyMessageId, TLRPC.User user, TLRPC.Chat chat, boolean firstSearch) {
+        searchMessagesInChat(query, dialogId, mergeDialogId, guid, direction, replyMessageId, false, user, chat, true, firstSearch);
     }
 
     public void jumpToSearchedMessage(int guid, int index) {
@@ -3398,9 +3401,21 @@ public class MediaDataController extends BaseController {
         MessageObject messageObject = searchResultMessages.get(lastReturnedNum);
         getNotificationCenter().postNotificationName(NotificationCenter.chatSearchResultsAvailable, guid, messageObject.getId(), getMask(), messageObject.getDialogId(), lastReturnedNum, messagesSearchCount[0] + messagesSearchCount[1], true);
     }
-
+    
+    public void setCurrentMessage(int index) {
+        lastReturnedNum = index;
+    }
+    
+    public void setCurrentMaxMessage() {
+        lastReturnedNum = searchResultMessages.size() - 1;
+    }
+    
     public void loadMoreSearchMessages() {
-        if (loadingMoreSearchMessages || messagesSearchEndReached[0] && lastMergeDialogId == 0 && messagesSearchEndReached[1]) {
+        loadMoreSearchMessages(false);
+    }
+    
+    public void loadMoreSearchMessages(boolean force) {
+        if (!force && (loadingMoreSearchMessages || messagesSearchEndReached[0] && lastMergeDialogId == 0 && messagesSearchEndReached[1])) {
             return;
         }
         int temp = searchResultMessages.size();
@@ -3409,8 +3424,12 @@ public class MediaDataController extends BaseController {
         lastReturnedNum = temp;
         loadingMoreSearchMessages = true;
     }
-
+    
     private void searchMessagesInChat(String query, long dialogId, long mergeDialogId, int guid, int direction, int replyMessageId, boolean internal, TLRPC.User user, TLRPC.Chat chat, boolean jumpToMessage) {
+        searchMessagesInChat(query, dialogId, mergeDialogId, guid, direction, replyMessageId, internal, user, chat, jumpToMessage, false);
+    }
+    
+    private void searchMessagesInChat(String query, long dialogId, long mergeDialogId, int guid, int direction, int replyMessageId, boolean internal, TLRPC.User user, TLRPC.Chat chat, boolean jumpToMessage, boolean firstSearch) {
         int max_id = 0;
         long queryWithDialog = dialogId;
         boolean firstQuery = !internal;
@@ -3609,7 +3628,9 @@ public class MediaDataController extends BaseController {
                                     lastReturnedNum = searchResultMessages.size() - 1;
                                 }
                                 MessageObject messageObject = searchResultMessages.get(lastReturnedNum);
-                                getNotificationCenter().postNotificationName(NotificationCenter.chatSearchResultsAvailable, guid, messageObject.getId(), getMask(), messageObject.getDialogId(), lastReturnedNum, messagesSearchCount[0] + messagesSearchCount[1], jumpToMessage);
+                                getNotificationCenter().postNotificationName(NotificationCenter.chatSearchResultsAvailable, guid, messageObject.getId(), getMask(),
+                                    messageObject.getDialogId(), lastReturnedNum, messagesSearchCount[0] + messagesSearchCount[1], jumpToMessage,
+                                    firstSearch);
                             }
                         }
                         if (queryWithDialogFinal == dialogId && messagesSearchEndReached[0] && mergeDialogId != 0 && !messagesSearchEndReached[1]) {

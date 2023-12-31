@@ -283,6 +283,7 @@ import xyz.nextalone.nnngram.activity.MessageDetailActivity;
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.config.DialogConfig;
 import xyz.nextalone.nnngram.config.ForwardContext;
+import xyz.nextalone.nnngram.helpers.MessageHelper;
 import xyz.nextalone.nnngram.helpers.QrHelper;
 import xyz.nextalone.nnngram.helpers.TranslateHelper;
 import xyz.nextalone.nnngram.translate.LanguageDetectorTimeout;
@@ -19167,13 +19168,54 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 boolean jumpToMessage = (Boolean) args[6];
                 if (jumpToMessage) {
                     int messageId = (Integer) args[1];
+                    int mask = (Integer) args[2];
+                    int num = (Integer) args[4];
+                    boolean firstSearch = args.length > 7 && (boolean) args[7];
+                    if (Config.searchInPlace && firstSearch) {
+                        int currentMessageId = getFirstVisibleMessage();
+                        if (currentMessageId != 0) {
+                            ArrayList<MessageObject> foundMessageObjects = getMediaDataController().getFoundMessageObjects();
+                            List<Integer> foundMessageIds = new ArrayList<>();
+                            for (MessageObject message: foundMessageObjects) {
+                                foundMessageIds.add(message.getId());
+                            }
+                            Collections.sort(foundMessageIds);
+                            if (foundMessageIds.get(0) > currentMessageId) {
+                                Runnable loop = () -> {
+                                    getMediaDataController().setCurrentMaxMessage();
+                                    getMediaDataController().searchMessagesInChat(null, dialog_id, mergeDialogId, classGuid, 1, threadMessageId, searchingUserMessages,
+                                        searchingChatMessages, firstSearch);
+                                };
+                                if (Looper.myLooper() == Looper.getMainLooper()) {
+                                    new Thread(loop).start();
+                                } else {
+                                    loop.run();
+                                }
+                                return;
+                            }
+
+                            int insertionPoint = Collections.binarySearch(foundMessageIds, currentMessageId);
+                            int nextLargerIndex = (insertionPoint < 0) ? Math.max(-(insertionPoint + 1) - 1, 0) : insertionPoint;
+                            if (nextLargerIndex < foundMessageIds.size()) {
+                                Integer nextLargerMessageId = foundMessageIds.get(nextLargerIndex);
+                                if (Math.abs(nextLargerMessageId) < Math.abs(messageId)) {
+                                    mask = mask | 2;
+                                }
+                                messageId = nextLargerMessageId;
+                                nextLargerIndex = foundMessageIds.size() - nextLargerIndex - 1;
+                                getMediaDataController().setCurrentMessage(nextLargerIndex);
+                                num = nextLargerIndex;
+                            }
+                        }
+                    } else {
+                    }
                     long did = (Long) args[3];
                     if (messageId != 0) {
                         scrollToMessageId(messageId, 0, true, did == dialog_id ? 0 : 1, true, 0);
                     } else {
                         updateVisibleRows();
                     }
-                    updateSearchButtons((Integer) args[2], (Integer) args[4], (Integer) args[5]);
+                    updateSearchButtons(mask, num, (Integer) args[5]);
                     if (searchItem != null) {
                         searchItem.setShowSearchProgress(false);
                     }
@@ -28656,7 +28698,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (searchItem != null) {
                 searchItem.setSearchFieldText(text, false);
             }
-            getMediaDataController().searchMessagesInChat(text, dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages);
+            getMediaDataController().searchMessagesInChat(text, dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages, true);
         }
         updatePinnedMessageView(true);
     }
@@ -31224,7 +31266,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         public void onSearchPressed(EditText editText) {
             searchWas = true;
             updateSearchButtons(0, 0, -1);
-            getMediaDataController().searchMessagesInChat(editText.getText().toString(), dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages);
+            getMediaDataController().searchMessagesInChat(editText.getText().toString(), dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages, true);
         }
 
         @Override
@@ -35130,5 +35172,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             contentView.addView(chatListThanosEffect, 1 + contentView.indexOfChild(chatListView), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         }
         return chatListThanosEffect;
+    }
+    
+    private int getFirstVisibleMessage() {
+        return MessageHelper.INSTANCE.getFirstVisibleMessage(chatLayoutManager, chatListView, chatAdapter, messages);
     }
 }
