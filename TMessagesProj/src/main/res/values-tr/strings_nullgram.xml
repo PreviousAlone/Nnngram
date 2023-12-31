@@ -143,7 +143,7 @@
     <string name="Command">Komut</string>
     <string name="setCustomQuickMessage">Özel Hızlı Mesaj Ayarla</string>
     <string name="emptyInput">Buraya hiçbir şey giremezsiniz</string>
-    <string name="numberInvalid"><![CDATA[Sayı >20 ve 150< olmalıdır 20 den büyük 150 den küçük]]></string>
+    <string name="numberInvalid"><![CDATA[Sayı >20 ve 200< olmalıdır 20 den büyük 200 den küçük]]></string>
     <string name="notANumber">Bir sayı girmelisiniz!</string>
     <string name="notACommand">Bir dize girmelisiniz!</string>
     <string name="SendAsReply">Bir Yanıt Olarak</string>

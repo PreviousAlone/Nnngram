@@ -144,7 +144,7 @@
     <string name="Command">Команда</string>
     <string name="setCustomQuickMessage">Настройка быстрых сообщений</string>
     <string name="emptyInput">Здесь ничего не введено</string>
-    <string name="numberInvalid"><![CDATA[Число должно быть >20 и 150<]]></string>
+    <string name="numberInvalid"><![CDATA[Число должно быть >20 и 200<]]></string>
     <string name="notANumber">Ты должен ввести число!</string>
     <string name="notACommand">Вы должны ввести текст!</string>
     <string name="SendAsReply">Отправить как ответ на предыдущее письмо</string>

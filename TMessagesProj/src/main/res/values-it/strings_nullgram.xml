@@ -143,7 +143,7 @@
     <string name="Command">Comando</string>
     <string name="setCustomQuickMessage">Imposta messaggio rapido custom</string>
     <string name="emptyInput">Non puoi inserire nulla qui</string>
-    <string name="numberInvalid"><![CDATA[Il numero deve essere tra 20 e 150]]></string>
+    <string name="numberInvalid"><![CDATA[Il numero deve essere tra 20 e 200]]></string>
     <string name="notANumber">Devi inserire un numero!</string>
     <string name="notACommand">Devi inserire una stringa!</string>
     <string name="SendAsReply">Invia come risposta</string>
