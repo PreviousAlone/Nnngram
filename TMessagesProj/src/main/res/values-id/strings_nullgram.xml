@@ -159,7 +159,7 @@
     <string name="Command">Perintah</string>
     <string name="setCustomQuickMessage">Atur Pesan Kirim Cepat Kustom</string>
     <string name="emptyInput">Anda tidak boleh mengosongkan masukan disini</string>
-    <string name="numberInvalid"><![CDATA[Nomor harus >20 dan <150]]></string>
+    <string name="numberInvalid"><![CDATA[Nomor harus >20 dan <200]]></string>
     <string name="notANumber">Anda harus masukkan sebuah angka!</string>
     <string name="notACommand">Anda harus masukkan sebuah string!</string>
     <string name="SendAsReply">Kirim Sebagai Balasan</string>
