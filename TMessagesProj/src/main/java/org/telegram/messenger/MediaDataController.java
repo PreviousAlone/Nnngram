@@ -8350,7 +8350,7 @@ public class MediaDataController extends BaseController {
             loadFeaturedDate[0] = 0;
             loadFeaturedDate[1] = 0;
         }
-        loadRecents(MediaDataController.TYPE_FAVE, false, true, false);
+        loadRecents(MediaDataController.TYPE_FAVE, false, false, true);
         loadRecents(MediaDataController.TYPE_GREETINGS, false, true, false);
         loadRecents(MediaDataController.TYPE_PREMIUM_STICKERS, false, false, true);
         checkFeaturedStickers();
