@@ -87,14 +87,14 @@ jobs:
           ./gradlew :TMessagesProj:assembleRelease :TMessagesProj:uploadCrashlyticsSymbolFileRelease
           echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@master
         name: Upload apk (arm64-v8a)
         with:
           name: Nnngram-arm64-v8a-${{ env.SHA7 }}
           path: ${{ env.APK_FILE }}
 
       - name: Upload mapping
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@master
         with:
           name: mapping
           path: TMessagesProj/build/outputs/mapping
