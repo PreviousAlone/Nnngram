@@ -22361,10 +22361,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     getMediaDataController().setCurrentMessage(nextLargerIndex);
                                     num = nextLargerIndex;
                                 }
-                            } else {
-                                messageId = lastFoundMessageId;
-                                num = foundMessageIds.size();
-                                mask = 2;
                             }
                         }
                     } else {
