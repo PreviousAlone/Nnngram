@@ -1228,6 +1228,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int OPTION_EDIT_SCHEDULE_TIME = 102;
     private final static int OPTION_SPEED_PROMO = 103;
     private final static int OPTION_OPEN_PROFILE = 104;
+    private final static int OPTION_SHARE_PHOTO = 105;
     private final static int OPTION_FACT_CHECK = 106;
     private final static int OPTION_EDIT_PRICE = 107;
     private final static int OPTION_GIFT = 108;
@@ -29911,7 +29912,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                         options.add(OPTION_SAVE_TO_GALLERY);
                                         icons.add(R.drawable.msg_gallery);
                                         items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
-                                        options.add(OPTION_SHARE);
+                                    options.add(OPTION_SHARE_PHOTO);
                                         icons.add(R.drawable.msg_shareout);
                                     }
                                 }
@@ -30218,6 +30219,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_gallery);
                                 items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
                                 options.add(OPTION_SHARE);
+//                                options.add(OPTION_SHARE_PHOTO); // fixme: crash on share photo
                                 icons.add(R.drawable.msg_shareout);
                                 if (ConfigManager.getBooleanOrFalse(Defines.showCopyPhoto)) {
                                     items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
@@ -32453,6 +32455,37 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 try {
                     getParentActivity().startActivityForResult(Intent.createChooser(intent, LocaleController.getString(R.string.ShareFile)), 500);
+                } catch (Throwable ignore) {
+
+                }
+                break;
+            }
+            case OPTION_SHARE_PHOTO: {
+                String path = selectedObject.messageOwner.attachPath;
+                if (path != null && path.length() > 0) {
+                    File temp = new File(path);
+                    if (!temp.exists()) {
+                        path = null;
+                    }
+                }
+                if (path == null || path.length() == 0) {
+                    path = getFileLoader().getPathToMessage(selectedObject.messageOwner).toString();
+                }
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType(selectedObject.isVideo() ? "video/mp4" : "image/jpeg");
+                File f = new File(path);
+                if (Build.VERSION.SDK_INT >= 24) {
+                    try {
+                        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getParentActivity(), ApplicationLoader.getApplicationId() + ".provider", f));
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    } catch (Exception ignore) {
+                        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                    }
+                } else {
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                }
+                try {
+                    getParentActivity().startActivityForResult(Intent.createChooser(intent, LocaleController.getString("ShareFile", R.string.ShareFile)), 500);
                 } catch (Throwable ignore) {
 
                 }
