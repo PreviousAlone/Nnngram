@@ -4898,14 +4898,14 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (a == 1) {
                 nameTextView[a].setScrollNonFitText(true);
                 nameTextView[a].setOnLongClickListener(v -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                    builder.setItems(new CharSequence[]{LocaleController.getString("Copy", R.string.Copy)}, (dialogInterface, i) -> {
-                        if (i == 0) {
-                            AndroidUtilities.addToClipboard(((SimpleTextView) v).getText());
-                            BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
-                        }
-                    });
-                    showDialog(builder.create());
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+//                    builder.setItems(new CharSequence[]{LocaleController.getString("Copy", R.string.Copy)}, (dialogInterface, i) -> {
+//                        if (i == 0) {
+                    AndroidUtilities.addToClipboard(((SimpleTextView) v).getText());
+                    BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
+//                        }
+//                    });
+//                    showDialog(builder.create());
                     return false;
                 });
                 nameTextView[a].setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
