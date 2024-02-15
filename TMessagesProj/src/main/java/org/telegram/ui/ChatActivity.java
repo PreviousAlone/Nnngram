@@ -33675,7 +33675,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             updateBottomOverlay();
         }
         if ((threadMessageId == 0 || isTopic || chatMode == MODE_SAVED) && !UserObject.isReplyUser(currentUser)) {
-            openSearchKeyboard = text == null;
+            openSearchKeyboard = text == null || text.isEmpty();
             if (searchItem != null) {
                 searchItem.openSearch(openSearchKeyboard);
             }
