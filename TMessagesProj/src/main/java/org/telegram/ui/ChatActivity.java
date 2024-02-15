@@ -22716,6 +22716,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         setFilterMessages(false);
                         updateVisibleRows();
                     }
+                    updateSearchButtons(mask, num, (Integer) args[5]);
                     onSearchLoadingUpdate(false);
                 } else if (searchingReaction != null) {
                     if (chatAdapter.isFiltered) {
