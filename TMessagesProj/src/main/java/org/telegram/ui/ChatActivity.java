@@ -29136,11 +29136,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 options.add(OPTION_ADD_TO_STICKERS_OR_MASKS);
                                 icons.add(R.drawable.msg_sticker);
                             } else {
-                                if (!selectedObject.isAnimatedSticker()) {
+//                                if (!selectedObject.isAnimatedSticker()) {
                                     items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
                                     options.add(OPTION_SAVE_STICKER_TO_GALLERY);
                                     icons.add(R.drawable.msg_gallery);
-                                }
+//                                }
                                 items.add(LocaleController.getString("AddToStickers", R.string.AddToStickers));
                                 options.add(OPTION_ADD_TO_STICKERS_OR_MASKS);
                                 icons.add(R.drawable.msg_sticker);
@@ -29177,12 +29177,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_callback);
                             }
                         } else if (type == 9) {
-                            if (!selectedObject.isAnimatedSticker()) {
+//                            if (!selectedObject.isAnimatedSticker()) {
                                 items.add(LocaleController.getString("SaveToGallery",
                                     R.string.SaveToGallery));
                                 options.add(OPTION_SAVE_STICKER_TO_GALLERY);
                                 icons.add(R.drawable.msg_gallery);
-                            }
+//                            }
                             TLRPC.Document document = selectedObject.getDocument();
                             if (!getMediaDataController().isStickerInFavorites(document)) {
                                 if (getMediaDataController().canAddStickerToFavorites()) {

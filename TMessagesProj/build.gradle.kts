@@ -114,6 +114,9 @@ dependencies {
     implementation(libs.ktor.client.contentNegotiation)
     implementation(libs.ktor.serialization.json)
 
+    implementation(libs.ffmpeg)
+    implementation(libs.lottie)
+
     implementation(project(":libs:tcp2ws"))
     implementation(project(":libs:pangu"))
     ksp(project(":libs:ksp"))
