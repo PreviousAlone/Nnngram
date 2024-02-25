@@ -3990,7 +3990,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     Log.refreshLog();
                     return Unit.INSTANCE;
                 });
-                builder.addItem(LocaleController.getString("DebugSendLastLogs", R.string.DebugSendLastLogs), R.drawable.msg_shareout, (it) -> {
+                builder.addItem(LocaleController.getString("DebugSendLastLogs", R.string.DebugSendLastLogs), R.drawable.msg_share, (it) -> {
                     Log.shareLog(getContext());
                     return Unit.INSTANCE;
                 });
