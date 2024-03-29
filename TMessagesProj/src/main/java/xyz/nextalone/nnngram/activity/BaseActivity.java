@@ -86,6 +86,7 @@ public abstract class BaseActivity extends BaseFragment {
     public static final int TYPE_RADIO = 10;
     public static final int TYPE_ACCOUNT = 11;
     public static final int TYPE_STICKER_SIZE = 12;
+    public static final int TYPE_GIF_SIZE = 13;
     protected HashMap<String, Integer> rowMap = new HashMap<>(20);
     protected HashMap<Integer, String> rowMapReverse = new HashMap<>(20);
 

@@ -8821,6 +8821,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             }
                         }
                     }
+                    if (messageObject.type == MessageObject.TYPE_GIF) {
+                        w = w * Config.getGifSize() / 100;
+                        h = h * Config.getGifSize() / 100;
+                    }
 
                     if (w == 0 || h == 0) {
                         w = h = AndroidUtilities.dp(150);

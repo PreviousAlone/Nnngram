@@ -91,10 +91,13 @@ public class ChatSettingActivity extends BaseActivity {
 
     private ActionBarMenuItem resetItem;
     private StickerSizeCell stickerSizeCell;
+    private GifSizeCell gifSizeCell;
 
     private int stickerSizeHeaderRow;
     private int stickerSizeRow;
     private int stickerSize2Row;
+    private int gifSizeHeaderRow;
+    private int gifSizeRow;
 
     private int chatRow;
     private int ignoreBlockedUserMessagesRow;
@@ -181,6 +184,7 @@ public class ChatSettingActivity extends BaseActivity {
             animator.addUpdateListener(valueAnimator -> {
                 ConfigManager.putFloat(Defines.stickerSize, (Float) valueAnimator.getAnimatedValue());
                 stickerSizeCell.invalidate();
+                gifSizeCell.invalidate();
             });
             animator.start();
         });
@@ -471,7 +475,8 @@ public class ChatSettingActivity extends BaseActivity {
         stickerSizeHeaderRow = addRow();
         stickerSizeRow = addRow("stickerSize");
         stickerSize2Row = addRow();
-
+        gifSizeHeaderRow = addRow();
+        gifSizeRow = addRow("gifSize");
         chatRow = addRow();
         ignoreBlockedUserMessagesRow = addRow("ignoreBlockedUserMessages");
         hideGroupStickerRow = addRow("hideGroupSticker");
@@ -555,6 +560,11 @@ public class ChatSettingActivity extends BaseActivity {
                     if (position == stickerSizeRow) {
                         textCell.setTextAndValue(LocaleController.getString("StickerSize", R.string.StickerSize),
                             String.valueOf(Math.round(ConfigManager.getFloatOrDefault(Defines.stickerSize, 14.0f))), payload, true);
+                    } else if (position == gifSizeHeaderRow) {
+                        textCell.setTextAndValue(LocaleController.getString("gifSize", R.string.gifSize),
+                            String.valueOf(ConfigManager.getIntOrDefault(Defines.gifSize, 150)), payload, true);
+                    } else if (position == chatRow) {
+                        textCell.setText(LocaleController.getString("Chat", R.string.Chat), false);
                     } else if (position == messageMenuRow) {
                         textCell.setText(LocaleController.getString("MessageMenu", R.string.MessageMenu), false);
                     } else if (position == textStyleSettingsRow) {
@@ -694,6 +704,8 @@ public class ChatSettingActivity extends BaseActivity {
                         headerCell.setText(LocaleController.getString("Chat", R.string.Chat));
                     } else if (position == stickerSizeHeaderRow) {
                         headerCell.setText(LocaleController.getString("StickerSize", R.string.StickerSize));
+                    } else if (position == gifSizeHeaderRow) {
+                        headerCell.setText(LocaleController.getString("gifSize", R.string.gifSize));
                     } else if (position == markdownRow) {
                         headerCell.setText(LocaleController.getString("Markdown", R.string.Markdown));
                     }
@@ -758,6 +770,10 @@ public class ChatSettingActivity extends BaseActivity {
                     view = stickerSizeCell = new StickerSizeCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
+                case TYPE_GIF_SIZE:
+                    view = gifSizeCell = new GifSizeCell(mContext);
+                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                    break;
             }
             // noinspection ConstantConditions
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
@@ -771,10 +787,12 @@ public class ChatSettingActivity extends BaseActivity {
             } else if (position == messageMenuRow || position == customDoubleClickTapRow || position == maxRecentStickerRow || position == customQuickMessageRow || position == markdownParserRow
                 || position == messageFiltersRow || position == textStyleSettingsRow) {
                 return TYPE_SETTINGS;
-            } else if (position == chatRow || position == stickerSizeHeaderRow || position == markdownRow) {
+            } else if (position == chatRow || position == stickerSizeHeaderRow || position == markdownRow || position == gifSizeHeaderRow) {
                 return TYPE_HEADER;
             } else if (position == stickerSizeRow) {
                 return TYPE_STICKER_SIZE;
+            } else if (position == gifSizeRow) {
+                return TYPE_GIF_SIZE;
             } else if ((position > chatRow && position < chat2Row) || (position > markdownRow && position < markdown2Row) || (position > stickerSizeRow && position < stickerSize2Row)) {
                 return TYPE_CHECK;
             } else if (position == markdown2Row) {
@@ -1193,5 +1211,81 @@ public class ChatSettingActivity extends BaseActivity {
             return super.performAccessibilityAction(action, arguments) || sizeBar.getSeekBarAccessibilityDelegate().performAccessibilityActionInternal(this, action, arguments);
         }
     }
-
+    
+    public class GifSizeCell extends FrameLayout {
+        
+        private final SeekBarView sizeBar;
+        private final int startGifSize = 50;
+        private final int endGifSize = 100;
+        
+        private final TextPaint textPaint;
+        private int lastWidth;
+        
+        public GifSizeCell(Context context) {
+            super(context);
+            
+            setWillNotDraw(false);
+            
+            textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            textPaint.setTextSize(AndroidUtilities.dp(16));
+            
+            sizeBar = new SeekBarView(context);
+            sizeBar.setReportChanges(true);
+            sizeBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
+                @Override
+                public void onSeekBarDrag(boolean stop, float progress) {
+                    sizeBar.getSeekBarAccessibilityDelegate().postAccessibilityEventRunnable(GifSizeCell.this);
+                    ConfigManager.putInt(Defines.gifSize, (int) (startGifSize + (endGifSize - startGifSize) * progress));
+                    GifSizeCell.this.invalidate();
+                }
+                
+                @Override
+                public void onSeekBarPressed(boolean pressed) {
+                
+                }
+            });
+            sizeBar.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+            addView(sizeBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.LEFT | Gravity.TOP, 9, 5, 43, 11));
+        }
+        
+        @Override
+        protected void onDraw(Canvas canvas) {
+            textPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText));
+            canvas.drawText(ConfigManager.getIntOrDefault(Defines.gifSize, 100) + "%", getMeasuredWidth() - AndroidUtilities.dp(45), AndroidUtilities.dp(28), textPaint);
+        }
+        
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            int width = MeasureSpec.getSize(widthMeasureSpec);
+            if (lastWidth != width) {
+                sizeBar.setProgress((ConfigManager.getIntOrDefault(Defines.gifSize, 100) - startGifSize) / (float) (endGifSize - startGifSize));
+                lastWidth = width;
+            }
+        }
+        
+        @Override
+        public void invalidate() {
+            super.invalidate();
+            lastWidth = -1;
+            sizeBar.invalidate();
+        }
+        
+        @Override
+        public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
+            super.onInitializeAccessibilityEvent(event);
+            sizeBar.getSeekBarAccessibilityDelegate().onInitializeAccessibilityEvent(this, event);
+        }
+        
+        @Override
+        public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
+            super.onInitializeAccessibilityNodeInfo(info);
+            sizeBar.getSeekBarAccessibilityDelegate().onInitializeAccessibilityNodeInfoInternal(this, info);
+        }
+        
+        @Override
+        public boolean performAccessibilityAction(int action, Bundle arguments) {
+            return super.performAccessibilityAction(action, arguments) || sizeBar.getSeekBarAccessibilityDelegate().performAccessibilityActionInternal(this, action, arguments);
+        }
+    }
 }

@@ -382,4 +382,5 @@
     <string name="hideFilterMuteAll">Hide filter mute all</string>
     <string name="hideKeyboardWhenScrolling">Hide keyboard when scrolling</string>
     <string name="searchInPlace">Search in place</string>
+    <string name="gifSize">GIF size</string>
 </resources>
