@@ -369,6 +369,7 @@
     <string name="hideFilterMuteAll">隐藏文件夹中的\"全部取消静音\"</string>
     <string name="hideKeyboardWhenScrolling">滑动时隐藏键盘</string>
     <string name="searchInPlace">从当前位置中开始搜索</string>
+    <string name="gifSize">GIF 大小</string>
 
     <string name="Quote">引用</string>
     <string name="QuoteTo">引用到...</string>
