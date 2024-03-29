@@ -888,7 +888,7 @@ class MessageUtils(num: Int) : BaseController(num) {
                         if (File(outputPath).exists()) {
                             File(outputPath).delete()
                         }
-                        val cmd = arrayOf("-y", "-i", path, "-vf", "colorkey=0x000000:0.1:0.1,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse", outputPath)
+                        val cmd = arrayOf("-y", "-vcodec", "libvpx-vp9", "-i", path, "-lavfi", "split[v],palettegen,[v]paletteuse", outputPath)
                         FFmpeg.executeAsync(cmd) { executionId, returnCode ->
                             if (returnCode == RETURN_CODE_SUCCESS) {
                                 MediaController.saveFile(outputPath, activity, 0, null, null, callback)
