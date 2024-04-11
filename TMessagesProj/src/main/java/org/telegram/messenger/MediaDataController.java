@@ -3831,11 +3831,11 @@ public class MediaDataController extends BaseController {
                             TLRPC.messages_Messages res = (TLRPC.messages_Messages) response;
                             messagesSearchEndReached[1] = res.messages.isEmpty();
                             messagesSearchCount[1] = res instanceof TLRPC.TL_messages_messagesSlice ? res.count : res.messages.size();
-                            searchMessagesInChat(req.q, dialogId, mergeDialogId, guid, direction, replyMessageId, true, user, chat, jumpToMessage, reaction, filter);
+                            searchMessagesInChat(req.q, dialogId, mergeDialogId, guid, direction, replyMessageId, true, user, chat, jumpToMessage, reaction, filter, firstSearch);
                         } else {
                             messagesSearchEndReached[1] = true;
                             messagesSearchCount[1] = 0;
-                            searchMessagesInChat(req.q, dialogId, mergeDialogId, guid, direction, replyMessageId, true, user, chat, jumpToMessage, reaction, filter);
+                            searchMessagesInChat(req.q, dialogId, mergeDialogId, guid, direction, replyMessageId, true, user, chat, jumpToMessage, reaction, filter, firstSearch);
                         }
                     }
                 }), ConnectionsManager.RequestFlagFailOnServerErrors);
@@ -3979,7 +3979,7 @@ public class MediaDataController extends BaseController {
                                         lastReturnedNum = searchResultMessages.size() - 1;
                                     }
                                     MessageObject messageObject = searchResultMessages.get(lastReturnedNum);
-                                    getNotificationCenter().postNotificationName(NotificationCenter.chatSearchResultsAvailable, guid, messageObject.getId(), getMask(), messageObject.getDialogId(), lastReturnedNum, getSearchCount(), jumpToMessage, firstSearch);
+                                    getNotificationCenter().postNotificationName(NotificationCenter.chatSearchResultsAvailable, guid, messageObject.getId(), getMask(), messageObject.getDialogId(), lastReturnedNum, getSearchCount(), jumpToMessage, firstSearch, filter);
                                 } else if (isSaved) {
                                     getNotificationCenter().postNotificationName(NotificationCenter.chatSearchResultsAvailable, guid, 0, getMask(), dialogId, lastReturnedNum, getSearchCount(), false);
                                 }
