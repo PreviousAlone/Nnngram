@@ -84,6 +84,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int largeAvatarAsBackgroundRow;
     private int hidePhoneRow;
     private int drawerListRow;
+    private int hideDialogsFloatingButtonRow;
     private int drawer2Row;
 
     private int translatorRow;
@@ -392,6 +393,11 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.hideFilterMuteAll);
             }
+        } else if (position == hideDialogsFloatingButtonRow) {
+            Config.toggleHideDialogsFloatingButton();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.hideDialogsFloatingButton);
+            }
         }
 
     }
@@ -422,6 +428,7 @@ public class GeneralSettingActivity extends BaseActivity {
         }
         hidePhoneRow = addRow("hidePhone");
         drawerListRow = addRow("drawerList");
+        hideDialogsFloatingButtonRow = addRow("hideDialogsFloatingButton");
         drawer2Row = addRow();
 
         translatorRow = addRow();
@@ -661,6 +668,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("ignoreFolderUnreadCount", R.string.ignoreFolderUnreadCount), Config.ignoreFolderUnreadCount, true);
                     } else if (position == hideFilterMuteAllRow) {
                         textCell.setTextAndCheck(LocaleController.getString("hideFilterMuteAll", R.string.hideFilterMuteAll), Config.hideFilterMuteAll, true);
+                    } else if (position == hideDialogsFloatingButtonRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("hideDialogsFloatingButton", R.string.hideDialogsFloatingButton), Config.hideDialogsFloatingButton, true);
                     }
                     break;
                 }
