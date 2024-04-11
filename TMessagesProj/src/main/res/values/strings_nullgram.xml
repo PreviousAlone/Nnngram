@@ -384,4 +384,5 @@
     <string name="searchInPlace">Search in place</string>
     <string name="gifSize">GIF size</string>
     <string name="block">Block</string>
+    <string name="hideDialogsFloatingButton">Hide dialogs floating button</string>
 </resources>

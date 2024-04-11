@@ -6905,6 +6905,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         updateVisibleRows(0, false);
         updateProxyButton(false, true);
         updateStoriesVisibility(false);
+        if (Config.hideDialogsFloatingButton) {
+            hideFloatingButton(true);
+        }
         checkSuggestClearDatabase();
         if (filterTabsView != null && viewPages[0] != null && viewPages[0].dialogsAdapter != null) {
             int dialogsType = viewPages[0].dialogsAdapter.getDialogsType();
@@ -11052,6 +11055,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void hideFloatingButton(boolean hide) {
+        if (Config.hideDialogsFloatingButton) {
+            hide = true;
+        }
         if (rightSlidingDialogContainer.hasFragment()) {
             hide = true;
         }
