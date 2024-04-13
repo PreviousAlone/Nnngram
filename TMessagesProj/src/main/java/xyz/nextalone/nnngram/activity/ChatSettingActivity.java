@@ -140,6 +140,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int filterZalgoRow;
     private int hideKeyboardWhenScrollingRow;
     private int searchInPlaceRow;
+    private int disableChannelMuteButtonRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -454,6 +455,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.searchInPlace);
             }
+        } else if (position == disableChannelMuteButtonRow) {
+            Config.toggleDisableChannelMuteButton();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.disableChannelMuteButton);
+            }
         }
     }
 
@@ -520,6 +526,7 @@ public class ChatSettingActivity extends BaseActivity {
         filterZalgoRow = addRow("filterZalgo");
         hideKeyboardWhenScrollingRow = addRow("hideKeyboardWhenScrolling");
         searchInPlaceRow = addRow("searchInPlace");
+        disableChannelMuteButtonRow = addRow("disableChannelMuteButton");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -695,6 +702,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("hideKeyboardWhenScrolling", R.string.hideKeyboardWhenScrolling), Config.hideKeyboardWhenScrolling, true);
                     } else if (position == searchInPlaceRow) {
                         textCell.setTextAndCheck(LocaleController.getString("searchInPlace", R.string.searchInPlace), Config.searchInPlace, true);
+                    } else if (position == disableChannelMuteButtonRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("disableChannelMuteButton", R.string.disableChannelMuteButton), Config.disableChannelMuteButton, true);
                     }
                     break;
                 }

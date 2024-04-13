@@ -372,6 +372,7 @@
     <string name="gifSize">GIF 大小</string>
     <string name="block">屏蔽</string>
     <string name="hideDialogsFloatingButton">禁用主页浮动按钮</string>
+    <string name="disableChannelMuteButton">禁用频道静音按钮</string>
 
     <string name="Quote">引用</string>
     <string name="QuoteTo">引用到...</string>
