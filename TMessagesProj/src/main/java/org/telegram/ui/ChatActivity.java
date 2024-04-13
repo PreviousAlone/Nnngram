@@ -14402,8 +14402,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                     nameText = AndroidUtilities.replaceCharSequence("%s", LocaleController.getString(R.string.ReplyTo), name == null ? "" : name);
                 }
+                nameText = StringUtils.zalgoFilter(nameText);
                 nameText = Emoji.replaceEmoji(nameText, replyNameTextView.getPaint().getFontMetricsInt(), false);
-                replyNameTextView.setText(StringUtils.zalgoFilter(name));
+                replyNameTextView.setText(nameText);
                 replyIconImageView.setContentDescription(LocaleController.getString(R.string.AccDescrReplying));
                 replyCloseImageView.setContentDescription(LocaleController.getString(R.string.AccDescrCancelReply));
 
