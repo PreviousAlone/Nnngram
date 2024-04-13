@@ -217,6 +217,7 @@ object Defines {
     @BooleanConfig const val searchInPlace =  "searchInPlace"
     @IntConfig(100) const val gifSize = "gifSize"
     @BooleanConfig const val hideDialogsFloatingButton = "hideDialogsFloatingButton"
+    @BooleanConfig const val disableChannelMuteButton = "disableChannelMuteButton"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
