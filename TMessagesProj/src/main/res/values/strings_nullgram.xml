@@ -385,4 +385,5 @@
     <string name="gifSize">GIF size</string>
     <string name="block">Block</string>
     <string name="hideDialogsFloatingButton">Hide dialogs floating button</string>
+    <string name="disableChannelMuteButton">Disable channel mute button</string>
 </resources>
