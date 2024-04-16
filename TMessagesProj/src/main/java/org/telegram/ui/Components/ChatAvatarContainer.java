@@ -589,6 +589,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             }
             ProfileActivity fragment = new ProfileActivity(args, sharedMediaPreloader);
             fragment.setChatInfo(parentFragment.getCurrentChatInfo());
+            fragment.setChatInfoChannelMsg(parentFragment.profileChannelMessageFetcher);
             if (fromChatAnimation) {
                 fragment.setPlayProfileAnimation(byAvatar ? 2 : 1);
             }
