@@ -682,7 +682,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     args.putLong("dialog_id", UserConfig.getInstance(currentAccount).getClientUserId());
                     args.putInt("type", MediaActivity.TYPE_STORIES);
                     presentFragment(new MediaActivity(args, null));
-                } else if (id == 17) {
+                } else if (id == 18) {
                     Bundle args = new Bundle();
                     args.putInt("folderId", 1);
                     args.putBoolean("onlySelect", false);
