@@ -386,4 +386,5 @@
     <string name="block">Block</string>
     <string name="hideDialogsFloatingButton">Hide dialogs floating button</string>
     <string name="disableChannelMuteButton">Disable channel mute button</string>
+    <string name="disableAutoPip">Disable auto PIP</string>
 </resources>
