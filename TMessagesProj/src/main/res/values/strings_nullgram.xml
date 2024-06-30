@@ -387,4 +387,5 @@
     <string name="hideDialogsFloatingButton">Hide dialogs floating button</string>
     <string name="disableChannelMuteButton">Disable channel mute button</string>
     <string name="disableAutoPip">Disable auto PIP</string>
+    <string name="sendMp4DocumentAsVideo">Send MP4 document as video</string>
 </resources>
