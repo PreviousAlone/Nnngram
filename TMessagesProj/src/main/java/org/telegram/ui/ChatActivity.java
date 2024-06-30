@@ -32384,6 +32384,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 media.add(info);
                 SendMessagesHelper.prepareSendingMedia(getAccountInstance(), media, getUserConfig().getClientUserId(), null, null, null, null, true, true, null, false, 0, 0, false, null, quickReplyShortcut, getQuickReplyId(), 0, false);
             }
+            BulletinFactory.of(ChatActivity.this).showForwardedBulletinWithTag(getUserConfig().getClientUserId(), messages.size());
         } else {
             forwardMessages(messages, false, false, true, 0, getUserConfig().getClientUserId());
             createUndoView();
