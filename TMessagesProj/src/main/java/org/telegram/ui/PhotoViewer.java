@@ -5652,8 +5652,35 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     }
                     loopItem.setEnabledByColor(playerLooping, 0xFFFFFFFF, 0xFF73B4EC);
                 } else if (id == gallery_menu_save_messages) {
-                    var accountInstance = AccountInstance.getInstance(currentAccount);
-                    accountInstance.getSendMessagesHelper().sendMessage(new ArrayList<>(Collections.singletonList(currentMessageObject)),accountInstance.getUserConfig().getClientUserId(),false, false, true, 0);
+                    boolean noforwards = currentMessageObject != null && (MessagesController.getInstance(currentAccount).isChatNoForwards(currentMessageObject.getChatId()) || (currentMessageObject.messageOwner != null && currentMessageObject.messageOwner.noforwards) || currentMessageObject.hasRevealedExtendedMedia());
+                    if (noforwards){
+                        String path = currentMessageObject.messageOwner.attachPath;
+                        if (path != null && !path.isEmpty()) {
+                            File temp = new File(path);
+                            if (!temp.exists()) {
+                                path = null;
+                            }
+                        }
+                        if (path == null || path.isEmpty()) {
+                            path = parentChatActivity.getFileLoader().getPathToMessage(currentMessageObject.messageOwner).toString();
+                        }
+                        ArrayList<SendMessagesHelper.SendingMediaInfo> media = new ArrayList<>();
+                        SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
+                        info.path = path;
+                        info.thumbPath = null;
+                        info.videoEditedInfo = null;
+                        info.isVideo = path.endsWith(".mp4");
+                        info.caption = null;
+                        info.entities = null;
+                        info.masks = null;
+                        info.ttl = 0;
+                        media.add(info);
+                        SendMessagesHelper.prepareSendingMedia(parentChatActivity.getAccountInstance(), media, parentChatActivity.getUserConfig().getClientUserId(), null, null, null, null, true, true, null, false, 0, 0, false, null, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, false);
+                        BulletinFactory.of(fragment).showForwardedBulletinWithTag(parentChatActivity.getUserConfig().getClientUserId(), 1);
+                    } else {
+                        var accountInstance = AccountInstance.getInstance(currentAccount);
+                        accountInstance.getSendMessagesHelper().sendMessage(new ArrayList<>(Collections.singletonList(currentMessageObject)), accountInstance.getUserConfig().getClientUserId(), false, false, true, 0);
+                    }
                 } else if (id == gallery_menu_copy_photo) {
                     MessageUtils.getInstance(currentAccount).addMessageToClipboard(currentMessageObject, () -> {
                         if (BulletinFactory.canShowBulletin(parentFragment)) {
