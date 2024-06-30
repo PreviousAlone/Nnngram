@@ -142,6 +142,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int searchInPlaceRow;
     private int disableChannelMuteButtonRow;
     private int disableAutoPipRow;
+    private int sendMp4DocumentAsVideoRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -466,6 +467,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.disableAutoPip);
             }
+        } else if (position == sendMp4DocumentAsVideoRow) {
+            Config.toggleSendMp4DocumentAsVideo();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.sendMp4DocumentAsVideo);
+            }
         }
     }
 
@@ -534,6 +540,7 @@ public class ChatSettingActivity extends BaseActivity {
         searchInPlaceRow = addRow("searchInPlace");
         disableChannelMuteButtonRow = addRow("disableChannelMuteButton");
         disableAutoPipRow = addRow("disableAutoPip");
+        sendMp4DocumentAsVideoRow = addRow("sendMp4DocumentAsVideo");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -713,6 +720,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("disableChannelMuteButton", R.string.disableChannelMuteButton), Config.disableChannelMuteButton, true);
                     } else if (position == disableAutoPipRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disableAutoPip", R.string.disableAutoPip), Config.disableAutoPip, true);
+                    } else if (position == sendMp4DocumentAsVideoRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("sendMp4DocumentAsVideo", R.string.sendMp4DocumentAsVideo), Config.sendMp4DocumentAsVideo, true);
                     }
                     break;
                 }
