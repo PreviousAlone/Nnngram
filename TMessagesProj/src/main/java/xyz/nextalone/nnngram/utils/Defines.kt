@@ -219,6 +219,7 @@ object Defines {
     @BooleanConfig const val hideDialogsFloatingButton = "hideDialogsFloatingButton"
     @BooleanConfig const val disableChannelMuteButton = "disableChannelMuteButton"
     @BooleanConfig const val disableAutoPip = "disableAutoPip"
+    @BooleanConfig const val sendMp4DocumentAsVideo = "sendMp4DocumentAsVideo"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"

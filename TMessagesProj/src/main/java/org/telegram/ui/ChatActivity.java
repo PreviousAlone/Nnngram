@@ -32308,27 +32308,27 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             // todo send message link along
             for (MessageObject message : messages) {
                 String path = message.messageOwner.attachPath;
-                if (path != null && path.length() > 0) {
+                if (path != null && !path.isEmpty()) {
                     File temp = new File(path);
                     if (!temp.exists()) {
                         path = null;
                     }
                 }
-                if (path == null || path.length() == 0) {
+                if (path == null || path.isEmpty()) {
                     path = getFileLoader().getPathToMessage(message.messageOwner).toString();
                 }
                 ArrayList<SendMessagesHelper.SendingMediaInfo> media = new ArrayList<>();
                 SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
-                media.add(info);
                 info.path = path;
                 info.thumbPath = null;
                 info.videoEditedInfo = null;
-                info.isVideo = false;
+                info.isVideo = path.endsWith(".mp4");
                 info.caption = null;
                 info.entities = null;
                 info.masks = null;
                 info.ttl = 0;
-                SendMessagesHelper.prepareSendingMedia(getAccountInstance(), media, getUserConfig().getClientUserId(), null, null, null, null, false, false, null, false, 0, 0, false, null, quickReplyShortcut, getQuickReplyId(), 0, false);
+                media.add(info);
+                SendMessagesHelper.prepareSendingMedia(getAccountInstance(), media, getUserConfig().getClientUserId(), null, null, null, null, true, true, null, false, 0, 0, false, null, quickReplyShortcut, getQuickReplyId(), 0, false);
             }
         } else {
             forwardMessages(messages, false, false, true, 0, getUserConfig().getClientUserId());

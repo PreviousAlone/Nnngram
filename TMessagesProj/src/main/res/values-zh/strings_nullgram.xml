@@ -374,4 +374,5 @@
     <string name="hideDialogsFloatingButton">禁用主页浮动按钮</string>
     <string name="disableChannelMuteButton">禁用频道静音按钮</string>
     <string name="disableAutoPip">禁用自动画中画</string>
+    <string name="sendMp4DocumentAsVideo">以视频格式发送 MP4 文件</string>
 </resources>
