@@ -8762,6 +8762,10 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         }
                     }
                 } else {
+                    if (Config.sendMp4DocumentAsVideo) {
+                        info.isVideo = info.path.endsWith("mp4");
+                        info.doNotCompress = info.isVideo;
+                    }
                     if (info.isVideo || info.videoEditedInfo != null) {
                         Bitmap thumb = null;
                         String thumbKey = null;
