@@ -89,9 +89,9 @@ fun ChatSettingActivity.createMessageFilterSetter(context: Context, resourcesPro
         setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null)
         setPositiveButton(LocaleController.getString("Save", R.string.Save)) { _, _ ->
             runCatching {
-                if (!editText.text.isNullOrEmpty()) Pattern.compile(editText.text.toString())
+                if (!editText.text.isNullOrEmpty()) Pattern.compile(editText.text.toString().trim { it == '|' })
             }.onSuccess {
-                Config.messageFilter = editText.text.toString()
+                Config.messageFilter = editText.text.toString().trim { it == '|' }
             }.onFailure {
                 Toast.makeText(context, LocaleController.getString("InvalidPattern", R.string.InvalidPattern), Toast.LENGTH_SHORT).show()
             }
