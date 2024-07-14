@@ -38,11 +38,7 @@ tasks.register<Delete>("clean").configure {
 val apiCode by extra(93)
 val verCode = Common.getBuildVersionCode(rootProject)
 
-val verName = if (Version.isStable) {
-    "v" + Version.officialVersionName + "-" + (Common.getGitHeadRefsSuffix(rootProject))
-} else {
-    "v" + Version.officialVersionName + "-preview-" + (Common.getGitHeadRefsSuffix(rootProject))
-}
+val verName = "v" + Version.officialVersionName + "-" + (Common.getGitHeadRefsSuffix(rootProject))
 
 val androidTargetSdkVersion by extra(35)
 val androidMinSdkVersion by extra(27)
