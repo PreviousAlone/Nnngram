@@ -35,7 +35,7 @@ jobs:
         with:
           cmake-version: '3.22.1'
       - name: Get short SHA
-        run: | 
+        run: |
           echo "SHA7=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -100,6 +100,34 @@ jobs:
           name: mapping
           path: TMessagesProj/build/outputs/mapping
 
+      - name: Debug Build (Telegram)
+        run: |
+          echo -e "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}\nRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}\nRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}">>local.properties
+          cat > service_account_credentials.json << EOF
+          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
+          EOF
+          mkdir TMessagesProj/config/
+          echo ${{secrets.KEYSTORE}} | base64 -d > TMessagesProj/config/release.keystore
+          echo ${{secrets.GOOGLE_SERVICES_JSON}} | base64 -d > TMessagesProj/google-services.json
+          sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/build.gradle.kts
+          sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/google-services.json
+          ./gradlew TMessagesProj:assembleRelease
+          echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
+
+      - uses: actions/upload-artifact@master
+        name: Upload apk (arm64-v8a) (Telegram)
+        with:
+          name: Nnngram-arm64-v8a-${{ env.SHA7 }}-Telegram
+          path: ${{ env.APK_FILE }}
+
+      - name: Upload mapping
+        uses: actions/upload-artifact@master
+        with:
+          name: mapping-Telegram
+          path: TMessagesProj/build/outputs/mapping
+
+
+
   upload:
     name: Upload Release
     if: ${{ github.event_name != 'pull_request' && success() && github.ref == 'refs/heads/main' }}
@@ -121,6 +149,7 @@ jobs:
       - name: find apk
         run: |
             mkdir apks
+            find artifacts -name "Telegram/*.apk" -exec rm {} \;
             find artifacts -name "*.apk" -exec cp {} apks \;
             echo "APK_FILE_UPLOAD=$(find apks -name '*arm64*.apk')" >> $GITHUB_ENV
       - name: Get Apk Info
