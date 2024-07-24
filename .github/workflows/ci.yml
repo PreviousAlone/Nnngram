@@ -111,6 +111,7 @@ jobs:
           sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/build.gradle.kts
           sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/google-services.json
           ./gradlew TMessagesProj:assembleRelease
+          find TMessagesProj/build/outputs/apk -name '*arm64*.apk' -exec mv {} TMessagesProj/build/outputs/apk/Nnngram-arm64-v8a-${{ env.SHA7 }}-Telegram.apk \;
           echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
 
       - uses: actions/upload-artifact@master
@@ -148,7 +149,7 @@ jobs:
       - name: find apk
         run: |
             mkdir apks
-            find artifacts -name "Telegram/*.apk" -exec rm {} \;
+            find artifacts -name "*Telegram.apk" -exec rm {} \;
             find artifacts -name "*.apk" -exec cp {} apks \;
             echo "APK_FILE_UPLOAD=$(find apks -name '*arm64*.apk')" >> $GITHUB_ENV
       - name: Get Apk Info
