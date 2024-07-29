@@ -78,6 +78,7 @@ import android.text.style.ImageSpan;
 import android.util.Property;
 import android.util.TypedValue;
 import android.view.ActionMode;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
@@ -4897,7 +4898,23 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             return super.onTextContextMenuItem(id);
         }
 
+        @Override
+        public boolean onDragEvent(DragEvent event) {
+            if (event.getAction() == DragEvent.ACTION_DROP) {
+                ClipData clipData = event.getClipData();
+                if (clipData != null && LaunchActivity.instance != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    LaunchActivity.instance.requestDragAndDropPermissions(event);
+                    if (clipData.getItemCount() == 1 && (clipData.getDescription().hasMimeType("image/*") || clipData.getDescription().hasMimeType("video/mp4")) && !isEditingBusinessLink()) {
+                        editPhoto(clipData.getItemAt(0).getUri(), clipData.getDescription().getMimeType(0));
+                        return true;
+                    }
+                }
+            }
+            return super.onDragEvent(event);
+        }
+
         private void editPhoto(Uri uri, String mime) {
+            boolean isVideo = mime.contains("video");
             final File file = AndroidUtilities.generatePicturePath(parentFragment != null && parentFragment.isSecretChat(), MimeTypeMap.getSingleton().getExtensionFromMimeType(mime));
             Utilities.globalQueue.postRunnable(() -> {
                 try {
@@ -4911,7 +4928,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     }
                     in.close();
                     fos.close();
-                    MediaController.PhotoEntry photoEntry = new MediaController.PhotoEntry(0, -1, 0, file.getAbsolutePath(), 0, false, 0, 0, 0);
+                    MediaController.PhotoEntry photoEntry = new MediaController.PhotoEntry(0, -1, 0, file.getAbsolutePath(), 0, isVideo, 0, 0, 0);
                     ArrayList<Object> entries = new ArrayList<>();
                     entries.add(photoEntry);
                     AndroidUtilities.runOnUIThread(() -> {
