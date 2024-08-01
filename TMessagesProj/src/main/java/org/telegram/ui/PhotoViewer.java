@@ -10064,7 +10064,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         }
         checkFullscreenButton();
 
-        if (orientationEventListener == null) {
+        if (orientationEventListener == null && !Config.disableGravityDetectionInVideo) {
             orientationEventListener = new OrientationEventListener(ApplicationLoader.applicationContext) {
                 @Override
                 public void onOrientationChanged(int orientation) {
