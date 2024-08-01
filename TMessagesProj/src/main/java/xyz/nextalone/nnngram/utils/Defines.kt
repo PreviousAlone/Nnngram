@@ -220,6 +220,7 @@ object Defines {
     @BooleanConfig const val disableChannelMuteButton = "disableChannelMuteButton"
     @BooleanConfig const val disableAutoPip = "disableAutoPip"
     @BooleanConfig const val sendMp4DocumentAsVideo = "sendMp4DocumentAsVideo"
+    @BooleanConfig const val disableGravityDetectionInVideo = "disableGravityDetectionInVideo"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
