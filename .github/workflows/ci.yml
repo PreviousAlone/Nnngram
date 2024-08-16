@@ -78,12 +78,9 @@ jobs:
       - name: Debug Build
         run: |
           echo -e "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}\nRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}\nRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}">>local.properties
-          cat > service_account_credentials.json << EOF
-          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
-          EOF
-          mkdir TMessagesProj/config/
-          echo ${{ secrets.KEYSTORE }} | base64 -d > TMessagesProj/config/release.keystore
-          echo ${{ secrets.GOOGLE_SERVICES_JSON }} | base64 -d > TMessagesProj/google-services.json
+          mkdir -p TMessagesProj/config/
+          echo "${{ secrets.KEYSTORE }}" | base64 -d > TMessagesProj/config/release.keystore
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > TMessagesProj/google-services.json
           ./gradlew :TMessagesProj:assembleRelease :TMessagesProj:uploadCrashlyticsSymbolFileRelease
           echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
 
@@ -102,12 +99,9 @@ jobs:
       - name: Debug Build (Telegram)
         run: |
           echo -e "RELEASE_KEY_PASSWORD=${{ secrets.RELEASE_KEY_PASSWORD }}\nRELEASE_KEY_ALIAS=${{ secrets.RELEASE_KEY_ALIAS }}\nRELEASE_STORE_PASSWORD=${{ secrets.RELEASE_STORE_PASSWORD }}">>local.properties
-          cat > service_account_credentials.json << EOF
-          ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}"
-          EOF
-          mkdir TMessagesProj/config/
-          echo ${{secrets.KEYSTORE}} | base64 -d > TMessagesProj/config/release.keystore
-          echo ${{secrets.GOOGLE_SERVICES_JSON}} | base64 -d > TMessagesProj/google-services.json
+          mkdir -p TMessagesProj/config/
+          echo "${{ secrets.KEYSTORE }}" | base64 -d > TMessagesProj/config/release.keystore
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > TMessagesProj/google-services.json
           sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/build.gradle.kts
           sed -i 's@xyz.nextalone.nnngram@org.telegram.messenger@' TMessagesProj/google-services.json
           ./gradlew TMessagesProj:assembleRelease
