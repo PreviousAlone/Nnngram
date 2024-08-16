@@ -569,12 +569,7 @@ public class TextCell extends FrameLayout {
     }
 
     public static CharSequence applyNewSpan(CharSequence str) {
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str);
-        spannableStringBuilder.append("  d");
-        FilterCreateActivity.NewSpan span = new FilterCreateActivity.NewSpan(10);
-        span.setColor(Theme.getColor(Theme.key_premiumGradient1));
-        spannableStringBuilder.setSpan(span, spannableStringBuilder.length() - 1, spannableStringBuilder.length(), 0);
-        return spannableStringBuilder;
+        return str;
     }
 
     public void setColorfulIcon(int color, int resId) {
