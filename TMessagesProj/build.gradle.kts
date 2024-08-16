@@ -45,23 +45,7 @@ configurations {
     }
 }
 
-var serviceAccountCredentialsFile = File(rootProject.projectDir, "service_account_credentials.json")
 val abiName = mapOf("arm64-v8a" to "arm64")
-
-if (serviceAccountCredentialsFile.isFile) {
-    setupPlay(Version.isStable)
-    play.serviceAccountCredentials.set(serviceAccountCredentialsFile)
-} else if (System.getenv().containsKey("ANDROID_PUBLISHER_CREDENTIALS")) {
-    setupPlay(Version.isStable)
-}
-
-fun setupPlay(stable: Boolean) {
-    val targetTrace = if (stable) "production" else "beta"
-    play {
-        track.set(targetTrace)
-        defaultToAppBundles.set(true)
-    }
-}
 
 cargo {
     module  = "../libs/rust"
