@@ -4348,7 +4348,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
             if (sendWhenOnlineButton != null) {
                 TLRPC.User user = parentFragment == null ? null : parentFragment.getCurrentUser();
-                if (user != null && !user.bot && !(user.status instanceof TLRPC.TL_userStatusEmpty) && !(user.status instanceof TLRPC.TL_userStatusOnline) && !(user.status instanceof TLRPC.TL_userStatusRecently) && !(user.status instanceof TLRPC.TL_userStatusLastMonth) && !(user.status instanceof TLRPC.TL_userStatusLastWeek)) {
+                if (messageEditText != null && !TextUtils.isEmpty(messageEditText.getText()) && user != null && !user.bot && !(user.status instanceof TLRPC.TL_userStatusEmpty) && !(user.status instanceof TLRPC.TL_userStatusOnline) && !(user.status instanceof TLRPC.TL_userStatusRecently) && !(user.status instanceof TLRPC.TL_userStatusLastMonth) && !(user.status instanceof TLRPC.TL_userStatusLastWeek)) {
                     sendWhenOnlineButton.setVisibility(VISIBLE);
                 } else {
                     sendWhenOnlineButton.setVisibility(GONE);
@@ -4550,7 +4550,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         options.setupSelectors();
         if (sendWhenOnlineButton != null) {
             TLRPC.User user = parentFragment == null ? null : parentFragment.getCurrentUser();
-            if (user != null && !user.bot && !(user.status instanceof TLRPC.TL_userStatusEmpty) && !(user.status instanceof TLRPC.TL_userStatusOnline) && !(user.status instanceof TLRPC.TL_userStatusRecently) && !(user.status instanceof TLRPC.TL_userStatusLastMonth) && !(user.status instanceof TLRPC.TL_userStatusLastWeek)) {
+            if (messageEditText != null && !TextUtils.isEmpty(messageEditText.getText()) && user != null && !user.bot && !(user.status instanceof TLRPC.TL_userStatusEmpty) && !(user.status instanceof TLRPC.TL_userStatusOnline) && !(user.status instanceof TLRPC.TL_userStatusRecently) && !(user.status instanceof TLRPC.TL_userStatusLastMonth) && !(user.status instanceof TLRPC.TL_userStatusLastWeek)) {
                 sendWhenOnlineButton.setVisibility(VISIBLE);
             } else {
                 sendWhenOnlineButton.setVisibility(GONE);
