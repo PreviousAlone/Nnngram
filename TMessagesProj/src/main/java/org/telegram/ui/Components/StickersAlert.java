@@ -177,6 +177,8 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
     public boolean probablyEmojis;
     private boolean isEditModeEnabled;
 
+    private final int menu_user_profile = 105;
+
     public TLRPC.TL_messages_stickerSet stickerSet;
     private TLRPC.Document selectedSticker;
     private SendMessagesHelper.ImportingSticker selectedStickerPath;
@@ -1128,6 +1130,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
         optionsButton.addSubItem(1, R.drawable.msg_share, LocaleController.getString("StickersShare", R.string.StickersShare));
         optionsButton.addSubItem(2, R.drawable.msg_link, LocaleController.getString("CopyLink", R.string.CopyLink));
         optionsButton.addSubItem(3, R.drawable.media_download, LocaleController.getString("Save", R.string.Save));
+        optionsButton.addSubItem(menu_user_profile, R.drawable.msg_openprofile, LocaleController.getString("ChannelAdmin", R.string.ChannelAdmin));
 
         optionsButton.setOnClickListener(v -> {
             checkOptions();
@@ -1430,6 +1433,25 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
                 dismiss();
                 MediaDataController.getInstance(currentAccount).toggleStickerSet(getContext(), stickerSet, 1, parentFragment, false, false);
             });
+        } else if (id == menu_user_profile) {
+            // Na: open sticker's admin user profile or copy admin userId
+            long userId = stickerSet.set.id >> 32;
+            if ((stickerSet.set.id >> 24 & 0xff) != 0) {
+                userId += 0x100000000L;
+            }
+            if (parentFragment != null) {
+                TLRPC.User user = parentFragment.getMessagesController().getUser(userId);
+                if (user != null) {
+                    MessagesController.getInstance(currentAccount).openChatOrProfileWith(user, null, parentFragment, 0, false);
+                    return;
+                }
+            }
+            try {
+                AndroidUtilities.addToClipboard("" + userId);
+                BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyLinkBulletin().show();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
         }
     }
 
