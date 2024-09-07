@@ -1462,6 +1462,25 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
             } catch (Exception e) {
                 FileLog.e(e);
             }
+        } else if (id == menu_user_profile) {
+            // Na: open sticker's admin user profile or copy admin userId
+            long userId = stickerSet.set.id >> 32;
+            if ((stickerSet.set.id >> 24 & 0xff) != 0) {
+                userId += 0x100000000L;
+            }
+            if (fragment != null) {
+                TLRPC.User user = fragment.getMessagesController().getUser(userId);
+                if (user != null) {
+                    MessagesController.getInstance(currentAccount).openChatOrProfileWith(user, null, fragment, 0, false);
+                    return;
+                }
+            }
+            try {
+                AndroidUtilities.addToClipboard("" + userId);
+                BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyLinkBulletin().show();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
         }
     }
 
@@ -1537,6 +1556,8 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
             }
         }
     }
+
+    private final int menu_user_profile = 105;
 
     private class EmojiPackHeader extends FrameLayout {
 
@@ -1677,6 +1698,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
                 addView(optionsButton, LayoutHelper.createFrame(40, 40, Gravity.TOP | Gravity.RIGHT, 0, 5, 5 - backgroundPaddingLeft / AndroidUtilities.density, 0));
                 optionsButton.addSubItem(1, R.drawable.msg_share, LocaleController.getString(R.string.StickersShare));
                 optionsButton.addSubItem(2, R.drawable.msg_link, LocaleController.getString(R.string.CopyLink));
+                optionsButton.addSubItem(menu_user_profile, R.drawable.msg_openprofile, LocaleController.getString(R.string.ChannelAdmin));
                 optionsButton.setOnClickListener(v -> optionsButton.toggleSubMenu());
                 optionsButton.setDelegate(EmojiPacksAlert.this::onSubItemClick);
                 optionsButton.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
