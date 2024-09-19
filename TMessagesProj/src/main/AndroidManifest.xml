@@ -736,6 +736,10 @@ e            <intent-filter>
 
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/notification" />
 
+        <property
+            android:name="miui.continuity.policy"
+            android:value="5" />
+
     </application>
 
 </manifest>
