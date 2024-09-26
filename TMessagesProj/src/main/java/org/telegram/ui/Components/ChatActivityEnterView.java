@@ -102,6 +102,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -4907,6 +4908,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     LaunchActivity.instance.requestDragAndDropPermissions(event);
                     if (clipData.getItemCount() == 1 && (clipData.getDescription().hasMimeType("image/*") || clipData.getDescription().hasMimeType("video/mp4")) && !isEditingBusinessLink()) {
                         editPhoto(clipData.getItemAt(0).getUri(), clipData.getDescription().getMimeType(0));
+                        return true;
+                    } else if (clipData.getItemCount() > 1) {
+                        Toast.makeText(getContext(), "Don't drag more than 1 file at a time", Toast.LENGTH_SHORT).show();
                         return true;
                     }
                 }
