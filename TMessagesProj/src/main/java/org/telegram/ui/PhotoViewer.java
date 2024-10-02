@@ -5725,7 +5725,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             fullscreenButton[a].setContentDescription(getString("AccSwitchToFullscreen", R.string.AccSwitchToFullscreen));
             fullscreenButton[a].setScaleType(ImageView.ScaleType.CENTER);
             fullscreenButton[a].setBackground(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
-            fullscreenButton[a].setVisibility(View.INVISIBLE);
+            fullscreenButton[a].setVisibility(View.GONE);
             fullscreenButton[a].setAlpha(1.0f);
             containerView.addView(fullscreenButton[a], LayoutHelper.createFrame(48, 48));
             fullscreenButton[a].setOnClickListener(v -> {
@@ -9577,7 +9577,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public void checkFullscreenButton() {
         if (imagesArr.isEmpty()) {
             for (int b = 0; b < 3; b++) {
-                fullscreenButton[b].setVisibility(View.INVISIBLE);
+                fullscreenButton[b].setVisibility(View.GONE);
             }
             return;
         }
@@ -9589,12 +9589,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 index -= 1;
             }
             if (index < 0 || index >= imagesArr.size()) {
-                fullscreenButton[b].setVisibility(View.INVISIBLE);
+                fullscreenButton[b].setVisibility(View.GONE);
                 continue;
             }
             MessageObject messageObject = imagesArr.get(index);
             if (!messageObject.isVideo() && !messageObject.isYouTubeVideo()) {
-                fullscreenButton[b].setVisibility(View.INVISIBLE);
+                fullscreenButton[b].setVisibility(View.GONE);
                 continue;
             }
             boolean isYouTube = messageObject.isYouTubeVideo() && currentMessageObject != null && currentMessageObject.getId() == messageObject.getId();
