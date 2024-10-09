@@ -71,6 +71,16 @@ class Pangu {
             "((\\S+)#)" +
                 "([\\p{InHiragana}\\p{InKatakana}\\p{InBopomofo}\\p{InCJKCompatibilityIdeographs}\\p{InCJKUnifiedIdeographs}])"
         )
+
+        private val EN_PUNCTUATION_EN = Pattern.compile(
+            "([a-zA-Z])([.,!?])([a-zA-Z])"
+        )
+        private val EN_PUNCTUATION_CJK = Pattern.compile(
+            "([a-zA-Z0-9])([.,!?])([\\p{InHiragana}\\p{InKatakana}\\p{InBopomofo}\\p{InCJKCompatibilityIdeographs}\\p{InCJKUnifiedIdeographs}])"
+        )
+        private val CJK_PUNCTUATION_EN = Pattern.compile(
+            "([\\p{InHiragana}\\p{InKatakana}\\p{InBopomofo}\\p{InCJKCompatibilityIdeographs}\\p{InCJKUnifiedIdeographs}])([.,!?])([a-zA-Z0-9])"
+        )
     }
 
     private fun processUrl(text: String) = Pattern.compile("://").matcher(text).let { matcher ->
@@ -170,6 +180,14 @@ class Pangu {
         val acMatcher = ANS_CJK.matcher(text)
         text = acMatcher.replaceAll("$1 $2")
 
+        // CJK or ANS with EN Punctuation
+        val enPunctuationEnMatcher = EN_PUNCTUATION_EN.matcher(text)
+        text = enPunctuationEnMatcher.replaceAll("$1$2 $3")
+        val enPunctuationCjkMatcher = EN_PUNCTUATION_CJK.matcher(text)
+        text = enPunctuationCjkMatcher.replaceAll("$1$2 $3")
+        val cjkPunctuationEnMatcher = CJK_PUNCTUATION_EN.matcher(text)
+        text = cjkPunctuationEnMatcher.replaceAll("$1$2 $3")
+
         return text
     }
 
@@ -184,6 +202,21 @@ internal object Test {
     @JvmStatic
     fun main(args: Array<String>) {
         val pangu = Pangu()
-        println(pangu.spacingText("當你凝視著 https://telegra.ph/八尋ぽち-ひみチュッ-中国翻訳-無修正-DL版-06-17-3 ，bug也凝視著 https://telegra.ph/ASDF-DL版-06-17-3"))
+        val testCases = listOf(
+            "當你凝視著 https://telegra.ph/八尋ぽち-ひみチュッ-中国翻訳-無修正-DL版-06-17-3 ，bug也凝視著 https://telegra.ph/ASDF-DL版-06-17-3",
+            "Hello,world!This is a test.",
+            "你好，世界！这是一个测试。",
+            "你好,世界!这是一个测试.",
+            "123,456.789!0",
+            "1,1 1.1 1!1 1?1 1,a 1.a 1!a 1?a a,a a.a a!a a?a a,1 a.1 a!1 a?1",
+            "CJK和ANS混合测试：你好world123,你好!world123",
+            "URL测试：https://example.com/path?query=测试",
+            "带引号的测试：\"你好\" '世界'",
+            "带括号的测试：(你a好) [世b,b界] {测c试}"
+        )
+
+        testCases.forEach { testCase ->
+            println("$testCase\n${pangu.spacingText(testCase)}\n")
+        }
     }
 }
