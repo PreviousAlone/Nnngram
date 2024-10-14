@@ -389,4 +389,5 @@
     <string name="disableAutoPip">Disable auto PIP</string>
     <string name="sendMp4DocumentAsVideo">Send MP4 document as video</string>
     <string name="disableGravityDetectionInVideo">Disable gravity detection in video</string>
+    <string name="hideProxyEntryInTitle">Hide proxy entry in title</string>
 </resources>

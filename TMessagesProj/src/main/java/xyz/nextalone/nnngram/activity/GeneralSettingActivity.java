@@ -111,6 +111,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int disableSharePhoneWithContactByDefaultRow;
     private int ignoreUserSpecifiedReplyColorRow;
     private int ignoreFolderUnreadCountRow;
+    private int hideProxyEntryInTitleRow;
     private int hideFilterMuteAllRow;
 
     private int devicesRow;
@@ -398,8 +399,12 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.hideDialogsFloatingButton);
             }
+        } else if (position == hideProxyEntryInTitleRow) {
+            Config.toggleHideProxyEntryInTitle();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.hideProxyEntryInTitle);
+            }
         }
-
     }
 
     @Override
@@ -467,6 +472,7 @@ public class GeneralSettingActivity extends BaseActivity {
         tabsTitleTypeRow = addRow("tabsTitleType");
         ignoreFolderUnreadCountRow = addRow("ignoreFolderUnreadCount");
         hideFilterMuteAllRow = addRow("hideFilterMuteAll");
+        hideProxyEntryInTitleRow = addRow();
         general2Row = addRow();
 
         devicesRow = addRow();
@@ -670,6 +676,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("hideFilterMuteAll", R.string.hideFilterMuteAll), Config.hideFilterMuteAll, true);
                     } else if (position == hideDialogsFloatingButtonRow) {
                         textCell.setTextAndCheck(LocaleController.getString("hideDialogsFloatingButton", R.string.hideDialogsFloatingButton), Config.hideDialogsFloatingButton, true);
+                    } else if (position == hideProxyEntryInTitleRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.hideProxyEntryInTitle), Config.hideProxyEntryInTitle, true);
                     }
                     break;
                 }
