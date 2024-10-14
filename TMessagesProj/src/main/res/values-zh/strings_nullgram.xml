@@ -376,4 +376,5 @@
     <string name="disableAutoPip">禁用自动画中画</string>
     <string name="sendMp4DocumentAsVideo">以视频格式发送 MP4 文件</string>
     <string name="disableGravityDetectionInVideo">禁用视频重力检测</string>
+    <string name="hideProxyEntryInTitle">隐藏标题代理入口</string>
 </resources>
