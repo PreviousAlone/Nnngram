@@ -868,6 +868,9 @@ public class GeneralSettingActivity extends BaseActivity {
         boolean isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium();
         int count = isPremium ? 8 : 6;
         for (int a = 0; a < count; a++) {
+            if (a == 3) {
+                continue;
+            }
             TextCheckCell textCell = new TextCheckCell(context);
             switch (a) {
                 case 0 -> textCell.setTextAndCheck(LocaleController.getString("NewGroup", R.string.NewGroup), Config.showNewGroup,  false);
