@@ -9951,6 +9951,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (proxyDrawable == null || doneItem != null && doneItem.getVisibility() == View.VISIBLE) {
             return;
         }
+        if (Config.hideProxyEntryInTitle) {
+            proxyItem.setVisibility(View.GONE);
+            return;
+        }
         boolean showDownloads = false;
         for (int i = 0; i < getDownloadController().downloadingFiles.size(); i++) {
             if (getFileLoader().isLoadingFile(getDownloadController().downloadingFiles.get(i).getFileName())) {
