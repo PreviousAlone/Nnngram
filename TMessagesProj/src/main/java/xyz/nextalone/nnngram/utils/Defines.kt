@@ -221,6 +221,7 @@ object Defines {
     @BooleanConfig const val disableAutoPip = "disableAutoPip"
     @BooleanConfig const val sendMp4DocumentAsVideo = "sendMp4DocumentAsVideo"
     @BooleanConfig const val disableGravityDetectionInVideo = "disableGravityDetectionInVideo"
+    @BooleanConfig const val hideProxyEntryInTitle = "hideProxyEntryInTitle"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
