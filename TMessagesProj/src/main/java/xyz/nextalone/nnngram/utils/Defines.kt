@@ -222,6 +222,7 @@ object Defines {
     @BooleanConfig const val sendMp4DocumentAsVideo = "sendMp4DocumentAsVideo"
     @BooleanConfig const val disableGravityDetectionInVideo = "disableGravityDetectionInVideo"
     @BooleanConfig const val hideProxyEntryInTitle = "hideProxyEntryInTitle"
+    @BooleanConfig const val autoMuteAfterJoiningChannel = "autoMuteAfterJoinChannel"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
