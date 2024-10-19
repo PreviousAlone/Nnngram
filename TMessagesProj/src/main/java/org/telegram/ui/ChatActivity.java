@@ -8558,6 +8558,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 getNotificationCenter().postNotificationName(NotificationCenter.peerSettingsDidLoad, dialog_id);
                             }
                         }
+                        if (Config.autoMuteAfterJoiningChannel)
+                            getNotificationsController().muteDialog(dialog_id, getTopicId(), true);
                     } else {
                         toggleMute(true);
                     }
