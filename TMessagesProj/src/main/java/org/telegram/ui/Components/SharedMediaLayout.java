@@ -3328,7 +3328,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
         if (forwardItem == null) {
             return;
         }
-        boolean noforwards = !Config.ignoreChatStrict && profileActivity.getMessagesController().isChatNoForwards(-dialog_id) || hasNoforwardsMessage();
+        boolean noforwards = !Config.ignoreChatStrict && (profileActivity.getMessagesController().isChatNoForwards(-dialog_id) || hasNoforwardsMessage());
         forwardItem.setAlpha(noforwards ? 0.5f : 1f);
         if (forwardNoQuoteItem != null) forwardNoQuoteItem.setAlpha(noforwards ? 0.5f : 1f);
         if (noforwards && forwardItem.getBackground() != null) {
