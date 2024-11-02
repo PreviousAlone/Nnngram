@@ -19,6 +19,8 @@
 
 package xyz.nextalone.nnngram.activity;
 
+import static org.telegram.messenger.AndroidUtilities.getSystemProperty;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
@@ -64,6 +66,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int linkedUserRow;
     private int overrideChannelAliasRow;
     private int showRPCErrorRow;
+    private int enableXiaomiHyperAiRow;
 
     private int specialRow;
     private int special2Row;
@@ -219,6 +222,11 @@ public class ExperimentSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.ignoreChatStrict);
             }
+        } else if (position == enableXiaomiHyperAiRow) {
+            Config.toggleEnableXiaomiHyperAi();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.enableXiaomiHyperAi);
+            }
         }
 
     }
@@ -252,6 +260,9 @@ public class ExperimentSettingActivity extends BaseActivity {
         }
         var user = UserConfig.getInstance(currentAccount).getCurrentUser();
         showRPCErrorRow = user != null && user.developer() ? addRow("showRPCError") : -1;
+        if (getSystemProperty("ro.mi.os.version.name") != null) {
+            enableXiaomiHyperAiRow = addRow("enableXiaomiHyperAi");
+        }
         experiment2Row = addRow();
 
         if (Config.showHiddenSettings) {
@@ -391,6 +402,8 @@ public class ExperimentSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("enablePanguOnReceiving", R.string.enablePanguOnReceiving), Config.enablePanguOnReceiving, true);
                     } else if (position == ignoreChatStrictRow) {
                         textCell.setTextAndCheck("", Config.ignoreChatStrict, true);
+                    } else if (position == enableXiaomiHyperAiRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.enableXiaomiHyperAi), Config.enableXiaomiHyperAi, true);
                     }
                     break;
                 }

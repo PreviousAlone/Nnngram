@@ -378,4 +378,5 @@
     <string name="disableGravityDetectionInVideo">禁用视频重力检测</string>
     <string name="hideProxyEntryInTitle">隐藏标题代理入口</string>
     <string name="autoMuteAfterJoiningChannel">加入频道后自动静音</string>
+    <string name="enableXiaomiHyperAi">在输入框中显示小米澎湃AI</string>
 </resources>
