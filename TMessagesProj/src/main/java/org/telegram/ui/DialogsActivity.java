@@ -10039,7 +10039,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             return;
         }
         if (Config.hideProxyEntryInTitle) {
-            proxyItem.setVisibility(View.INVISIBLE);
+            proxyItem.setVisibility(View.GONE);
             return;
         }
         boolean showDownloads = false;
