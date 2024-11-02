@@ -246,6 +246,7 @@ object Defines {
     @BooleanConfig(true) const val showTextRegular = "showTextRegular"
     @BooleanConfig(true) const val showTextQuote = "showTextQuote"
     @BooleanConfig(true) const val showTextMonoCode = "showTextMonoCode"
+    @BooleanConfig(false) const val enableXiaomiHyperAi = "enableXiaomiHyperAi"
 
     /**
      * 数组中元素未找到的下标，值为-1
