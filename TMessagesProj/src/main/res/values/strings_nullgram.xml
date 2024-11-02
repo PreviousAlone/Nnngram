@@ -391,4 +391,5 @@
     <string name="disableGravityDetectionInVideo">Disable gravity detection in video</string>
     <string name="hideProxyEntryInTitle">Hide proxy entry in title</string>
     <string name="autoMuteAfterJoiningChannel">Auto mute after joining channel</string>
+    <string name="enableXiaomiHyperAi">Enable Xiaomi HyperAI in editor</string>
 </resources>
