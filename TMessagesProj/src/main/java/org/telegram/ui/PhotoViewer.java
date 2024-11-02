@@ -13654,7 +13654,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             actionBarContainer.setSubtitle(subtitle, animated);
 
             boolean isInvoice = newMessageObject.isInvoice();
-            boolean noforwards = !Config.ignoreChatStrict && MessagesController.getInstance(currentAccount).isChatNoForwards(newMessageObject.getChatId()) || (newMessageObject.messageOwner != null && newMessageObject.messageOwner.noforwards) || newMessageObject.hasRevealedExtendedMedia();
+            boolean noforwards = !Config.ignoreChatStrict && (MessagesController.getInstance(currentAccount).isChatNoForwards(newMessageObject.getChatId()) || (newMessageObject.messageOwner != null && newMessageObject.messageOwner.noforwards) || newMessageObject.hasRevealedExtendedMedia());
             if (isVideo) {
                 bottomLayout.setVisibility(View.VISIBLE);
                 bottomLayout.setTag(1);
