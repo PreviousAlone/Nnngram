@@ -1469,10 +1469,10 @@ public class LocaleController {
 //            value = value.replace("Telegram", "Nnngram");
         if (value.contains("TELEOFFICIAL"))
             value = value.replace("TELEOFFICIAL", "Telegram");
+        if (value.contains("NullgramClient"))
+            value = value.replace("NullgramClient", "nagram_group");
         if (value.contains("Nullgram"))
             value = value.replace("Nullgram", "Nnngram");
-        if (value.contains("NullgramClient"))
-            value = value.replace("NullgramClient", "nagram_client");
         return value;
     }
 
