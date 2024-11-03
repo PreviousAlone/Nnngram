@@ -180,6 +180,8 @@ object Defines {
     @BooleanConfig const val showOriginal = "showOriginal"
     const val translatorProvider = "translatorProvider"
     const val deepLFormality = "deepLFormality"
+    @StringConfig("") const val deepLxApi = "deepLxApi"
+    const val deepLxPreserveFormatting = "deepLxPreserveFormatting"
     const val translatorStatus = "translatorStatus"
     const val targetLanguage = "targetLanguage"
     const val restrictedLanguages = "restrictedLanguagesFix"
