@@ -90,6 +90,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int translatorRow;
     private int showOriginalRow;
     private int deepLFormalityRow;
+    private int deepLxApiRow;
     private int translatorTypeRow;
     private int translationProviderRow;
     private int translationTargetRow;
@@ -306,11 +307,26 @@ public class GeneralSettingActivity extends BaseActivity {
                     listAdapter.notifyItemChanged(translationTargetRow, PARTIAL);
                 }
                 if (!oldProvider.equals(TranslateHelper.getCurrentProviderType())) {
-                    if (oldProvider.equals(ProviderType.DeepLTranslator)) {
+                    boolean wasDeepLTranslator = oldProvider.equals(ProviderType.DeepLTranslator);
+                    boolean isDeepLTranslator = TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLTranslator);
+                    boolean wasDeepLxTranslator = oldProvider.equals(ProviderType.DeepLxTranslator);
+                    boolean isDeepLxTranslator = TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLxTranslator);
+
+                    if (wasDeepLTranslator && !isDeepLxTranslator) {
                         listAdapter.notifyItemRemoved(deepLFormalityRow);
-                        updateRows();
-                    } else if (TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLTranslator)) {
-                        updateRows();
+                    } else if (wasDeepLxTranslator) {
+                        listAdapter.notifyItemRemoved(deepLxApiRow);
+                        if (!isDeepLxTranslator) {
+                            listAdapter.notifyItemRemoved(deepLFormalityRow);
+                        }
+                    }
+
+                    updateRows();
+
+                    if (isDeepLTranslator) {
+                        listAdapter.notifyItemInserted(deepLFormalityRow);
+                    } else if (isDeepLxTranslator) {
+                        listAdapter.notifyItemInserted(deepLxApiRow);
                         listAdapter.notifyItemInserted(deepLFormalityRow);
                     }
                 }
@@ -338,6 +354,22 @@ public class GeneralSettingActivity extends BaseActivity {
                     ConfigManager.putInt(Defines.deepLFormality, types.get(i));
                     listAdapter.notifyItemChanged(deepLFormalityRow, PARTIAL);
                 });
+        } else if (position == deepLxApiRow) {
+            EditTextBoldCursor editText = new EditTextBoldCursor(getParentActivity());
+            editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+            editText.setHint("DeepLx API Url"); // todo: string resource
+            editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            editText.setText(Config.getDeepLxApi());
+            FrameLayout frameLayout = new FrameLayout(getParentActivity());
+            frameLayout.addView(editText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 16, 0, 16, 0));
+            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+            builder.setTitle("DeepLx API Url"); // todo: string resource
+            builder.setView(frameLayout);
+            builder.setPositiveButton(LocaleController.getString("Save", R.string.Save), (dialogInterface, i) -> {
+                Config.setDeepLxApi(editText.getText().toString());
+            });
+            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+            builder.show();
         } else if (position == translatorTypeRow) {
             var oldType = TranslateHelper.getCurrentStatus();
             TranslateHelper.showTranslatorTypeSelector(getParentActivity(), view, () -> {
@@ -441,7 +473,8 @@ public class GeneralSettingActivity extends BaseActivity {
         if (TranslateHelper.getCurrentStatus() != TranslateHelper.Status.External) {
             showOriginalRow = TranslateHelper.getCurrentStatus() == TranslateHelper.Status.InMessage ? addRow("showOriginal") : -1;
             translationProviderRow = addRow("translationProvider");
-            deepLFormalityRow = TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLTranslator) ? addRow("deepLFormality") : -1;
+            deepLxApiRow = TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLxTranslator) ? addRow("deepLxApi") : -1;
+            deepLFormalityRow = (TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLTranslator) || TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLxTranslator)) ? addRow("deepLFormality") : -1;
             translationTargetRow = addRow("translationTarget");
             doNotTranslateRow = addRow("doNotTranslate");
             autoTranslateRow = addRow("autoTranslate");
@@ -612,6 +645,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndValue(LocaleController.getString("customTitle", R.string.customTitle), Config.getCustomTitle(), payload, true);
                     } else if (position == drawerListRow) {
                         textCell.setText(LocaleController.getString("drawerList", R.string.drawerList), false);
+                    } else if (position == deepLxApiRow) {
+                        textCell.setTextAndValue(LocaleController.getString(R.string.DeepLxApi), Config.getDeepLxApi().substring(0, 25) + "...", payload, true);
                     }
                     break;
                 }
@@ -768,7 +803,7 @@ public class GeneralSettingActivity extends BaseActivity {
                 return 1;
             } else if (position == tabsTitleTypeRow || position == translationProviderRow || position == deepLFormalityRow || position == translationTargetRow ||
                 position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow ||
-                position == drawerListRow) {
+                position == drawerListRow || position == deepLxApiRow) {
                 return 2;
             } else if (position == generalRow || position == translatorRow || position == devicesRow || position == storiesRow) {
                 return 4;
