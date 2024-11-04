@@ -82,8 +82,11 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.HyperOsHelper;
 import xyz.nextalone.nnngram.helpers.TranslateHelper;
 
 public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.SelectableView> {
@@ -1420,22 +1423,43 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
 
     private static final int TRANSLATE = 3;
     private static final int BLOCK = 4;
+    private static final Map<Integer, Integer> menus = new HashMap<>();
+    private int getMenuIndex(int id, int defaultIndex) {
+        if (menus.containsKey(id)) {
+            Integer index =  menus.get(id);
+            if (index != null) {
+                return index;
+            }
+        }
+        return defaultIndex;
+    }
+
     private ActionMode.Callback createActionCallback() {
         final ActionMode.Callback callback = new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                menu.removeItem(R.id.hyperos_ai);
-                menu.add(Menu.NONE, android.R.id.copy, 0, android.R.string.copy);
-                menu.add(Menu.NONE, R.id.menu_quote, 1, LocaleController.getString(R.string.Quote));
-                menu.add(Menu.NONE, android.R.id.selectAll, 2, android.R.string.selectAll);
-                menu.add(Menu.NONE, TRANSLATE, 3, LocaleController.getString(R.string.TranslateMessage));
-                menu.add(Menu.NONE, BLOCK, 4, LocaleController.getString(R.string.block));
+                menus.clear();
+                int index = 0;
+                if (HyperOsHelper.INSTANCE.isHyperAiAvailable(textSelectionOverlay.getContext())) {
+                    menus.put(R.id.hyperos_ai, index);
+                    menu.add(Menu.NONE, R.id.hyperos_ai, index++, "AI");
+                }
+                menus.put(android.R.id.copy, index);
+                menu.add(Menu.NONE, android.R.id.copy, index++, android.R.string.copy);
+                menus.put(R.id.menu_quote, index);
+                menu.add(Menu.NONE, R.id.menu_quote, index++, LocaleController.getString(R.string.Quote));
+                menus.put(android.R.id.selectAll, index);
+                menu.add(Menu.NONE, android.R.id.selectAll, index++, android.R.string.selectAll);
+                menus.put(TRANSLATE, index);
+                menu.add(Menu.NONE, TRANSLATE, index++, LocaleController.getString(R.string.TranslateMessage));
+                menus.put(BLOCK, index);
+                menu.add(Menu.NONE, BLOCK, index, LocaleController.getString(R.string.block));
                 return true;
             }
 
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                menu.getItem(1).setVisible(canShowQuote());
+                menu.getItem(getMenuIndex(R.id.menu_quote, 0)).setVisible(canShowQuote());
                 MenuItem copyItem = menu.findItem(android.R.id.copy);
                 if (copyItem != null) {
                     copyItem.setVisible(canCopy());
@@ -1443,11 +1467,11 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                 if (selectedView != null) {
                     CharSequence charSequence = getText(selectedView, false);
                     if (!canCopy()) {
-                        menu.getItem(2).setVisible(false);
+                        menu.getItem(getMenuIndex(android.R.id.selectAll, 2)).setVisible(false);
                     } else if (multiselect || selectionStart <= 0 && selectionEnd >= charSequence.length() - 1) {
-                        menu.getItem(2).setVisible(false);
+                        menu.getItem(getMenuIndex(android.R.id.selectAll, 2)).setVisible(false);
                     } else {
-                        menu.getItem(2).setVisible(true);
+                        menu.getItem(getMenuIndex(android.R.id.selectAll, 2)).setVisible(true);
                     }
                 }
                 if (onTranslateListener != null && LanguageDetector.hasSupport() && getSelectedText() != null) {
@@ -1469,7 +1493,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
 
             private String translateFromLanguage = null;
             private void updateTranslateButton(Menu menu) {
-                menu.getItem(3).setVisible(!LanguageDetector.hasSupport() || translateFromLanguage == null || !TranslateHelper.isLanguageRestricted(translateFromLanguage));
+                menu.getItem(getMenuIndex(TRANSLATE, 3)).setVisible(!LanguageDetector.hasSupport() || translateFromLanguage == null || !TranslateHelper.isLanguageRestricted(translateFromLanguage));
             }
 
             @Override
@@ -1514,6 +1538,15 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                     String currentFilteredMessages = Config.getMessageFilter();
                     currentFilteredMessages = currentFilteredMessages + (currentFilteredMessages.isEmpty() ? "" : "|") + str.toString();
                     Config.setMessageFilter(currentFilteredMessages);
+                    hideActions();
+                    clear(true);
+                    return true;
+                } else if (itemId == R.id.hyperos_ai) {
+                    CharSequence str = getSelectedText();
+                    if (str == null) {
+                        return true;
+                    }
+                    HyperOsHelper.INSTANCE.startHyperOsAiService(textSelectionOverlay, str.toString());
                     hideActions();
                     clear(true);
                     return true;
