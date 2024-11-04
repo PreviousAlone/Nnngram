@@ -646,7 +646,11 @@ public class GeneralSettingActivity extends BaseActivity {
                     } else if (position == drawerListRow) {
                         textCell.setText(LocaleController.getString("drawerList", R.string.drawerList), false);
                     } else if (position == deepLxApiRow) {
-                        textCell.setTextAndValue(LocaleController.getString(R.string.DeepLxApi), Config.getDeepLxApi().substring(0, 25) + "...", payload, true);
+                        String value = Config.getDeepLxApi();
+                        if (value.length() > 25) {
+                            value = value.substring(0, 25) + "...";
+                        }
+                        textCell.setTextAndValue(LocaleController.getString(R.string.DeepLxApi), value, payload, true);
                     }
                     break;
                 }
