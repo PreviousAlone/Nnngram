@@ -49,10 +49,9 @@ Android NDK rev.21とAndroid SDK 14が必要です。
 
 ## スポンサー
 
-IDEに無料のオープンソースライセンスを割り当ててくれたJetbrainsとOSSのスポンサーになって頂いたCloudFlareに感謝をします。
+IDEに無料のオープンソースライセンスを割り当ててくれたJetbrainsに感謝をします。
 
 [<img src="docs/jetbrains-variant-3.png" width="200"/>](https://jb.gg/OpenSource)
-[<img src="docs/CF_logomark.svg" width="200"/>](https://www.cloudflare.com/)
 
 
 [^1]: https://telegra.ph/%E6%9C%89%E5%85%B3-Nekogram-Lite-%E7%9A%84%E6%95%85%E4%BA%8B-04-09
