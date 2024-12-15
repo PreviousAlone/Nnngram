@@ -1,7 +1,7 @@
 ![](https://socialify.git.ci/PreviousAlone/Nnngram/image?description=1&forks=1&issues=1&name=1&owner=1&pulls=1&stargazers=1&theme=Dark)
 
 # Nagram-reborn based on Nullgram
-[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=@Nnngram&color=0088cc)](https://t.me/NullgramClient)
+[![Telegram](https://img.shields.io/static/v1?label=Telegram&message=@Nnngram&color=0088cc)](https://t.me/Nnngram)
 
 ## What is Nullgram
 
