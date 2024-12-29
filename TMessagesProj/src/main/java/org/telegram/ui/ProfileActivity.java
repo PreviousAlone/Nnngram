@@ -12058,10 +12058,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             } else {
                             value = LocaleController.getString(R.string.NumberUnknown);
                             }
-                        } else if (!TextUtils.isEmpty(user.username)) {
-                            value = "@" + user.username;
                         } else {
-                            value = "@???";
+                            value = LocaleController.getString(R.string.PhoneHidden);
                         }
                         detailCell.setTextAndValue(value, LocaleController.getString(R.string.TapToChangePhone), true);
                         detailCell.setContentDescriptionValueFirst(false);
@@ -14705,8 +14703,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 presentFragment(new UserInfoActivity());
             });
         } else if (position == phoneRow) {
-            itemOptions.add(R.drawable.profile_phone, getString(R.string.ProfilePhoneEdit), () -> {
+            itemOptions.add(R.drawable.msg_newphone, getString(R.string.ProfilePhoneEdit), () -> {
                 presentFragment(new ActionIntroActivity(ActionIntroActivity.ACTION_TYPE_CHANGE_PHONE_NUMBER));
+            });
+            itemOptions.add(R.drawable.msg_block2, getString(R.string.Hide), () -> {
+                hidePhone = true;
+                updateListAnimated(false);
             });
         } else if (position == birthdayRow) {
             itemOptions.add(R.drawable.msg_edit, getString(R.string.ProfileBirthdayChange), () -> {
