@@ -19,7 +19,6 @@
 
 @file:Suppress("UnstableApiUsage")
 
-import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.FilterConfiguration
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
@@ -48,7 +47,7 @@ configurations {
 val abiName = mapOf("arm64-v8a" to "arm64")
 
 cargo {
-    module  = "../libs/rust"
+    module = "../libs/rust"
     libname = "rust"
     targets = listOf("arm64", "arm")
 
