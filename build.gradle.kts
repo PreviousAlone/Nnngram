@@ -44,7 +44,7 @@ val androidTargetSdkVersion by extra(35)
 val androidMinSdkVersion by extra(27)
 val androidCompileSdkVersion by extra(35)
 val androidBuildToolsVersion = Version.findBuildToolsVersion()
-val androidCompileNdkVersion = "27.0.12077973"
+val androidCompileNdkVersion = "27.2.12479018"
 
 fun Project.configureBaseExtension() {
     extensions.findByType(com.android.build.gradle.BaseExtension::class)?.run {
