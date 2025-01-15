@@ -28,7 +28,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Base64
@@ -42,14 +41,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.TimePicker
-import android.widget.Toast
 import androidx.core.content.FileProvider
-import com.airbnb.lottie.LottieComposition
-import com.airbnb.lottie.LottieCompositionFactory
-import com.airbnb.lottie.LottieDrawable
-import com.airbnb.lottie.LottieResult
-import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
-import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -102,7 +94,6 @@ import xyz.nextalone.nnngram.helpers.QrHelper
 import xyz.nextalone.nnngram.helpers.QrHelper.readQr
 import xyz.nextalone.nnngram.tryOrLog
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
@@ -426,7 +417,7 @@ class MessageUtils(num: Int) : BaseController(num) {
     }
 
     fun saveStickerToGallery(activity: Activity, messageObject: MessageObject, callback: Utilities.Callback<Uri>) {
-        saveStickerToGallery(activity, getPathToMessage(messageObject), messageObject.isVideoSticker, messageObject.isAnimatedSticker, callback)
+        saveStickerToGallery(activity, getPathToMessage(messageObject), messageObject.isVideoSticker, callback)
     }
 
     fun addMessageToClipboard(selectedObject: MessageObject, callback: Runnable) {
@@ -876,94 +867,14 @@ class MessageUtils(num: Int) : BaseController(num) {
             if (!temp.exists()) {
                 return
             }
-            saveStickerToGallery(activity, path, MessageObject.isVideoSticker(document), MessageObject.isAnimatedStickerDocument(document), callback)
+            saveStickerToGallery(activity, path, MessageObject.isVideoSticker(document), callback)
         }
 
-        private fun saveStickerToGallery(activity: Activity, path: String?, video: Boolean, animated: Boolean, callback: Utilities.Callback<Uri>) {
+        private fun saveStickerToGallery(activity: Activity, path: String?, video: Boolean, callback: Utilities.Callback<Uri>) {
             Utilities.globalQueue.postRunnable {
                 tryOrLog {
                     if (video) {
-                        val outputPath =
-                            path!!.replace(".webm", ".gif")
-                        if (File(outputPath).exists()) {
-                            File(outputPath).delete()
-                        }
-                        val cmd = arrayOf("-y", "-vcodec", "libvpx-vp9", "-i", path, "-lavfi", "split[v],palettegen,[v]paletteuse", outputPath)
-                        FFmpeg.executeAsync(cmd) { executionId, returnCode ->
-                            if (returnCode == RETURN_CODE_SUCCESS) {
-                                MediaController.saveFile(outputPath, activity, 0, null, null, callback)
-                            } else {
-                                Log.e("FFmpeg", "Failed to convert to GIF: $returnCode, file: $path")
-                                Toast.makeText(activity, "Failed to convert to GIF, Use Mp4", Toast.LENGTH_SHORT).show()
-                                com.arthenica.mobileffmpeg.Config.printLastCommandOutput(android.util.Log.ERROR)
-                                MediaController.saveFile(path, activity, 1, null, null, callback)
-                            }
-                        }
-                    } else if (animated) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val outputPath = path!!.replace(".tgs", ".gif")
-                            if (File(outputPath).exists()) {
-                                File(outputPath).delete()
-                            }
-
-                            val result: LottieResult<LottieComposition> = LottieCompositionFactory.fromJsonInputStreamSync(
-                                FileInputStream(File(path)), path)
-                            val composition: LottieComposition? = result.value
-
-                            composition?.let { comp ->
-                                val lottieDrawable = LottieDrawable().apply { this.composition = comp }
-
-                                lottieDrawable.setBounds(0, 0, comp.bounds.width(), comp.bounds.height())
-
-                                val tempDir = File(activity.cacheDir, "temp_${System.currentTimeMillis()}")
-                                if (!tempDir.exists()) {
-                                    tempDir.mkdirs()
-                                }
-
-                                for (i in comp.startFrame.toInt() until comp.endFrame.toInt()) {
-                                    lottieDrawable.frame = i
-
-                                    val bitmap = Bitmap.createBitmap(comp.bounds.width(), comp.bounds.height(), Bitmap.Config.ARGB_8888)
-                                    val canvas = Canvas(bitmap)
-                                    lottieDrawable.draw(canvas)
-
-                                    val file = File(tempDir, "$i.png")
-                                    FileOutputStream(file).use { fos ->
-                                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                                    }
-                                }
-                                val generatePaletteCommand = arrayOf(
-                                    "-i", "${tempDir.absolutePath}/%d.png",
-                                    "-vf", "palettegen=stats_mode=diff",
-                                    "-y", "${tempDir.absolutePath}/palette.png"
-                                )
-                                val createGifCommand = arrayOf(
-                                    "-framerate", "60",
-                                    "-i", "${tempDir.absolutePath}/%d.png",
-                                    "-i", "${tempDir.absolutePath}/palette.png",
-                                    "-filter_complex", "[0:v]scale=320:-1:flags=lanczos[v];[v][1:v]paletteuse=dither=none:diff_mode=rectangle",
-                                    "-y", outputPath
-                                )
-                                FFmpeg.executeAsync(generatePaletteCommand) { executionId, returnCode ->
-                                    if (returnCode == RETURN_CODE_SUCCESS) {
-                                        FFmpeg.executeAsync(createGifCommand) { executionId, returnCode ->
-                                            if (returnCode == RETURN_CODE_SUCCESS) {
-                                                MediaController.saveFile(outputPath, activity, 0, null, null, callback)
-                                            } else {
-                                                Log.e("FFmpeg", "Failed to convert to GIF: $returnCode, file: $path")
-                                                Toast.makeText(activity, "Failed to convert to GIF, Use tgs", Toast.LENGTH_SHORT).show()
-                                                com.arthenica.mobileffmpeg.Config.printLastCommandOutput(android.util.Log.ERROR)
-                                            }
-                                            tempDir.deleteRecursively()
-                                        }
-                                    } else {
-                                        Log.e("FFmpeg", "Failed to convert to GIF: $returnCode, file: $path")
-                                        Toast.makeText(activity, "Failed to convert to GIF, Use tgs", Toast.LENGTH_SHORT).show()
-                                        com.arthenica.mobileffmpeg.Config.printLastCommandOutput(android.util.Log.ERROR)
-                                    }
-                                }
-                            }
-                        }
+                        MediaController.saveFile(path, activity, 1, null, null, callback)
                     } else {
                         val image = BitmapFactory.decodeFile(path)
                         if (image != null) {
