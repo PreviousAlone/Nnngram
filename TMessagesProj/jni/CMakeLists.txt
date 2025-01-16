@@ -234,7 +234,6 @@ add_library(${NATIVE_LIB} SHARED
         exoplayer/flac_parser.cc
         exoplayer/opus_jni.cc
         exoplayer/ffmpeg_jni.cc
-        exoplayer/vpx_jni.cc
         fast-edge.cpp
         genann.c
         secureid_ocr.cpp
