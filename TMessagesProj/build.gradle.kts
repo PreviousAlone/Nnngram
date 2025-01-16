@@ -98,6 +98,7 @@ dependencies {
     implementation(libs.ktor.serialization.json)
 
     implementation(files("libs/ffmpeg-kit-video-4.4.LTS.aar"))
+    implementation(libs.smart.exception.java)
     implementation(libs.lottie)
 
     implementation(project(":libs:tcp2ws"))
