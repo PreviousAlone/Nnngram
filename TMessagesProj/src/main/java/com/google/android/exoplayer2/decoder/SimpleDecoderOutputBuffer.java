@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /** Buffer for {@link SimpleDecoder} output. */
-public class SimpleDecoderOutputBuffer extends DecoderOutputBuffer {
+public class SimpleDecoderOutputBuffer extends OutputBuffer {
 
   private final Owner<SimpleDecoderOutputBuffer> owner;
 

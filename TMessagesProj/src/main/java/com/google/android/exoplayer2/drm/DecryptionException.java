@@ -1,5 +1,6 @@
+
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2017 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.android.exoplayer2.video;
+package com.google.android.exoplayer2.drm;
 
-/** Renders the {@link VideoDecoderOutputBuffer}. */
-public interface VideoDecoderOutputBufferRenderer {
+/**
+ * Thrown when a non-platform component fails to decrypt data.
+ */
+public class DecryptionException extends Exception {
 
-  /**
-   * Sets the output buffer to be rendered. The renderer is responsible for releasing the buffer.
-   *
-   * @param outputBuffer The output buffer to be rendered.
-   */
-  void setOutputBuffer(VideoDecoderOutputBuffer outputBuffer);
+    /**
+     * A component specific error code.
+     */
+    public final int errorCode;
+
+    /**
+     * @param errorCode A component specific error code.
+     * @param message The detail message.
+     */
+    public DecryptionException(int errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+
 }

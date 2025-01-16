@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.android.exoplayer2.video;
+package com.google.android.exoplayer2.ext.vp9;
 
-/** Renders the {@link VideoDecoderOutputBuffer}. */
-public interface VideoDecoderOutputBufferRenderer {
+import com.google.android.exoplayer2.decoder.DecoderException;
 
-  /**
-   * Sets the output buffer to be rendered. The renderer is responsible for releasing the buffer.
-   *
-   * @param outputBuffer The output buffer to be rendered.
-   */
-  void setOutputBuffer(VideoDecoderOutputBuffer outputBuffer);
+/** Thrown when a libvpx decoder error occurs. */
+public final class VpxDecoderException extends DecoderException {
+
+    /* package */ VpxDecoderException(String message) {
+        super(message);
+    }
+
+    /* package */ VpxDecoderException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

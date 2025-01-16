@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.android.exoplayer2.video;
+@NonNullApi
+package com.google.android.exoplayer2.ext.vp9;
 
-/** Renders the {@link VideoDecoderOutputBuffer}. */
-public interface VideoDecoderOutputBufferRenderer {
-
-  /**
-   * Sets the output buffer to be rendered. The renderer is responsible for releasing the buffer.
-   *
-   * @param outputBuffer The output buffer to be rendered.
-   */
-  void setOutputBuffer(VideoDecoderOutputBuffer outputBuffer);
-}
+import com.google.android.exoplayer2.util.NonNullApi;
