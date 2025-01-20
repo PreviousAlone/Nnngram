@@ -18,15 +18,15 @@
   ~ <https://www.gnu.org/licenses/>
   -->
 <resources>
-    <string name="NullgramPushService">Nullgramプッシュサービス</string>
-    <string name="NullSettings">Nullgramの設定</string>
+    <string name="NullgramPushService">Nnngramプッシュサービス</string>
+    <string name="NullSettings">Nnngramの設定</string>
     <string name="OfficialChannel">公式チャンネル</string>
     <string name="Chat">チャット</string>
     <string name="Experiment">実験的</string>
     <string name="OfficialSite">公式サイト</string>
     <string name="ViewSourceCode">ソースコードを表示</string>
     <string name="Categories">カテゴリー</string>
-    <string name="About">Nullgramについて</string>
+    <string name="About">Nnngramについて</string>
     <string name="noAvailableUpdate">更新はありません。</string>
     <string name="updateAvailable">新しいバージョンが利用可能です。</string>
     <string name="variantsNotFound">リリースバリアントを自動でチェックしましたが一致しませんでした。\nGitHubから手動でダウンロードしてください。</string>
@@ -43,7 +43,7 @@
     <string name="InvalidAccessToken">無効なアクセストークン</string>
     <string name="QRLoginTitle">QRでログイン</string>
     <string name="QRLoginMessage">QRコードを別のデバイスでスキャンしてログイン。</string>
-    <string name="NullgramVersion">Nullgram %1$s\nBased on TELEOFFICIAL %2$s</string>
+    <string name="NullgramVersion">Nnngram %1$s\nBased on TELEOFFICIAL %2$s</string>
     <string name="RestrictionReason">制限の理由</string>
     <string name="showBotAPIID">Bot API IDを表示</string>
     <string name="hideGroupSticker">グループステッカーパックを非表示</string>
@@ -61,6 +61,8 @@
     <string name="formatterDay24HSec">HH:mm:ss</string>
     <string name="DeleteDownloadedFile">キャッシュを削除</string>
     <string name="Repeat">繰り返す</string>
+    <string name="RepeatAsCopy">コピーとして繰り返す</string>
+    <string name="Reverse">反転</string>
     <string name="saveMessages">メッセージを保存</string>
     <string name="ViewHistory">履歴を見る</string>
     <string name="NoQuoteForward">送信者なしで転送</string>
@@ -86,7 +88,7 @@
     <string name="AutoCheckUpdateSwitch">自動更新</string>
     <string name="AutoCheckUpdateStable">安定版</string>
     <string name="AutoCheckUpdatePreview">プレビュー (不安定)</string>
-    <string name="AppUpdateNullgram">Nullgramの更新</string>
+    <string name="AppUpdateNullgram">Nnngramの更新</string>
     <string name="VersionUpdateNoUpdate">更新はありません</string>
     <string name="DoNotRemindAgain">今後は表示しない</string>
     <string name="FCTitle">アプリの更新について</string>
@@ -103,7 +105,7 @@
     <string name="PrivacyNoticePhoneVisible">あなたの電話番号が誰でも見られる状態であることを検出しました。これにより、政府管理のハッカーがあなたの本当の身元を特定する可能性があります。OFFに設定してください!</string>
     <string name="PrivacyNoticeAddByPhone">「電話番号による検索を許可」をOFFに未設定であることを検出しました。これにより、政府管理のハッカーがあなたの本当の身元を特定する可能性があります。OFFに設定してください!</string>
     <string name="hidePhone">電話番号を非表示</string>
-    <string name="AppLinkNotVerifiedMessage">Android 12以降では、Nullgramでt.meのリンクを開くには、検証済みリンクにリンクを手動で追加する必要があります。</string>
+    <string name="AppLinkNotVerifiedMessage">Android 12以降では、Nnngramでt.meのリンクを開くには、検証済みリンクにリンクを手動で追加する必要があります。</string>
     <string name="AppLinkNotVerifiedTitle">アプリのリンクが確認されていません</string>
     <string name="showExactNumber">正確な数値を表示</string>
     <string name="disableJumpToNextChannel">次のチャンネルへのジャンプを無効化</string>
@@ -130,8 +132,8 @@
     <string name="ignoreReactionMention">リアクションの返信を無視</string>
     <string name="ignoreReactionMentionInfo">未読のリアクションを自動的に既読にします。\nTELEOFFICIALサーバーで管理しているため、通知は表示されたままになります。</string>
     <string name="StickerSize">ステッカーのサイズ</string>
-    <string name="StickerSizeDialogMessageReplyTo">にゃ</string>
-    <string name="StickerSizeDialogMessage">おぉ、かわいい女の子だ!</string>
+    <string name="StickerSizeDialogMessageReplyTo">アニメグッズを買ってきて欲しい。</string>
+    <string name="StickerSizeDialogMessage">おぉ、キュートな男の子だ!</string>
     <string name="ResetStickerSize">ステッカーのサイズをリセット</string>
     <string name="EditUndo">元に戻す</string>
     <string name="EditRedo">やり直し</string>
@@ -180,7 +182,7 @@
     <string name="Passcode1">パスコード</string>
     <string name="UnknownSettings">不明な設定</string>
     <string name="PasscodeNeeded">最初にパスコードを有効化する必要があります。</string>
-    <string name="PasscodeShowInSettings">Nullgramの設定で表示</string>
+    <string name="PasscodeShowInSettings">Nnngramの設定で表示</string>
     <string name="PasscodeShowInSettingsAbout">非表示にすると **リンクのみ** でこのページを開くことができます:</string>
     <string name="PasscodeSet">パスコードを設定する</string>
     <string name="PasscodeEdit">パスコードを変更</string>
@@ -230,7 +232,7 @@
     <string name="disableSharePhoneWithContactByDefault">連絡先の追加時に電話番号を共有しない</string>
     <string name="disableStickersAutoReorder">ステッカーの再読込みを無効化</string>
     <string name="autoDisableBuiltInProxy">内蔵のプロキシを自動で無効化</string>
-    <string name="autoDisableBuiltInProxyDesc">NullgramがVPNのONを検出すると、内蔵のプロキシを自動的にOFFにします。</string>
+    <string name="autoDisableBuiltInProxyDesc">NnngramがVPNのONを検出すると、内蔵のプロキシを自動的にOFFにします。</string>
     <string name="NullgramWsDescription">Cloudflare経由でWebSocketを介して TELEOFFICIALに接続をします。\n提供: Nullgram</string>
     <string name="NekogramXWsDescription">提供: Nekogram X</string>
     <string name="WsGetHelp">自分でも簡単に導入できます!</string>
@@ -326,8 +328,8 @@
     <string name="MonoCode">コード</string>
     <string name="CreateCode">コードを作成</string>
     <string name="CreateCodeLanguage">言語</string>
-    <string name="UnsupportedMediaNullgram">このメッセージはお使いのバージョンのNullgramではサポートされていません。表示するにはアプリを更新してください:
-https://t.me/NullgramClient</string>
+    <string name="UnsupportedMediaNullgram">このメッセージはお使いのバージョンのNnngramではサポートされていません。表示するにはアプリを更新してください:
+https://t.me/Nnngram</string>
     <string name="ignoreUserSpecifiedReplyColor">ユーザーが設定した返信の色を無視</string>
     <string name="ShowTitle">タイトルを表示</string>
     <string name="HideTitle">タイトルを非表示</string>
@@ -347,4 +349,44 @@ https://t.me/NullgramClient</string>
     <string name="InvalidPattern">無効なパターン</string>
     <string name="sendLargePhoto">大きな写真を送信</string>
     <string name="Details">詳細</string>
+    <string name="DontAskAgain">今後確認しない</string>
+    <string name="NoFilesFound">ファイルが見つかりません</string>
+    <string name="NoFilesInfo">ファイル情報がありません</string>
+    <string name="SearchRecentFiles">最近のファイルを検索</string>
+    <string name="FileUploadLimit">ファイルは%1$s件を超えてはいけません</string>
+    <string name="ViewStats">状態を表示</string>
+    <string name="NoFilesFoundInfo">現在のフォルダに**%1$s**の結果はありません。</string>
+    <string name="AppIconGoogle">Google</string>
+    <string name="AppIconColorful">Colorful</string>
+    <string name="AppIconDarkGreen">Dark Green</string>
+    <string name="AppIconNeon">Neon</string>
+    <string name="doNotUnarchiveBySwipe">スワイプでアーカイブを解除しない</string>
+    <string name="hideInputFieldBotButton">入力フィールドのボットボタンを非表示</string>
+    <string name="hideMessageSeenTooltip">メッセージの既読ツールチップを非表示</string>
+    <string name="disableNotificationBubble">通知バブルを無効化</string>
+    <string name="showOnlineStatus">オンライン状態を表示</string>
+    <string name="disablePhotoSideAction">写真のサイドアクションを無効化</string>
+    <string name="MergeMessage">メッセージを統合</string>
+    <string name="filterZalgo">「Zalgo」シンボルをフィルター</string>
+    <string name="ignoreFolderUnreadCount">フォルダ内の未読数を無視</string>
+    <string name="customTitle">カスタムタイトル</string>
+    <string name="setCustomTitle">カスタムタイトルを設定</string>
+    <string name="drawerList">ドロワーリスト</string>
+    <string name="TextStyleSettings">テキストスタイル</string>
+    <string name="hideSendAsButton">送信ボタンを非表示</string>
+    <string name="hideFilterMuteAll">フィルターですべてミュートを非表示</string>
+    <string name="hideKeyboardWhenScrolling">スクロール時にキーボードを非表示</string>
+    <string name="searchInPlace">その場で検索</string>
+    <string name="gifSize">GIFのサイズ</string>
+    <string name="block">ブロック</string>
+    <string name="hideDialogsFloatingButton">ダイアログフローティングボタンを非表示</string>
+    <string name="disableChannelMuteButton">チャンネルのミュートボタンを非表示</string>
+    <string name="disableAutoPip">PIPの自動表示を無効化</string>
+    <string name="sendMp4DocumentAsVideo">MP4ドキュメントを動画として送信</string>
+    <string name="disableGravityDetectionInVideo">動画の重力検出を無効化する</string>
+    <string name="hideProxyEntryInTitle">タイトル内のプロキシエントリを非表示</string>
+    <string name="autoMuteAfterJoiningChannel">チャンネル参加後に自動でミュート</string>
+    <string name="enableXiaomiHyperAi">編集でXiaomi HyperAIを有効化</string>
+    <string name="ProviderDeepLXTranslate">DeepLX翻訳</string>
+    <string name="DeepLxApi">DeepLX API</string>
 </resources>
