@@ -5218,7 +5218,7 @@ public class EmojiView extends FrameLayout implements
         if (trendingAdapter != null) {
             trendingAdapter.notifyDataSetChanged();
         }
-        if (!Config.disableTrendingSticker && !featured.isEmpty() && (featuredStickerSets.isEmpty() || preferences.getLong("featured_hidden", 0) == featured.get(0).set.id)) {
+        if (!Config.DisableFeaturedStickers && !featured.isEmpty() && (featuredStickerSets.isEmpty() || preferences.getLong("featured_hidden", 0) == featured.get(0).set.id)) {
             final int id = mediaDataController.getUnreadStickerSets().isEmpty() ? 2 : 3;
             final StickerTabView trendingStickersTabView = stickersTab.addStickerIconTab(id, stickerIcons[id]);
             trendingStickersTabView.textView.setText(LocaleController.getString(R.string.FeaturedStickersShort));
@@ -8130,6 +8130,7 @@ public class EmojiView extends FrameLayout implements
         }
 
         public void loadTrendingGifs() {
+            if (Config.DisableFeaturedGifs) return;
             search("", "", true, true, true);
         }
 

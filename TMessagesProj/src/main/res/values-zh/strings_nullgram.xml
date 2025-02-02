@@ -365,6 +365,7 @@
     <string name="setCustomTitle">设置自定义标题</string>
     <string name="drawerList">侧边栏列表</string>
     <string name="TextStyleSettings">文本样式</string>
+    <string name="DisableTrending">禁用趋势推荐</string>
     <string name="hideSendAsButton">隐藏发送者按钮</string>
     <string name="hideFilterMuteAll">隐藏文件夹中的 \"全部取消静音\"</string>
     <string name="hideKeyboardWhenScrolling">滑动时隐藏键盘</string>
@@ -380,4 +381,16 @@
     <string name="autoMuteAfterJoiningChannel">加入频道后自动静音</string>
     <string name="enableXiaomiHyperAi">在输入框中显示小米澎湃 AI</string>
     <string name="ProviderDeepLXTranslate">DeepLX 翻译</string>
+    <string name="DisableStarsSubscription">禁用Stars余额不足通知</string>
+    <string name="DisablePremiumExpiring">禁用Premium到期通知</string>
+    <string name="DisablePremiumUpgrade">禁用Premium升级通知</string>
+    <string name="DisablePremiumChristmas">禁用Premium圣诞通知</string>
+    <string name="DisablePremiumRestore">禁用Premium过期恢复通知</string>
+    <string name="DisableBirthdayContact">禁用联系人生日通知</string>
+    <string name="DisableFavoriteSearchEmojiTags">禁用收藏夹标签搜索栏Emoji列表</string>
+    <string name="DisableFeatuerdEmojis">禁用热门Premium Emoji</string>
+    <string name="DisableFeaturedStickers">禁用热门Premium Stickers</string>
+    <string name="DisableFeaturedGifs">禁用热门GIF图</string>
+    <string name="DisablePremiumFavoriteEmojiTags">禁用Premium收藏夹Emoji标签</string>
+    <string name="DisableNonPremiumChannelChatShow">禁用非Premium频道马甲显示</string>
 </resources>

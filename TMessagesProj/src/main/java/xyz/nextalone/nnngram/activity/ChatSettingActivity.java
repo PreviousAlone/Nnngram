@@ -105,6 +105,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int disablePremiumStickerRow;
     private int messageMenuRow;
     private int textStyleSettingsRow;
+    private int DisableTrendingSettingsRow;
     private int allowScreenshotOnNoForwardChatRow;
     private int labelChannelUserRow;
     private int displaySpoilerDirectlyRow;
@@ -227,6 +228,8 @@ public class ChatSettingActivity extends BaseActivity {
             showMessageMenuAlert();
         } else if (position == textStyleSettingsRow) {
             showTextStyleSettingsAlert();
+        } else if (position == DisableTrendingSettingsRow) {
+            showTrenDingSettingsAlert();
         } else if (position == allowScreenshotOnNoForwardChatRow) {
             Config.toggleAllowScreenshotOnNoForwardChat();
             if (view instanceof TextCheckCell) {
@@ -513,6 +516,7 @@ public class ChatSettingActivity extends BaseActivity {
         disablePremiumStickerRow = addRow("disablePremiumSticker");
         messageMenuRow = addRow();
         textStyleSettingsRow = addRow("textStyleSettings");
+        DisableTrendingSettingsRow = addRow("DisableTrendingSettings");
         if (Config.showHiddenSettings) {
             allowScreenshotOnNoForwardChatRow = addRow("allowScreenshotOnNoForwardChat");
         }
@@ -604,6 +608,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setText(LocaleController.getString("MessageMenu", R.string.MessageMenu), false);
                     } else if (position == textStyleSettingsRow) {
                         textCell.setText(LocaleController.getString("TextStyleSettings", R.string.TextStyleSettings), false);
+                    } else if (position == DisableTrendingSettingsRow) {
+                        textCell.setText(LocaleController.getString("DisableTrendingSettings", R.string.DisableTrendingSettings), false);
                     } else if (position == maxRecentStickerRow) {
                         textCell.setTextAndValue(LocaleController.getString("maxRecentSticker", R.string.maxRecentSticker), String.valueOf(Config.getMaxRecentSticker()), payload, true);
                     } else if (position == customDoubleClickTapRow) {
@@ -830,7 +836,7 @@ public class ChatSettingActivity extends BaseActivity {
             if (position == chat2Row || position == stickerSize2Row) {
                 return TYPE_SHADOW;
             } else if (position == messageMenuRow || position == customDoubleClickTapRow || position == maxRecentStickerRow || position == customQuickMessageRow || position == markdownParserRow
-                || position == messageFiltersRow || position == textStyleSettingsRow) {
+                || position == messageFiltersRow || position == textStyleSettingsRow || position == DisableTrendingSettingsRow) {
                 return TYPE_SETTINGS;
             } else if (position == chatRow || position == stickerSizeHeaderRow || position == markdownRow || position == gifSizeHeaderRow) {
                 return TYPE_HEADER;
@@ -969,6 +975,148 @@ public class ChatSettingActivity extends BaseActivity {
                     case 8 + 1 + 1: {
                         Config.toggleShowReport();
                         textCell.setChecked(Config.showReport);
+                        break;
+                    }
+                }
+            });
+        }
+        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
+        builder.setView(linearLayout);
+        showDialog(builder.create());
+    }
+
+    private void showTrenDingSettingsAlert() {
+        if (getParentActivity() == null) {
+            return;
+        }
+        Context context = getParentActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(LocaleController.getString("DisableTrending", R.string.DisableTrending));
+
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout linearLayoutInviteContainer = new LinearLayout(context);
+        linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
+        int count = 9 + 3;
+        for (int a = 0; a < count; a++) {
+            TextCheckCell textCell = new TextCheckCell(context);
+            switch (a) {
+                case 0: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisablePremiumUpgrade", R.string.DisablePremiumUpgrade), Config.DisablePremiumUpgrade, false);
+                    break;
+                }
+                case 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisablePremiumExpiring", R.string.DisablePremiumExpiring), Config.DisablePremiumExpiring, false);
+                    break;
+                }
+                case 2: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisablePremiumChristmas", R.string.DisablePremiumChristmas), Config.DisablePremiumChristmas, false);
+                    break;
+                }
+                case 3: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisableBirthdayContact", R.string.DisableBirthdayContact), Config.DisableBirthdayContact, false);
+                    break;
+                }
+                case 4: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisablePremiumRestore", R.string.DisablePremiumRestore), Config.DisablePremiumRestore, false);
+                    break;
+                }
+                case 4 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisableStarsSubscription", R.string.DisableStarsSubscription), Config.DisableStarsSubscription, false);
+                    break;
+                }
+                case 4 + 1 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisableFavoriteSearchEmojiTags", R.string.DisableFavoriteSearchEmojiTags), Config.DisableFavoriteSearchEmojiTags, false);
+                    break;
+                }
+                case 5+ 1 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisableFeatuerdEmojis", R.string.DisableFeatuerdEmojis), Config.DisableFeatuerdEmojis, false);
+                    break;
+                }
+                case 6+ 1 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisableFeaturedStickers", R.string.DisableFeaturedStickers), Config.DisableFeaturedStickers, false);
+                    break;
+                }
+                case 7+ 1 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisableFeaturedGifs", R.string.DisableFeaturedGifs), Config.DisableFeaturedGifs, false);
+                    break;
+                }
+                case 8+ 1 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisablePremiumFavoriteEmojiTags", R.string.DisablePremiumFavoriteEmojiTags), Config.DisablePremiumFavoriteEmojiTags, false);
+                    break;
+                }
+                case 9+ 1 + 1: {
+                    textCell.setTextAndCheck(LocaleController.getString("DisableNonPremiumChannelChatShow", R.string.DisableNonPremiumChannelChatShow), Config.DisableNonPremiumChannelChatShow, false);
+                    break;
+                }
+            }
+            textCell.setTag(a);
+            textCell.setBackground(Theme.getSelectorDrawable(false));
+            linearLayoutInviteContainer.addView(textCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+            textCell.setOnClickListener(v2 -> {
+                Integer tag = (Integer) v2.getTag();
+                switch (tag) {
+                    case 0: {
+                        Config.toggleDisablePremiumUpgrade();
+                        textCell.setChecked(Config.DisablePremiumUpgrade);
+                        break;
+                    }
+                    case 1: {
+                        Config.toggleDisablePremiumExpiring();
+                        textCell.setChecked(Config.DisablePremiumExpiring);
+                        break;
+                    }
+                    case 2: {
+                        Config.toggleDisablePremiumChristmas();
+                        textCell.setChecked(Config.DisablePremiumChristmas);
+                        break;
+                    }
+                    case 3: {
+                        Config.toggleDisableBirthdayContact();
+                        textCell.setChecked(Config.DisableBirthdayContact);
+                        break;
+                    }
+                    case 4: {
+                        Config.toggleDisablePremiumRestore();
+                        textCell.setChecked(Config.DisablePremiumRestore);
+                        break;
+                    }
+                    case 4+ 1: {
+                        Config.toggleDisableStarsSubscription();
+                        textCell.setChecked(Config.DisableStarsSubscription);
+                        break;
+                    }
+                    case 4 + 1 + 1: {
+                        Config.toggleDisableFavoriteSearchEmojiTags();
+                        textCell.setChecked(Config.DisableFavoriteSearchEmojiTags);
+                        break;
+                    }
+                    case 5 + 1 + 1: {
+                        Config.toggleDisableFeatuerdEmojis();
+                        textCell.setChecked(Config.DisableFeatuerdEmojis);
+                        break;
+                    }
+                    case 6 + 1 + 1: {
+                        Config.toggleDisableFeaturedStickers();
+                        textCell.setChecked(Config.DisableFeaturedStickers);
+                        break;
+                    }
+                    case 7 + 1 + 1: {
+                        Config.toggleDisableFeaturedGifs();
+                        textCell.setChecked(Config.DisableFeaturedGifs);
+                        break;
+                    }
+                    case 8 + 1 + 1: {
+                        Config.toggleDisablePremiumFavoriteEmojiTags();
+                        textCell.setChecked(Config.DisablePremiumFavoriteEmojiTags);
+                        break;
+                    }
+                    case 9 + 1 + 1: {
+                        Config.toggleDisableNonPremiumChannelChatShow();
+                        textCell.setChecked(Config.DisableNonPremiumChannelChatShow);
                         break;
                     }
                 }
