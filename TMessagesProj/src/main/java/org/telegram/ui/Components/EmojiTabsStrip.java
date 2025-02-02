@@ -37,6 +37,7 @@ import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
+import xyz.nextalone.gen.Config;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.Premium.PremiumLockIconView;
 import org.telegram.ui.Components.Reactions.HwEmojis;
@@ -464,6 +465,9 @@ public class EmojiTabsStrip extends ScrollableHorizontalScrollView {
         appearCount = emojiPacks.size();
         final boolean includeFeatured = doIncludeFeatured();
         final boolean isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium() || allowEmojisForNonPremium();
+        if (Config.DisableFeatuerdEmojis && !isPremium) {
+            return;
+        }
 
         ArrayList<EmojiTabButton> attachedEmojiPacks = new ArrayList<>();
 

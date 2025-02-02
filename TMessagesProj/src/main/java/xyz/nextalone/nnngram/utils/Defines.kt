@@ -213,6 +213,7 @@ object Defines {
     @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
     @StringConfig("Nnngram") const val customTitle = "customTitle"
     @StringConfig("") const val textStyleSettings = "textStyleSettings"
+    @StringConfig("") const val DisableTrendingSettings = "DisableTrendingSettings"
     @BooleanConfig const val hideSendAsButton = "hideSendAsButton"
     @BooleanConfig const val hideFilterMuteAll = "hideFilterMuteAll"
     @BooleanConfig const val hideKeyboardWhenScrolling = "hideKeyboardWhenScrolling"
@@ -249,6 +250,20 @@ object Defines {
     @BooleanConfig(true) const val showTextQuote = "showTextQuote"
     @BooleanConfig(true) const val showTextMonoCode = "showTextMonoCode"
     @BooleanConfig(false) const val enableXiaomiHyperAi = "enableXiaomiHyperAi"
+
+    // TrenDing Disable
+    @BooleanConfig const val DisablePremiumUpgrade = "DisablePremiumUpgrade"
+    @BooleanConfig const val DisablePremiumExpiring = "DisablePremiumExpiring"
+    @BooleanConfig const val DisablePremiumChristmas = "DisablePremiumChristmas"
+    @BooleanConfig const val DisableBirthdayContact = "DisableBirthdayContact"
+    @BooleanConfig const val DisablePremiumRestore = "DisablePremiumRestore"
+    @BooleanConfig const val DisableStarsSubscription = "DisableStarsSubscription"
+    @BooleanConfig const val DisableFavoriteSearchEmojiTags = "DisableFavoriteSearchEmojiTags"
+    @BooleanConfig const val DisableFeatuerdEmojis = "DisableFeatuerdEmojis"
+    @BooleanConfig const val DisableFeaturedStickers = "DisableFeaturedStickers"
+    @BooleanConfig const val DisableFeaturedGifs = "DisableFeaturedGifs"
+    @BooleanConfig const val DisablePremiumFavoriteEmojiTags = "DisablePremiumFavoriteEmojiTags"
+    @BooleanConfig const val DisableNonPremiumChannelChatShow = "DisableNonPremiumChannelChatShow"
 
     /**
      * 数组中元素未找到的下标，值为-1
