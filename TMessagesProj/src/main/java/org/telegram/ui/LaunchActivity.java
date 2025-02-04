@@ -1005,13 +1005,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         BackupAgent.requestBackup(this);
 
-        getWindow().setNavigationBarColor(Color.TRANSPARENT);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            getWindow().setNavigationBarContrastEnforced(false);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            getWindow().setDecorFitsSystemWindows(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            getWindow().setNavigationBarContrastEnforced(false);  // Need Android Q
+            getWindow().setDecorFitsSystemWindows(false);  // Need Android R
         }
     }
 
