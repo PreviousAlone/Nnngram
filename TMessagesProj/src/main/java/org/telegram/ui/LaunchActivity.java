@@ -1004,6 +1004,15 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             });
         }
         BackupAgent.requestBackup(this);
+
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);
+        }
     }
 
     private void showAttachMenuBot(TLRPC.TL_attachMenuBot attachMenuBot, String startApp, boolean sidemenu) {
