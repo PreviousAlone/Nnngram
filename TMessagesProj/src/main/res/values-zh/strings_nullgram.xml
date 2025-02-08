@@ -380,4 +380,6 @@
     <string name="autoMuteAfterJoiningChannel">加入频道后自动静音</string>
     <string name="enableXiaomiHyperAi">在输入框中显示小米澎湃 AI</string>
     <string name="ProviderDeepLXTranslate">DeepLX 翻译</string>
+    <string name="disableRepeatInChannel">在频道中禁用复读</string>
+    <string name="disableRepeatInChannelError">已禁止在频道中使用复读</string>
 </resources>

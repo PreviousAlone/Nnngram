@@ -41416,6 +41416,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     public boolean processRepeatMessage(boolean asCopy, boolean longClick) {
+        if (Config.disableRepeatInChannel && isChannel()) {
+            BulletinFactory.of(this).createSimpleBulletin(R.raw.error, getString(R.string.disableRepeatInChannelError)).show();
+            return false;
+        }
         if (asCopy || longClick || (isThreadChat() && !isTopic) || getMessagesController().isChatNoForwards(currentChat) || selectedObject.messageOwner.noforwards) {
             var messageObject = getMessageUtils().getMessageForRepeat(selectedObject, selectedObjectGroup);
             if (messageObject != null) {

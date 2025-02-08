@@ -394,4 +394,6 @@
     <string name="enableXiaomiHyperAi">Enable Xiaomi HyperAI in editor</string>
     <string name="ProviderDeepLXTranslate">DeepLX Translate</string>
     <string name="DeepLxApi">DeepLX API</string>
+    <string name="disableRepeatInChannel">Disable repeat in channel</string>
+    <string name="disableRepeatInChannelError">Repeat is disabled in channel</string>
 </resources>

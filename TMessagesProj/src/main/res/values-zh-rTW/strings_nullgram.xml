@@ -370,4 +370,6 @@
     <string name="hideKeyboardWhenScrolling">滑動時隱藏鍵盤</string>
     <string name="searchInPlace">在当前位置中开始搜索</string>
     <string name="ProviderDeepLXTranslate">DeepLX 翻譯</string>
+    <string name="disableRepeatInChannel">在頻道中禁用复读</string>
+    <string name="disableRepeatInChannelError">已禁止在頻道中使用复读</string>
 </resources>

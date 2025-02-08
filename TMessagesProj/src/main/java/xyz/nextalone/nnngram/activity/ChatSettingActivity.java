@@ -145,6 +145,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int sendMp4DocumentAsVideoRow;
     private int disableGravityDetectionInVideoRow;
     private int autoMuteAfterJoiningChannelRow;
+    private int disableRepeatInChannelRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -484,6 +485,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.autoMuteAfterJoiningChannel);
             }
+        } else if (position == disableRepeatInChannelRow) {
+            Config.toggleDisableRepeatInChannel();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.disableRepeatInChannel);
+            }
         }
     }
 
@@ -555,6 +561,7 @@ public class ChatSettingActivity extends BaseActivity {
         sendMp4DocumentAsVideoRow = addRow("sendMp4DocumentAsVideo");
         disableGravityDetectionInVideoRow = addRow("disableGravityDetectionInVideo");
         autoMuteAfterJoiningChannelRow = addRow("autoMuteAfterJoiningChannel");
+        disableRepeatInChannelRow = addRow("disableRepeatInChannel");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -740,6 +747,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("disableGravityDetectionInVideo", R.string.disableGravityDetectionInVideo), Config.disableGravityDetectionInVideo, true);
                     } else if (position == autoMuteAfterJoiningChannelRow) {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.autoMuteAfterJoiningChannel), Config.autoMuteAfterJoiningChannel, true);
+                    } else if (position == disableRepeatInChannelRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.disableRepeatInChannel), Config.disableRepeatInChannel, true);
                     }
                     break;
                 }
