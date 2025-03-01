@@ -1925,6 +1925,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         @Override
         public void onDoubleTap(View view, int position, float x, float y) {
+            if ((selectedMessagesIds[0].size() + selectedMessagesIds[1].size()) > 0) {
+                BulletinFactory.of(ChatActivity.this).createSimpleBulletin(R.raw.error, getString(R.string.disableDoubleTapWhenSelecting)).show();
+                return;
+            }
             if (Config.getDoubleTab() == Defines.doubleTabNone || !(view instanceof ChatMessageCell) || getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || chatMode == MODE_QUICK_REPLIES) {
                 return;
             }
