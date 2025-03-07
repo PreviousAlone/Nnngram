@@ -85,9 +85,9 @@ public class EditTextEffects extends EditText {
 
     public EditTextEffects(Context context) {
         super(context);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            setLocalePreferredLineHeightForMinimumUsed(false);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+//            setLocalePreferredLineHeightForMinimumUsed(false);
+//        }
         if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
             clickDetector = new SpoilersClickDetector(this, spoilers, this::onSpoilerClicked);
         }
