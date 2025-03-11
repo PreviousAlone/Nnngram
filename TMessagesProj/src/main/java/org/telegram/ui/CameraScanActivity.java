@@ -694,7 +694,7 @@ public class CameraScanActivity extends BaseFragment {
                     ChatAttachAlert chatAttachAlert = new ChatAttachAlert(getParentActivity(), this, true, false, false, null);
                     chatAttachAlert.drawNavigationBar = true;
                     chatAttachAlert.setupPhotoPicker(LocaleController.getString("ChoosePhoto", R.string.ChoosePhoto));
-                    chatAttachAlert.setDelegate((button, arg, notify, scheduleDate, effectId, invertMedia, forceDocument) -> {
+                    chatAttachAlert.setDelegate((button, arg, notify, scheduleDate, effectId, invertMedia, forceDocument, payStars) -> {
                         try {
                             HashMap<Object, Object> photos = chatAttachAlert.getPhotoLayout().getSelectedPhotos();
                             if (!photos.isEmpty()) {

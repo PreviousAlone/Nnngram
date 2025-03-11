@@ -64,8 +64,8 @@ public class FileLog {
     public static void dumpResponseAndRequest(TLObject request, TLObject response, TLRPC.TL_error error, long requestMsgId, long startRequestTimeInMillis, int requestToken) {
         return;
     }
-
-    public static void dumpUnparsedMessage(TLObject message, long messageId) {
+    
+    public static void dumpUnparsedMessage(TLObject message, long messageId, int account) {
         return;
     }
 

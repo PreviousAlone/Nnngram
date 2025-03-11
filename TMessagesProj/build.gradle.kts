@@ -101,6 +101,11 @@ dependencies {
     implementation(libs.smart.exception.java)
     implementation(libs.lottie)
 
+    implementation(libs.google.recaptcha)
+    implementation(libs.play.services.cast.framework)
+    implementation(libs.mediarouter)
+    implementation(libs.nanohttpd)
+
     implementation(project(":libs:tcp2ws"))
     implementation(project(":libs:pangu"))
     ksp(project(":libs:ksp"))

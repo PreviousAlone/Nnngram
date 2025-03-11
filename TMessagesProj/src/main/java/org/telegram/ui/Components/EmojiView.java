@@ -6801,6 +6801,7 @@ public class EmojiView extends FrameLayout implements
 
     public static class EmojiPack {
         public int index;
+        public Long thumbDocumentId;
         public TLRPC.StickerSet set;
         public ArrayList<TLRPC.Document> documents = new ArrayList<>();
         public TLRPC.InputStickerSet needLoadSet;
@@ -7700,8 +7701,8 @@ public class EmojiView extends FrameLayout implements
                         TLRPC.Document document = packs.get(position);
                         if (document instanceof SelectAnimatedEmojiDialog.SetTitleDocument) {
                             StickerSetNameCell cell = (StickerSetNameCell) holder.itemView;
-                            final String title = ((SelectAnimatedEmojiDialog.SetTitleDocument) document).title;
-                            final int index = lastSearchEmojiString == null || title == null ? -1 : title.toLowerCase().indexOf(lastSearchEmojiString.toLowerCase());
+                            final CharSequence title = ((SelectAnimatedEmojiDialog.SetTitleDocument) document).title;
+                            final int index = lastSearchEmojiString == null || title == null ? -1 : title.toString().toLowerCase().indexOf(lastSearchEmojiString.toLowerCase());
                             if (index >= 0) {
                                 cell.setText(title, 0, index, lastSearchEmojiString.length());
                             } else {

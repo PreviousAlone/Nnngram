@@ -563,6 +563,12 @@ public class LinkSpanDrawable<S extends CharacterStyle> {
             }
         }
 
+        private int maxWidth;
+        @Override
+        public void setMaxWidth(int maxPixels) {
+            maxWidth = maxPixels;
+        }
+
         protected int processColor(int color) {
             return color;
         }
@@ -743,6 +749,9 @@ public class LinkSpanDrawable<S extends CharacterStyle> {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            if (maxWidth > 0) {
+                widthMeasureSpec = MeasureSpec.makeMeasureSpec(Math.min(maxWidth, MeasureSpec.getSize(widthMeasureSpec)), MeasureSpec.getMode(widthMeasureSpec));
+            }
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             stack = AnimatedEmojiSpan.update(emojiCacheType(), this, stack, getLayout());
         }

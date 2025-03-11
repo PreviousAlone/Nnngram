@@ -54,6 +54,7 @@ public class UItem extends AdapterWithDiffUtils.Item {
     public boolean checked;
     public boolean collapsed;
     public boolean enabled = true;
+    public boolean reordering;
     public int pad;
     public boolean hideDivider;
     public int iconResId;
@@ -316,7 +317,7 @@ public class UItem extends AdapterWithDiffUtils.Item {
     public static UItem asIntSlideView(
         int style,
         int min, int value, int max,
-        Utilities.CallbackReturn<Integer, String> toString,
+        Utilities.CallbackReturn<Integer, CharSequence> toString,
         Utilities.Callback<Integer> whenChose
     ) {
         UItem item = new UItem(UniversalAdapter.VIEW_TYPE_INTSLIDE, false);
@@ -548,6 +549,11 @@ public class UItem extends AdapterWithDiffUtils.Item {
         return this;
     }
 
+    public UItem setReordering(boolean reordering) {
+        this.reordering = reordering;
+        return this;
+    }
+
     public <F extends UItemFactory<?>> boolean instanceOf(Class<F> factoryClass) {
         if (viewType < factoryViewTypeStartsWith) return false;
         if (factoryInstances == null) return false;
@@ -674,6 +680,10 @@ public class UItem extends AdapterWithDiffUtils.Item {
         }
 
         public void bindView(View view, UItem item, boolean divider) {
+
+        }
+
+        public void attachedView(View view, UItem item) {
 
         }
 

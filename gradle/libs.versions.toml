@@ -34,6 +34,10 @@ sharetarget = "1.2.0"
 paletteKtx = "1.0.0"
 rust = "0.9.6"
 smartExceptionJava = "0.2.1" # FFmpegKit requires it
+recaptcha = "18.4.0"
+playServiceCastFramework = "21.4.0"
+mediarouter = "1.7.0"
+nanohttpd = "2.3.1"
 
 [libraries]
 checker-compat-qual = { module = "org.checkerframework:checker-compat-qual", version.ref = "checkerCompatQual" }
@@ -74,6 +78,10 @@ ktor-client-encoding = { module = "io.ktor:ktor-client-encoding", version.ref = 
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 smart-exception-java = { module = "com.arthenica:smart-exception-java", version.ref = "smartExceptionJava" }
+google-recaptcha = { module = "com.google.android.recaptcha:recaptcha", version.ref = "recaptcha" }
+play-services-cast-framework = { module = "com.google.android.gms:play-services-cast-framework", version.ref = "playServiceCastFramework" }
+mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
+nanohttpd = { module = "org.nanohttpd:nanohttpd", version.ref = "nanohttpd" }
 
 [plugins]
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }

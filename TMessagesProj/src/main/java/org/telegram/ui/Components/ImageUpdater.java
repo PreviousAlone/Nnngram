@@ -488,7 +488,7 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
             chatAttachAlert.setDelegate(new ChatAttachAlert.ChatAttachViewDelegate() {
 
                 @Override
-                public void didPressedButton(int button, boolean arg, boolean notify, int scheduleDate, long effectId, boolean invertMedia, boolean forceDocument) {
+                public void didPressedButton(int button, boolean arg, boolean notify, int scheduleDate, long effectId, boolean invertMedia, boolean forceDocument, long payStars) {
                     if (parentFragment == null || parentFragment.getParentActivity() == null || chatAttachAlert == null) {
                         return;
                     }
@@ -510,6 +510,7 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
                                     info.path = photoEntry.path;
                                 }
                                 info.thumbPath = photoEntry.thumbPath;
+                                info.coverPath = photoEntry.coverPath;
                                 info.videoEditedInfo = photoEntry.editedInfo;
                                 info.isVideo = photoEntry.isVideo;
                                 info.caption = photoEntry.caption != null ? photoEntry.caption.toString() : null;
@@ -526,6 +527,7 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
                                     info.searchImage = searchImage;
                                 }
                                 info.thumbPath = searchImage.thumbPath;
+                                info.coverPath = searchImage.coverPath;
                                 info.videoEditedInfo = searchImage.editedInfo;
                                 info.caption = searchImage.caption != null ? searchImage.caption.toString() : null;
                                 info.entities = searchImage.entities;

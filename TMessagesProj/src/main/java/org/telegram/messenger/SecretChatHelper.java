@@ -28,7 +28,6 @@ import android.util.SparseIntArray;
 
 import org.telegram.SQLite.SQLiteCursor;
 import org.telegram.messenger.support.LongSparseIntArray;
-import org.telegram.tgnet.AbstractSerializedData;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.InputSerializedData;
 import org.telegram.tgnet.NativeByteBuffer;
@@ -1440,7 +1439,7 @@ public class SecretChatHelper extends BaseController {
                         TLRPC.Message message = messages.get(a);
                         MessageObject messageObject = new MessageObject(currentAccount, message, false, true);
                         messageObject.resendAsIs = true;
-                        getSendMessagesHelper().retrySendMessage(messageObject, true);
+                        getSendMessagesHelper().retrySendMessage(messageObject, true, 0);
                     }
                 });
 
