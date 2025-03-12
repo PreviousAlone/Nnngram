@@ -14007,11 +14007,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         getConnectionsManager().bindRequestToGuid(linkSearchRequestId, classGuid);
     }
 
-    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate) {
-        forwardMessages(arrayList, fromMyName, hideCaption, notify, scheduleDate, 0);
+    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long payStars) {
+        forwardMessages(arrayList, fromMyName, hideCaption, notify, scheduleDate, payStars, 0);
     }
 
-    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long payStars) {
+    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long payStars, long did) {
         if (arrayList == null || arrayList.isEmpty()) {
             return;
         }
@@ -14021,7 +14021,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if ((scheduleDate != 0) == (chatMode == MODE_SCHEDULED)) {
             waitingForSendingMessageLoad = true;
         }
-        int result = getSendMessagesHelper().sendMessage(arrayList, dialog_id, fromMyName, hideCaption, notify, scheduleDate, getThreadMessage(), -1, payStars);
+        int result = getSendMessagesHelper().sendMessage(arrayList, did != 0 ? did : dialog_id, fromMyName, hideCaption, notify, scheduleDate, getThreadMessage(), -1, payStars);
         AlertsCreator.showSendMediaAlert(result, this, themeDelegate);
         if (result != 0) {
             AndroidUtilities.runOnUIThread(() -> {
@@ -33272,29 +33272,37 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
-                processRepeatMessage();
+                AlertsCreator.ensurePaidMessageConfirmation(currentAccount, getDialogId(), selectedObjectGroup != null ? selectedObjectGroup.messages.size() : 1, payStars -> {
+                    processRepeatMessage(payStars);
+                });
                 break;
             }
             case OPTION_REPEAT_AS_COPY: {
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
-                processRepeatMessage(true);
+                AlertsCreator.ensurePaidMessageConfirmation(currentAccount, getDialogId(), selectedObjectGroup != null ? selectedObjectGroup.messages.size() : 1, payStars -> {
+                    processRepeatMessage(true, payStars);
+                });
                 break;
             }
             case OPTION_REVERSE:
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
-                processReverseMessage(false);
+                AlertsCreator.ensurePaidMessageConfirmation(currentAccount, getDialogId(), selectedObjectGroup != null ? selectedObjectGroup.messages.size() : 1, payStars -> {
+                    processReverseMessage(false, payStars);
+                });
                 break;
             case Defines.customQuickMessageRow: {
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
-                getSendMessagesHelper().sendMessage(SendMessageParams.of(ConfigManager.getStringOrDefault(Defines.customQuickMessage, "NULL"),
-                        dialog_id, selectedObject, Config.customQuickMsgSAR ? threadMessageObject : null,
-                        null, false, null, null, null, true, 0, null, false));
+                AlertsCreator.ensurePaidMessageConfirmation(currentAccount, getDialogId(), selectedObjectGroup != null ? selectedObjectGroup.messages.size() : 1, payStars -> {
+                    SendMessageParams fparams = SendMessageParams.of(ConfigManager.getStringOrDefault(Defines.customQuickMessage, "NULL"), dialog_id, selectedObject, Config.customQuickMsgSAR ? threadMessageObject : null, null, false, null, null, null, true, 0, null, false);
+                    fparams.payStars = payStars;
+                    getSendMessagesHelper().sendMessage(fparams);
+                });
                 break;
             }
             case OPTION_VIEW_REPLIES_OR_THREAD: {
@@ -33470,7 +33478,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
             BulletinFactory.of(ChatActivity.this).showForwardedBulletinWithTag(getUserConfig().getClientUserId(), messages.size());
         } else {
-            forwardMessages(messages, false, false, true, 0, getUserConfig().getClientUserId());
+            forwardMessages(messages, false, false, true, 0, 0, getUserConfig().getClientUserId());
             createUndoView();
             if (undoView != null) {
                 undoView.showWithAction(getUserConfig().getClientUserId(), UndoView.ACTION_FWD_MESSAGES, messages.size());
@@ -33502,10 +33510,16 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (checkSlowMode(chatActivityEnterView.getSendButton())) {
                     return;
                 }
-                processRepeatMessage(false, true);
+                final MessageObject.GroupedMessages group = selectedObjectGroup;
+                AlertsCreator.ensurePaidMessageConfirmation(currentAccount, getDialogId(), group != null ? group.messages.size() : 1, payStars -> {
+                    processRepeatMessage(false, true, payStars);
+                });
             }
             case OPTION_REVERSE -> {
-                processReverseMessage(true);
+                final MessageObject.GroupedMessages group = selectedObjectGroup;
+                AlertsCreator.ensurePaidMessageConfirmation(currentAccount, getDialogId(), group != null ? group.messages.size() : 1, payStars -> {
+                    processReverseMessage(true, payStars);
+                });
             }
             default -> processSelectedOption(option);
         }
@@ -41802,15 +41816,15 @@ price);
         return super.hideKeyboardOnShow();
     }
 
-    public boolean processRepeatMessage(){
-        return processRepeatMessage(false, false);
+    public boolean processRepeatMessage(long payStars){
+        return processRepeatMessage(false, false, payStars);
     }
 
-    public boolean processRepeatMessage(boolean asCopy) {
-        return processRepeatMessage(asCopy, false);
+    public boolean processRepeatMessage(boolean asCopy, long payStars) {
+        return processRepeatMessage(asCopy, false, payStars);
     }
 
-    public boolean processRepeatMessage(boolean asCopy, boolean longClick) {
+    public boolean processRepeatMessage(boolean asCopy, boolean longClick, long payStars) {
         if (Config.disableRepeatInChannel && isChannel()) {
             BulletinFactory.of(this).createSimpleBulletin(R.raw.error, getString(R.string.disableRepeatInChannelError)).show();
             return false;
@@ -41863,7 +41877,9 @@ price);
                         } else {
                             entities = null;
                         }
-                        getSendMessagesHelper().sendMessage(SendMessageParams.of(message, dialog_id, replyToMsg, threadMessageObject, null, false, entities, null, null, true, 0, null, false));
+                        SendMessageParams fparams = SendMessageParams.of(message, dialog_id, replyToMsg, threadMessageObject, null, false, entities, null, null, true, 0, null, false);
+                        fparams.payStars = payStars;
+                        getSendMessagesHelper().sendMessage(fparams);
                         return true;
                     }
                 }
@@ -41875,12 +41891,12 @@ price);
             } else {
                 messages.add(selectedObject);
             }
-            forwardMessages(messages, false, false, true, 0);
+            forwardMessages(messages, false, false, true, 0, payStars);
         }
         return false;
     }
 
-    public boolean processReverseMessage(boolean longClick) {
+    public boolean processReverseMessage(boolean longClick, long payStars) {
         var messageObject = getMessageUtils().getMessageForRepeat(selectedObject, selectedObjectGroup);
         if (messageObject != null) {
             var replyToMsg = longClick ? messageObject : threadMessageObject;
@@ -41905,10 +41921,9 @@ price);
                     } else {
                         entities = null;
                     }
-                    getSendMessagesHelper().sendMessage(SendMessageParams.of(
-                        message, dialog_id, replyToMsg,
-                        threadMessageObject, null, false, entities,
-                        null, null, true, 0, null, false));
+                    SendMessageParams fparams = SendMessageParams.of(message, dialog_id, replyToMsg, threadMessageObject, null, false, entities, null, null, true, 0, null, false);
+                    fparams.payStars = payStars;
+                    getSendMessagesHelper().sendMessage(fparams);
                     return true;
                 }
                 return false;
