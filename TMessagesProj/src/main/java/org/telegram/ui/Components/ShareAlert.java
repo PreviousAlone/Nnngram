@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -505,13 +505,21 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         this(context, fragment, messages, text, text2, channel, copyLink, copyLink2, fullScreen, forCall, false, null, null);
     }
 
+    public ShareAlert(final Context context, ChatActivity fragment, ArrayList<MessageObject> messages, final String text, final String text2, boolean channel, final String copyLink, final String copyLink2, boolean fullScreen, boolean forCall, boolean includeStory, Theme.ResourcesProvider resourcesProvider) {
+        this(context, fragment, messages, text, text2, channel, copyLink, copyLink2, fullScreen, forCall, includeStory, false, resourcesProvider);
+    }
+
+    public ShareAlert(final Context context, ChatActivity fragment, ArrayList<MessageObject> messages, final String text, final String text2, boolean channel, final String copyLink, final String copyLink2, boolean fullScreen, boolean forCall, boolean includeStory, boolean noQuote, Theme.ResourcesProvider resourcesProvider) {
+        this(context, fragment, messages, text, text2, channel, copyLink, copyLink2, fullScreen, forCall, includeStory, noQuote, null, resourcesProvider);
+    }
+
     public ShareAlert(final Context context, ChatActivity fragment, ArrayList<MessageObject> messages, final String text, final String text2, boolean channel, final String copyLink, final String copyLink2, boolean fullScreen, boolean forCall, boolean includeStory, Integer video_timestamp, Theme.ResourcesProvider resourcesProvider) {
         this(context, fragment, messages, text, text2, channel, copyLink, copyLink2, fullScreen, forCall, includeStory, false, video_timestamp, resourcesProvider);
     }
 
-    public ShareAlert(final Context context, ChatActivity fragment, ArrayList<MessageObject> messages, final String text, final String text2, boolean channel, final String copyLink, final String copyLink2, boolean fullScreen, boolean forCall, boolean includeStory, boolean noQuote, Integer video_timestamp, Theme.ResourcesProvider resourcesProvider) {
-        super(context, true, resourcesProvider);
-        this.resourcesProvider = resourcesProvider;
+    public ShareAlert(final Context context, ChatActivity fragment, ArrayList<MessageObject> messages, final String text, final String text2, boolean channel, final String copyLink, final String copyLink2, boolean fullScreen, boolean forCall, boolean includeStory, boolean noQuote, Integer video_timestamp, Theme.ResourcesProvider theme) {
+        super(context, true, theme);
+        this.resourcesProvider = theme;
         this.forwardContext = () -> sendingMessageObjects;
         this.forwardContext.getForwardParams().noQuote = noQuote;
         this.includeStory = includeStory;
@@ -2305,13 +2313,13 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                     if (replyTopMsg != null) {
                         replyTopMsg.isTopicMainMessage = true;
                     }
-                if (frameLayout2.getTag() != null && commentTextView.length() > 0) {
-                        SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(text[0] == null ? null : text[0].toString(), key, replyTopMsg, replyTopMsg, null, true, entities, null, null, withSound, 0, null, false);
-                        params.payStars = price == null ? 0 : price;
-                        SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
-                }
-                    int result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, forwardContext.getForwardParams().noQuote,
-                        forwardContext.getForwardParams().noCaption, withSound, 0, replyTopMsg, video_timestamp, price == null ? 0 : price);
+                    int result;
+                    if (frameLayout2.getTag() != null && commentTextView.length() > 0) {
+                            SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(text[0] == null ? null : text[0].toString(), key, replyTopMsg, replyTopMsg, null, true, entities, null, null, withSound, 0, null, false);
+                            params.payStars = price == null ? 0 : price;
+                            SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
+                    }
+                    result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, forwardContext.getForwardParams().noQuote, forwardContext.getForwardParams().noCaption, withSound, 0, replyTopMsg, video_timestamp, price == null ? 0 : price);
                     if (result != 0) {
                         removeKeys.add(key);
                     }

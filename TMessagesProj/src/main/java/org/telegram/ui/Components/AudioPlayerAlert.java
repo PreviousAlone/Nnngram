@@ -2075,8 +2075,6 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             optionsButton.showSubItem(5);
             if (noforwards) {
                 optionsButton.hideSubItem(1);
-                optionsButton.hideSubItem(2);
-                optionsButton.hideSubItem(6);  // fixme: 11.8.2
                 optionsButton.setAdditionalYOffset(-dp(16));
             } else {
                 optionsButton.showSubItem(1);

@@ -30,10 +30,6 @@ jobs:
       - name: Check out submodules
         run: |
           git -c submodule."libs/rust".update=none submodule update --init --recursive
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: '3.22.1'
       - name: Get short SHA
         run: |
           echo "SHA7=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
@@ -72,7 +68,7 @@ jobs:
             sudo rm -rf /usr/local/lib/node_modules
             df -h
             sudo apt-get install bison gcc make curl ninja-build -y
-            echo "y" | sdkmanager --install "ndk;27.2.12479018" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+            echo "y" | sdkmanager --install "ndk;28.0.13004108" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
             echo "sdk.dir=${ANDROID_HOME}" >> local.properties
             export ANDROID_SDK=${ANDROID_HOME}
       - name: Debug Build
@@ -84,14 +80,14 @@ jobs:
           ./gradlew :TMessagesProj:assembleRelease :TMessagesProj:uploadCrashlyticsSymbolFileRelease
           echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
 
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v4
         name: Upload apk (arm64-v8a)
         with:
           name: Nnngram-arm64-v8a-${{ env.SHA7 }}
           path: ${{ env.APK_FILE }}
 
       - name: Upload mapping
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: mapping
           path: TMessagesProj/build/outputs/mapping
@@ -131,11 +127,11 @@ jobs:
       - telegram-bot-api
     steps:
       - name: Donwload Artifacts
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
       - name: Download Telegram Bot API Binary
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: telegram-bot-api-binary
           path: .

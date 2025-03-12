@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -8851,8 +8851,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     updatePagedownButtonVisibility(true);
                     searchingQuery = searchItem.getSearchField().getText().toString();
                     lastSearchedMessageId = 0;
-                    getMediaDataController().searchMessagesInChat(searchingQuery, dialog_id, mergeDialogId, classGuid, 0, threadMessageId, false, searchingUserMessages, searchingChatMessages,
-                        !TextUtils.isEmpty(searchingQuery) || searchingReaction != null, searchingReaction, searchingType, true);
+                    getMediaDataController().searchMessagesInChat(searchingQuery, dialog_id, mergeDialogId, classGuid, 0, threadMessageId, false, searchingUserMessages, searchingChatMessages, !TextUtils.isEmpty(searchingQuery) || searchingReaction != null, searchingReaction, searchingType, true);
                     AndroidUtilities.hideKeyboard(searchItem.getSearchField());
                     return true;
                 }
@@ -10050,6 +10049,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (searchFilterButton != null && searchFilterButton.getVisibility() != GONE) {
                         leftMargin += 48;
                     }
+                    if (searchFilterButton != null && searchFilterButton.getVisibility() != GONE) {
+                        leftMargin += 48;
+                    }
                     ((MarginLayoutParams) child.getLayoutParams()).leftMargin = AndroidUtilities.dp(leftMargin);
                 }
                 super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
@@ -10191,8 +10193,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         updatePagedownButtonVisibility(true);
                         searchingQuery = searchItem.getSearchField().getText().toString();
                         lastSearchedMessageId = 0;
-                        getMediaDataController().searchMessagesInChat(searchingQuery, dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages,
-                         searchingReaction, searchingType, true);
+                        getMediaDataController().searchMessagesInChat(searchingQuery, dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages, searchingReaction, searchingType, true);
                     });
                     if (searchingType == filter.second) {
                         filterPopup.putCheck();
@@ -29552,7 +29553,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             "[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)+");
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "AppCompatCustomView"})
     private boolean createMenu(View v, boolean single, boolean listView, float x, float y, boolean searchGroup, boolean longpress) {
         if (actionBar.isActionModeShowed() || isReport()) {
             return false;
@@ -30365,7 +30366,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_gallery);
                                 items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
                                 options.add(OPTION_SHARE);
-//                                options.add(OPTION_SHARE_PHOTO); // fixme: crash on share photo
                                 icons.add(R.drawable.msg_shareout);
                                 if (ConfigManager.getBooleanOrFalse(Defines.showCopyPhoto)) {
                                     items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
@@ -33596,7 +33596,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     final long did = dids.get(a).dialogId;
                     final Long price = prices == null ? (Long) 0L : prices.get(did);
                     if (message != null) {
-                        SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, notify, scheduleDate, null, false);
+                        SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, forwardParams.notify, forwardParams.scheduleDate, null, false);
                         params.quick_reply_shortcut = quickReplyShortcut;
                         params.quick_reply_shortcut_id = getQuickReplyId();
                         params.payStars = price == null ? 0 : price;
@@ -40132,6 +40132,10 @@ price);
             }
             if (avatarContainer != null && avatarContainer.getTimeItem() != null) {
                 avatarContainer.getTimeItem().invalidate();
+            }
+            if (bottomGiftButton != null) {
+                bottomGiftButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_featuredStickers_addButton), PorterDuff.Mode.SRC_IN));
+                bottomGiftButton.setBackground(Theme.createSelectorDrawable(Theme.multAlpha(getThemedColor(Theme.key_featuredStickers_addButton), .10f), Theme.RIPPLE_MASK_CIRCLE_20DP));
             }
         };
         ArrayList<ThemeDescription> themeDescriptions = new ArrayList<>();

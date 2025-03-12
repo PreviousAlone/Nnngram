@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -5883,7 +5883,6 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         translateItem.setColors(0xfffafafa, 0xfffafafa);
         qrItem = menuItem.addSubItem(gallery_menu_qr, R.drawable.msg_qrcode, LocaleController.getString("QrCode", R.string.QrCode));
         qrItem.setColors(0xfffafafa, 0xfffafafa);
-
         menuItem.redrawPopup(0xf9222222);
         setMenuItemIcon(false, true);
         menuItem.setPopupItemsSelectorColor(0x0fffffff);

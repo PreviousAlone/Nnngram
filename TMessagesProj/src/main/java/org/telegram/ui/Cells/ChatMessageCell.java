@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -16701,7 +16701,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 && currentChat != null && currentMessageObject.isSenderChannel()) {
                 if (Config.channelAlias) {
                     String aliasName = ConfigManager.getStringOrDefault(Defines.channelAliasPrefix
-                        + currentMessageObject.messageOwner.from_id.channel_id, "");
+                        + currentMessageObject.messageOwner.from_id.channel_id, null);
 
                     String nickname = null;
                     if (Config.linkedUser

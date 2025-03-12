@@ -31,8 +31,6 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class BillingController {
     public final static String PREMIUM_PRODUCT_ID = "telegram_premium";
@@ -41,8 +39,8 @@ public class BillingController {
 
     public static boolean billingClientEmpty;
 
-//    private final Map<String, Consumer<BillingResult>> resultListeners = new HashMap<>();
-    private final Set<String> requestingTokens = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    // private final Map<String, Consumer<BillingResult>> resultListeners = new HashMap<>();
+    private final List<String> requestingTokens = Collections.synchronizedList(new ArrayList<>());
     private final Map<String, Integer> currencyExpMap = new HashMap<>();
     // private final BillingClient billingClient;
     private String lastPremiumTransaction;
@@ -395,8 +393,8 @@ public class BillingController {
     /**
      * All consumable purchases must be consumed. For us it is a gift.
      * Without confirmation the user will not be able to buy the product again.
-     
-    private void consumeGiftPurchase(Purchase purchase, TLRPC.InputStorePaymentPurpose purpose, Runnable onDone) {
+
+    private void consumeGiftPurchase(Purchase purchase, TLRPC.InputStorePaymentPurpose purpose) {
         if (purpose instanceof TLRPC.TL_inputStorePaymentGiftPremium
                 || purpose instanceof TLRPC.TL_inputStorePaymentPremiumGiftCode
                 || purpose instanceof TLRPC.TL_inputStorePaymentStarsTopup

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -5174,14 +5174,14 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (a == 1) {
                 nameTextView[a].setScrollNonFitText(true);
                 nameTextView[a].setOnLongClickListener(v -> {
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-//                    builder.setItems(new CharSequence[]{LocaleController.getString("Copy", R.string.Copy)}, (dialogInterface, i) -> {
-//                        if (i == 0) {
-                    AndroidUtilities.addToClipboard(((SimpleTextView) v).getText());
-                    BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
-//                        }
-//                    });
-//                    showDialog(builder.create());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+                    builder.setItems(new CharSequence[]{LocaleController.getString("Copy", R.string.Copy)}, (dialogInterface, i) -> {
+                        if (i == 0) {
+                            AndroidUtilities.addToClipboard(((SimpleTextView) v).getText());
+                            BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
+                        }
+                    });
+                    showDialog(builder.create());
                     return false;
                 });
                 nameTextView[a].setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -7894,7 +7894,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         idTextView.setVisibility(View.VISIBLE);
                     }
                 }
-                updateCollectibleHint();
+                updateCollectibleHint();  // fixme: merged upstream
             }
 
             if (!openAnimationInProgress && (expandAnimator == null || !expandAnimator.isRunning())) {
@@ -12373,7 +12373,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setText(LocaleController.getString(R.string.ReportUserLocation), false);
                         textCell.setColors(-1, Theme.key_text_RedRegular);
                     } else if (position == nullRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NnnSettings", R.string.NullgramName), R.drawable.msg_settings, false);
+                        textCell.setTextAndIcon(LocaleController.getString(R.string.NullSettings), R.drawable.msg_settings, false);
                     } else if (position == languageRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.Language), LocaleController.getCurrentLanguageName(), false, R.drawable.msg2_language, false);
                         textCell.setImageLeft(23);
@@ -15001,6 +15001,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private TLRPC.TL_emojiStatusCollectible collectibleStatus;
 
     public void setCollectibleGiftStatus(TLRPC.TL_emojiStatusCollectible status) {
+        if (collectibleHint != null) collectibleHint.hide();
+        return;
+        /*
+
         if (avatarContainer2 == null) return;
         if (collectibleStatus == status) return;
         if (collectibleStatus != null && status != null && collectibleStatus.collectible_id == status.collectible_id) return;
@@ -15034,6 +15038,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
             updateCollectibleHint();
         }
+
+        */
     }
 
     public void updateCollectibleHint() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -9670,48 +9670,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     }
 
     public void updateGiftButton(boolean animated) {
-
-        final boolean visible =
-            !MessagesController.getInstance(currentAccount).premiumPurchaseBlocked() &&
-            getParentFragment() != null && getParentFragment().getCurrentUser() != null &&
-            !BuildVars.IS_BILLING_UNAVAILABLE &&
-            !UserObject.isUserSelf(getParentFragment().getCurrentUser()) &&
-            !UserObject.isBot(getParentFragment().getCurrentUser()) &&
-            !MessagesController.isSupportUser(getParentFragment().getCurrentUser()) &&
-            getParentFragment().getCurrentUserInfo() != null &&
-            (
-                (
-                    !getParentFragment().getCurrentUser().premium &&
-                    MessagesController.getInstance(currentAccount).giftAttachMenuIcon &&
-                    MessagesController.getInstance(currentAccount).giftTextFieldIcon &&
-                    MessagesController.getInstance(currentAccount).getMainSettings().getBoolean("show_gift_for_" + parentFragment.getDialogId(), true)
-                ) || (
-                    BirthdayController.isToday(getParentFragment().getCurrentUserInfo().birthday) &&
-                    MessagesController.getInstance(currentAccount).getMainSettings().getBoolean(Calendar.getInstance().get(Calendar.YEAR) + "show_gift_for_" + parentFragment.getDialogId(), true)
-                )
-            ) &&
-            parentFragment != null && parentFragment.getChatMode() == 0;
-
-        if (!visible && birthdayHint != null) {
-            birthdayHint.hide();
-        }
-        if (!visible && giftButton == null) {
-            return;
-        }
-        createGiftButton();
-
-        AndroidUtilities.updateViewVisibilityAnimated(giftButton, visible, 1f, animated);
-        if (scheduledButton != null && scheduledButton.getVisibility() == View.VISIBLE) {
-            float tX = (visible ? -dp(48) : 0) + dp(botButton != null && botButton.getVisibility() == VISIBLE ? 48 : 0);
-            if (animated) {
-                scheduledButton.animate().translationX(tX).setDuration(150).start();
-            } else {
-                scheduledButton.setTranslationX(tX);
-            }
-        }
-        if (visible) {
-            checkBirthdayHint();
-        }
     }
 
     private void checkBirthdayHint() {

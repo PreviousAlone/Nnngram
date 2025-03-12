@@ -67,6 +67,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.ChatActionCell;
 import org.telegram.ui.Cells.EditEmojiTextCell;
 import org.telegram.ui.ChatActivity;
+import org.telegram.ui.Components.BottomSheetWithRecyclerListView;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BottomSheetWithRecyclerListView;
 import org.telegram.ui.Components.BulletinFactory;
@@ -572,101 +573,6 @@ public class SendGiftSheet extends BottomSheetWithRecyclerListView implements No
         if (useStars && premiumTier.isStarsPaymentAvailable()) {
             option = premiumTier.getStarsOption();
         } else {
-            if (premiumTier.giftCodeOption != null) {
-                option = premiumTier.giftCodeOption;
-            } else if (premiumTier.giftOption != null) {
-                option = premiumTier.giftOption;
-            } else {
-                button.setLoading(false);
-                return;
-            }
-        }
-        if (option instanceof TLRPC.TL_premiumGiftCodeOption) {
-            final TLRPC.TL_premiumGiftCodeOption o = (TLRPC.TL_premiumGiftCodeOption) option;
-            if ("XTR".equalsIgnoreCase(o.currency)) {
-                StarsController.getInstance(currentAccount).buyPremiumGift(dialogId, o, getMessage(), (status, err) -> {
-                    if (status) {
-                        if (closeParentSheet != null) {
-                            closeParentSheet.run();
-                        }
-                        AndroidUtilities.hideKeyboard(messageEdit);
-                        dismiss();
-
-                        AndroidUtilities.runOnUIThread(() -> PremiumPreviewGiftSentBottomSheet.show(new ArrayList<>(Arrays.asList(user))), 250);
-                    } else if (!TextUtils.isEmpty(err)) {
-                        BulletinFactory.of(topBulletinContainer, resourcesProvider)
-                            .createSimpleBulletin(R.raw.error, LocaleController.formatString(R.string.UnknownErrorCode, err))
-                            .show();
-                    }
-                    button.setLoading(false);
-                });
-            } else {
-                final BaseFragment fragment = new BaseFragment() {
-                    @Override
-                    public Activity getParentActivity() {
-                        Activity activity = getOwnerActivity();
-                        if (activity == null) activity = LaunchActivity.instance;
-                        if (activity == null)
-                            activity = AndroidUtilities.findActivity(SendGiftSheet.this.getContext());
-                        return activity;
-                    }
-
-                    @Override
-                    public Theme.ResourcesProvider getResourceProvider() {
-                        return SendGiftSheet.this.resourcesProvider;
-                    }
-                };
-                BoostRepository.payGiftCode(new ArrayList<>(Arrays.asList(user)), o, null, getMessage(), fragment, result -> {
-                    if (closeParentSheet != null) {
-                        closeParentSheet.run();
-                    }
-                    dismiss();
-                    NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.giftsToUserSent);
-                    AndroidUtilities.runOnUIThread(() -> PremiumPreviewGiftSentBottomSheet.show(new ArrayList<>(Arrays.asList(user))), 250);
-
-                    MessagesController.getInstance(currentAccount).getMainSettings().edit()
-                        .putBoolean("show_gift_for_" + dialogId, true)
-                        .putBoolean(Calendar.getInstance().get(Calendar.YEAR) + "show_gift_for_" + dialogId, true)
-                        .apply();
-                }, error -> {
-                    BoostDialogs.showToastError(getContext(), error);
-                });
-            }
-        } else if (option instanceof TLRPC.TL_premiumGiftOption) {
-            final TLRPC.TL_premiumGiftOption o = (TLRPC.TL_premiumGiftOption) option;
-            if ("XTR".equalsIgnoreCase(o.currency)) {
-                StarsController.getInstance(currentAccount).buyPremiumGift(dialogId, o, getMessage(), (status, err) -> {
-                    if (status) {
-                        if (closeParentSheet != null) {
-                            closeParentSheet.run();
-                        }
-                        AndroidUtilities.hideKeyboard(messageEdit);
-                        dismiss();
-
-                        AndroidUtilities.runOnUIThread(() -> PremiumPreviewGiftSentBottomSheet.show(new ArrayList<>(Arrays.asList(user))), 250);
-                    } else if (!TextUtils.isEmpty(err)) {
-                        BulletinFactory.of(topBulletinContainer, resourcesProvider)
-                            .createSimpleBulletin(R.raw.error, LocaleController.formatString(R.string.UnknownErrorCode, err))
-                            .show();
-                    }
-                    button.setLoading(false);
-                });
-            } else if (BuildVars.useInvoiceBilling()) {
-                final LaunchActivity activity = LaunchActivity.instance;
-                if (activity != null) {
-                    Uri uri = Uri.parse(o.bot_url);
-                    if (uri.getHost().equals("t.me")) {
-                        if (!uri.getPath().startsWith("/$") && !uri.getPath().startsWith("/invoice/")) {
-                            activity.setNavigateToPremiumBot(true);
-                        } else {
-                            activity.setNavigateToPremiumGiftCallback(() -> onGiftSuccess(false));
-                        }
-                    }
-                    Browser.openUrl(activity, premiumTier.giftOption.bot_url);
-                    dismiss();
-                }
-            } else {
-            }
         }
     }
 

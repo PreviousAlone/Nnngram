@@ -28,10 +28,6 @@ jobs:
       - name: Check out submodules
         run: |
           git -c submodule."libs/rust".update=none submodule update --init --recursive
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: '3.22.1'
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -67,7 +63,7 @@ jobs:
             sudo rm -rf /usr/local/lib/node_modules
             df -h
             sudo apt-get install bison gcc make curl ninja-build ccache -y
-            echo "y" | sdkmanager --install "ndk;27.2.12479018" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+            echo "y" | sdkmanager --install "ndk;28.0.13004108" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
             echo "sdk.dir=${ANDROID_HOME}" >> local.properties
       - name: Debug Build
         run: |

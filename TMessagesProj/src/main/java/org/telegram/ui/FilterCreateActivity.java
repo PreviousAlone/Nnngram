@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -230,6 +230,7 @@ public class FilterCreateActivity extends BaseFragment {
         newFilterName = new SpannableStringBuilder(filter.name);
         newFilterName = Emoji.replaceEmoji(newFilterName, paint.getFontMetricsInt(), false);
         newFilterName = MessageObject.replaceAnimatedEmoji(newFilterName, filter.entities, paint.getFontMetricsInt());
+        newFilterEmoticon = filter.emoticon;
         newFilterAnimations = !filter.title_noanimate;
         AnimatedEmojiDrawable.toggleAnimations(currentAccount, newFilterAnimations);
         newFilterFlags = filter.flags;
@@ -382,7 +383,7 @@ public class FilterCreateActivity extends BaseFragment {
             items.add(ItemInner.asShadow(LocaleController.getString(R.string.FilterExcludeInfo)));
         }
 
-        if (getMessagesController().folderTags || !getUserConfig().isPremium()) {
+        if (getMessagesController().folderTags/* || !getUserConfig().isPremium()*/) {
             items.add(new ItemInner(VIEW_TYPE_HEADER_COLOR_PREVIEW, false));
             items.add(new ItemInner(VIEW_TYPE_COLOR, false));
             items.add(ItemInner.asShadow(LocaleController.getString(R.string.FolderTagColorInfo)));
@@ -1519,16 +1520,24 @@ public class FilterCreateActivity extends BaseFragment {
                     break;
                 }
                 case VIEW_TYPE_EDIT: {
-                    PollEditTextCell cell = new PollEditTextCell(mContext, false, PollEditTextCell.TYPE_EMOJI, null, view1 -> IconSelector.show(FilterCreateActivity.this, (emoticon) -> {
+                    EditEmojiTextCell cell = nameEditTextCell = new EditEmojiTextCell(mContext, (SizeNotifierFrameLayout) fragmentView, LocaleController.getString(R.string.FilterNameHint), false, MAX_NAME_LENGTH, EditTextEmoji.STYLE_GIFT, resourceProvider) {
+                        @Override
+                        public int emojiCacheType() {
+                            return AnimatedEmojiDrawable.CACHE_TYPE_TOGGLEABLE_EDIT;
+                        }
+                    };
+                    cell.setOnChangeIconListener(v -> IconSelector.show(FilterCreateActivity.this, v, newFilterEmoticon == null ? "\uD83D\uDCC1" : newFilterEmoticon, (emoticon) -> {
                         newFilterEmoticon = emoticon;
-                        adapter.notifyItemChanged(nameRow);
+                        nameEditTextCell.setIcon(FolderIconHelper.getTabIcon(newFilterEmoticon), true);
                         checkDoneButton(true);
                     }));
-                    cell.setIcon(FolderIconHelper.getTabIcon(newFilterEmoticon), true);
-                    cell.createErrorTextView();
-                    cell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-                    EditTextBoldCursor editText = cell.getTextView();
-                    editText.setText(newFilterName);
+                    cell.setIcon(FolderIconHelper.getTabIcon(newFilterEmoticon), false);
+                    cell.setAllowEntities(false);
+                    cell.editTextEmoji.getEditText().setEmojiColor(getThemedColor(Theme.key_featuredStickers_addButton));
+                    cell.editTextEmoji.setEmojiViewCacheType(AnimatedEmojiDrawable.CACHE_TYPE_TOGGLEABLE_EDIT);
+                    cell.editTextEmoji.setText(newFilterName);
+                    AnimatedEmojiDrawable.toggleAnimations(currentAccount, newFilterAnimations);
+                    EditTextCaption editText = cell.editTextEmoji.getEditText();
                     editText.addTextChangedListener(new EditTextSuggestionsFix());
                     editText.addTextChangedListener(new TextWatcher() {
                         @Override
