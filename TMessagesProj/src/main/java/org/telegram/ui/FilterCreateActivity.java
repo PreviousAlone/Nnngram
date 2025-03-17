@@ -224,7 +224,6 @@ public class FilterCreateActivity extends BaseFragment {
             filter.color = (int) (Math.random() * 8);
             creatingNew = true;
         }
-        newFilterEmoticon = filter.emoticon;
         TextPaint paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         paint.setTextSize(dp(17));
         newFilterName = new SpannableStringBuilder(filter.name);
@@ -1562,6 +1561,8 @@ public class FilterCreateActivity extends BaseFragment {
                         }
                     });
                     editText.setPadding(dp(23 - 16), editText.getPaddingTop(), editText.getPaddingRight(), editText.getPaddingBottom());
+                    cell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                    cell.editTextEmoji.getEditText().setImeOptions(EditorInfo.IME_ACTION_DONE | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
                     view = cell;
                     break;
                 }
@@ -1724,11 +1725,6 @@ public class FilterCreateActivity extends BaseFragment {
                 case VIEW_TYPE_CREATE_LINK: {
                     createLinkCell = (CreateLinkCell) holder.itemView;
                     createLinkCell.setDivider(divider);
-                    break;
-                }
-                case VIEW_TYPE_EDIT: {
-                    PollEditTextCell cell = (PollEditTextCell) holder.itemView;
-                    cell.setIcon(FolderIconHelper.getTabIcon(newFilterEmoticon), false);
                     break;
                 }
                 case VIEW_TYPE_HEADER_COLOR_PREVIEW: {
