@@ -8427,7 +8427,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
             String token = codeField.getText().toString();
 
-            if (token.length() == 0) {
+            if (token.isEmpty()) {
                 onFieldError(outlineCodeField, false);
                 return;
             }
@@ -8444,11 +8444,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             Log.d("BotLogin", token);
 
-            ConnectionsManager.getInstance(currentAccount).cleanup(true);
+            ConnectionsManager.getInstance(currentAccount).cleanup(false);
             final TLRPC.TL_auth_importBotAuthorization req = new TLRPC.TL_auth_importBotAuthorization();
 
-            req.api_id = 1391584;
-            req.api_hash = "355c91550b0d658cfb7ff89dcf91a08c";
+            req.api_id = 105810;
+            req.api_hash = "3e7a52498eec003c5896a330e5d29397";
             req.bot_auth_token = token;
             req.flags = 0;
             int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
@@ -8462,12 +8462,15 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                     }, 150);
                 } else {
                     needHideProgress(false);
+                    if (error.code == 401) {
+                        ConnectionsManager.getInstance(currentAccount).cleanup(true);
+                    }
                     if (error.text.equals("ACCESS_TOKEN_INVALID")) {
                         needShowAlert(LocaleController.getString("AppName", R.string.AppName), LocaleController.getString("InvalidAccessToken", R.string.InvalidAccessToken));
                     } else if (error.text.startsWith("FLOOD_WAIT")) {
                         needShowAlert(LocaleController.getString("AppName", R.string.AppName), LocaleController.getString("FloodWait", R.string.FloodWait));
                     } else if (error.code != -1000) {
-                        needShowAlert(LocaleController.getString("AppName", R.string.AppName), error.text);
+                        needShowAlert(LocaleController.getString("AppName", R.string.AppName), error.code + " " + error.text);
                     }
                 }
             }), ConnectionsManager.RequestFlagFailOnServerErrors | ConnectionsManager.RequestFlagWithoutLogin | ConnectionsManager.RequestFlagTryDifferentDc | ConnectionsManager.RequestFlagEnableUnauthorized);

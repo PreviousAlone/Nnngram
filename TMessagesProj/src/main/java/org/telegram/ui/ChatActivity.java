@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
  * This program is free software; you can redistribute it and/or
@@ -240,10 +240,80 @@ import org.telegram.ui.Cells.ShareDialogCell;
 import org.telegram.ui.Cells.StickerCell;
 import org.telegram.ui.Cells.TextSelectionHelper;
 import org.telegram.ui.Cells.UserInfoCell;
-import org.telegram.ui.Components.*;
+import org.telegram.ui.Components.AlertsCreator;
+import org.telegram.ui.Components.AnimatedEmojiDrawable;
+import org.telegram.ui.Components.AnimatedEmojiSpan;
+import org.telegram.ui.Components.AnimatedFileDrawable;
+import org.telegram.ui.Components.AnimatedTextView;
+import org.telegram.ui.Components.AnimationProperties;
+import org.telegram.ui.Components.AttachBotIntroTopView;
+import org.telegram.ui.Components.AudioPlayerAlert;
+import org.telegram.ui.Components.AutoDeletePopupWrapper;
+import org.telegram.ui.Components.BackButtonMenu;
+import org.telegram.ui.Components.BackupImageView;
+import org.telegram.ui.Components.BlurBehindDrawable;
+import org.telegram.ui.Components.BluredView;
+import org.telegram.ui.Components.BlurredFrameLayout;
+import org.telegram.ui.Components.Bulletin;
+import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.ChatActivityEnterTopView;
+import org.telegram.ui.Components.ChatActivityEnterView;
+import org.telegram.ui.Components.ChatActivityInterface;
+import org.telegram.ui.Components.ChatAttachAlert;
+import org.telegram.ui.Components.ChatAttachAlertDocumentLayout;
+import org.telegram.ui.Components.ChatAvatarContainer;
+import org.telegram.ui.Components.ChatBigEmptyView;
+import org.telegram.ui.Components.ChatGreetingsView;
+import org.telegram.ui.Components.ChatNotificationsPopupWrapper;
+import org.telegram.ui.Components.ChatScrimPopupContainerLayout;
+import org.telegram.ui.Components.ChatSearchTabs;
+import org.telegram.ui.Components.ChatThemeBottomSheet;
+import org.telegram.ui.Components.ChecksHintView;
+import org.telegram.ui.Components.CircularProgressDrawable;
+import org.telegram.ui.Components.ClippingImageView;
+import org.telegram.ui.Components.ColoredImageSpan;
+import org.telegram.ui.Components.CombinedDrawable;
+import org.telegram.ui.Components.CounterView;
+import org.telegram.ui.Components.CrossfadeDrawable;
+import org.telegram.ui.Components.CubicBezierInterpolator;
+import org.telegram.ui.Components.EditTextBoldCursor;
+import org.telegram.ui.Components.EditTextCaption;
+import org.telegram.ui.Components.EmbedBottomSheet;
+import org.telegram.ui.Components.EmojiPacksAlert;
+import org.telegram.ui.Components.EmojiView;
+import org.telegram.ui.Components.ExtendedGridLayoutManager;
+import org.telegram.ui.Components.FireworksOverlay;
+import org.telegram.ui.Components.FlickerLoadingView;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugController;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugProvider;
 import org.telegram.ui.Components.Forum.ForumUtilities;
+import org.telegram.ui.Components.FragmentContextView;
+import org.telegram.ui.Components.GigagroupConvertAlert;
+import org.telegram.ui.Components.HashtagActivity;
+import org.telegram.ui.Components.HashtagHistoryView;
+import org.telegram.ui.Components.HideViewAfterAnimation;
+import org.telegram.ui.Components.HintView;
+import org.telegram.ui.Components.ImageUpdater;
+import org.telegram.ui.Components.ImportingAlert;
+import org.telegram.ui.Components.InstantCameraView;
+import org.telegram.ui.Components.InviteMembersBottomSheet;
+import org.telegram.ui.Components.ItemOptions;
+import org.telegram.ui.Components.JoinGroupAlert;
+import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.LinkSpanDrawable;
+import org.telegram.ui.Components.MediaActivity;
+import org.telegram.ui.Components.MentionsContainerView;
+import org.telegram.ui.Components.MessageBackgroundDrawable;
+import org.telegram.ui.Components.MessageContainsEmojiButton;
+import org.telegram.ui.Components.MessagePreviewView;
+import org.telegram.ui.Components.MessagePrivateSeenView;
+import org.telegram.ui.Components.MotionBackgroundDrawable;
+import org.telegram.ui.Components.NumberTextView;
+import org.telegram.ui.Components.PhonebookShareAlert;
+import org.telegram.ui.Components.PinnedLineView;
+import org.telegram.ui.Components.PipRoundVideoView;
+import org.telegram.ui.Components.PollVotesAlert;
+import org.telegram.ui.Components.PopupSwipeBackLayout;
 import org.telegram.ui.Components.Premium.GiftPremiumBottomSheet;
 import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
@@ -251,9 +321,45 @@ import org.telegram.ui.Components.Premium.PremiumPreviewBottomSheet;
 import org.telegram.ui.Components.Premium.boosts.BoostDialogs;
 import org.telegram.ui.Components.Premium.boosts.GiftInfoBottomSheet;
 import org.telegram.ui.Components.Premium.boosts.PremiumPreviewGiftLinkBottomSheet;
+import org.telegram.ui.Components.QuoteSpan;
+import org.telegram.ui.Components.RLottieDrawable;
+import org.telegram.ui.Components.RLottieImageView;
+import org.telegram.ui.Components.RadialProgressView;
+import org.telegram.ui.Components.ReactedHeaderView;
+import org.telegram.ui.Components.ReactedUsersListView;
+import org.telegram.ui.Components.ReactionTabHolderView;
 import org.telegram.ui.Components.Reactions.ChatSelectionReactionMenuOverlay;
 import org.telegram.ui.Components.Reactions.ReactionsEffectOverlay;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
+import org.telegram.ui.Components.ReactionsContainerLayout;
+import org.telegram.ui.Components.RecyclerAnimationScrollHelper;
+import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.ScaleStateListAnimator;
+import org.telegram.ui.Components.ScrimOptions;
+import org.telegram.ui.Components.SearchTagsList;
+import org.telegram.ui.Components.ShareAlert;
+import org.telegram.ui.Components.SharedMediaLayout;
+import org.telegram.ui.Components.SizeNotifierFrameLayout;
+import org.telegram.ui.Components.StickerEmptyView;
+import org.telegram.ui.Components.StickersAlert;
+import org.telegram.ui.Components.SuggestEmojiView;
+import org.telegram.ui.Components.TextSelectionHint;
+import org.telegram.ui.Components.TextStyleSpan;
+import org.telegram.ui.Components.ThanosEffect;
+import org.telegram.ui.Components.ThemeEditorView;
+import org.telegram.ui.Components.TranscribeButton;
+import org.telegram.ui.Components.TranslateAlert2;
+import org.telegram.ui.Components.TrendingStickersAlert;
+import org.telegram.ui.Components.TypefaceSpan;
+import org.telegram.ui.Components.URLSpanBotCommand;
+import org.telegram.ui.Components.URLSpanMono;
+import org.telegram.ui.Components.URLSpanNoUnderline;
+import org.telegram.ui.Components.URLSpanReplacement;
+import org.telegram.ui.Components.URLSpanUserMention;
+import org.telegram.ui.Components.UndoView;
+import org.telegram.ui.Components.UnreadCounterTextView;
+import org.telegram.ui.Components.ViewHelper;
+import org.telegram.ui.Components.ViewPagerFixed;
 import org.telegram.ui.Components.quickforward.QuickShareSelectorOverlayLayout;
 import org.telegram.ui.Components.spoilers.SpoilerEffect;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
@@ -264,9 +370,9 @@ import org.telegram.ui.Stars.StarReactionsOverlay;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
 import org.telegram.ui.Stars.StarsReactionsSheet;
+import org.telegram.ui.Stories.PublicStoriesList;
 import org.telegram.ui.Stories.StoriesListPlaceProvider;
 import org.telegram.ui.Stories.StoriesUtilities;
-import org.telegram.ui.Stories.PublicStoriesList;
 import org.telegram.ui.Stories.recorder.HintView2;
 import org.telegram.ui.Stories.recorder.PreviewView;
 import org.telegram.ui.Stories.recorder.StoryEntry;
@@ -26678,34 +26784,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     private void showGiftButton(boolean show, boolean animated) {
-        if (getContext() == null) return;
-        final boolean wasShown = bottomGiftButton != null && bottomGiftButton.getAlpha() > 0.5f;
-        if (bottomGiftButton == null) {
-            bottomGiftButton = new ImageView(getContext());
-            bottomGiftButton.setImageResource(R.drawable.input_gift_s);
-            bottomGiftButton.setScaleType(ImageView.ScaleType.CENTER);
-            bottomGiftButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_fieldOverlayText), PorterDuff.Mode.SRC_IN));
-            bottomOverlayChat.addView(bottomGiftButton, LayoutHelper.createFrame(48, 48, Gravity.RIGHT | Gravity.CENTER_VERTICAL));
-            bottomGiftButton.setBackground(Theme.createSelectorDrawable(Theme.multAlpha(getThemedColor(Theme.key_chat_fieldOverlayText), .10f), Theme.RIPPLE_MASK_CIRCLE_20DP));
-            bottomGiftButton.setOnClickListener(v -> {
-                MessagesController.getGlobalMainSettings().edit().putInt("channelgifthint", 3).apply();
-                showDialog(new GiftSheet(getContext(), currentAccount, getDialogId(), null, null));
-            });
-            bottomGiftButton.setContentDescription(getString(R.string.Gift2ChannelSend));
-            ScaleStateListAnimator.apply(bottomGiftButton);
-        }
-        AndroidUtilities.updateViewShow(bottomGiftButton, show, true, animated);
-        if (show && !wasShown && bottomGiftHintView == null && MessagesController.getGlobalMainSettings().getInt("channelgifthint", 0) < 2) {
-            bottomGiftHintView = new HintView2(getContext(), HintView2.DIRECTION_BOTTOM);
-            bottomGiftHintView.setPadding(dp(7.33f), 0, dp(7.33f), 0);
-            bottomGiftHintView.setMultilineText(false);
-            bottomGiftHintView.setText(getString(R.string.Gift2ChannelSendHint));
-            bottomGiftHintView.setJoint(1, -24 + 7.33f);
-            contentView.addView(bottomGiftHintView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 100, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0, 0, 51 - 8.66f));
-            bottomGiftHintView.setOnHiddenListener(() -> AndroidUtilities.removeFromParent(bottomGiftHintView));
-            bottomGiftHintView.show();
-            MessagesController.getGlobalMainSettings().edit().putInt("channelgifthint", MessagesController.getGlobalMainSettings().getInt("channelgifthint", 0) + 1).apply();
-        }
     }
 
 
@@ -30014,13 +30092,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_gif);
                             }
                         } else if (type == 4) {
-                            if (!selectedObject.hasRevealedExtendedMedia()) {
-                                if (ConfigManager.getBooleanOrFalse(Defines.showDeleteDownloadFiles) && selectedObject.getDocument() != null) {
-                                    items.add(LocaleController.getString("DeleteDownloadedFile",
-                                        R.string.DeleteDownloadedFile));
-                                    options.add(OPTION_DELETE_DOWNLOADED_FILE);
-                                    icons.add(R.drawable.msg_clear);
-                                }
+                            if (Config.showDeleteDownloadFiles && !selectedObject.needDrawBluredPreview() && selectedObject.getDocument() != null) {
+                                items.add(LocaleController.getString(R.string.DeleteDownloadedFile));
+                                options.add(OPTION_DELETE_DOWNLOADED_FILE);
+                                icons.add(R.drawable.msg_clear);
+                            }
+                            if (!noforwardsOrPaidMedia && !selectedObject.hasRevealedExtendedMedia()) {
                                 if (selectedObject.isVideo()) {
                                     if (!selectedObject.needDrawBluredPreview()) {
                                         items.add(LocaleController.getString(R.string.SaveToGallery));
@@ -30054,8 +30131,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                         items.add(LocaleController.getString(R.string.SaveToGallery));
                                         options.add(OPTION_SAVE_TO_GALLERY);
                                         icons.add(R.drawable.msg_gallery);
+                                        if (Config.showCopyPhoto) {
+                                            items.add(LocaleController.getString(R.string.CopyPhoto));
+                                            options.add(OPTION_COPY_PHOTO);
+                                            icons.add(R.drawable.msg_copy);
+                                        }
                                         items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
-                                    options.add(OPTION_SHARE_PHOTO);
+                                        options.add(OPTION_SHARE_PHOTO);
                                         icons.add(R.drawable.msg_shareout);
                                     }
                                 }
@@ -30367,11 +30449,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 items.add(LocaleController.getString("ShareFile", R.string.ShareFile));
                                 options.add(OPTION_SHARE);
                                 icons.add(R.drawable.msg_shareout);
-                                if (ConfigManager.getBooleanOrFalse(Defines.showCopyPhoto)) {
-                                    items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
-                                    options.add(OPTION_COPY_PHOTO);
-                                    icons.add(R.drawable.msg_copy);
-                                }
                             }
                         } else if (type == 5) {
                             items.add(LocaleController.getString(R.string.ApplyLocalizationFile));
@@ -33215,12 +33292,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 break;
             }
             case OPTION_DELETE_DOWNLOADED_FILE: {
-                if (Build.VERSION.SDK_INT >= 23 && (Build.VERSION.SDK_INT <= 28
-                    || BuildVars.NO_SCOPED_STORAGE) && getParentActivity().checkSelfPermission(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                    getParentActivity().requestPermissions(
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 4);
+                if ((Build.VERSION.SDK_INT <= 28 || BuildVars.NO_SCOPED_STORAGE)
+                    && PermissionUtils.isStoragePermissionGranted()) {
+                    getParentActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 4);
                     selectedObject = null;
                     selectedObjectGroup = null;
                     selectedObjectToEditCaption = null;
@@ -33239,13 +33313,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                 }
                 String path = selectedObject.messageOwner.attachPath;
-                if (path != null && path.length() > 0) {
+                if (path != null && !path.isEmpty()) {
                     File temp = new File(path);
                     if (!temp.exists()) {
                         path = null;
                     }
                 }
-                if (path == null || path.length() == 0) {
+                if (path == null || path.isEmpty()) {
                     path = getFileLoader().getPathToMessage(selectedObject.messageOwner).toString();
                 }
                 File temp = new File(path);
