@@ -40,9 +40,9 @@ val verCode = Common.getBuildVersionCode(rootProject)
 
 val verName = "v" + Version.officialVersionName + "-" + (Common.getGitHeadRefsSuffix(rootProject))
 
-val androidTargetSdkVersion by extra(35)
+val androidTargetSdkVersion by extra(34)
 val androidMinSdkVersion by extra(27)
-val androidCompileSdkVersion by extra(35)
+val androidCompileSdkVersion by extra(34)
 val androidBuildToolsVersion = Version.findBuildToolsVersion()
 val androidCompileNdkVersion = "28.0.13004108"
 
