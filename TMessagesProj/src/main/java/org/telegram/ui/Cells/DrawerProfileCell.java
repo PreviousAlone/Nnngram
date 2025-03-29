@@ -808,8 +808,12 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         status.setColor(Theme.getColor(Theme.isCurrentThemeDark() ? Theme.key_chats_verifiedBackground : Theme.key_chats_menuPhoneCats));
         if (!Config.hidePhone) {
             phoneTextView.setText(PhoneFormat.getInstance().format("+" + user.phone));
+            phoneTextView.setVisibility(VISIBLE);
+            nameTextView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 16, 0, 52, 28));
         } else {
-            phoneTextView.setText(LocaleController.getString(R.string.hidePhone));
+            phoneTextView.setText("");
+            phoneTextView.setVisibility(INVISIBLE);
+            nameTextView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 16, 0, 52, 16));
         }
         AvatarDrawable avatarDrawable = new AvatarDrawable(user);
         avatarDrawable.setColor(Theme.getColor(Theme.key_avatar_backgroundInProfileBlue));
