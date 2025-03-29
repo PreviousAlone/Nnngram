@@ -397,4 +397,5 @@
     <string name="disableRepeatInChannel">Disable repeat in channel</string>
     <string name="disableRepeatInChannelError">Repeat is disabled in channel</string>
     <string name="disableDoubleTapWhenSelecting">Double tap is disabled when selecting</string>
+    <string name="searchHashtagInCurrentChat">Search hash tag in current chat by default</string>
 </resources>

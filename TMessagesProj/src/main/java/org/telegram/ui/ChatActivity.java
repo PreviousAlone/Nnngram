@@ -34418,7 +34418,7 @@ price);
         if (searchFilterButton != null) {
             searchFilterButton.setVisibility(View.GONE);
         }
-        if (channelHashtags || forcePublic || ChatObject.isChannelAndNotMegaGroup(currentChat) && ChatObject.isPublic(currentChat) && searchingHashtag != null) {
+        if (!Config.searchHashtagInCurrentChat && (channelHashtags || forcePublic || ChatObject.isChannelAndNotMegaGroup(currentChat) && ChatObject.isPublic(currentChat) && searchingHashtag != null)) {
             defaultSearchPage = 2;
         } else {
             defaultSearchPage = 0;

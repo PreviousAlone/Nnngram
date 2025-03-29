@@ -373,4 +373,5 @@
     <string name="disableRepeatInChannel">在頻道中禁用复读</string>
     <string name="disableRepeatInChannelError">已禁止在頻道中使用复读</string>
     <string name="disableDoubleTapWhenSelecting">已禁止在選擇中使用雙擊</string>
+    <string name="searchHashtagInCurrentChat">默認在當前聊天中搜索標籤</string>
 </resources>

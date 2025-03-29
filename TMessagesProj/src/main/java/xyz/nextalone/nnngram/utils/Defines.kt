@@ -227,6 +227,7 @@ object Defines {
     @BooleanConfig const val hideProxyEntryInTitle = "hideProxyEntryInTitle"
     @BooleanConfig const val autoMuteAfterJoiningChannel = "autoMuteAfterJoinChannel"
     @BooleanConfig const val disableRepeatInChannel = "disableRepeatInChannel"
+    @BooleanConfig const val searchHashtagInCurrentChat = "searchHashtagInCurrentChat"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"
