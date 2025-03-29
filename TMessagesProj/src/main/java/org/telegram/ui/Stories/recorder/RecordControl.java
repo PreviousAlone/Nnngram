@@ -518,6 +518,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
                 canvas.save();
                 canvas.scale(scale, scale, leftCx, cy);
                 canvas.drawCircle(leftCx, cy, dp(22), buttonPaint);
+                canvas.rotate(-getRotation(), leftCx, cy);
                 unlockDrawable.draw(canvas);
                 canvas.restore();
             }
@@ -527,6 +528,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
         if (scale > 0) {
             canvas.save();
             canvas.scale(scale, scale, leftCx, cy);
+            canvas.rotate(-getRotation(), leftCx, cy);
             galleryImage.draw(canvas);
             canvas.restore();
         }
@@ -536,7 +538,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
             canvas.save();
             scale = flipButton.getScale(.2f) * dualT * (1.0f - check);
             canvas.scale(scale, scale, rightCx, cy);
-            canvas.rotate(flipDrawableRotateT.set(flipDrawableRotate), rightCx, cy);
+            canvas.rotate(flipDrawableRotateT.set(flipDrawableRotate) - getRotation(), rightCx, cy);
             canvas.drawCircle(rightCx, cy, dp(22), buttonPaintWhite);
             flipDrawableBlack.draw(canvas);
             canvas.restore();
@@ -545,7 +547,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
             canvas.save();
             scale = flipButton.getScale(.2f) * (1f - dualT) * (1.0f - check);
             canvas.scale(scale, scale, rightCx, cy);
-            canvas.rotate(flipDrawableRotateT.set(flipDrawableRotate), rightCx, cy);
+            canvas.rotate(flipDrawableRotateT.set(flipDrawableRotate) - getRotation(), rightCx, cy);
             canvas.drawCircle(rightCx, cy, dp(22), buttonPaint);
             flipDrawableWhite.draw(canvas);
             canvas.restore();
@@ -650,6 +652,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
                 canvas.save();
                 canvas.scale(scale, scale, leftCx, cy);
                 canvas.drawCircle(leftCx, cy, dp(22), buttonPaintWhite);
+                canvas.rotate(-getRotation(), leftCx, cy);
                 lockDrawable.draw(canvas);
                 canvas.restore();
             }
@@ -657,7 +660,7 @@ public class RecordControl extends View implements FlashViews.Invertable {
             scale = flipButton.getScale(.2f) * (1.0f - check);
             canvas.save();
             canvas.scale(scale, scale, rightCx, cy);
-            canvas.rotate(flipDrawableRotateT.set(flipDrawableRotate), rightCx, cy);
+            canvas.rotate(flipDrawableRotateT.set(flipDrawableRotate) - getRotation(), rightCx, cy);
             canvas.drawCircle(rightCx, cy, dp(22), buttonPaintWhite);
             flipDrawableBlack.draw(canvas);
             canvas.restore();

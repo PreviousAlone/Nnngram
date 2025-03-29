@@ -90,7 +90,7 @@ public class SpoilerEffect extends Drawable {
 
     private final Stack<Particle> particlesPool = new Stack<>();
     private int maxParticles;
-    float[][] particlePoints = new float[ALPHAS.length][MAX_PARTICLES_PER_ENTITY * 5];
+    private static final float[][] particlePoints = new float[ALPHAS.length][MAX_PARTICLES_PER_ENTITY * 5];
     private final float[] particleRands = new float[RAND_REPEAT];
     private final int[] renderCount = new int[ALPHAS.length];
 
@@ -432,8 +432,6 @@ public class SpoilerEffect extends Drawable {
                         particlePoints[a][renderCount + 1] = p.y - bitmapSize;
                         renderCount += 2;
                     }
-
-
                 }
                 canvas.drawPoints(particlePoints[a], 0, renderCount, particlePaints[a]);
             }

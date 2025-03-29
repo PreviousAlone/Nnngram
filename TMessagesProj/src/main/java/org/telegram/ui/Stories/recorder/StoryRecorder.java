@@ -127,6 +127,7 @@ import org.telegram.messenger.VideoEditedInfo;
 import org.telegram.messenger.camera.CameraController;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.AccountFrozenAlert;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
@@ -498,6 +499,10 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
         if (isShown || entry == null) {
             return;
         }
+        if (MessagesController.getInstance(currentAccount).isFrozen()) {
+            AccountFrozenAlert.show(currentAccount);
+            return;
+        }
 
         this.botId = botId;
         this.botLang = lang_code;
@@ -561,6 +566,10 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
         if (isShown) {
             return;
         }
+        if (MessagesController.getInstance(currentAccount).isFrozen()) {
+            AccountFrozenAlert.show(currentAccount);
+            return;
+        }
 
         isReposting = false;
         prepareClosing = false;
@@ -619,6 +628,10 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
 
     public void openEdit(SourceView sourceView, StoryEntry entry, long time, boolean animated) {
         if (isShown) {
+            return;
+        }
+        if (MessagesController.getInstance(currentAccount).isFrozen()) {
+            AccountFrozenAlert.show(currentAccount);
             return;
         }
 
@@ -681,6 +694,10 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
         if (isShown) {
             return;
         }
+        if (MessagesController.getInstance(currentAccount).isFrozen()) {
+            AccountFrozenAlert.show(currentAccount);
+            return;
+        }
 
         isReposting = false;
         prepareClosing = false;
@@ -740,6 +757,10 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
     private static boolean firstOpen = true;
     public void openRepost(SourceView sourceView, StoryEntry entry) {
         if (isShown) {
+            return;
+        }
+        if (MessagesController.getInstance(currentAccount).isFrozen()) {
+            AccountFrozenAlert.show(currentAccount);
             return;
         }
 

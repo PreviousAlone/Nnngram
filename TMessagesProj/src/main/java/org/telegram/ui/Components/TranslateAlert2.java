@@ -80,8 +80,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import kotlin.Unit;
-import top.qwq2333.gen.Config;
-import top.qwq2333.nullgram.helpers.TranslateHelper;
+import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
 
 public class TranslateAlert2 extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 

@@ -30,7 +30,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.LongSparseArray;
-import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 
@@ -48,7 +47,6 @@ import org.telegram.messenger.BirthdayController;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
-import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.FileRefController;
 import org.telegram.messenger.LocaleController;
@@ -81,7 +79,6 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.SharedMediaLayout;
 import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.PaymentFormActivity;
-import org.telegram.ui.PrivacyControlActivity;
 import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.bots.BotWebViewSheet;
 
@@ -90,7 +87,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -752,7 +748,7 @@ public class StarsController {
             return;
         }
 
-        TLRPC.TL_inputStorePaymentStarsTopup payload = new TLRPC.TL_inputStorePaymentStarsTopup();
+        final TLRPC.TL_inputStorePaymentStarsTopup payload = new TLRPC.TL_inputStorePaymentStarsTopup();
         payload.stars = option.stars;
         payload.currency = option.currency;
         payload.amount = option.amount;
@@ -780,8 +776,8 @@ public class StarsController {
             payload.amount = (long) ((offerDetails.getPriceAmountMicros() / Math.pow(10, 6)) * Math.pow(10, BillingController.getInstance().getCurrencyExp(option.currency)));
 
             BillingController.getInstance().addResultListener(productDetails.getProductId(), billingResult1 -> {
-                final boolean success = billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK;
-                final String error = success ? null : BillingController.getResponseCodeString(billingResult.getResponseCode());
+                final boolean success = billingResult1.getResponseCode() == BillingClient.BillingResponseCode.OK;
+                final String error = success ? null : BillingController.getResponseCodeString(billingResult1.getResponseCode());
                 FileLog.d("StarsController.buy onResult " + success + " " + error);
                 AndroidUtilities.runOnUIThread(() -> whenDone.run(success, error));
             });
@@ -880,7 +876,7 @@ public class StarsController {
 
             return;
         }
-//
+
 //        TLRPC.TL_inputStorePaymentStarsGift payload = new TLRPC.TL_inputStorePaymentStarsGift();
 //        payload.stars = option.stars;
 //        payload.currency = option.currency;
@@ -907,7 +903,7 @@ public class StarsController {
 //            payload.currency = offerDetails.getPriceCurrencyCode();
 //            payload.amount = (long) ((offerDetails.getPriceAmountMicros() / Math.pow(10, 6)) * Math.pow(10, BillingController.getInstance().getCurrencyExp(option.currency)));
 //
-//            TLRPC.TL_payments_canPurchasePremium checkReq = new TLRPC.TL_payments_canPurchasePremium();
+//            TLRPC.TL_payments_canPurchaseStore checkReq = new TLRPC.TL_payments_canPurchaseStore();
 //            checkReq.purpose = payload;
 //            ConnectionsManager.getInstance(currentAccount).sendRequest(checkReq, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
 //                if (res instanceof TLRPC.TL_boolTrue) {
@@ -1052,6 +1048,53 @@ public class StarsController {
 
             return;
         }
+
+//        QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
+//                .setProductType(BillingClient.ProductType.INAPP)
+//                .setProductId(option.store_product)
+//                .build();
+//        BillingController.getInstance().queryProductDetails(Arrays.asList(product), (billingResult, list) -> AndroidUtilities.runOnUIThread(() -> {
+//            if (list.isEmpty()) {
+//                AndroidUtilities.runOnUIThread(() -> whenDone.run(false, "PRODUCT_NOT_FOUND"));
+//                return;
+//            }
+//
+//            ProductDetails productDetails = list.get(0);
+//            ProductDetails.OneTimePurchaseOfferDetails offerDetails = productDetails.getOneTimePurchaseOfferDetails();
+//            if (offerDetails == null) {
+//                AndroidUtilities.runOnUIThread(() -> whenDone.run(false, "PRODUCT_NO_ONETIME_OFFER_DETAILS"));
+//                return;
+//            }
+//
+//            TLRPC.TL_payments_canPurchaseStore checkReq = new TLRPC.TL_payments_canPurchaseStore();
+//            checkReq.purpose = payload;
+//            ConnectionsManager.getInstance(currentAccount).sendRequest(checkReq, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+//                if (res instanceof TLRPC.TL_boolTrue) {
+//                    BillingController.getInstance().addResultListener(productDetails.getProductId(), billingResult1 -> {
+//                        final boolean success = billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK;
+//                        final String error = success ? null : BillingController.getResponseCodeString(billingResult.getResponseCode());
+//                        AndroidUtilities.runOnUIThread(() -> whenDone.run(success, error));
+//                    });
+//                    BillingController.getInstance().setOnCanceled(() -> {
+//                        AndroidUtilities.runOnUIThread(() -> whenDone.run(false, null));
+//                    });
+//                    BillingController.getInstance().launchBillingFlow(
+//                            activity, AccountInstance.getInstance(UserConfig.selectedAccount), payload,
+//                            Collections.singletonList(BillingFlowParams.ProductDetailsParams.newBuilder()
+//                                    .setProductDetails(list.get(0))
+//                                    .build())
+//                    );
+//                } else if (res instanceof TLRPC.TL_boolFalse) {
+//                    if (whenDone != null) {
+//                        whenDone.run(false, "PURCHASE_FORBIDDEN");
+//                    }
+//                } else {
+//                    if (whenDone != null) {
+//                        whenDone.run(false, err != null ? err.text : "SERVER_ERROR");
+//                    }
+//                }
+//            }));
+//        }));
     }
 
     public Runnable pay(MessageObject messageObject, Runnable whenShown) {
@@ -1916,7 +1959,7 @@ public class StarsController {
             req.count = (int) amount;
             req.flags |= 1;
             final long privacyDialogId = getPeerId();
-            if (privacyDialogId == 0) {
+            if (privacyDialogId == 0 || privacyDialogId == UserConfig.getInstance(currentAccount).getClientUserId()) {
                 req.privacy = new TL_stars.paidReactionPrivacyDefault();
             } else if (privacyDialogId == UserObject.ANONYMOUS) {
                 req.privacy = new TL_stars.paidReactionPrivacyAnonymous();
@@ -2102,7 +2145,7 @@ public class StarsController {
                 gifts.addAll(giftsCached);
                 birthdaySortedGifts.clear();
                 birthdaySortedGifts.addAll(gifts);
-                Collections.sort(birthdaySortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.birthday ? -1 : 0)).thenComparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)));
+                Collections.sort(birthdaySortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)).thenComparingInt((TL_stars.StarGift a) -> (a.birthday ? -1 : 0)));
                 sortedGifts.clear();
                 sortedGifts.addAll(gifts);
                 Collections.sort(sortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)));
@@ -2123,7 +2166,7 @@ public class StarsController {
                     gifts.addAll(res.gifts);
                     birthdaySortedGifts.clear();
                     birthdaySortedGifts.addAll(gifts);
-                    Collections.sort(birthdaySortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.birthday ? -1 : 0)).thenComparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)));
+                    Collections.sort(birthdaySortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)).thenComparingInt((TL_stars.StarGift a) -> (a.birthday ? -1 : 0)));
                     sortedGifts.clear();
                     sortedGifts.addAll(gifts);
                     Collections.sort(sortedGifts, Comparator.comparingInt((TL_stars.StarGift a) -> (a.sold_out ? 1 : 0)));
@@ -2309,7 +2352,7 @@ public class StarsController {
         inputInvoice.user_id = MessagesController.getInstance(currentAccount).getInputUser(dialogId);
         inputInvoice.months = months;
         if (text != null && !TextUtils.isEmpty(text.text)) {
-            inputInvoice.flags |= 2;
+            inputInvoice.flags |= 1;
             inputInvoice.message = text;
         }
 
@@ -2789,7 +2832,17 @@ public class StarsController {
             }
         }
 
-        public boolean togglePinned(TL_stars.SavedStarGift gift, boolean pin) {
+        public void setPinned(ArrayList<TL_stars.SavedStarGift> newPinned) {
+            gifts.removeAll(newPinned);
+            if (sort_by_date) {
+                Collections.sort(gifts, (a, b) -> b.date - a.date);
+            }
+            gifts.addAll(0, newPinned);
+            NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.starUserGiftsLoaded, dialogId, GiftsList.this);
+            sendPinnedOrder();
+        }
+
+        public boolean togglePinned(TL_stars.SavedStarGift gift, boolean pin, boolean fixLimit) {
             if (gift == null) {
                 return false;
             }
@@ -2805,10 +2858,14 @@ public class StarsController {
                     return false;
                 }
                 if (pinned.size() + 1 > MessagesController.getInstance(currentAccount).stargiftsPinnedToTopLimit) {
-                    hitLimit = true;
-                    while (pinned.size() > 0 && pinned.size() + 1 > MessagesController.getInstance(currentAccount).stargiftsPinnedToTopLimit) {
-                        TL_stars.SavedStarGift pinnedGift = pinned.remove(pinned.size() - 1);
-                        pinnedGift.pinned_to_top = false;
+                    if (fixLimit) {
+                        hitLimit = true;
+                        while (pinned.size() > 0 && pinned.size() + 1 > MessagesController.getInstance(currentAccount).stargiftsPinnedToTopLimit) {
+                            TL_stars.SavedStarGift pinnedGift = pinned.remove(pinned.size() - 1);
+                            pinnedGift.pinned_to_top = false;
+                        }
+                    } else {
+                        return true;
                     }
                 }
                 pinned.add(gift);
@@ -2962,6 +3019,7 @@ public class StarsController {
                     userFull.settings.flags &=~ 16384;
                     userFull.settings.charge_paid_message_stars = 0;
                 }
+                MessagesController.getNotificationsSettings(currentAccount).edit().putLong("dialog_bar_paying_" + dialogId, 0L).apply();
                 MessagesController.getInstance(currentAccount).loadPeerSettings(
                     MessagesController.getInstance(currentAccount).getUser(dialogId),
                     MessagesController.getInstance(currentAccount).getChat(-dialogId),
@@ -3063,7 +3121,7 @@ public class StarsController {
                     bulletinButton.animate().alpha(0.0f).scaleX(0.3f).scaleY(0.3f).start();
                 } else {
                     bulletinButton.setAlpha(0.0f);
-                    bulletinButton.setVisibility(View.INVISIBLE);
+                    bulletinButton.setVisibility(View.GONE);
                 }
             }
 

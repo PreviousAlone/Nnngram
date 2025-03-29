@@ -19,14 +19,19 @@
 
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.LocaleController.getString;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
@@ -73,6 +78,9 @@ import org.telegram.ui.ChatActivity;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.FilteredSearchView;
 import org.telegram.ui.FilteredSearchView.MessageHashId;
+import org.telegram.ui.PremiumPreviewFragment;
+import org.telegram.ui.ReportBottomSheet;
+import org.telegram.ui.SearchAdsInfoBottomSheet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,13 +131,16 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
     private ArrayList<FiltersView.MediaFilterData> currentSearchFilters = new ArrayList<>();
 
     private final static String actionModeTag = "search_view_pager";
-
+    
+    
     public final static int gotoItemId = 200;
     public final static int forwardItemId = 201;
     public final static int forwardNoQuoteItemId = 202;
     public final static int saveItemId = 203;
     public final static int deleteItemId = 204;
-
+    public final static int speedItemId = 205;
+    
+    private ActionBarMenuItem speedItem;
     private ActionBarMenuItem gotoItem;
     private ActionBarMenuItem forwardItem;
     private ActionBarMenuItem forwardNoQuoteItem;
@@ -209,6 +220,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                 }
                 MessagesController.getInstance(currentAccount).openApp(bot, 0);
                 putRecentSearch(bot.id, bot);
+            }
+
+            @Override
+            protected void openSponsoredOptions(ProfileSearchCell cell, TLRPC.TL_sponsoredPeer sponsoredPeer) {
+            
             }
         };
         if (initialDialogsType == DialogsActivity.DIALOGS_TYPE_BOT_REQUEST_PEER) {
@@ -297,7 +313,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                 super.setVisibility(visibility);
             }
         };
-        emptyView.title.setText(LocaleController.getString(R.string.NoResult));
+        emptyView.title.setText(getString(R.string.NoResult));
         emptyView.subtitle.setVisibility(View.GONE);
         emptyView.setVisibility(View.GONE);
         emptyView.addView(loadingView, 0);
@@ -351,7 +367,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                 super.setVisibility(visibility);
             }
         };
-        channelsEmptyView.title.setText(LocaleController.getString(R.string.NoResult));
+        channelsEmptyView.title.setText(getString(R.string.NoResult));
         channelsEmptyView.subtitle.setVisibility(View.GONE);
         channelsEmptyView.setVisibility(View.GONE);
         channelsEmptyView.addView(loadingView, 0);
@@ -365,11 +381,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                 super.update(animated);
                 channelsEmptyView.showProgress(loadingMessages || loadingChannels || messages == null || !messages.isEmpty() || searchMyChannels == null || !searchMyChannels.isEmpty() || searchChannels == null || !searchChannels.isEmpty() || searchRecommendedChannels == null || !searchRecommendedChannels.isEmpty(), animated);
                 if (TextUtils.isEmpty(query)) {
-                    channelsEmptyView.title.setText(LocaleController.getString(R.string.NoChannelsTitle));
+                    channelsEmptyView.title.setText(getString(R.string.NoChannelsTitle));
                     channelsEmptyView.subtitle.setVisibility(View.VISIBLE);
-                    channelsEmptyView.subtitle.setText(LocaleController.getString(R.string.NoChannelsMessage));
+                    channelsEmptyView.subtitle.setText(getString(R.string.NoChannelsMessage));
                 } else {
-                    channelsEmptyView.title.setText(LocaleController.getString(R.string.NoResult));
+                    channelsEmptyView.title.setText(getString(R.string.NoResult));
                     channelsEmptyView.subtitle.setVisibility(View.GONE);
                 }
             }
@@ -428,7 +444,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                 super.setVisibility(visibility);
             }
         };
-        botsEmptyView.title.setText(LocaleController.getString(R.string.NoResult));
+        botsEmptyView.title.setText(getString(R.string.NoResult));
         botsEmptyView.subtitle.setVisibility(View.GONE);
         botsEmptyView.setVisibility(View.GONE);
         botsEmptyView.addView(loadingView, 0);
@@ -441,7 +457,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
             public void update(boolean animated) {
                 super.update(animated);
                 botsEmptyView.showProgress(loadingMessages || loadingBots || searchMessages == null || !searchMessages.isEmpty(), animated);
-                botsEmptyView.title.setText(LocaleController.getString(R.string.NoResult));
+                botsEmptyView.title.setText(getString(R.string.NoResult));
                 botsEmptyView.subtitle.setVisibility(View.GONE);
             }
 
@@ -498,7 +514,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                 super.setVisibility(visibility);
             }
         };
-        hashtagEmptyView.title.setText(LocaleController.getString(R.string.NoResult));
+        hashtagEmptyView.title.setText(getString(R.string.NoResult));
         hashtagEmptyView.subtitle.setVisibility(View.GONE);
         hashtagEmptyView.setVisibility(View.GONE);
         hashtagEmptyView.addView(loadingView, 0);
@@ -511,7 +527,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
             public void update(boolean animated) {
                 super.update(animated);
                 hashtagEmptyView.showProgress(false, animated);
-                hashtagEmptyView.title.setText(LocaleController.getString(R.string.NoResult));
+                hashtagEmptyView.title.setText(getString(R.string.NoResult));
                 hashtagEmptyView.subtitle.setVisibility(View.GONE);
             }
 
@@ -748,14 +764,14 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
             selectedMessagesCountTextView.setTextColor(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon));
             actionMode.addView(selectedMessagesCountTextView, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1.0f, 72, 0, 0, 0));
             selectedMessagesCountTextView.setOnTouchListener((v, event) -> true);
-
-            gotoItem = actionMode.addItemWithWidth(gotoItemId, R.drawable.msg_message, AndroidUtilities.dp(54), LocaleController.getString("AccDescrGoToMessage", R.string.AccDescrGoToMessage));
-            forwardNoQuoteItem = actionMode.addItemWithWidth(forwardNoQuoteItemId, R.drawable.msg_forward, AndroidUtilities.dp(54), LocaleController.getString("NoQuoteForward", R.string.NoQuoteForward));
-            forwardItem = actionMode.addItemWithWidth(forwardItemId, ConfigManager.getBooleanOrFalse(Defines.showNoQuoteForward) ? R.drawable.msg_noquote_forward :
-                    R.drawable.msg_forward,
-                AndroidUtilities.dp(54), LocaleController.getString("Forward", R.string.Forward));
-            saveItem = actionMode.addItemWithWidth(saveItemId, R.drawable.msg_download, AndroidUtilities.dp(54), LocaleController.getString("SaveToDownloads", R.string.SaveToDownloads));
-            deleteItem = actionMode.addItemWithWidth(deleteItemId, R.drawable.msg_delete, AndroidUtilities.dp(54), LocaleController.getString("Delete", R.string.Delete));
+            
+            speedItem = actionMode.addItemWithWidth(speedItemId, R.drawable.avd_speed, AndroidUtilities.dp(54), getString(R.string.AccDescrPremiumSpeed));
+            speedItem.getIconView().setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon), PorterDuff.Mode.SRC_IN));
+            gotoItem = actionMode.addItemWithWidth(gotoItemId, R.drawable.msg_message, AndroidUtilities.dp(54), getString(R.string.AccDescrGoToMessage));
+            forwardNoQuoteItem = actionMode.addItemWithWidth(forwardNoQuoteItemId, R.drawable.msg_forward, AndroidUtilities.dp(54), getString(R.string.NoQuoteForward));
+            forwardItem = actionMode.addItemWithWidth(forwardItemId, ConfigManager.getBooleanOrFalse(Defines.showNoQuoteForward) ? R.drawable.msg_noquote_forward : R.drawable.msg_forward, AndroidUtilities.dp(54), getString(R.string.Forward));
+            saveItem = actionMode.addItemWithWidth(saveItemId, R.drawable.msg_download, AndroidUtilities.dp(54), getString(R.string.SaveToDownloads));
+            deleteItem = actionMode.addItemWithWidth(deleteItemId, R.drawable.msg_delete, AndroidUtilities.dp(54), getString(R.string.Delete));
         }
         if (selectedMessagesCountTextView != null) {
             boolean isForumSearch = dialogsSearchAdapter != null && dialogsSearchAdapter.delegate != null && dialogsSearchAdapter.delegate.getSearchForumDialogId() != 0;
@@ -828,11 +844,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
             spannableStringBuilder
                     .append(AndroidUtilities.replaceTags(LocaleController.formatPluralString("RemoveDocumentsMessage", selectedFiles.size())))
                     .append("\n\n")
-                    .append(LocaleController.getString(R.string.RemoveDocumentsAlertMessage));
+                    .append(getString(R.string.RemoveDocumentsAlertMessage));
 
             builder.setMessage(spannableStringBuilder);
-            builder.setNegativeButton(LocaleController.getString(R.string.Cancel), (dialogInterface, i) -> dialogInterface.dismiss());
-            builder.setPositiveButton(LocaleController.getString(R.string.Delete), (dialogInterface, i) -> {
+            builder.setNegativeButton(getString(R.string.Cancel), (dialogInterface, i) -> dialogInterface.dismiss());
+            builder.setPositiveButton(getString(R.string.Delete), (dialogInterface, i) -> {
                 dialogInterface.dismiss();
                 parent.getDownloadController().deleteRecentFiles(messageObjects);
                 hideActionMode();
@@ -1336,15 +1352,15 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         @Override
         public String getItemTitle(int position) {
             if (items.get(position).type == DIALOGS_TYPE) {
-                return LocaleController.getString(R.string.SearchAllChatsShort);
+                return getString(R.string.SearchAllChatsShort);
             } else if (items.get(position).type == CHANNELS_TYPE) {
-                return LocaleController.getString(R.string.ChannelsTab);
+                return getString(R.string.ChannelsTab);
             } else if (items.get(position).type == BOTS_TYPE) {
-                return LocaleController.getString(R.string.AppsTab);
+                return getString(R.string.AppsTab);
             } else if (items.get(position).type == DOWNLOADS_TYPE) {
-                return LocaleController.getString(R.string.DownloadsTabs);
+                return getString(R.string.DownloadsTabs);
             } else if (items.get(position).type == PUBLIC_POSTS_TYPE) {
-                return LocaleController.getString(R.string.PublicPostsTabs);
+                return getString(R.string.PublicPostsTabs);
             } else {
                 return FiltersView.filters[items.get(position).filterIndex].getTitle();
             }
