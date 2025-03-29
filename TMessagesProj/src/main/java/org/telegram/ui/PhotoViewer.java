@@ -17578,6 +17578,14 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 final long seekTo = videoPlayer.getCurrentPosition() + (startTime > 0 ? startTime : 0);
                 final TLRPC.Document document = videoPlayer.getCurrentDocument() == null ? (currentMessageObject != null ? currentMessageObject.getDocument() : null) : videoPlayer.getCurrentDocument();
                 boolean doSeek = true;
+                if (Config.cancelLoadingVideoWhenClose) {
+                    if (currentMessageObject != null) {
+                        if (FileLoader.getInstance(currentAccount).isLoadingFile(currentFileNames[0])) {
+                            FileLoader.getInstance(currentAccount).cancelLoadFile(currentMessageObject.getDocument());
+                            releasePlayer(false);
+                        }
+                    }
+                }
                 final Runnable seek = () -> {
                     if (animation != null && document != null) {
                         FileLog.d("seeking from photo viewer to animation object");

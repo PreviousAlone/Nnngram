@@ -147,6 +147,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int autoMuteAfterJoiningChannelRow;
     private int disableRepeatInChannelRow;
     private int searchHashtagInCurrentChatRow;
+    private int cancelLoadingVideoWhenCloseRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -496,6 +497,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.searchHashtagInCurrentChat);
             }
+        } else if (position == cancelLoadingVideoWhenCloseRow) {
+            Config.toggleCancelLoadingVideoWhenClose();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.cancelLoadingVideoWhenClose);
+            }
         }
     }
 
@@ -569,6 +575,7 @@ public class ChatSettingActivity extends BaseActivity {
         autoMuteAfterJoiningChannelRow = addRow("autoMuteAfterJoiningChannel");
         disableRepeatInChannelRow = addRow("disableRepeatInChannel");
         searchHashtagInCurrentChatRow = addRow("searchHashtagInCurrentChat");
+        cancelLoadingVideoWhenCloseRow = addRow("cancelLoadingVideoWhenClose");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -758,6 +765,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.disableRepeatInChannel), Config.disableRepeatInChannel, true);
                     } else if (position == searchHashtagInCurrentChatRow) {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.searchHashtagInCurrentChat), Config.searchHashtagInCurrentChat, true);
+                    } else if (position == cancelLoadingVideoWhenCloseRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.cancelLoadingVideoWhenClose), Config.cancelLoadingVideoWhenClose, true);
                     }
                     break;
                 }

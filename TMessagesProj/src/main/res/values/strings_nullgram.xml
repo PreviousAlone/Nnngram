@@ -398,4 +398,5 @@
     <string name="disableRepeatInChannelError">Repeat is disabled in channel</string>
     <string name="disableDoubleTapWhenSelecting">Double tap is disabled when selecting</string>
     <string name="searchHashtagInCurrentChat">Search hash tag in current chat by default</string>
+    <string name="cancelLoadingVideoWhenClose">Cancel loading video when close</string>
 </resources>
