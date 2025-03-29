@@ -1909,7 +1909,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 switch (Config.getDoubleTab()) {
                     case Defines.doubleTabTranslate:
-                        if (TranslateHelper.getCurrentStatus() != Status.External || !noforwards) {
+                        if (TranslateHelper.getCurrentStatus() != Status.External) {
                             MessageObject messageObject = getMessageUtils().getMessageForTranslate(message, messageGroup);
                             if (messageObject != null) {
                                 return true;
@@ -39216,6 +39216,21 @@ price);
             } else if (message.isSending()) {
                 return;
             }
+
+            if (cell.getPhotoImage() != null && !message.preview) {
+                TLRPC.WebPage webPage = MessageObject.getMedia(message.messageOwner).webpage;
+                ImageReceiver photoImage = cell.getPhotoImage();
+                if (webPage != null && webPage.photo != null 
+                    && (x < photoImage.getCenterX() + photoImage.getImageWidth() / 2
+                        && x > photoImage.getCenterX() - photoImage.getImageWidth() / 2)
+                    && (y < photoImage.getCenterY() + photoImage.getImageHeight() / 2
+                        && y > photoImage.getCenterY() - photoImage.getImageHeight() / 2)
+                ) {
+                    openPhotoViewerForMessage(cell, message);
+                    return;
+                }
+            }
+
             if (fullPreview && message != null && message.messageOwner != null && message.messageOwner.media != null && message.messageOwner.media.webpage != null && !TextUtils.isEmpty(message.messageOwner.media.webpage.url)) {
                 final String url = message.messageOwner.media.webpage.url;
                 final String host = AndroidUtilities.getHostAuthority(url);
