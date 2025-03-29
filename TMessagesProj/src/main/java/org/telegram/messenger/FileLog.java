@@ -84,13 +84,9 @@ public class FileLog {
     }
 
     public void init() {
-        if (LOG_ANRS) {
-            new ANRDetector(this::dumpANR);
-        }
     }
 
     public static void ensureInitied() {
-        getInstance().init();
     }
 
     public static String getNetworkLogPath() {
@@ -106,7 +102,6 @@ public class FileLog {
      */
     @Deprecated
     public static void e(final String message, final Throwable exception) {
-        ensureInitied();
         Log.e(message, exception);
     }
 
@@ -131,7 +126,6 @@ public class FileLog {
      */
     @Deprecated
     public static void e(final Throwable e, boolean logToAppCenter) {
-        ensureInitied();
         Log.e(e);
         if (needSent(e) && logToAppCenter) {
             AndroidUtilities.appCenterLog(e);
@@ -179,7 +173,6 @@ public class FileLog {
         if (needSent(e) && logToAppCenter) {
             AndroidUtilities.appCenterLog(e);
         }
-        ensureInitied();
     }
 
     private static boolean needSent(Throwable e) {
@@ -195,7 +188,6 @@ public class FileLog {
      */
     @Deprecated
     public static void d(final String message) {
-        ensureInitied();
         Log.d(message);
     }
 
@@ -204,7 +196,6 @@ public class FileLog {
      */
     @Deprecated
     public static void w(final String message) {
-        ensureInitied();
         Log.w(message);
     }
 
@@ -213,7 +204,6 @@ public class FileLog {
      */
     @Deprecated
     public static void cleanupLogs() {
-        ensureInitied();
     }
 
     public static class IgnoreSentException extends Exception{
