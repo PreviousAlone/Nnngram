@@ -358,7 +358,7 @@ object TranslateHelper {
 
     @JvmStatic
     fun showTranslateDialog(
-        context: Context, query: String, fragment: BaseFragment, sourceLanguage: String, onLinkPress: ((URLSpan) -> Boolean)?
+        context: Context, query: String, fragment: BaseFragment?, sourceLanguage: String, onLinkPress: ((URLSpan) -> Boolean)?
     ) {
         if (currentStatus == Status.External) {
             startExternalTranslator(context, query)

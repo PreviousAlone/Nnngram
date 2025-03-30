@@ -88,6 +88,7 @@ import java.util.Map;
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.helpers.HyperOsHelper;
 import xyz.nextalone.nnngram.helpers.TranslateHelper;
+import xyz.nextalone.nnngram.utils.Log;
 
 public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.SelectableView> {
 
@@ -1524,7 +1525,10 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                     if (str == null) {
                         return true;
                     }
-                    TranslateHelper.showTranslateDialog(textSelectionOverlay.getContext(), str.toString(), null, translateFromLanguage, null);
+                    LanguageDetector.detectLanguage(str.toString(), lng -> {
+                        translateFromLanguage = TranslateHelper.stripLanguageCode(lng);
+                        TranslateHelper.showTranslateDialog(textSelectionOverlay.getContext(), str.toString(), null, translateFromLanguage, null);
+                    }, e -> Log.e("mlkit: failed to detect language"));
                     hideActions();
                     clear(true);
                     return true;
