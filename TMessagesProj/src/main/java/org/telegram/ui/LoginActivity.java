@@ -213,6 +213,7 @@ import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.InlinesKt;
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.helpers.PasscodeHelper;
+import xyz.nextalone.nnngram.ui.BackButtonRecentMenu;
 import xyz.nextalone.nnngram.ui.BottomBuilder;
 import xyz.nextalone.nnngram.ui.EditTextAutoFill;
 import xyz.nextalone.nnngram.ui.QrView;
@@ -1830,6 +1831,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     private boolean pendingSwitchingAccount;
 
     private void onAuthSuccess(TLRPC.TL_auth_authorization res, boolean afterSignup) {
+        BackButtonRecentMenu.clearRecentDialogs(currentAccount);
         PasscodeHelper.removePasscodeForAccount(currentAccount);
         MessagesController.getInstance(currentAccount).cleanup();
         ConnectionsManager.getInstance(currentAccount).setUserId(res.user.id);

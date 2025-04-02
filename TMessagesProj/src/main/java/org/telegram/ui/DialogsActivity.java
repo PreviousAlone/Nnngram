@@ -189,6 +189,7 @@ import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AnimationProperties;
 import org.telegram.ui.Components.ArchiveHelp;
 import org.telegram.ui.Components.AvatarDrawable;
+import org.telegram.ui.Components.BackButtonMenu;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.BlurredRecyclerView;
 import org.telegram.ui.Components.ImageUpdater;
@@ -268,6 +269,7 @@ import xyz.nextalone.nnngram.config.ForwardContext;
 import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 import xyz.nextalone.nnngram.helpers.QrHelper;
 import xyz.nextalone.nnngram.ui.AppLinkVerifyBottomSheet;
+import xyz.nextalone.nnngram.ui.BackButtonRecentMenu;
 import xyz.nextalone.nnngram.ui.SendOptionsMenuLayout;
 import xyz.nextalone.nnngram.utils.APKUtils;
 import xyz.nextalone.nnngram.utils.Defines;
@@ -5277,6 +5279,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         } else {
             showSearch(false, false, false);
+        }
+        if (!onlySelect && folderId == 0) {
+            View backButton = actionBar.getBackButton();
+            backButton.setOnLongClickListener(e -> {
+                if (searching || filterTabsView != null && filterTabsView.isEditing() || actionBar.isActionModeShowed()) return false;
+                BackButtonRecentMenu.show(currentAccount, this, backButton);
+                return true;
+            });
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

@@ -338,6 +338,7 @@ import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.helpers.TranslateHelper;
 import xyz.nextalone.nnngram.translate.LanguageDetectorTimeout;
 import xyz.nextalone.nnngram.ui.AutoTranslatePopupWrapper;
+import xyz.nextalone.nnngram.ui.BackButtonRecentMenu;
 import xyz.nextalone.nnngram.ui.BottomBuilder;
 import xyz.nextalone.nnngram.ui.SimpleTextViewSwitcher;
 import xyz.nextalone.nnngram.utils.AlertUtil;
@@ -5524,7 +5525,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         contentView.blurBehindViews.add(sharedMediaLayout);
         updateTtlIcon();
         updateIdText(false, false);
-
+        
+        BackButtonRecentMenu.addToRecentDialogs(currentAccount, userId != 0 ? userId : -chatId);
+        
         blurredView = new View(context) {
             @Override
             public void setAlpha(float alpha) {

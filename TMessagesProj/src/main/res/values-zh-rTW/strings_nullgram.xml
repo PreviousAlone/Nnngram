@@ -375,4 +375,7 @@
     <string name="disableDoubleTapWhenSelecting">已禁止在選擇中使用雙擊</string>
     <string name="searchHashtagInCurrentChat">默認在當前聊天中搜索標籤</string>
     <string name="cancelLoadingVideoWhenClose">關閉視頻時取消加載</string>
+    <string name="RecentChats">最近對話</string>
+    <string name="ClearRecentChats">清除最近對話</string>
+    <string name="ClearRecentChatAlert">您確定要清除您的最近對話嗎？</string>
 </resources>

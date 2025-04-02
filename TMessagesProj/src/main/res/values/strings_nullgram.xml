@@ -399,4 +399,7 @@
     <string name="disableDoubleTapWhenSelecting">Double tap is disabled when selecting</string>
     <string name="searchHashtagInCurrentChat">Search hash tag in current chat by default</string>
     <string name="cancelLoadingVideoWhenClose">Cancel loading video when close</string>
+    <string name="RecentChats">Recent chats</string>
+    <string name="ClearRecentChats">Clear recent chats</string>
+    <string name="ClearRecentChatAlert">Do you want to clear your recent chats?</string>
 </resources>
