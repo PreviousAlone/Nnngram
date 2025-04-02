@@ -10171,9 +10171,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (searchFilterButton != null && searchFilterButton.getVisibility() != GONE) {
                         leftMargin += 48;
                     }
-                    if (searchFilterButton != null && searchFilterButton.getVisibility() != GONE) {
-                        leftMargin += 48;
-                    }
                     ((MarginLayoutParams) child.getLayoutParams()).leftMargin = AndroidUtilities.dp(leftMargin);
                 }
                 super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
