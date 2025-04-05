@@ -113,6 +113,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int ignoreUserSpecifiedReplyColorRow;
     private int ignoreFolderUnreadCountRow;
     private int hideProxyEntryInTitleRow;
+    private int showProxyEntryInDrawerRow;
     private int hideFilterMuteAllRow;
 
     private int devicesRow;
@@ -436,6 +437,11 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.hideProxyEntryInTitle);
             }
+        } else if (position == showProxyEntryInDrawerRow) {
+            Config.toggleShowProxyEntryInDrawer();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.showProxyEntryInDrawer);
+            }
         }
     }
 
@@ -506,6 +512,7 @@ public class GeneralSettingActivity extends BaseActivity {
         ignoreFolderUnreadCountRow = addRow("ignoreFolderUnreadCount");
         hideFilterMuteAllRow = addRow("hideFilterMuteAll");
         hideProxyEntryInTitleRow = addRow();
+        showProxyEntryInDrawerRow = addRow("showProxyEntryInDrawer");
         general2Row = addRow();
 
         devicesRow = addRow();
@@ -717,6 +724,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("hideDialogsFloatingButton", R.string.hideDialogsFloatingButton), Config.hideDialogsFloatingButton, true);
                     } else if (position == hideProxyEntryInTitleRow) {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.hideProxyEntryInTitle), Config.hideProxyEntryInTitle, true);
+                    } else if (position == showProxyEntryInDrawerRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.showProxyEntryInDrawer), Config.showProxyEntryInDrawer, true);
                     }
                     break;
                 }

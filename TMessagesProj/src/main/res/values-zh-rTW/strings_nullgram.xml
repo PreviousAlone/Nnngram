@@ -378,4 +378,5 @@
     <string name="RecentChats">最近對話</string>
     <string name="ClearRecentChats">清除最近對話</string>
     <string name="ClearRecentChatAlert">您確定要清除您的最近對話嗎？</string>
+    <string name="showProxyEntryInDrawer">在側邊欄中顯示代理條目</string>
 </resources>

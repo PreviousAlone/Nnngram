@@ -155,6 +155,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Adapters.DrawerLayoutAdapter;
 import org.telegram.ui.Cells.ChatMessageCell;
 import org.telegram.ui.Cells.DrawerActionCell;
+import org.telegram.ui.Cells.DrawerActionCheckCell;
 import org.telegram.ui.Cells.DrawerAddCell;
 import org.telegram.ui.Cells.DrawerProfileCell;
 import org.telegram.ui.Cells.DrawerUserCell;
@@ -584,6 +585,12 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 if (freeAccounts > 0 && availableAccount != null) {
                     presentFragment(new LoginActivity(availableAccount));
                     drawerLayoutContainer.closeDrawer(false);
+                }
+            } else if (view instanceof DrawerActionCheckCell) {
+                int id = drawerLayoutAdapter.getId(position);
+                if (id == 13) {
+                    drawerLayoutContainer.closeDrawer(false);
+                    presentFragment(new ProxyListActivity());
                 }
             } else {
                 int id = drawerLayoutAdapter.getId(position);

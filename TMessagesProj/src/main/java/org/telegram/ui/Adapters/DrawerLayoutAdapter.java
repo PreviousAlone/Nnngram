@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -33,12 +34,14 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.DrawerLayoutContainer;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.DividerCell;
 import org.telegram.ui.Cells.DrawerActionCell;
+import org.telegram.ui.Cells.DrawerActionCheckCell;
 import org.telegram.ui.Cells.DrawerAddCell;
 import org.telegram.ui.Cells.DrawerProfileCell;
 import org.telegram.ui.Cells.DrawerUserCell;
@@ -49,6 +52,7 @@ import org.telegram.ui.Components.SideMenultItemAnimator;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import kotlin.jvm.functions.Function0;
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 
@@ -156,6 +160,9 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             case 5:
                 view = new DrawerAddCell(mContext);
                 break;
+            case 6:
+                view = new DrawerActionCheckCell(mContext);
+                break;
             case 1:
             default:
                 view = new EmptyCell(mContext, AndroidUtilities.dp(8));
@@ -186,6 +193,16 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             case 4: {
                 DrawerUserCell drawerUserCell = (DrawerUserCell) holder.itemView;
                 drawerUserCell.setAccount(accountNumbers.get(position - 2));
+                break;
+            }
+            case 6: {
+                DrawerActionCheckCell drawerActionCell = (DrawerActionCheckCell) holder.itemView;
+                position -= 2;
+                if (accountsShown) {
+                    position -= getAccountRowsCount();
+                }
+                ((CheckItem) items.get(position)).bindCheck(drawerActionCell);
+                drawerActionCell.setPadding(0, 0, 0, 0);
                 break;
             }
         }
@@ -220,7 +237,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         if (i < 0 || i >= items.size() || items.get(i) == null) {
             return 2;
         }
-        return 3;
+        return items.get(i) instanceof CheckItem ? 6 : 3;
     }
 
     public void swapElements(int fromIndex, int toIndex) {
@@ -369,6 +386,12 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             items.add(new Item(18, LocaleController.getString(R.string.ArchivedChats), R.drawable.msg_archive));
         }
         items.add(new Item(8, LocaleController.getString(R.string.Settings), settingsIcon));
+        if (Config.showProxyEntryInDrawer) {
+            items.add(new CheckItem(13, LocaleController.getString("Proxy", R.string.Proxy), R.drawable.msg_policy, SharedConfig::isProxyEnabled, () -> {
+                SharedConfig.setProxyEnable(!SharedConfig.isProxyEnabled());
+                return true;
+            }));
+        }
 //        items.add(null); // divider
 //        items.add(new Item(7, LocaleController.getString(R.string.InviteFriends), inviteIcon));
 //        items.add(new Item(13, LocaleController.getString(R.string.TelegramFeatures), helpIcon));
@@ -467,5 +490,29 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             this.error = true;
             return this;
         }
+    }
+    
+    public class CheckItem extends Item {
+        
+        public Function0<Boolean> isChecked;
+        public Function0<Boolean> doSwitch;
+        
+        public CheckItem(int id, String text, int icon, Function0<Boolean> isChecked, @Nullable Function0<Boolean> doSwitch) {
+            super(id, text, icon);
+            this.isChecked = isChecked;
+            this.doSwitch = doSwitch;
+        }
+        
+        public void bindCheck(DrawerActionCheckCell actionCell) {
+            actionCell.setTextAndValueAndCheck(text.toString(), icon, null, isChecked.invoke(), false, false);
+            if (doSwitch != null) {
+                actionCell.setOnCheckClickListener((v) -> {
+                    if (doSwitch.invoke()) {
+                        actionCell.setChecked(isChecked.invoke());
+                    }
+                });
+            }
+        }
+        
     }
 }
