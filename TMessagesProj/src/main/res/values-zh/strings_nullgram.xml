@@ -389,4 +389,7 @@
     <string name="ClearRecentChats">清除最近对话</string>
     <string name="ClearRecentChatAlert">您确定要清除您的最近对话吗？</string>
     <string name="showProxyEntryInDrawer">在侧滑栏显示代理入口</string>
+    <string name="hideSavedAndArchivedMessagesInList">在列表里隐藏收藏夹和已归档消息</string>
+    <string name="messagePlaceholderInSaved">这里是您收藏的消息</string>
+    <string name="messagePlaceholderInArchived">这里是您已归档的消息</string>
 </resources>

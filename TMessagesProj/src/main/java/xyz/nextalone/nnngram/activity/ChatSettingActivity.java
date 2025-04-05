@@ -148,6 +148,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int disableRepeatInChannelRow;
     private int searchHashtagInCurrentChatRow;
     private int cancelLoadingVideoWhenCloseRow;
+    private int hideSavedAndArchivedMessagesInListRow;
     private int chat2Row;
 
     private int markdownRow;
@@ -502,6 +503,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.cancelLoadingVideoWhenClose);
             }
+        } else if (position == hideSavedAndArchivedMessagesInListRow) {
+            Config.toggleHideSavedAndArchivedMessagesInList();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.hideSavedAndArchivedMessagesInList);
+            }
         }
     }
 
@@ -576,6 +582,7 @@ public class ChatSettingActivity extends BaseActivity {
         disableRepeatInChannelRow = addRow("disableRepeatInChannel");
         searchHashtagInCurrentChatRow = addRow("searchHashtagInCurrentChat");
         cancelLoadingVideoWhenCloseRow = addRow("cancelLoadingVideoWhenClose");
+        hideSavedAndArchivedMessagesInListRow = addRow("hideSavedAndArchivedMessagesInList");
         chat2Row = addRow();
 
         markdownRow = addRow();
@@ -767,6 +774,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.searchHashtagInCurrentChat), Config.searchHashtagInCurrentChat, true);
                     } else if (position == cancelLoadingVideoWhenCloseRow) {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.cancelLoadingVideoWhenClose), Config.cancelLoadingVideoWhenClose, true);
+                    } else if (position == hideSavedAndArchivedMessagesInListRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.hideSavedAndArchivedMessagesInList), Config.hideSavedAndArchivedMessagesInList, true);
                     }
                     break;
                 }

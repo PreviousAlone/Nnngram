@@ -976,6 +976,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     }
 
     private CharSequence formatArchivedDialogNames() {
+        if (Config.hideSavedAndArchivedMessagesInList) {
+            return new SpannableStringBuilder(LocaleController.getString(R.string.messagePlaceholderInArchived));
+        }
         final MessagesController messagesController = MessagesController.getInstance(currentAccount);
         ArrayList<TLRPC.Dialog> dialogs = messagesController.getDialogs(currentDialogFolderId);
         currentDialogFolderDialogsCount = dialogs.size();
@@ -1579,8 +1582,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                             if (!isSavedDialog && user != null && user.self && !message.isOutOwner()) {
                                 triedMessageName = AndroidUtilities.escape(getMessageNameString());
                             }
-                            if (
-                                isSavedDialog && user != null && !user.self && message != null && message.isOutOwner() ||
+                            if (Config.hideSavedAndArchivedMessagesInList && UserObject.isUserSelf(user) && !isSavedDialog && !useMeForMyMessages) {
+                                messageString = new SpannableStringBuilder(LocaleController.getString(R.string.messagePlaceholderInSaved));
+                            } else if (isSavedDialog && user != null && !user.self && message != null && message.isOutOwner() ||
                                 triedMessageName != null ||
                                 chat != null && chat.id > 0 && (fromChat == null || fromChat.id != chat.id) && (!ChatObject.isChannel(chat) || ChatObject.isMegagroup(chat)) && !ForumUtilities.isTopicCreateMessage(message) ||
                                 user != null && user.id == UserObject.VERIFY && message != null && message.getForwardedFromId() != null

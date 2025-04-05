@@ -230,6 +230,7 @@ object Defines {
     @BooleanConfig const val disableRepeatInChannel = "disableRepeatInChannel"
     @BooleanConfig const val searchHashtagInCurrentChat = "searchHashtagInCurrentChat"
     @BooleanConfig const val cancelLoadingVideoWhenClose = "cancelLoadingVideoWhenClose"
+    @BooleanConfig const val hideSavedAndArchivedMessagesInList = "hideSavedAndArchivedMessagesInList"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"

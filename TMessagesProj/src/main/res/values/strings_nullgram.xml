@@ -403,4 +403,7 @@
     <string name="ClearRecentChats">Clear recent chats</string>
     <string name="ClearRecentChatAlert">Do you want to clear your recent chats?</string>
     <string name="showProxyEntryInDrawer">Show proxy entry in drawer</string>
+    <string name="hideSavedAndArchivedMessagesInList">Hide saved and archived messages in list</string>
+    <string name="messagePlaceholderInSaved">Here are your saved messages</string>
+    <string name="messagePlaceholderInArchived">Here are your archived messages</string>
 </resources>
