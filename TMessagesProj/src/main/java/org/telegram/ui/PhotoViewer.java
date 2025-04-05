@@ -152,6 +152,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.gms.cast.framework.CastContext;
@@ -10365,7 +10366,11 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     }
                     AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity, resourcesProvider);
                     builder.setTitle(getString("AppName", R.string.AppName));
-                    builder.setMessage(getString(R.string.CantPlayVideo));
+                    String errorMessage = getString(R.string.CantPlayVideo);
+                    if (e instanceof PlaybackException) {
+                        errorMessage += "\n" + ((PlaybackException) e).getErrorCodeName();
+                    }
+                    builder.setMessage(errorMessage);
                     builder.setPositiveButton(getString("Open", R.string.Open), (dialog, which) -> {
                         try {
                             AndroidUtilities.openForView(currentMessageObject, parentActivity, resourcesProvider, true);

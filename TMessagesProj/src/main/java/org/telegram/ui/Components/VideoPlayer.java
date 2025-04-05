@@ -1741,7 +1741,6 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
                     }
                 }
             } else {
-                Toast.makeText(ApplicationLoader.applicationContext, error.getErrorCodeName(), Toast.LENGTH_LONG).show();
                 delegate.onError(this, error);
             }
         });
