@@ -14135,10 +14135,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long payStars) {
-        forwardMessages(arrayList, fromMyName, hideCaption, notify, scheduleDate, payStars, 0);
+        forwardMessages(arrayList, fromMyName, hideCaption, notify, scheduleDate, -1, payStars);
     }
 
-    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long payStars, long did) {
+    private void forwardMessages(ArrayList<MessageObject> arrayList, boolean fromMyName, boolean hideCaption, boolean notify, int scheduleDate, long target, long payStars) {
         if (arrayList == null || arrayList.isEmpty()) {
             return;
         }
@@ -14148,7 +14148,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if ((scheduleDate != 0) == (chatMode == MODE_SCHEDULED)) {
             waitingForSendingMessageLoad = true;
         }
-        int result = getSendMessagesHelper().sendMessage(arrayList, did != 0 ? did : dialog_id, fromMyName, hideCaption, notify, scheduleDate, getThreadMessage(), -1, payStars);
+        int result;
+        if (target > 0) {
+            result = getSendMessagesHelper().sendMessage(arrayList, target, fromMyName, hideCaption, notify, scheduleDate, getThreadMessage(), -1, payStars);
+        } else {
+            result = getSendMessagesHelper().sendMessage(arrayList, dialog_id, fromMyName, hideCaption, notify, scheduleDate, getThreadMessage(), -1, payStars);
+        }
         AlertsCreator.showSendMediaAlert(result, this, themeDelegate);
         if (result != 0) {
             AndroidUtilities.runOnUIThread(() -> {
@@ -33671,7 +33676,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
             BulletinFactory.of(ChatActivity.this).showForwardedBulletinWithTag(getUserConfig().getClientUserId(), messages.size());
         } else {
-            forwardMessages(messages, false, false, true, 0, 0, getUserConfig().getClientUserId());
+            forwardMessages(messages, false, false, true, 0, getUserConfig().getClientUserId(), 0);
             createUndoView();
             if (undoView != null) {
                 undoView.showWithAction(getUserConfig().getClientUserId(), UndoView.ACTION_FWD_MESSAGES, messages.size());
