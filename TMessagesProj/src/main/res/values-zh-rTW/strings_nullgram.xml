@@ -267,6 +267,7 @@
     <string name="DeepLFormalityLess">較少</string>
     <string name="TranslationTarget">目標語言</string>
     <string name="TranslationTargetApp">追蹤應用程式</string>
+    <string name="EditTextTranslationTarget">輸入框目標語言</string>
     <string name="BrokenMLKit">選項不可用</string>
     <string name="BrokenMLKitDetail">Google MLKit 語言識別在此設備上似乎出現問題。</string>
     <string name="TranslatorTypePopup">彈出對話方塊</string>

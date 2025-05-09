@@ -185,6 +185,7 @@ object Defines {
     const val deepLxPreserveFormatting = "deepLxPreserveFormatting"
     const val translatorStatus = "translatorStatus"
     const val targetLanguage = "targetLanguage"
+    const val editTextTargetLanguage = "editTextTargetLanguage"
     const val restrictedLanguages = "restrictedLanguagesFix"
     @BooleanConfig const val autoTranslate = "autoTranslate"
 
@@ -254,6 +255,7 @@ object Defines {
     @BooleanConfig(true) const val showTextRegular = "showTextRegular"
     @BooleanConfig(true) const val showTextQuote = "showTextQuote"
     @BooleanConfig(true) const val showTextMonoCode = "showTextMonoCode"
+    @BooleanConfig(true) const val showTextTranslate = "showTextTranslate"
     @BooleanConfig(false) const val enableXiaomiHyperAi = "enableXiaomiHyperAi"
 
     /**

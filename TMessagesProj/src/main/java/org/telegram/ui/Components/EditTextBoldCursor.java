@@ -25,6 +25,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -43,6 +44,7 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.Layout;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -56,7 +58,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
@@ -68,6 +72,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.LocationController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.XiaomiUtilities;
@@ -80,8 +85,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlin.Unit;
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.helpers.HyperOsHelper;
+import xyz.nextalone.nnngram.helpers.TranslateHelper;
 
 public class EditTextBoldCursor extends EditTextEffects {
 
@@ -1222,6 +1229,7 @@ public class EditTextBoldCursor extends EditTextEffects {
             extendActionMode(floatingActionMode, floatingActionMode.getMenu());
             addUndoRedo(floatingActionMode.getMenu());
             addHyperOsAi(floatingActionMode.getMenu());
+            addTranslate(floatingActionMode.getMenu());
             floatingActionMode.invalidate();
             getViewTreeObserver().addOnPreDrawListener(floatingToolbarPreDrawListener);
             invalidate();
@@ -1258,6 +1266,12 @@ public class EditTextBoldCursor extends EditTextEffects {
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
     }
+    
+    private void addTranslate(Menu menu) {
+        if (!TranslateHelper.getCurrentEditTextTargetLanguage().equals("no") && menu.findItem(R.id.menu_translate) == null) {
+            menu.add(Menu.NONE, R.id.menu_translate, 0, LocaleController.getString(R.string.TranslateMessage));
+        }
+    }
 
     @Override
     public boolean onTextContextMenuItem(int id) {
@@ -1267,6 +1281,42 @@ public class EditTextBoldCursor extends EditTextEffects {
             return true;
         } else if (id == R.id.hyperos_ai) {
             HyperOsHelper.INSTANCE.startHyperOsAiService(this);
+            return true;
+        } else if (id == R.id.menu_translate) {
+            final int selStart = getSelectionStart();
+            final int selEnd = getSelectionEnd();
+            final String originalText = getText().toString();
+            final boolean hasSelection = selStart >= 0 && selEnd >= 0 && selStart != selEnd;
+            
+            String textToTranslate = hasSelection
+                ? originalText.substring(selStart, selEnd)
+                : originalText;
+            
+            TranslateHelper.translate(textToTranslate, "auto", "en", (translation, sourceLanguage, ignore) -> {
+                AndroidUtilities.runOnUIThread(() -> {
+                    CharSequence translatedText = translation.toString();
+                    if (hasSelection) {
+                        // Replace only selected portion
+                        SpannableStringBuilder newText = new SpannableStringBuilder(originalText)
+                            .replace(selStart, selEnd, translatedText);
+                        setText(newText);
+                        
+                        // Adjust selection to cover the translated portion
+                        int newLength = translatedText.length();
+                        setSelection(selStart, selStart + newLength);
+                    } else {
+                        // Replace entire text
+                        setText(translatedText);
+                        
+                        // Select all text if no original selection existed
+                        setSelection(0, translatedText.length());
+                    }
+                });
+                return Unit.INSTANCE;
+            }, e -> {
+                // Handle error case
+                return null;
+            });
             return true;
         }
         return super.onTextContextMenuItem(id);

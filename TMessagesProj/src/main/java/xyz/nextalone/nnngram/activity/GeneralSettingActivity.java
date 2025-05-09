@@ -96,6 +96,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int translationTargetRow;
     private int doNotTranslateRow;
     private int autoTranslateRow;
+    private int editTextTranslationTargetRow;
     private int translator2Row;
 
     private int customTitleRow;
@@ -306,6 +307,7 @@ public class GeneralSettingActivity extends BaseActivity {
                 } else {
                     listAdapter.notifyItemChanged(translationProviderRow, PARTIAL);
                     listAdapter.notifyItemChanged(translationTargetRow, PARTIAL);
+                    listAdapter.notifyItemChanged(editTextTranslationTargetRow, PARTIAL);
                 }
                 if (!oldProvider.equals(TranslateHelper.getCurrentProviderType())) {
                     boolean wasDeepLTranslator = oldProvider.equals(ProviderType.DeepLTranslator);
@@ -339,6 +341,11 @@ public class GeneralSettingActivity extends BaseActivity {
                 if (getRestrictedLanguages().size() == 1) {
                     listAdapter.notifyItemChanged(doNotTranslateRow, PARTIAL);
                 }
+                return Unit.INSTANCE;
+            });
+        } else if (position == editTextTranslationTargetRow) {
+            TranslateHelper.showEditTextTranslationTargetSelector(this, view, () -> {
+                listAdapter.notifyItemChanged(editTextTranslationTargetRow, PARTIAL);
                 return Unit.INSTANCE;
             });
         } else if (position == deepLFormalityRow) {
@@ -483,6 +490,7 @@ public class GeneralSettingActivity extends BaseActivity {
             deepLFormalityRow = (TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLTranslator) || TranslateHelper.getCurrentProviderType().equals(ProviderType.DeepLxTranslator)) ? addRow("deepLFormality") : -1;
             translationTargetRow = addRow("translationTarget");
             doNotTranslateRow = addRow("doNotTranslate");
+            editTextTranslationTargetRow = addRow("editTextTranslationTarget");
             autoTranslateRow = addRow("autoTranslate");
         } else {
             showOriginalRow = -1;
@@ -490,6 +498,7 @@ public class GeneralSettingActivity extends BaseActivity {
             translationTargetRow = -1;
             deepLFormalityRow = -1;
             doNotTranslateRow = -1;
+            editTextTranslationTargetRow = -1;
             autoTranslateRow = -1;
         }
         translator2Row = addRow();
@@ -604,6 +613,20 @@ public class GeneralSettingActivity extends BaseActivity {
                             }
                         }
                         textCell.setTextAndValue(LocaleController.getString("TranslationTarget", R.string.TranslationTarget), value, payload, true);
+                    } else if (position == editTextTranslationTargetRow) {
+                        String language = TranslateHelper.getCurrentEditTextTargetLanguage();
+                        CharSequence value;
+                        if (language.equals("disable")) {
+                            value = LocaleController.getString(R.string.Disable);
+                        } else {
+                            Locale locale = Locale.forLanguageTag(language);
+                            if (!TextUtils.isEmpty(locale.getScript())) {
+                                value = HtmlCompat.fromHtml(locale.getDisplayScript(), HtmlCompat.FROM_HTML_MODE_LEGACY);
+                            } else {
+                                value = locale.getDisplayName();
+                            }
+                        }
+                        textCell.setTextAndValue(LocaleController.getString(R.string.EditTextTranslationTarget), value, payload, true);
                     } else if (position == deepLFormalityRow) {
                         String value;
                         switch (ConfigManager.getIntOrDefault(Defines.deepLFormality, 0)) {
@@ -816,7 +839,7 @@ public class GeneralSettingActivity extends BaseActivity {
                 return 1;
             } else if (position == tabsTitleTypeRow || position == translationProviderRow || position == deepLFormalityRow || position == translationTargetRow ||
                 position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow ||
-                position == drawerListRow || position == deepLxApiRow) {
+                position == drawerListRow || position == deepLxApiRow || position == editTextTranslationTargetRow) {
                 return 2;
             } else if (position == generalRow || position == translatorRow || position == devicesRow || position == storiesRow) {
                 return 4;

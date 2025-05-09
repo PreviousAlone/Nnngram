@@ -267,6 +267,7 @@
     <string name="DeepLFormalityLess">更口语</string>
     <string name="TranslationTarget">目标语言</string>
     <string name="TranslationTargetApp">跟随应用</string>
+    <string name="EditTextTranslationTarget">输入框目标语言</string>
     <string name="BrokenMLKit">选项不可用</string>
     <string name="BrokenMLKitDetail">Google MLKit 语言识别器在这个设备上不知何故坏了。</string>
     <string name="TranslatorTypePopup">弹出式对话框</string>

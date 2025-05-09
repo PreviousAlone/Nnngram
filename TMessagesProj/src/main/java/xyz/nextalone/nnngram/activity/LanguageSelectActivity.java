@@ -57,6 +57,7 @@ public class LanguageSelectActivity extends BaseActivity {
 
     public static final int TYPE_RESTRICTED = 0;
     public static final int TYPE_TARGET = 1;
+    public static final int TYPE_EDIT_TEXT_TARGET = 2;
 
     private static final List<String> RESTRICTED_LIST = Arrays.asList(
         "af", "am", "ar", "az", "be", "bg", "bn", "bs", "ca", "ceb",
@@ -188,6 +189,9 @@ public class LanguageSelectActivity extends BaseActivity {
                     TranslateHelper.setRestrictedLanguages(newSelectedLanguages);
                 }
                 cell.setChecked(!remove);
+            } else if (currentType == TYPE_EDIT_TEXT_TARGET) {
+                TranslateHelper.setCurrentEditTextTargetLanguage(localeInfo.langCode);
+                finishFragment();
             } else {
                 TranslateHelper.setCurrentTargetLanguage(localeInfo.langCode);
                 finishFragment();
@@ -213,7 +217,8 @@ public class LanguageSelectActivity extends BaseActivity {
 
     @Override
     protected String getActionBarTitle() {
-        return currentType == TYPE_RESTRICTED ? LocaleController.getString("DoNotTranslate", R.string.DoNotTranslate) : LocaleController.getString("TranslationTarget", R.string.TranslationTarget);
+        return currentType == TYPE_RESTRICTED ? LocaleController.getString(R.string.DoNotTranslate) :
+            currentType == TYPE_EDIT_TEXT_TARGET ? LocaleController.getString(R.string.EditTextTranslationTarget) : LocaleController.getString(R.string.TranslationTarget);
     }
 
     @Override
@@ -222,6 +227,10 @@ public class LanguageSelectActivity extends BaseActivity {
     }
 
     private String getCurrentTargetLanguage() {
+        if (currentType == TYPE_EDIT_TEXT_TARGET) {
+            return TranslateHelper.getCurrentEditTextTargetLanguage();
+        }
+        
         var language = TranslateHelper.getCurrentTargetLanguage();
         if (currentType == TYPE_RESTRICTED) {
             language = TranslateHelper.stripLanguageCode(language);
@@ -250,6 +259,11 @@ public class LanguageSelectActivity extends BaseActivity {
         if (currentType == TYPE_TARGET) {
             var localeInfo = new LocaleInfo();
             localeInfo.langCode = "app";
+            sortedLanguages.add(0, localeInfo);
+        } else if (currentType == TYPE_EDIT_TEXT_TARGET) {
+            var localeInfo = new LocaleInfo();
+            localeInfo.langCode = "disable";
+            localeInfo.name = LocaleController.getString(R.string.Disable);
             sortedLanguages.add(0, localeInfo);
         }
     }

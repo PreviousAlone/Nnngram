@@ -271,6 +271,7 @@
     <string name="DeepLFormalityLess">Less</string>
     <string name="TranslationTarget">Target language</string>
     <string name="TranslationTargetApp">Follow App</string>
+    <string name="EditTextTranslationTarget">Input target language</string>
     <string name="BrokenMLKit">Option unavailable</string>
     <string name="BrokenMLKitDetail">Google MLKit language identifier is somehow broken on this device.</string>
     <string name="TranslatorTypePopup">Popup dialog</string>

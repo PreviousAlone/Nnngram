@@ -68,6 +68,13 @@ object TranslateHelper {
         }
 
     @JvmStatic
+    var currentEditTextTargetLanguage = ConfigManager.getStringOrDefault(Defines.editTextTargetLanguage, "no")!!
+        set(value) {
+            ConfigManager.putString(Defines.editTextTargetLanguage, value)
+            field = value
+        }
+
+    @JvmStatic
     var restrictedLanguages: java.util.HashSet<String> = ConfigManager.getStringSetOrDefault(Defines.restrictedLanguages, java.util.HashSet()) as java.util.HashSet<String>
         set(value) {
             Log.i("TranslateHelper: set restrictedLanguages to $value")
@@ -334,6 +341,40 @@ object TranslateHelper {
             }
         } else {
             fragment.presentFragment(LanguageSelectActivity(LanguageSelectActivity.TYPE_TARGET, whiteActionBar))
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun showEditTextTranslationTargetSelector(
+        fragment: BaseFragment, view: View?, whiteActionBar: Boolean = true, resourcesProvider: ResourcesProvider? = null, callback: () -> Unit
+    ) {
+        if (getCurrentProvider().getTargetLanguages().size <= 30) {
+            val targetLanguages = ArrayList<String>(getCurrentProvider().getTargetLanguages())
+            val names = arrayListOf<CharSequence>()
+            for (language in targetLanguages) {
+                val locale = Locale.forLanguageTag(language)
+                if (!TextUtils.isEmpty(locale.script)) {
+                    names.add(HtmlCompat.fromHtml(String.format("%s - %s", locale.displayScript, locale.getDisplayScript(locale)), HtmlCompat.FROM_HTML_MODE_LEGACY))
+                } else {
+                    names.add(String.format("%s - %s", locale.displayName, locale.getDisplayName(locale)))
+                }
+            }
+            targetLanguages.add(0, "disable")
+            names.add(0, LocaleController.getString(R.string.Disable))
+            PopupBuilder.show(
+                names,
+                LocaleController.getString("TranslationTarget", R.string.TranslationTarget),
+                targetLanguages.indexOf(currentEditTextTargetLanguage),
+                fragment.parentActivity,
+                view,
+                resourcesProvider
+            ) { i ->
+                currentEditTextTargetLanguage = targetLanguages[i]
+                callback.invoke()
+            }
+        } else {
+            fragment.presentFragment(LanguageSelectActivity(LanguageSelectActivity.TYPE_EDIT_TEXT_TARGET, whiteActionBar))
         }
     }
 
