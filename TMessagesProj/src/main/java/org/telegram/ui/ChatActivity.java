@@ -33662,6 +33662,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (path == null || path.isEmpty()) {
                     path = getFileLoader().getPathToMessage(message.messageOwner).toString();
                 }
+                File file = new File(path);
+                if (path.isEmpty() || FileLoader.getInstance(currentAccount).isLoadingFile(file.getName()) || !file.exists()) {
+                    BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.retryAfterFileDownloaded)).show();
+                    return;
+                }
                 ArrayList<SendMessagesHelper.SendingMediaInfo> media = new ArrayList<>();
                 SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
                 info.path = path;

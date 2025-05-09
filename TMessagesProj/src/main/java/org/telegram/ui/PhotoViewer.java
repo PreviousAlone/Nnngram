@@ -5701,6 +5701,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         if (path == null || path.isEmpty()) {
                             path = parentChatActivity.getFileLoader().getPathToMessage(currentMessageObject.messageOwner).toString();
                         }
+                        File file = new File(path);
+                        if (path.isEmpty() || FileLoader.getInstance(currentAccount).isLoadingFile(file.getName()) || !file.exists()) {
+                            BulletinFactory.of(containerView, resourcesProvider).createErrorBulletin(LocaleController.getString(R.string.retryAfterFileDownloaded)).show();
+                            return;
+                        }
                         ArrayList<SendMessagesHelper.SendingMediaInfo> media = new ArrayList<>();
                         SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
                         info.path = path;
@@ -5714,7 +5719,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         media.add(info);
                         SendMessagesHelper.prepareSendingMedia(parentChatActivity.getAccountInstance(), media, parentChatActivity.getUserConfig().getClientUserId(), null, null,
                             null, null, true, true, null, false, 0, 0, false, null, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, false, 0);
-                        BulletinFactory.of(fragment).showForwardedBulletinWithTag(parentChatActivity.getUserConfig().getClientUserId(), 1);
+                        BulletinFactory.global().showForwardedBulletinWithTag(parentChatActivity.getUserConfig().getClientUserId(), 1);
                     } else {
                         var accountInstance = AccountInstance.getInstance(currentAccount);
                         accountInstance.getSendMessagesHelper().sendMessage(new ArrayList<>(Collections.singletonList(currentMessageObject)),

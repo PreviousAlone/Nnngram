@@ -406,4 +406,5 @@
     <string name="hideSavedAndArchivedMessagesInList">Hide saved and archived messages in list</string>
     <string name="messagePlaceholderInSaved">Here are your saved messages</string>
     <string name="messagePlaceholderInArchived">Here are your archived messages</string>
+    <string name="retryAfterFileDownloaded">Please retry after the file is downloaded</string>
 </resources>

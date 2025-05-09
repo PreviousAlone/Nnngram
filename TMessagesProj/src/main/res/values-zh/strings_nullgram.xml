@@ -392,4 +392,5 @@
     <string name="hideSavedAndArchivedMessagesInList">在列表里隐藏收藏夹和已归档消息</string>
     <string name="messagePlaceholderInSaved">这里是您收藏的消息</string>
     <string name="messagePlaceholderInArchived">这里是您已归档的消息</string>
+    <string name="retryAfterFileDownloaded">文件未下载完成，请稍后重试</string>
 </resources>
