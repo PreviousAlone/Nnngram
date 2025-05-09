@@ -68,7 +68,7 @@ object TranslateHelper {
         }
 
     @JvmStatic
-    var currentEditTextTargetLanguage = ConfigManager.getStringOrDefault(Defines.editTextTargetLanguage, "no")!!
+    var currentEditTextTargetLanguage = ConfigManager.getStringOrDefault(Defines.editTextTargetLanguage, "disable")!!
         set(value) {
             ConfigManager.putString(Defines.editTextTargetLanguage, value)
             field = value

@@ -227,10 +227,6 @@ public class LanguageSelectActivity extends BaseActivity {
     }
 
     private String getCurrentTargetLanguage() {
-        if (currentType == TYPE_EDIT_TEXT_TARGET) {
-            return TranslateHelper.getCurrentEditTextTargetLanguage();
-        }
-        
         var language = TranslateHelper.getCurrentTargetLanguage();
         if (currentType == TYPE_RESTRICTED) {
             language = TranslateHelper.stripLanguageCode(language);
@@ -263,7 +259,6 @@ public class LanguageSelectActivity extends BaseActivity {
         } else if (currentType == TYPE_EDIT_TEXT_TARGET) {
             var localeInfo = new LocaleInfo();
             localeInfo.langCode = "disable";
-            localeInfo.name = LocaleController.getString(R.string.Disable);
             sortedLanguages.add(0, localeInfo);
         }
     }
@@ -387,8 +382,15 @@ public class LanguageSelectActivity extends BaseActivity {
                     if (localeInfo.langCode.equals("app")) {
                         cell.setTextAndCheck(LocaleController.getString("TranslationTargetApp", R.string.TranslationTargetApp),
                             TranslateHelper.getCurrentTargetLanguage().equals(localeInfo.langCode), !last);
+                    } else if (localeInfo.langCode.equals("disable")) {
+                        cell.setTextAndCheck(LocaleController.getString(R.string.Disable),
+                            TranslateHelper.getCurrentEditTextTargetLanguage().equals(localeInfo.langCode), !last);
                     } else {
-                        cell.setTextAndValueAndCheck(localeInfo.name, localeInfo.nameLocalized, TranslateHelper.getCurrentTargetLanguage().equals(localeInfo.langCode), false, !last);
+                        if (currentType == TYPE_EDIT_TEXT_TARGET) {
+                            cell.setTextAndValueAndCheck(localeInfo.name, localeInfo.nameLocalized, TranslateHelper.getCurrentEditTextTargetLanguage().equals(localeInfo.langCode), false, !last);
+                        } else {
+                            cell.setTextAndValueAndCheck(localeInfo.name, localeInfo.nameLocalized, TranslateHelper.getCurrentTargetLanguage().equals(localeInfo.langCode), false, !last);
+                        }
                     }
                     break;
                 }
@@ -406,7 +408,7 @@ public class LanguageSelectActivity extends BaseActivity {
             if (i == (search ? searchResult : sortedLanguages).size()) {
                 return TYPE_SHADOW;
             }
-            return currentType == TYPE_TARGET ? TYPE_RADIO : TYPE_CHECKBOX;
+            return (currentType == TYPE_TARGET || currentType == TYPE_EDIT_TEXT_TARGET) ? TYPE_RADIO : TYPE_CHECKBOX;
         }
     }
 
