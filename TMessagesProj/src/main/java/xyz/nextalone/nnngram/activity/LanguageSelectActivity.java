@@ -293,6 +293,9 @@ public class LanguageSelectActivity extends BaseActivity {
             if (c.langCode.equals("app")) {
                 continue;
             }
+            if (c.langCode.equals("disable")) {
+                continue;
+            }
             if (c.name.toString().toLowerCase().startsWith(query) || c.nameEnglish.toString().toLowerCase().startsWith(query) || c.nameLocalized.toString().toLowerCase().startsWith(query)) {
                 resultArray.add(c);
             }
