@@ -17644,12 +17644,15 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 final TLRPC.Document document = videoPlayer.getCurrentDocument() == null ? (currentMessageObject != null ? currentMessageObject.getDocument() : null) : videoPlayer.getCurrentDocument();
                 boolean doSeek = true;
                 if (Config.cancelLoadingVideoWhenClose) {
-                    if (currentMessageObject != null) {
-                        if (FileLoader.getInstance(currentAccount).isLoadingFile(currentFileNames[0])) {
-                            FileLoader.getInstance(currentAccount).cancelLoadFile(currentMessageObject.getDocument());
-                            releasePlayer(false);
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
                         }
-                    }
+                        if (currentMessageObject != null) {
+                            FileLoader.getInstance(currentAccount).cancelLoadFile(currentMessageObject.getDocument());
+                        }
+                    }).start();
                 }
                 final Runnable seek = () -> {
                     if (animation != null && document != null) {
