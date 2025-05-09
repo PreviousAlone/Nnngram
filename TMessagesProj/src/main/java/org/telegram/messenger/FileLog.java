@@ -39,8 +39,6 @@ public class FileLog {
     private boolean initied;
     public static boolean databaseIsMalformed = false;
 
-    public static final boolean LOG_ANRS = BuildVars.DEBUG_VERSION;
-
     private OutputStreamWriter tlStreamWriter = null;
     private File tlRequestsFile = null;
 
