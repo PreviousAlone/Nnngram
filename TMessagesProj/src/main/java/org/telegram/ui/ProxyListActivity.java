@@ -70,7 +70,6 @@ import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SlideChooseView;
 
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -180,33 +179,33 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                 String url;
                 try {
                     if (!TextUtils.isEmpty(address)) {
-                        params.append("server=").append(URLEncoder.encode(address, StandardCharsets.UTF_8));
+                        params.append("server=").append(URLEncoder.encode(address, "UTF-8"));
                     }
                     if (!TextUtils.isEmpty(port)) {
                         if (params.length() != 0) {
                             params.append("&");
                         }
-                        params.append("port=").append(URLEncoder.encode(port, StandardCharsets.UTF_8));
+                        params.append("port=").append(URLEncoder.encode(port, "UTF-8"));
                     }
                     if (!TextUtils.isEmpty(currentInfo.secret)) {
                         url = "https://t.me/proxy?";
                         if (params.length() != 0) {
                             params.append("&");
                         }
-                        params.append("secret=").append(URLEncoder.encode(secret, StandardCharsets.UTF_8));
+                        params.append("secret=").append(URLEncoder.encode(secret, "UTF-8"));
                     } else {
                         url = "https://t.me/socks?";
                         if (!TextUtils.isEmpty(user)) {
                             if (params.length() != 0) {
                                 params.append("&");
                             }
-                            params.append("user=").append(URLEncoder.encode(user, StandardCharsets.UTF_8));
+                            params.append("user=").append(URLEncoder.encode(user, "UTF-8"));
                         }
                         if (!TextUtils.isEmpty(password)) {
                             if (params.length() != 0) {
                                 params.append("&");
                             }
-                            params.append("pass=").append(URLEncoder.encode(password, StandardCharsets.UTF_8));
+                            params.append("pass=").append(URLEncoder.encode(password, "UTF-8"));
                         }
                     }
                 } catch (Exception ignore) {
