@@ -394,4 +394,8 @@
     <string name="messagePlaceholderInSaved">这里是您收藏的消息</string>
     <string name="messagePlaceholderInArchived">这里是您已归档的消息</string>
     <string name="retryAfterFileDownloaded">文件未下载完成，请稍后重试</string>
+    <string name="PlayerDecoder">播放器解码器</string>
+    <string name="PlayerDecoderSoftware">首选应用解码器</string>
+    <string name="PlayerDecoderHardware">仅限设备解码器</string>
+    <string name="PlayerDecoderPerferHW">设备解码器优先</string>
 </resources>

@@ -86,7 +86,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int ignoreChatStrictRow;
     private int premium2Row;
     private int alwaysSendWithoutSoundRow;
-
+    private int playerDecoderRow;
 
     private int experiment2Row;
 
@@ -234,6 +234,19 @@ public class ExperimentSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.enableXiaomiHyperAi);
             }
+        } else if (position == playerDecoderRow) {
+            ArrayList<String> arrayList = new ArrayList<>();
+            ArrayList<Integer> types = new ArrayList<>();
+            arrayList.add(LocaleController.getString(R.string.PlayerDecoderSoftware));
+            types.add(Defines.playerDecoderSoftware);
+            arrayList.add(LocaleController.getString(R.string.PlayerDecoderHardware));
+            types.add(Defines.playerDecoderHardware);
+            arrayList.add(LocaleController.getString(R.string.PlayerDecoderPerferHW));
+            types.add(Defines.playerDecoderPerferHW);
+            PopupBuilder.show(arrayList, LocaleController.getString(R.string.PlayerDecoder), types.indexOf(Config.getPlayerDecoder()), getParentActivity(), view, i -> {
+                Config.setPlayerDecoder(types.get(i));
+                listAdapter.notifyItemChanged(playerDecoderRow, PARTIAL);
+            });
         }
 
     }
@@ -260,6 +273,7 @@ public class ExperimentSettingActivity extends BaseActivity {
         enchantAudioRow = addRow("enchantAudio");
         linkedUserRow = addRow("linkedUser");
         alwaysSendWithoutSoundRow = addRow();
+        playerDecoderRow = addRow();
         if (Config.linkedUser && Config.labelChannelUser) {
             overrideChannelAliasRow = addRow("overrideChannelAlias");
         } else {
@@ -411,6 +425,13 @@ public class ExperimentSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck("", Config.ignoreChatStrict, true);
                     } else if (position == enableXiaomiHyperAiRow) {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.enableXiaomiHyperAi), Config.enableXiaomiHyperAi, true);
+                    } else if (position == playerDecoderRow) {
+                        String value = switch (Config.getPlayerDecoder()) {
+                            case Defines.playerDecoderHardware -> LocaleController.getString(R.string.PlayerDecoderHardware);
+                            case Defines.playerDecoderPerferHW -> LocaleController.getString(R.string.PlayerDecoderPerferHW);
+                            default -> LocaleController.getString(R.string.PlayerDecoderSoftware);
+                        };
+                        textCell.setTextAndValue(LocaleController.getString(R.string.PlayerDecoder), value, payload, false);
                     }
                     break;
                 }

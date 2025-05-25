@@ -172,6 +172,12 @@ object Defines {
     const val devicePerformanceMedium = 1
     const val devicePerformanceHigh = 2
 
+    // Override Player Decoder Mode
+    @IntConfig(playerDecoderSoftware) const val playerDecoder = "playerDecoder"
+    const val playerDecoderSoftware = 0
+    const val playerDecoderHardware = 1
+    const val playerDecoderPerferHW = 2
+
     // WebSocket Proxy
     @BooleanConfig(true) const val wsEnableTLS = "wsEnableTLS"
     @StringConfig("") const val wsServerHost = "wsServerHost"
