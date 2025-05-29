@@ -6510,9 +6510,9 @@ public class AlertsCreator {
                 if (canDeleteInbox) {
                     cell.setText(LocaleController.formatString("DeleteMessagesOptionAlso", R.string.DeleteMessagesOptionAlso, UserObject.getFirstName(user)), "", deleteForAll[0], false);
                 } else if (chat != null && (hasNotOut || myMessagesCount == count)) {
-                    cell.setText(LocaleController.getString(R.string.DeleteForAll), "", false, false);
+                    cell.setText(LocaleController.getString(R.string.DeleteForAll), "", deleteForAll[0], false);
                 } else {
-                    cell.setText(LocaleController.getString(R.string.DeleteMessagesOption), "", false, false);
+                    cell.setText(LocaleController.getString(R.string.DeleteMessagesOption), "", deleteForAll[0], false);
                 }
                 cell.setPadding(LocaleController.isRTL ? dp(16) : dp(8), 0, LocaleController.isRTL ? dp(8) : dp(16), 0);
                 frameLayout.addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
