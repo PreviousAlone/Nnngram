@@ -5098,11 +5098,12 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     info.ttl = photoEntry.ttl;
                     info.videoEditedInfo = videoEditedInfo;
                     info.canDeleteAfter = true;
+                    info.hasMediaSpoilers = photoEntry.hasSpoiler;
                     photos.add(info);
                     photoEntry.reset();
                     sending = true;
                     boolean updateStickersOrder = SendMessagesHelper.checkUpdateStickersOrder(info.caption);
-                    SendMessagesHelper.prepareSendingMedia(accountInstance, photos, dialog_id, replyingMessageObject, getThreadMessage(), null, replyingQuote, false, false, editingMessageObject, notify, scheduleDate, parentFragment == null ? 0 : parentFragment.getChatMode(), updateStickersOrder, null, parentFragment != null ? parentFragment.quickReplyShortcut : null, parentFragment != null ? parentFragment.getQuickReplyId() : 0, 0, false, 0);
+                    SendMessagesHelper.prepareSendingMedia(accountInstance, photos, dialog_id, replyingMessageObject, getThreadMessage(), null, replyingQuote, forceDocument, false, editingMessageObject, notify, scheduleDate, parentFragment == null ? 0 : parentFragment.getChatMode(), updateStickersOrder, null, parentFragment != null ? parentFragment.quickReplyShortcut : null, parentFragment != null ? parentFragment.getQuickReplyId() : 0, 0, false, 0);
                     if (delegate != null) {
                         delegate.onMessageSend(null, true, scheduleDate, 0);
                     }

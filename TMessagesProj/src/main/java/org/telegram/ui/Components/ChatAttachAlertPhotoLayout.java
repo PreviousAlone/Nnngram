@@ -240,6 +240,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
     public final static int group = 0;
     public final static int compress = 1;
     public final static int spoiler = 2;
+    public final static int spoiler_update = 20;
     public final static int open_in = 3;
     public final static int preview_gap = 4;
     public final static int media_gap = 5;
@@ -262,6 +263,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
     }
 
     private class BasePhotoProvider extends PhotoViewer.EmptyPhotoViewerProvider {
+        @Override
+        public void spoilerPressed() {
+            onMenuItemClick(spoiler_update);
+        }
+        
         @Override
         public boolean isPhotoChecked(int index) {
             MediaController.PhotoEntry photoEntry = getPhotoEntryAtPosition(index);
@@ -3313,7 +3319,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                 parentAlert.applyCaption();
                 parentAlert.delegate.didPressedButton(4, true, true, 0, 0, parentAlert.isCaptionAbove(), false, 0);
             }
-        } else if (id == spoiler) {
+        } else if (id == spoiler || id == spoiler_update) {
             if (parentAlert.getPhotoPreviewLayout() != null) {
                 parentAlert.getPhotoPreviewLayout().startMediaCrossfade();
             }
@@ -3326,7 +3332,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                     break;
                 }
             }
-            spoilersEnabled = !spoilersEnabled;
+            if (id == spoiler) spoilersEnabled = !spoilersEnabled;
             boolean finalSpoilersEnabled = spoilersEnabled;
             AndroidUtilities.runOnUIThread(()-> {
                 spoilerItem.setText(LocaleController.getString(finalSpoilersEnabled ? R.string.DisablePhotoSpoiler : R.string.EnablePhotoSpoiler));
@@ -3352,7 +3358,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             for (HashMap.Entry<Object, Object> entry : selectedPhotos.entrySet()) {
                 if (entry.getValue() instanceof MediaController.PhotoEntry) {
                     MediaController.PhotoEntry photoEntry = (MediaController.PhotoEntry) entry.getValue();
-                    photoEntry.hasSpoiler = spoilersEnabled;
+                    if (id == spoiler) photoEntry.hasSpoiler = spoilersEnabled;
                     photoEntry.isChatPreviewSpoilerRevealed = false;
                     photoEntry.isAttachSpoilerRevealed = false;
                     selectedIds.add(photoEntry.imageId);
@@ -3362,7 +3368,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             gridView.forAllChild(view -> {
                 if (view instanceof PhotoAttachPhotoCell) {
                     MediaController.PhotoEntry entry = ((PhotoAttachPhotoCell) view).getPhotoEntry();
-                    ((PhotoAttachPhotoCell) view).setHasSpoiler(entry != null && selectedIds.contains(entry.imageId) && finalSpoilersEnabled);
+                    ((PhotoAttachPhotoCell) view).setHasSpoiler(entry != null && selectedIds.contains(entry.imageId) && entry.hasSpoiler);
                 }
             });
             if (parentAlert.getCurrentAttachLayout() != this) {

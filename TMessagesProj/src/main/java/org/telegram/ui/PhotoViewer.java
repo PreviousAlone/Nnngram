@@ -2926,6 +2926,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         default boolean isEditingMessage() {
             return false;
         }
+        default void spoilerPressed() {}
     }
 
     private class FrameLayoutDrawer extends SizeNotifierFrameLayoutPhoto {
@@ -7299,13 +7300,21 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             });
             sendPopupLayout.setShownFromBottom(false);
             sendPopupLayout.setBackgroundColor(0xf9222222);
-
+            
+            Object currentObject = imagesArrLocals.get(currentIndex);
+            boolean canSpoiler = fragment instanceof ChatActivity && !((ChatActivity) fragment).isSecretChat() && currentObject instanceof MediaController.PhotoEntry;
+            boolean spoilerEnabled = false;
+            if (canSpoiler) {
+                MediaController.PhotoEntry entry = (MediaController.PhotoEntry) currentObject;
+                spoilerEnabled = entry.hasSpoiler;
+            }
+            
             final boolean canEdit = placeProvider != null && placeProvider.canEdit(currentIndex);
             final boolean canReplace = placeProvider != null && placeProvider.canReplace(currentIndex);
-            final int[] order = {4, 3, 2, 0, 1};
-            for (int i = 0; i < 5; i++) {
+            final int[] order = {4, 3, 2, 0, 1, 5};
+            for (int i = 0; i < 6; i++) {
                 final int a = order[i];
-                if (a != 2 && a != 3 && canEdit && canReplace) {
+                if (a != 2 && a != 3 && a!= 5 && canEdit && canReplace) {
                     continue;
                 }
                 if (a != 1 && canEdit && !canReplace) {
@@ -7342,7 +7351,10 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     continue;
                 } else if (a == 4 && (isCurrentVideo || captionEdit.hasTimer())) {
                     continue;
+                } else if (a == 5 && !canSpoiler) {
+                    continue;
                 }
+                
                 ActionBarMenuSubItem cell = new ActionBarMenuSubItem(parentActivity, a == 0, a == 3, resourcesProvider);
                 if (a == 0) {
                     if (UserObject.isUserSelf(user)) {
@@ -7362,6 +7374,8 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     } else {
                         cell.setTextAndIcon(getString(R.string.SendAsFile), R.drawable.msg_sendfile);
                     }
+                } else if (a == 5) {
+                    cell.setTextAndIcon(LocaleController.getString(spoilerEnabled ? R.string.DisablePhotoSpoiler : R.string.EnablePhotoSpoiler), spoilerEnabled ? R.drawable.msg_spoiler_off : R.drawable.msg_spoiler);
                 }
                 cell.setMinimumWidth(dp(196));
                 cell.setColors(0xffffffff, 0xffffffff);
@@ -7380,6 +7394,13 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                         sendPressed(!Config.alwaysSendWithoutSound, 0);
                     } else if (a == 4) {
                         sendPressed(!Config.alwaysSendWithoutSound, 0, false, true, false);
+                    } else if (a == 5) {
+                        if (placeProvider != null && !placeProvider.isPhotoChecked(currentIndex)) {
+                            setPhotoChecked();
+                        }
+                        MediaController.PhotoEntry entry = (MediaController.PhotoEntry) currentObject;
+                        entry.hasSpoiler = !entry.hasSpoiler;
+                        if (placeProvider != null) placeProvider.spoilerPressed();
                     }
                 });
             }
