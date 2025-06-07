@@ -12,6 +12,10 @@ package org.webrtc;
 
 import android.media.MediaCodecInfo;
 import androidx.annotation.Nullable;
+
+import org.telegram.messenger.voip.Instance;
+import org.telegram.messenger.voip.VoIPService;
+import androidx.annotation.Nullable;
 import java.util.Arrays;
 
 /** Factory for Android hardware VideoDecoders. */

@@ -104,10 +104,7 @@ _avIoContext(std::move(fileData)) {
 
     _frame = av_frame_alloc();
 
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
-    const
-#endif
-    AVInputFormat *inputFormat = av_find_input_format(container.c_str());
+const AVInputFormat *inputFormat = av_find_input_format(container.c_str());
     if (!inputFormat) {
         _didReadToEnd = true;
         return;
@@ -311,11 +308,7 @@ void AudioStreamingPartInternal::fillPcmBuffer(AudioStreamingPartPersistentDecod
     }
     
     if (_channelCount == 0) {
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
         _channelCount = _frame->ch_layout.nb_channels;
-#else
-        _channelCount = _frame->channels;
-#endif
     }
     
     if (_channelCount == 0) {
@@ -323,42 +316,24 @@ void AudioStreamingPartInternal::fillPcmBuffer(AudioStreamingPartPersistentDecod
         return;
     }
     
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
     if (_frame->ch_layout.nb_channels != _channelCount || _frame->ch_layout.nb_channels > 8) {
-#else
-    if (_frame->channels != _channelCount || _frame->channels > 8) {
-#endif
         _didReadToEnd = true;
         return;
     }
 
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
     if (_pcmBuffer.size() < _frame->nb_samples * _frame->ch_layout.nb_channels) {
         _pcmBuffer.resize(_frame->nb_samples * _frame->ch_layout.nb_channels);
     }
-#else
-    if (_pcmBuffer.size() < _frame->nb_samples * _frame->channels) {
-        _pcmBuffer.resize(_frame->nb_samples * _frame->channels);
-    }
-#endif
 
     switch (_frame->format) {
     case AV_SAMPLE_FMT_S16: {
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
         memcpy(_pcmBuffer.data(), _frame->data[0], _frame->nb_samples * 2 * _frame->ch_layout.nb_channels);
-#else
-        memcpy(_pcmBuffer.data(), _frame->data[0], _frame->nb_samples * 2 * _frame->channels);
-#endif
     } break;
 
     case AV_SAMPLE_FMT_S16P: {
         int16_t *to = _pcmBuffer.data();
         for (int sample = 0; sample < _frame->nb_samples; ++sample) {
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
             for (int channel = 0; channel < _frame->ch_layout.nb_channels; ++channel) {
-#else
-            for (int channel = 0; channel < _frame->channels; ++channel) {
-#endif
                 int16_t *shortChannel = (int16_t*)_frame->data[channel];
                 *to++ = shortChannel[sample];
             }
@@ -366,30 +341,20 @@ void AudioStreamingPartInternal::fillPcmBuffer(AudioStreamingPartPersistentDecod
     } break;
 
     case AV_SAMPLE_FMT_FLT: {
-        float *floatData = (float *)&_frame->data[0];
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
-        for (int i = 0; i < _frame->nb_samples * _frame->ch_layout.nb_channels; i++) {
-            _pcmBuffer[i] = sampleFloatToInt16(floatData[i]);
-        }
-#else
-        for (int i = 0; i < _frame->nb_samples * _frame->channels; i++) {
-            _pcmBuffer[i] = sampleFloatToInt16(floatData[i]);
-        }
-#endif
+		float *floatData = (float *)&_frame->data[0];
+		for (int i = 0; i < _frame->nb_samples * _frame->ch_layout.nb_channels; i++) {
+			_pcmBuffer[i] = sampleFloatToInt16(floatData[i]);
+		}
     } break;
 
     case AV_SAMPLE_FMT_FLTP: {
-        int16_t *to = _pcmBuffer.data();
-        for (int sample = 0; sample < _frame->nb_samples; ++sample) {
-#if LIBAVFORMAT_VERSION_MAJOR >= 59
-            for (int channel = 0; channel < _frame->ch_layout.nb_channels; ++channel) {
-#else
-            for (int channel = 0; channel < _frame->channels; ++channel) {
-#endif
-                float *floatChannel = (float*)_frame->data[channel];
-                *to++ = sampleFloatToInt16(floatChannel[sample]);
-            }
-        }
+		int16_t *to = _pcmBuffer.data();
+		for (int sample = 0; sample < _frame->nb_samples; ++sample) {
+			for (int channel = 0; channel < _frame->ch_layout.nb_channels; ++channel) {
+				float *floatChannel = (float*)_frame->data[channel];
+				*to++ = sampleFloatToInt16(floatChannel[sample]);
+			}
+		}
     } break;
 
     default: {

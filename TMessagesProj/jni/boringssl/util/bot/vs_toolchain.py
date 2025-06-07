@@ -6,7 +6,6 @@ from __future__ import print_function
 
 import json
 import os
-import pipes
 import os.path
 import subprocess
 import sys

@@ -201,8 +201,10 @@ import org.telegram.messenger.camera.Size;
 import org.telegram.messenger.chromecast.ChromecastController;
 import org.telegram.messenger.chromecast.ChromecastMedia;
 import org.telegram.messenger.chromecast.ChromecastMediaVariations;
-import org.telegram.messenger.pip.PictureInPictureContentViewProvider;
+import org.telegram.messenger.pip.source.IPipSourceDelegate;
+import org.telegram.messenger.pip.utils.PipPermissions;
 import org.telegram.messenger.pip.PipSource;
+import org.telegram.messenger.pip.utils.PipUtils;
 import org.telegram.messenger.video.OldVideoPlayerRewinder;
 import org.telegram.messenger.video.VideoFramesRewinder;
 import org.telegram.messenger.video.VideoPlayerRewinder;
@@ -241,6 +243,7 @@ import org.telegram.ui.Components.ChatActivityEnterView;
 import org.telegram.ui.Components.ChatAttachAlert;
 import org.telegram.ui.Components.CheckBox;
 import org.telegram.ui.Components.ClippingImageView;
+import org.telegram.ui.Components.ColoredImageSpan;
 import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.Crop.CropTransform;
 import org.telegram.ui.Components.Crop.CropView;
@@ -271,7 +274,6 @@ import org.telegram.ui.Components.PhotoViewerBlurDrawable;
 import org.telegram.ui.Components.PhotoViewerCoverEditor;
 import org.telegram.ui.Components.PhotoViewerWebView;
 import org.telegram.ui.Components.PickerBottomLayoutViewer;
-import org.telegram.messenger.pip.PipNativeApiController;
 import org.telegram.ui.Components.PipVideoOverlay;
 import org.telegram.ui.Components.PlayPauseDrawable;
 import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
@@ -334,7 +336,7 @@ import xyz.nextalone.nnngram.utils.MessageUtils;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
-public class PhotoViewer implements NotificationCenter.NotificationCenterDelegate, GestureDetector2.OnGestureListener, GestureDetector2.OnDoubleTapListener, PictureInPictureContentViewProvider {
+public class PhotoViewer implements NotificationCenter.NotificationCenterDelegate, GestureDetector2.OnGestureListener, GestureDetector2.OnDoubleTapListener, IPipSourceDelegate {
     private final static float ZOOM_SCALE = 0.1f;
     private final static int MARK_DEFERRED_IMAGE_LOADING = 1;
 
@@ -895,6 +897,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private EditCoverButton editCoverButton;
     private ArrayList<HintView2> muteHints;
     private VideoCompressButton compressItem;
+    private HintView2 compressPhotoHint;
     private GroupedPhotosListView groupedPhotosListView;
     private Tooltip tooltip;
     private UndoView hintView;
@@ -958,7 +961,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private boolean lastCaptionTranslating;
     private MessagesController.DialogPhotos dialogPhotos;
 
-    private Paint bitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+    public static Paint bitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
     private boolean pipAvailable;
 
@@ -1667,6 +1670,16 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (videoTextureView == null) {
                 return true;
             }
+
+            if (PipVideoOverlay.isVisible() && PipVideoOverlay.getPipSource() != null) {
+                if (PipVideoOverlay.getPipSource().state2.isAttachedToPip()) {
+                    PipVideoOverlay.getPipTextureView().setSurfaceTexture(surface);
+                    PipVideoOverlay.getPipTextureView().setVisibility(View.VISIBLE);
+
+                    return false;
+                }
+            }
+
             if (changingTextureView) {
                 if (switchingInlineMode) {
                     waitingForFirstTextureUpload = 2;
@@ -2186,6 +2199,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
         @Override
         public void draw(Canvas canvas) {
+            if (textureViewSkipRender) {
+                return;
+            }
+
             if (animationInProgress != 0 && !AndroidUtilities.isTablet() && currentPlaceObject != null && currentPlaceObject.animatingImageView != null) {
                 animatingImageView.getClippedVisibleRect(visibleRect);
                 if (!visibleRect.isEmpty()) {
@@ -4776,6 +4793,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
 
             @Override
+            public void draw(@NonNull Canvas canvas) {
+                if (windowViewSkipRender) {
+                    return;
+                }
+                super.draw(canvas);
+            }
+
+            @Override
             protected void dispatchDraw(Canvas canvas) {
                 super.dispatchDraw(canvas);
                 if (parentChatActivity != null) {
@@ -5718,8 +5743,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         info.masks = null;
                         info.ttl = 0;
                         media.add(info);
-                        SendMessagesHelper.prepareSendingMedia(parentChatActivity.getAccountInstance(), media, parentChatActivity.getUserConfig().getClientUserId(), null, null,
-                            null, null, true, true, null, false, 0, 0, false, null, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, false, 0);
+                        SendMessagesHelper.prepareSendingMedia(parentChatActivity.getAccountInstance(), media, parentChatActivity.getUserConfig().getClientUserId(), null, null, null, null, true, true, null, false, 0, 0, false, null, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, false, 0, parentChatActivity.getSendMonoForumPeerId());
                         BulletinFactory.global().showForwardedBulletinWithTag(parentChatActivity.getUserConfig().getClientUserId(), 1);
                     } else {
                         var accountInstance = AccountInstance.getInstance(currentAccount);
@@ -7551,7 +7575,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
 
         compressItem = new VideoCompressButton(parentActivity);
         compressItem.setTag(1);
-        compressItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
+        compressItem.setBackground(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
 
         selectedCompression = selectCompression();
         compressItem.setState(videoConvertSupported && compressionsCount > 1, muteVideo, Math.min(resultWidth, resultHeight));
@@ -7560,6 +7584,18 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         compressItem.setOnClickListener(v -> {
             if (isCaptionOpen() || muteVideo) {
                 return;
+            }
+            if (currentIndex >= 0 && currentIndex < imagesArrLocals.size()) {
+                Object object = imagesArrLocals.get(currentIndex);
+                if (object instanceof MediaController.PhotoEntry) {
+                    MediaController.PhotoEntry photoEntry = (MediaController.PhotoEntry) object;
+                    if (!photoEntry.isVideo) {
+                        photoEntry.highQuality = !photoEntry.highQuality;
+                        compressItem.setPhotoState(photoEntry.highQuality);
+                        showPhotoQualityHint(photoEntry.highQuality);
+                        return;
+                    }
+                }
             }
             if (compressItem.getTag() == null) {
                 if (videoConvertSupported) {
@@ -8618,7 +8654,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         if (parentActivity == null) {
             return false;
         }
-        if (Build.VERSION.SDK_INT < 23 || PipNativeApiController.checkAnyPipPermissions(parentActivity)) {
+        if (Build.VERSION.SDK_INT < 23 || PipUtils.checkAnyPipPermissions(parentActivity)) {
             return true;
         } else {
             AlertsCreator.createDrawOverlayPermissionDialog(parentActivity, null, true).show();
@@ -10180,11 +10216,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         PipVideoOverlay.updatePlayButton();
         videoPlayerSeekbar.updateTimestamps(currentMessageObject, getVideoDuration());
         updateVideoPlayerTime();
-        AndroidUtilities.runOnUIThread(() -> {
-            if (pipSource != null) {
-                pipSource.setEnabled(pipItem != null && pipItem.isEnabled() && isPlaying);
-            }
-        });
+        AndroidUtilities.runOnUIThread(this::pipInvalidateAvailability);
     }
 
     private void playVideoOrWeb() {
@@ -10359,15 +10391,13 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     }
                 };
                 videoPlayer.setOnQualityChangeListener(this::updateQualityItems);
-                if (PipNativeApiController.checkPermissions(parentActivity) == PipNativeApiController.PIP_GRANTED_PIP) {
+                if (PipUtils.checkPermissions(parentActivity) == PipPermissions.PIP_GRANTED_PIP) {
                     pipSource = new PipSource.Builder(parentActivity, this)
                         .setTagPrefix("photo-viewer-" + videoPlayer.playerId)
+                        .setContentView(aspectRatioFrameLayout)
+                        .setPlaceholderView(pipPlaceholderView)
                         .setNeedMediaSession(true)
                         .build();
-                    if (aspectRatioFrameLayout != null) {
-                        pipSource.setContentView(aspectRatioFrameLayout);
-                    }
-                    pipSource.setEnabled(pipItem != null && pipItem.isEnabled() && isPlaying);
                 }
                 newPlayerCreated = true;
             }
@@ -10475,6 +10505,11 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
 
                 @Override
                 public void onRenderedFirstFrame(AnalyticsListener.EventTime eventTime) {
+                    if (pipFirstFrameCallback != null) {
+                        pipFirstFrameCallback.run();
+                        pipFirstFrameCallback = null;
+                    }
+
                     if (eventTime.eventPlaybackPositionMs == needCaptureFrameReadyAtTime) {
                         captureFrameReadyAtTime = eventTime.eventPlaybackPositionMs;
                         needCaptureFrameReadyAtTime = -1;
@@ -10487,6 +10522,14 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
 
                 @Override
                 public boolean onSurfaceDestroyed(SurfaceTexture surfaceTexture) {
+                    if (PipVideoOverlay.getPipSource() != null && PipVideoOverlay.getPipSource().state2.isAttachedToPip()) {
+                        if (changedTextureView != null && changedTextureView.getSurfaceTexture() == surfaceTexture) {
+                            PipVideoOverlay.getPipTextureView().setSurfaceTexture(surfaceTexture);
+                            PipVideoOverlay.getPipTextureView().setVisibility(View.VISIBLE);
+                            return true;
+                        }
+                    }
+
                     if (changingTextureView) {
                         changingTextureView = false;
                         if (isInline) {
@@ -10497,6 +10540,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                             return true;
                         }
                     }
+
                     return false;
                 }
 
@@ -10735,6 +10779,14 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 }
                 return super.drawChild(canvas, child, drawingTime);
             }
+
+            @Override
+            public void draw(@NonNull Canvas canvas) {
+                if (textureViewSkipRender) {
+                    return;
+                }
+                super.draw(canvas);
+            }
         };
         aspectRatioFrameLayout.setWillNotDraw(false);
         aspectRatioFrameLayout.setVisibility(View.INVISIBLE);
@@ -10778,6 +10830,9 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         firstFrameView.setScaleType(ImageView.ScaleType.FIT_XY);
         aspectRatioFrameLayout.addView(firstFrameView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
 
+        pipPlaceholderView = new View(parentActivity);
+        aspectRatioFrameLayout.addView(pipPlaceholderView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
         if (sendPhotoType == SELECT_TYPE_AVATAR) {
             flashView = new View(parentActivity);
             flashView.setBackgroundColor(0xffffffff);
@@ -10786,6 +10841,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         }
         if (pipSource != null) {
             pipSource.setContentView(aspectRatioFrameLayout);
+            pipSource.setPlaceholderView(pipPlaceholderView);
         }
     }
 
@@ -10964,7 +11020,11 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
 
     private static final int thumbSize = 512;
 
-    private void mergeImages(String finalPath, String thumbPath, Bitmap thumb, Bitmap bitmap, float size, boolean reverse) {
+    public void mergeImages(String finalPath, String thumbPath, Bitmap thumb, Bitmap bitmap, float size, boolean reverse) {
+        mergeImages(finalPath, thumbPath, thumb, bitmap, getCompressFormat(), size, reverse);
+    }
+
+    public static void mergeImages(String finalPath, String thumbPath, Bitmap thumb, Bitmap bitmap, Bitmap.CompressFormat format, float size, boolean reverse) {
         try {
             boolean recycle = false;
             if (thumb == null) {
@@ -10989,7 +11049,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 canvas.drawBitmap(bitmap, null, dstRect, bitmapPaint);
             }
             FileOutputStream stream = new FileOutputStream(new File(finalPath));
-            dst.compress(getCompressFormat(), size == thumbSize ? 83 : 87, stream);
+            dst.compress(format, size == thumbSize ? 83 : 87, stream);
             try {
                 stream.close();
             } catch (Exception e) {
@@ -11060,7 +11120,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         return getAnimatedMediaEntitiesCount(true) != 0;
     }
 
-    private Bitmap createCroppedBitmap(Bitmap bitmap, MediaController.CropState cropState, int[] extraTransform, boolean mirror) {
+    public static Bitmap createCroppedBitmap(Bitmap bitmap, MediaController.CropState cropState, int[] extraTransform, boolean mirror) {
         try {
             int tr = (cropState.transformRotation + (extraTransform != null ? extraTransform[0] : 0)) % 360;
             int inv = extraTransform != null && extraTransform.length > 1 ? extraTransform[1] : 0;
@@ -11340,7 +11400,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             if (entry.filterPath != null) {
                 new File(entry.filterPath).delete();
             }
-            TLRPC.PhotoSize size = ImageLoader.scaleAndSaveImage(bitmap, getCompressFormat(), AndroidUtilities.getPhotoSize(), AndroidUtilities.getPhotoSize(), 87, false, 101, 101);
+            TLRPC.PhotoSize size = ImageLoader.scaleAndSaveImage(bitmap, getCompressFormat(), AndroidUtilities.getPhotoSize(true), AndroidUtilities.getPhotoSize(true), 87, false, 101, 101);
             entry.filterPath = FileLoader.getInstance(currentAccount).getPathToAttach(size, true).toString();
             Bitmap b = entry.cropState != null ? createCroppedBitmap(bitmap, entry.cropState, null, true) : bitmap;
             if (entry.paintPath == null) {
@@ -12101,6 +12161,9 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             if (videoConvertSupported && isCurrentVideo) updateVideoInfo();
+                            if (fromEditMode == EDIT_MODE_PAINT) {
+                                setIsAboutToSwitchToIndex(currentIndex, false, true, true);
+                            }
                         }
                     });
                     animatorSet.start();
@@ -13465,7 +13528,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     return ImageLocation.getForDocument(message.getDocument());
                 } else {
                     TLRPC.FileLocation location;
-                    TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(message.photoThumbs, AndroidUtilities.getPhotoSize(), false, null, true);
+                    TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(message.photoThumbs, AndroidUtilities.getPhotoSize(true), false, null, true);
                     if (sizeFull != null) {
                         if (size != null) {
                             size[0] = sizeFull.size;
@@ -13571,7 +13634,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 }
             } else if (MessageObject.getMedia(message.messageOwner) instanceof TLRPC.TL_messageMediaPhoto && MessageObject.getMedia(message.messageOwner).photo != null || MessageObject.getMedia(message.messageOwner) instanceof TLRPC.TL_messageMediaWebPage && MessageObject.getMedia(message.messageOwner).webpage != null) {
                 TLRPC.FileLocation location;
-                TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(message.photoThumbs, AndroidUtilities.getPhotoSize(), false, null, true);
+                TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(message.photoThumbs, AndroidUtilities.getPhotoSize(true), false, null, true);
                 if (sizeFull != null) {
                     if (size != null) {
                         size[0] = sizeFull.size;
@@ -14248,7 +14311,10 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
     }
 
     private void setIsAboutToSwitchToIndex(int index, boolean init, boolean animated) {
-        if (!init && switchingToIndex == index) {
+        setIsAboutToSwitchToIndex(index, init, animated, false);
+    }
+    private void setIsAboutToSwitchToIndex(int index, boolean init, boolean animated, boolean force) {
+        if (!init && switchingToIndex == index && !force) {
             return;
         }
         boolean animateCaption = animated;
@@ -14360,9 +14426,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     if (!pipAvailable) {
                         pipItem.setEnabled(false);
                         setItemVisible(pipItem, true, !masksItemVisible && editItem.getAlpha() <= 0, 0.5f);
-                        if (pipSource != null) {
-                            pipSource.setEnabled(pipItem != null && pipItem.isEnabled() && isPlaying);
-                        }
+                        pipInvalidateAvailability();
                     } else {
                         setItemVisible(pipItem, true, !masksItemVisible && editItem.getAlpha() <= 0);
                     }
@@ -14624,12 +14688,14 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 }
             } else {
                 boolean isAnimation = false;
+                boolean highQuality = false;
                 if (object instanceof MediaController.PhotoEntry) {
                     MediaController.PhotoEntry photoEntry = ((MediaController.PhotoEntry) object);
                     currentPathObject = photoEntry.path;
                     isVideo = photoEntry.isVideo;
                     duration = photoEntry.duration;
                     cropState = photoEntry.cropState;
+                    highQuality = photoEntry.highQuality;
                 } else if (object instanceof MediaController.SearchImage) {
                     MediaController.SearchImage searchImage = (MediaController.SearchImage) object;
                     currentPathObject = searchImage.getPathToAttach();
@@ -14727,7 +14793,17 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                         animateCaption = false;
                     }
                     isCurrentVideo = false;
-                    compressItem.setVisibility(View.GONE);
+                    if (object instanceof MediaController.PhotoEntry && !((MediaController.PhotoEntry) object).isVideo) {
+                        final MediaController.PhotoEntry entry = (MediaController.PhotoEntry) object;
+                        if (!entry.isVideo && (currentIndex == index ? getCurrentVideoEditedInfo() : entry.editedInfo) == null) {
+                            compressItem.setVisibility(View.VISIBLE);
+                            compressItem.setPhotoState(highQuality);
+                        } else {
+                            compressItem.setVisibility(View.GONE);
+                        }
+                    } else {
+                        compressItem.setVisibility(View.GONE);
+                    }
                     if (isAnimation || sendPhotoType == SELECT_TYPE_QR || isDocumentsPicker) {
                         paintItem.setVisibility(View.GONE);
                         paintItem.setTag(null);
@@ -14858,9 +14934,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 if (!pipAvailable) {
                     pipItem.setEnabled(false);
                     setItemVisible(pipItem, true, true, 0.5f);
-                    if (pipSource != null) {
-                        pipSource.setEnabled(pipItem != null && pipItem.isEnabled() && isPlaying);
-                    }
+                    pipInvalidateAvailability();
                 } else {
                     setItemVisible(pipItem, true, true);
                 }
@@ -16817,15 +16891,15 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                             }
                             if (photoEntry.isVideo) {
                                 if (videoEditedInfo != null) {
-                                    SendMessagesHelper.prepareSendingVideo(parentChatActivity.getAccountInstance(), photoEntry.path, videoEditedInfo, null, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.ttl, editingMessageObject, notify, scheduleDate, forceDocument, photoEntry.hasSpoiler, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0);
+                                    SendMessagesHelper.prepareSendingVideo(parentChatActivity.getAccountInstance(), photoEntry.path, videoEditedInfo, null, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.ttl, editingMessageObject, notify, scheduleDate, forceDocument, photoEntry.hasSpoiler, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0, parentChatActivity.getSendMonoForumPeerId());
                                 } else {
-                                    SendMessagesHelper.prepareSendingVideo(parentChatActivity.getAccountInstance(), photoEntry.path, null, null, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.ttl, editingMessageObject, notify, scheduleDate, forceDocument, photoEntry.hasSpoiler, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0);
+                                    SendMessagesHelper.prepareSendingVideo(parentChatActivity.getAccountInstance(), photoEntry.path, null, null, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.ttl, editingMessageObject, notify, scheduleDate, forceDocument, photoEntry.hasSpoiler, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0, parentChatActivity.getSendMonoForumPeerId());
                                 }
                             } else {
                                 if (photoEntry.imagePath != null) {
-                                    SendMessagesHelper.prepareSendingPhoto(parentChatActivity.getAccountInstance(), photoEntry.imagePath, photoEntry.thumbPath, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.stickers, null, photoEntry.ttl, editingMessageObject, videoEditedInfo, notify, scheduleDate, 0, forceDocument, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0);
+                                    SendMessagesHelper.prepareSendingPhoto(parentChatActivity.getAccountInstance(), photoEntry.imagePath, photoEntry.thumbPath, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.stickers, null, photoEntry.ttl, editingMessageObject, videoEditedInfo, notify, scheduleDate, 0, forceDocument, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0, parentChatActivity.getSendMonoForumPeerId());
                                 } else if (photoEntry.path != null) {
-                                    SendMessagesHelper.prepareSendingPhoto(parentChatActivity.getAccountInstance(), photoEntry.path, photoEntry.thumbPath, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.stickers, null, photoEntry.ttl, editingMessageObject, videoEditedInfo, notify, scheduleDate, 0, forceDocument, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0);
+                                    SendMessagesHelper.prepareSendingPhoto(parentChatActivity.getAccountInstance(), photoEntry.path, photoEntry.thumbPath, null, parentChatActivity.getDialogId(), parentChatActivity.getReplyMessage(), parentChatActivity.getThreadMessage(), null, parentChatActivity.getReplyQuote(), photoEntry.entities, photoEntry.stickers, null, photoEntry.ttl, editingMessageObject, videoEditedInfo, notify, scheduleDate, 0, forceDocument, photoEntry.caption, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, 0, parentChatActivity.getSendMonoForumPeerId());
                                 }
                             }
                         }
@@ -18356,9 +18430,9 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             if ((mode == EDIT_MODE_NONE || mode == EDIT_MODE_STICKER_MASK || mode == EDIT_MODE_COVER) && sendPhotoType != SELECT_TYPE_AVATAR && isStatusBarVisible()) {
                 height += AndroidUtilities.statusBarHeight;
             }
-            if (mode == EDIT_MODE_NONE && sendPhotoType == 2) {
-                height += AndroidUtilities.navigationBarHeight;
-            }
+//            if (mode == EDIT_MODE_NONE && sendPhotoType == 2) {
+//                height += AndroidUtilities.navigationBarHeight;
+//            }
         }
         if (mode == EDIT_MODE_NONE && sendPhotoType == SELECT_TYPE_AVATAR || mode == EDIT_MODE_CROP) {
             height -= dp(48 + 32 + 64);
@@ -21454,8 +21528,8 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
 
     private RenderNode renderNode;
 
-    public static boolean BLUR_RENDERNODE() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedConfig.useNewBlur && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH && !AndroidUtilities.makingGlobalBlurBitmap;
+    public boolean BLUR_RENDERNODE() {
+        return !textureViewSkipRender && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && SharedConfig.useNewBlur && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH && !AndroidUtilities.makingGlobalBlurBitmap;
     }
 
     public void drawCaptionBlur(Canvas canvas, BlurringShader.StoryBlurDrawer drawer, int bgColor, int overlayColor, boolean clip, boolean allowTransparent, boolean allowCrossfade) {
@@ -22816,48 +22890,138 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         return videoPlayer.getCurrentPosition();
     }
 
+    /* Pip V2 */
+
+    private void pipInvalidateAvailability() {
+        if (pipSource != null) {
+            pipSource.invalidateAvailability();
+        }
+        if (PipVideoOverlay.getPipSource() != null) {
+            PipVideoOverlay.getPipSource().invalidateAvailability();
+        }
+    }
+
+    private View pipPlaceholderView;
+    public Runnable pipFirstFrameCallback;
+    private TextureView pipTextureView;
+    private boolean windowViewSkipRender;
+    private boolean textureViewSkipRender;
 
     @Override
-    public View detachContentFromWindow() {
-        if (videoPlayer != null) {
-            videoPlayer.setTextureView(null);
-            videoPlayer.setSurfaceView(null);
-        }
-        containerView.removeView(aspectRatioFrameLayout);
-        windowView.setVisibility(View.GONE);
-
-        return aspectRatioFrameLayout;
+    public boolean pipIsAvailable() {
+        return pipItem != null && pipItem.isEnabled() && isPlaying;
     }
 
     @Override
-    public void onAttachContentToPip() {
-        if (videoPlayer == null) return;
+    public Bitmap pipCreatePrimaryWindowViewBitmap() {
         if (videoTextureView != null) {
-            videoPlayer.setTextureView(videoTextureView);
-        } else if (videoSurfaceView != null) {
-            videoPlayer.setSurfaceView(videoSurfaceView);
+            return videoTextureView.getBitmap();
         }
+        if (usedSurfaceView) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Bitmap bitmap = Bitmaps.createBitmap(videoSurfaceView.getWidth(), videoSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
+                AndroidUtilities.getBitmapFromSurface(videoSurfaceView, bitmap);
+                return bitmap;
+            }
+        }
+        return null;
     }
 
     @Override
-    public void prepareDetachContentFromPip() {
-        if (videoPlayer == null) return;
-        videoPlayer.setTextureView(null);
-        videoPlayer.setSurfaceView(null);
+    public void pipRenderBackground(Canvas canvas) {
+        canvas.drawColor(0xFF000000);
+    }
+
+
+    @Override
+    public void pipRenderForeground(Canvas canvas) {
+        textureViewSkipRender = true;
+        windowView.draw(canvas);
+        textureViewSkipRender = false;
     }
 
     @Override
-    public void attachContentToWindow() {
-        containerView.addView(aspectRatioFrameLayout, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
-        windowView.setVisibility(View.VISIBLE);
+    public View pipCreatePictureInPictureView() {
+        pipTextureView = new TextureView(parentActivity);
+        pipTextureView.setOpaque(false);
+        if (pipPlaceholderView != null) {
+            pipPlaceholderView.bringToFront();
+        }
+
+        return pipTextureView;
+    }
+
+    @Override
+    public void pipHidePrimaryWindowView(Runnable firstFrameCallback) {
+        if (PipVideoOverlay.isVisible()) {
+            PipVideoOverlay.dismiss(false);
+        }
+
+        this.pipFirstFrameCallback = firstFrameCallback;
+
+        if (videoPlayer != null) {
+            videoPlayer.setSurfaceView(null);
+            videoPlayer.setTextureView(null);
+            videoPlayer.play();
+            videoPlayer.setTextureView(pipTextureView);
+        };
+
+        WindowManager wm = (WindowManager) parentActivity.getSystemService(Context.WINDOW_SERVICE);
+        wm.removeView(windowView);
+        windowViewSkipRender = true;
+        windowView.invalidate();
+    }
+
+    @Override
+    public Bitmap pipCreatePictureInPictureViewBitmap() {
+        if (pipTextureView == null || !pipTextureView.isAvailable()) {
+            return null;
+        }
+
+        return pipTextureView.getBitmap();
+    }
+
+    @Override
+    public void pipShowPrimaryWindowView(Runnable firstFrameCallback) {
+        this.pipFirstFrameCallback = firstFrameCallback;
+
+        windowViewSkipRender = false;
+        if (windowView != null) {
+            WindowManager wm = (WindowManager) parentActivity.getSystemService(Context.WINDOW_SERVICE);
+            wm.addView(windowView, windowLayoutParams);
+            windowView.invalidate();
+        }
+
         if (videoPlayer == null) {
             return;
         }
 
+        videoPlayer.setSurfaceView(null);
+        videoPlayer.setTextureView(null);
+        videoPlayer.play();
         if (videoTextureView != null) {
             videoPlayer.setTextureView(videoTextureView);
         } else if (videoSurfaceView != null) {
             videoPlayer.setSurfaceView(videoSurfaceView);
         }
+    }
+
+    private void showPhotoQualityHint(boolean highQuality) {
+        if (compressPhotoHint != null) {
+            compressPhotoHint.hide();
+            compressPhotoHint = null;
+        }
+        if (activityContext == null) return;
+        compressPhotoHint = new HintView2(activityContext, HintView2.DIRECTION_BOTTOM);
+        final SpannableStringBuilder sb = new SpannableStringBuilder("x ").append(getString(highQuality ? R.string.PhotoWillBeSentInHD : R.string.PhotoWillBeSentInSD));
+        sb.setSpan(new ColoredImageSpan(highQuality ? R.drawable.menu_quality_hd_filled : R.drawable.menu_quality_sd_filled), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        compressPhotoHint.setText(sb);
+        containerView.addView(compressPhotoHint, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 100, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0, 0, 48));
+        compressPhotoHint.setTranslationY(pickerView.getTranslationY());
+        compressPhotoHint.setJointPx(0, itemsLayout.getX() + compressItem.getX() + compressItem.getWidth() / 2.f);
+        final View thisHint = compressPhotoHint;
+        compressPhotoHint.setOnHiddenListener(() -> AndroidUtilities.removeFromParent(thisHint));
+        compressPhotoHint.setDuration(3500);
+        compressPhotoHint.show();
     }
 }

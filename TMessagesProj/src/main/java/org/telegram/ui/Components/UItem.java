@@ -26,7 +26,6 @@ import android.text.TextUtils;
 import android.util.LongSparseArray;
 import android.view.View;
 
-import org.telegram.messenger.FileLog;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.TLObject;
@@ -156,6 +155,14 @@ public class UItem extends AdapterWithDiffUtils.Item {
         UItem i = new UItem(UniversalAdapter.VIEW_TYPE_TOPVIEW, false);
         i.text = text;
         i.iconResId = lottieResId;
+        return i;
+    }
+
+    public static UItem asTopViewStatic(CharSequence text, int iconResId) {
+        UItem i = new UItem(UniversalAdapter.VIEW_TYPE_TOPVIEW, false);
+        i.text = text;
+        i.accent = true;
+        i.iconResId = iconResId;
         return i;
     }
 
@@ -691,7 +698,7 @@ public class UItem extends AdapterWithDiffUtils.Item {
             return null;
         }
 
-        public void bindView(View view, UItem item, boolean divider) {
+        public void bindView(View view, UItem item, boolean divider, UniversalAdapter adapter, UniversalRecyclerView listView) {
 
         }
 

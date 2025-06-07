@@ -34,6 +34,8 @@
 import os
 from googletest.test import gtest_test_utils
 
+import gtest_test_utils
+
 IS_WINDOWS = os.name == 'nt'
 IS_LINUX = os.name == 'posix' and os.uname()[0] == 'Linux'
 

@@ -15,8 +15,7 @@
 # 6) run build_ffmpeg.sh
 # 7) see compiled library in build_ffmpeg/adnroid folder
 
-NDK="~/Library/Android/sdk/ndk/android-ndk-r21e"
-NDK_r10e="~/Library/Android/sdk/ndk/android-ndk-r10e"
+NDK="$ANDROID_HOME/ndk/28.0.13004108"
 
 #build vpx
 cd ./vpx-android
@@ -25,7 +24,6 @@ sh build-vpx.sh
 cd ..
 
 
-NDK=$NDK_r10e
 
 function build_one {
 

@@ -379,6 +379,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 
 	private boolean needSendDebugLog;
 	private boolean needRateCall;
+	private String lastLogFilePath;
 	private long lastTypingTimeSend;
 
 	private boolean endCallAfterRequest;
@@ -1111,7 +1112,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 				reqCall.protocol.udp_reflector = true;
 				reqCall.protocol.min_layer = CALL_MIN_LAYER;
 				reqCall.protocol.max_layer = Instance.getConnectionMaxLayer();
-				reqCall.protocol.library_versions.addAll(Instance.AVAILABLE_VERSIONS);
+				Collections.addAll(reqCall.protocol.library_versions, NativeInstance.getAllVersions());
 				VoIPService.this.g_a = g_a;
 				reqCall.g_a_hash = Utilities.computeSHA256(g_a, 0, g_a.length);
 				reqCall.random_id = Utilities.random.nextInt();
@@ -1869,7 +1870,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 		req.protocol.max_layer = Instance.getConnectionMaxLayer();
 		req.protocol.min_layer = CALL_MIN_LAYER;
 		req.protocol.udp_p2p = req.protocol.udp_reflector = true;
-		req.protocol.library_versions.addAll(Instance.AVAILABLE_VERSIONS);
+		Collections.addAll(req.protocol.library_versions, NativeInstance.getAllVersions());
 		ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
 			if (error != null) {
 				callFailed();
@@ -3129,15 +3130,6 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 //				boolean hasOther = false;
 //				for (int a = 0; a < uids.length; a++) {
 //					if (uids[a] == 0) {
-////						if (chat != null && lastTypingTimeSend < SystemClock.uptimeMillis() - 5000 && levels[a] > 0.1f && voice[a]) {
-////							lastTypingTimeSend = SystemClock.uptimeMillis();
-////							TLRPC.TL_messages_setTyping req = new TLRPC.TL_messages_setTyping();
-////							req.action = new TLRPC.TL_speakingInGroupCallAction();
-////							req.peer = MessagesController.getInputPeer(chat);
-////							ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
-////
-////							});
-////						}
 //						NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.webRtcMicAmplitudeEvent, levels[a]);
 //						continue;
 //					}
@@ -3411,7 +3403,8 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			final boolean enableNs = !(sysNsAvailable && serverConfig.useSystemNs);
 			final String logFilePath = BuildVars.DEBUG_VERSION ? VoIPHelper.getLogFilePath("voip" + privateCall.id) : VoIPHelper.getLogFilePath("" + privateCall.id, false);
 			final String statsLogFilePath = VoIPHelper.getLogFilePath("" + privateCall.id, true);
-			final Instance.Config config = new Instance.Config(initializationTimeout, receiveTimeout, voipDataSaving, privateCall.p2p_allowed, enableAec, enableNs, true, false, serverConfig.enableStunMarking, logFilePath, statsLogFilePath, privateCall.protocol.max_layer);
+			final Instance.Config config = new Instance.Config(initializationTimeout, receiveTimeout, voipDataSaving, privateCall.p2p_allowed, enableAec, enableNs, true, false, serverConfig.enableStunMarking, logFilePath, statsLogFilePath, privateCall.protocol.max_layer, privateCall.custom_parameters == null ? "" : privateCall.custom_parameters.data);
+			lastLogFilePath = logFilePath;
 
 			// persistent state
 			final String persistentStateFilePath = new File(ApplicationLoader.applicationContext.getCacheDir(), "voip_persistent_state.json").getAbsolutePath();
@@ -4360,7 +4353,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 				req1.protocol.udp_p2p = req1.protocol.udp_reflector = true;
 				req1.protocol.min_layer = CALL_MIN_LAYER;
 				req1.protocol.max_layer = Instance.getConnectionMaxLayer();
-				req1.protocol.library_versions.addAll(Instance.AVAILABLE_VERSIONS);
+				Collections.addAll(req1.protocol.library_versions, NativeInstance.getAllVersions());
 				ConnectionsManager.getInstance(currentAccount).sendRequest(req1, (response1, error1) -> AndroidUtilities.runOnUIThread(() -> {
 					if (error1 == null) {
 						if (BuildVars.LOGS_ENABLED) {
@@ -4603,68 +4596,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 				e.printStackTrace();
 			}
 		}
-		if (needSendDebugLog && finalState.debugLog != null) {
-			TL_phone.saveCallDebug req = new TL_phone.saveCallDebug();
-			req.debug = new TLRPC.TL_dataJSON();
-			req.debug.data = finalState.debugLog;
-			req.peer = new TLRPC.TL_inputPhoneCall();
-			req.peer.access_hash = privateCall.access_hash;
-			req.peer.id = privateCall.id;
-
-			File file = new File(VoIPHelper.getLogFilePath("" + privateCall.id, true));
-			String cachedFile = MediaController.copyFileToCache(Uri.fromFile(file), "log");
-
-			ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
-				if (BuildVars.LOGS_ENABLED) {
-					FileLog.d("Sent debug logs, response = " + response);
-				}
-				try {
-					if (response instanceof TLRPC.TL_boolFalse) {
-						AndroidUtilities.runOnUIThread(() -> {
-							uploadLogFile(cachedFile);
-						});
-					} else {
-						File cacheFile = new File(cachedFile);
-						cacheFile.delete();
-					}
-				} catch (Exception e) {
-					FileLog.e(e);
-				}
-			});
-			needSendDebugLog = false;
-		}
 	}
 
 	private void uploadLogFile(String filePath) {
-		NotificationCenter.NotificationCenterDelegate uploadDelegate = new NotificationCenter.NotificationCenterDelegate() {
-			@Override
-			public void didReceivedNotification(int id, int account, Object... args) {
-				if (id == NotificationCenter.fileUploaded || id == NotificationCenter.fileUploadFailed) {
-					final String location = (String) args[0];
-					if (location.equals(filePath)) {
-						if (id == NotificationCenter.fileUploaded) {
-							TL_phone.saveCallLog req = new TL_phone.saveCallLog();
-							final TLRPC.InputFile file = (TLRPC.InputFile) args[1];
-							req.file = file;
-							req.peer = new TLRPC.TL_inputPhoneCall();
-							req.peer.access_hash = privateCall.access_hash;
-							req.peer.id = privateCall.id;
-							ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
-								if (BuildVars.LOGS_ENABLED) {
-									FileLog.d("Sent debug file log, response = " + response);
-								}
-							});
-						}
-						NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.fileUploaded);
-						NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.fileUploadFailed);
-					}
-				}
-			}
-		};
-		NotificationCenter.getInstance(currentAccount).addObserver(uploadDelegate, NotificationCenter.fileUploaded);
-		NotificationCenter.getInstance(currentAccount).addObserver(uploadDelegate, NotificationCenter.fileUploadFailed);
-		FileLoader.getInstance(currentAccount).uploadFile(filePath, false, true, ConnectionsManager.FileTypeFile);
-	}
+    }
 
 	private void initializeAccountRelatedThings() {
 		updateServerConfig();

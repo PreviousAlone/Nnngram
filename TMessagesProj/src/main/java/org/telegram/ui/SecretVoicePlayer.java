@@ -555,7 +555,7 @@ public class SecretVoicePlayer extends Dialog {
                     return false;
                 }
             });
-            myCell.setMessageObject(messageObject, cell.getCurrentMessagesGroup(), cell.pinnedBottom, cell.pinnedTop);
+            myCell.setMessageObject(messageObject, cell.getCurrentMessagesGroup(), cell.pinnedBottom, cell.pinnedTop, false);
             if (!isRound) {
                 audioVisualizerDrawable = new AudioVisualizerDrawable();
                 audioVisualizerDrawable.setParentView(myCell);

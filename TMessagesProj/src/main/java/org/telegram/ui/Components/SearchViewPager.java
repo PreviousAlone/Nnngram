@@ -75,6 +75,7 @@ import org.telegram.ui.Cells.SharedDocumentCell;
 import org.telegram.ui.Cells.SharedLinkCell;
 import org.telegram.ui.Cells.SharedPhotoVideoCell;
 import org.telegram.ui.ChatActivity;
+import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.FilteredSearchView;
 import org.telegram.ui.FilteredSearchView.MessageHashId;
@@ -224,7 +225,58 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
 
             @Override
             protected void openSponsoredOptions(ProfileSearchCell cell, TLRPC.TL_sponsoredPeer sponsoredPeer) {
-            
+                AndroidUtilities.hideKeyboard(fragment.getParentActivity().getCurrentFocus());
+                final ItemOptions o = ItemOptions.makeOptions(fragment, cell, true);
+                if (!TextUtils.isEmpty(sponsoredPeer.sponsor_info) || !TextUtils.isEmpty(sponsoredPeer.additional_info)) {
+                    final ItemOptions oi = o.makeSwipeback()
+                        .add(R.drawable.ic_ab_back, getString(R.string.Back), () -> o.closeSwipeback())
+                        .addGap();
+                    if (!TextUtils.isEmpty(sponsoredPeer.sponsor_info)) {
+                        oi.addText(sponsoredPeer.sponsor_info, 13);
+                    }
+                    if (!TextUtils.isEmpty(sponsoredPeer.additional_info)) {
+                        if (!TextUtils.isEmpty(sponsoredPeer.sponsor_info)) {
+                            oi.addGap();
+                        }
+                        oi.addText(sponsoredPeer.additional_info, 13);
+                    }
+                    o.add(R.drawable.msg_channel, getString(R.string.SponsoredMessageSponsorReportable), () -> {
+                        o.openSwipeback(oi);
+                    });
+                }
+                o
+                    .add(R.drawable.msg_info, getString(R.string.AboutRevenueSharingAds), () -> {
+                        fragment.showDialog(new SearchAdsInfoBottomSheet(context, fragment.getResourceProvider(), () -> {
+                            removeAllAds();
+                            BulletinFactory.of(fragment)
+                                .createAdReportedBulletin(LocaleController.getString(R.string.AdHidden))
+                                .show();
+                        }));
+                        o.dismiss();
+                    })
+                    .add(R.drawable.msg_block2, getString(R.string.ReportAd), () -> {
+                        ReportBottomSheet.openSponsoredPeer(fragment, sponsoredPeer.random_id, fragment.getResourceProvider(), () -> {
+                            removeAd(sponsoredPeer);
+                        });
+                        o.dismiss();
+                    })
+                    .addGap()
+                    .add(R.drawable.msg_cancel, getString(R.string.RemoveAds), () -> {
+                        if (UserConfig.getInstance(currentAccount).isPremium()) {
+                            fragment.getMessagesController().disableAds(true);
+                            removeAllAds();
+                            BulletinFactory.of(fragment)
+                                .createAdReportedBulletin(LocaleController.getString(R.string.AdHidden))
+                                .show();
+                        } else {
+                            new PremiumFeatureBottomSheet(fragment, PremiumPreviewFragment.PREMIUM_FEATURE_ADS, true).show();
+                        }
+                        o.dismiss();
+                    })
+                    .setGravity(LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT)
+                    .setOnTopOfScrim()
+                    .setDrawScrim(false)
+                    .show();
             }
         };
         if (initialDialogsType == DialogsActivity.DIALOGS_TYPE_BOT_REQUEST_PEER) {

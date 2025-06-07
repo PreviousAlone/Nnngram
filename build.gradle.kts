@@ -42,9 +42,10 @@ val verName = "v" + Version.officialVersionName + "-" + (Common.getGitHeadRefsSu
 
 val androidTargetSdkVersion by extra(34)
 val androidMinSdkVersion by extra(27)
-val androidCompileSdkVersion by extra(34)
+val androidCompileSdkVersion by extra(35)
 val androidBuildToolsVersion = Version.findBuildToolsVersion()
-val androidCompileNdkVersion = "28.0.13004108"
+val androidCompileNdkVersion = "28.1.13356709"
+
 
 fun Project.configureBaseExtension() {
     extensions.findByType(com.android.build.gradle.BaseExtension::class)?.run {
