@@ -17086,8 +17086,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
                 AndroidUtilities.logFlagSecure();
             } else {
-                windowLayoutParams.flags &=~ WindowManager.LayoutParams.FLAG_SECURE;
-                AndroidUtilities.logFlagSecure();
+                windowLayoutParams.flags &= ~WindowManager.LayoutParams.FLAG_SECURE;
             }
             windowLayoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_IS_FORWARD_NAVIGATION;
             windowView.setFocusable(false);

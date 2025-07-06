@@ -444,7 +444,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             if (chat.monoforum) {
                 TLRPC.Chat mfChat = MessagesController.getInstance(currentAccount).getChat(chat.linked_monoforum_id);
                 if (mfChat != null) {
-                    drawCheck = mfChat.verified;
+                    drawCheck = mfChat.verifiedExtended();
                 }
             }
             if (!LocaleController.isRTL) {

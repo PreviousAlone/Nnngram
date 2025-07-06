@@ -250,10 +250,81 @@ import org.telegram.ui.Cells.StickerCell;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextSelectionHelper;
 import org.telegram.ui.Cells.UserInfoCell;
-import org.telegram.ui.Components.*;
+import org.telegram.ui.Components.AlertsCreator;
+import org.telegram.ui.Components.AnimatedEmojiDrawable;
+import org.telegram.ui.Components.AnimatedEmojiSpan;
+import org.telegram.ui.Components.AnimatedFileDrawable;
+import org.telegram.ui.Components.AnimatedTextView;
+import org.telegram.ui.Components.AnimationProperties;
+import org.telegram.ui.Components.AttachBotIntroTopView;
+import org.telegram.ui.Components.AudioPlayerAlert;
+import org.telegram.ui.Components.AutoDeletePopupWrapper;
+import org.telegram.ui.Components.AvatarDrawable;
+import org.telegram.ui.Components.BackButtonMenu;
+import org.telegram.ui.Components.BackupImageView;
+import org.telegram.ui.Components.BlurBehindDrawable;
+import org.telegram.ui.Components.BluredView;
+import org.telegram.ui.Components.BlurredFrameLayout;
+import org.telegram.ui.Components.Bulletin;
+import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.ChatActivityEnterTopView;
+import org.telegram.ui.Components.ChatActivityEnterView;
+import org.telegram.ui.Components.ChatActivityInterface;
+import org.telegram.ui.Components.ChatAttachAlert;
+import org.telegram.ui.Components.ChatAttachAlertDocumentLayout;
+import org.telegram.ui.Components.ChatAvatarContainer;
+import org.telegram.ui.Components.ChatBigEmptyView;
+import org.telegram.ui.Components.ChatGreetingsView;
+import org.telegram.ui.Components.ChatNotificationsPopupWrapper;
+import org.telegram.ui.Components.ChatScrimPopupContainerLayout;
+import org.telegram.ui.Components.ChatSearchTabs;
+import org.telegram.ui.Components.ChatThemeBottomSheet;
+import org.telegram.ui.Components.ChecksHintView;
+import org.telegram.ui.Components.CircularProgressDrawable;
+import org.telegram.ui.Components.ClippingImageView;
+import org.telegram.ui.Components.ColoredImageSpan;
+import org.telegram.ui.Components.CombinedDrawable;
+import org.telegram.ui.Components.CounterView;
+import org.telegram.ui.Components.CrossfadeDrawable;
+import org.telegram.ui.Components.CubicBezierInterpolator;
+import org.telegram.ui.Components.EditTextBoldCursor;
+import org.telegram.ui.Components.EditTextCaption;
+import org.telegram.ui.Components.EmbedBottomSheet;
+import org.telegram.ui.Components.EmojiPacksAlert;
+import org.telegram.ui.Components.EmojiView;
+import org.telegram.ui.Components.ExtendedGridLayoutManager;
+import org.telegram.ui.Components.FireworksOverlay;
+import org.telegram.ui.Components.FlickerLoadingView;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugController;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugProvider;
 import org.telegram.ui.Components.Forum.ForumUtilities;
+import org.telegram.ui.Components.FragmentContextView;
+import org.telegram.ui.Components.GigagroupConvertAlert;
+import org.telegram.ui.Components.HashtagActivity;
+import org.telegram.ui.Components.HashtagHistoryView;
+import org.telegram.ui.Components.HideViewAfterAnimation;
+import org.telegram.ui.Components.HintView;
+import org.telegram.ui.Components.ImageUpdater;
+import org.telegram.ui.Components.ImportingAlert;
+import org.telegram.ui.Components.InstantCameraView;
+import org.telegram.ui.Components.InviteMembersBottomSheet;
+import org.telegram.ui.Components.ItemOptions;
+import org.telegram.ui.Components.JoinGroupAlert;
+import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.LinkSpanDrawable;
+import org.telegram.ui.Components.MediaActivity;
+import org.telegram.ui.Components.MentionsContainerView;
+import org.telegram.ui.Components.MessageBackgroundDrawable;
+import org.telegram.ui.Components.MessageContainsEmojiButton;
+import org.telegram.ui.Components.MessagePreviewView;
+import org.telegram.ui.Components.MessagePrivateSeenView;
+import org.telegram.ui.Components.MotionBackgroundDrawable;
+import org.telegram.ui.Components.NumberTextView;
+import org.telegram.ui.Components.PhonebookShareAlert;
+import org.telegram.ui.Components.PinnedLineView;
+import org.telegram.ui.Components.PipRoundVideoView;
+import org.telegram.ui.Components.PollVotesAlert;
+import org.telegram.ui.Components.PopupSwipeBackLayout;
 import org.telegram.ui.Components.Premium.GiftPremiumBottomSheet;
 import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
@@ -261,9 +332,47 @@ import org.telegram.ui.Components.Premium.PremiumPreviewBottomSheet;
 import org.telegram.ui.Components.Premium.boosts.BoostDialogs;
 import org.telegram.ui.Components.Premium.boosts.GiftInfoBottomSheet;
 import org.telegram.ui.Components.Premium.boosts.PremiumPreviewGiftLinkBottomSheet;
+import org.telegram.ui.Components.QuoteSpan;
+import org.telegram.ui.Components.RLottieDrawable;
+import org.telegram.ui.Components.RLottieImageView;
+import org.telegram.ui.Components.RadialProgressView;
+import org.telegram.ui.Components.ReactedHeaderView;
+import org.telegram.ui.Components.ReactedUsersListView;
+import org.telegram.ui.Components.ReactionTabHolderView;
 import org.telegram.ui.Components.Reactions.ChatSelectionReactionMenuOverlay;
 import org.telegram.ui.Components.Reactions.ReactionsEffectOverlay;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
+import org.telegram.ui.Components.ReactionsContainerLayout;
+import org.telegram.ui.Components.RecyclerAnimationScrollHelper;
+import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.ScaleStateListAnimator;
+import org.telegram.ui.Components.ScrimOptions;
+import org.telegram.ui.Components.SearchTagsList;
+import org.telegram.ui.Components.ShareAlert;
+import org.telegram.ui.Components.SharedMediaLayout;
+import org.telegram.ui.Components.SizeNotifierFrameLayout;
+import org.telegram.ui.Components.StickerEmptyView;
+import org.telegram.ui.Components.StickersAlert;
+import org.telegram.ui.Components.SuggestEmojiView;
+import org.telegram.ui.Components.TextSelectionHint;
+import org.telegram.ui.Components.TextStyleSpan;
+import org.telegram.ui.Components.ThanosEffect;
+import org.telegram.ui.Components.ThemeEditorView;
+import org.telegram.ui.Components.TopicSeparator;
+import org.telegram.ui.Components.TopicsTabsView;
+import org.telegram.ui.Components.TranscribeButton;
+import org.telegram.ui.Components.TranslateAlert2;
+import org.telegram.ui.Components.TrendingStickersAlert;
+import org.telegram.ui.Components.TypefaceSpan;
+import org.telegram.ui.Components.URLSpanBotCommand;
+import org.telegram.ui.Components.URLSpanMono;
+import org.telegram.ui.Components.URLSpanNoUnderline;
+import org.telegram.ui.Components.URLSpanReplacement;
+import org.telegram.ui.Components.URLSpanUserMention;
+import org.telegram.ui.Components.UndoView;
+import org.telegram.ui.Components.UnreadCounterTextView;
+import org.telegram.ui.Components.ViewHelper;
+import org.telegram.ui.Components.ViewPagerFixed;
 import org.telegram.ui.Components.quickforward.QuickShareSelectorOverlayLayout;
 import org.telegram.ui.Components.spoilers.SpoilerEffect;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
@@ -274,6 +383,7 @@ import org.telegram.ui.Stars.StarReactionsOverlay;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
 import org.telegram.ui.Stars.StarsReactionsSheet;
+import org.telegram.ui.Stories.PublicStoriesList;
 import org.telegram.ui.Stars.MessageSuggestionOfferSheet;
 import org.telegram.messenger.utils.tlutils.AmountUtils;
 import org.telegram.ui.Stories.PublicStoriesList;
@@ -31000,7 +31110,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             "[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)+");
     }
 
-    @SuppressLint("AppCompatCustomView")
+    @SuppressLint({"ClickableViewAccessibility", "AppCompatCustomView"})
     private boolean createMenu(View v, boolean single, boolean listView, float x, float y, boolean searchGroup, boolean longpress) {
         return createMenu(v, single, listView, x, y, searchGroup, longpress, false);
     }
@@ -45055,7 +45165,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         final MessageObject.GroupedMessages groupedMessages = selectedObjectGroup;
         final int type = getMessageType(message);
         CharSequence messageTextToTranslate = null;
-        int[] messageIdToTranslate = new int[] { message.getId() };
+        int[] messageIdToTranslate = new int[]{message.getId()};
         
         boolean allowChatActions = true;
         boolean allowPin;
@@ -45125,8 +45235,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     TLRPC.Poll poll = ((TLRPC.TL_messageMediaPoll) selectedObject.messageOwner.media).poll;
                     StringBuilder pollText = new StringBuilder();
                     pollText = new StringBuilder(poll.question.text).append("\n");
-                    for (TLRPC.PollAnswer answer : poll.answers)
+                    for (TLRPC.PollAnswer answer : poll.answers) {
                         pollText.append("\n\uD83D\uDD18 ").append(answer.text == null ? "" : answer.text.text);
+                    }
                     messageTextToTranslate = pollText.toString();
                 } catch (Exception e) {
                 }
@@ -45679,7 +45790,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     options.add(OPTION_REPLY);
                     icons.add(R.drawable.menu_reply);
                 }
-                if ((selectedObject.type == MessageObject.TYPE_TEXT || selectedObject.isAnimatedEmoji() || selectedObject.isAnimatedEmojiStickers() || getMessageCaption(selectedObject, selectedObjectGroup) != null)) {
+                if ((selectedObject.type == MessageObject.TYPE_TEXT || selectedObject.isAnimatedEmoji() || selectedObject.isAnimatedEmojiStickers()|| getMessageCaption(selectedObject, selectedObjectGroup) != null)) {
                     items.add(LocaleController.getString(R.string.Copy));
                     options.add(OPTION_COPY);
                     icons.add(R.drawable.msg_copy);
@@ -45706,14 +45817,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         items.add(LocaleController.getString(R.string.ShareFile));
                         options.add(OPTION_SHARE);
                         icons.add(R.drawable.msg_shareout);
-                    } else if (selectedObject.isMusic() && !selectedObject.isVoiceOnce() && !selectedObject.isRoundOnce()) {
+                    } else if (selectedObject.isMusic() && !selectedObject.isVoiceOnce()&& !selectedObject.isRoundOnce()) {
                         items.add(LocaleController.getString(R.string.SaveToMusic));
                         options.add(OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC);
                         icons.add(R.drawable.msg_download);
                         items.add(LocaleController.getString(R.string.ShareFile));
                         options.add(OPTION_SHARE);
                         icons.add(R.drawable.msg_shareout);
-                    } else if (!selectedObject.isVideo() && selectedObject.getDocument() != null && !selectedObject.isVoiceOnce() && !selectedObject.isRoundOnce()) {
+                    } else if (!selectedObject.isVideo() && selectedObject.getDocument()!= null && !selectedObject.isVoiceOnce() && !selectedObject.isRoundOnce()) {
                         items.add(LocaleController.getString(R.string.SaveToDownloads));
                         options.add(OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC);
                         icons.add(R.drawable.msg_download);
@@ -45746,7 +45857,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (uid != 0) {
                         user = MessagesController.getInstance(currentAccount).getUser(uid);
                     }
-                    if (user != null && user.id != getUserConfig().getClientUserId() && getContactsController().contactsDict.get(user.id) == null) {
+                    if (user != null && user.id != getUserConfig().getClientUserId()&& getContactsController().contactsDict.get(user.id) == null) {
                         items.add(LocaleController.getString(R.string.AddContactTitle));
                         options.add(OPTION_ADD_CONTACT);
                         icons.add(R.drawable.msg_addcontact);

@@ -81,7 +81,6 @@ public class BubbleActivity extends BasePermissionsActivity implements INavigati
             try {
                 if (!Config.allowScreenshotOnNoForwardChat){
                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-                    AndroidUtilities.logFlagSecure();
                 }
             } catch (Exception e) {
                 FileLog.e(e);

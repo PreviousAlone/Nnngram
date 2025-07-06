@@ -413,16 +413,14 @@ public class BillingController {
     /**
      * All consumable purchases must be consumed. For us it is a gift.
      * Without confirmation the user will not be able to buy the product again.
-    
-    public void consumeGiftPurchase(Purchase purchase, TLRPC.InputStorePaymentPurpose purpose, Runnable onDone) {
-        if (purpose instanceof TLRPC.TL_inputStorePaymentGiftPremium ||
-            purpose instanceof TLRPC.TL_inputStorePaymentPremiumGiftCode ||
-            purpose instanceof TLRPC.TL_inputStorePaymentStarsTopup ||
-            purpose instanceof TLRPC.TL_inputStorePaymentStarsGift ||
-            purpose instanceof TLRPC.TL_inputStorePaymentPremiumGiveaway ||
-            purpose instanceof TLRPC.TL_inputStorePaymentStarsGiveaway ||
-            purpose instanceof TLRPC.TL_inputStorePaymentAuthCode
-        ) {
+
+    private void consumeGiftPurchase(Purchase purchase, TLRPC.InputStorePaymentPurpose purpose) {
+        if (purpose instanceof TLRPC.TL_inputStorePaymentGiftPremium
+                || purpose instanceof TLRPC.TL_inputStorePaymentPremiumGiftCode
+                || purpose instanceof TLRPC.TL_inputStorePaymentStarsTopup
+                || purpose instanceof TLRPC.TL_inputStorePaymentStarsGift
+                || purpose instanceof TLRPC.TL_inputStorePaymentPremiumGiveaway
+                || purpose instanceof TLRPC.TL_inputStorePaymentStarsGiveaway) {
             FileLog.d("BillingController consumeGiftPurchase " + purpose + " " + purchase.getOrderId() + " " + purchase.getPurchaseToken());
             billingClient.consumeAsync(
                 ConsumeParams.newBuilder()
@@ -536,6 +534,6 @@ public class BillingController {
             case BillingClient.BillingResponseCode.ITEM_NOT_OWNED:        return "ITEM_NOT_OWNED";
             case BillingClient.BillingResponseCode.NETWORK_ERROR:         return "NETWORK_ERROR";
         }
-        return "BILLING_UNKNOWN_ERROR";
+        return null;
     }*/
 }
