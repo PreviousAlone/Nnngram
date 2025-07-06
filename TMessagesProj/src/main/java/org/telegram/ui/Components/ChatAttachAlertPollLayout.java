@@ -102,6 +102,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
     private KeyboardNotifier keyboardNotifier;
     private boolean waitingForKeyboardOpen;
     private boolean destroyed;
+    public boolean doneItemEnabled;
     private boolean isPremium;
 
     private final int maxAnswersCount;
@@ -516,7 +517,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
 
     @Override
     public void onHideShowProgress(float progress) {
-        parentAlert.doneItem.setAlpha((parentAlert.doneItem.isEnabled() ? 1.0f : 0.5f) * progress);
+        parentAlert.updateDoneItemEnabled();
     }
 
     @Override
@@ -577,7 +578,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
                     }
                 });
             } else {
-                if (quizPoll && parentAlert.doneItem.getAlpha() != 1.0f) {
+                if (quizPoll && !doneItemEnabled) {
                     int checksCount = 0;
                     for (int a = 0; a < answersChecks.length; a++) {
                         if (!TextUtils.isEmpty(getFixedString(answers[a])) && answersChecks[a]) {
@@ -827,8 +828,8 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
             allowNesterScroll = true;
         }
         parentAlert.setAllowNestedScroll(allowNesterScroll);
-        parentAlert.doneItem.setEnabled(quizPoll && checksCount == 0 || enabled);
-        parentAlert.doneItem.setAlpha(enabled ? 1.0f : 0.5f);
+        doneItemEnabled = quizPoll && checksCount == 0 || enabled;
+        parentAlert.updateDoneItemEnabled();
     }
 
     private void updateRows() {
@@ -896,7 +897,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
         } else {
             parentAlert.actionBar.setTitle(getString(R.string.NewPoll));
         }
-        parentAlert.doneItem.setVisibility(VISIBLE);
+        parentAlert.updateDoneItemEnabled();
         layoutManager.scrollToPositionWithOffset(0, 0);
     }
 
@@ -914,7 +915,8 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
 
     @Override
     public void onHidden() {
-        parentAlert.doneItem.setVisibility(INVISIBLE);
+
+        parentAlert.updateDoneItemEnabled();
     }
 
     @Override
@@ -1251,6 +1253,10 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
         }
     }
 
+    public boolean hasDoneItem() {
+        return true;
+    }
+
     private void hideEmojiPopup(boolean byBackButton) {
         if (!isPremium) {
             return;
@@ -1309,6 +1315,10 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
 
     public boolean isAnimatePopupClosing() {
         return isAnimatePopupClosing;
+    }
+
+    public boolean isDoneItemEnabled() {
+        return doneItemEnabled;
     }
 
     public boolean isPopupShowing() {
