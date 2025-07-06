@@ -1348,7 +1348,9 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         @Override
         public void setTranslationY(float translationY) {
             super.setTranslationY(translationY);
-            topBulletinContainer.setTranslationY(-topBulletinContainer.getTop() - topBulletinContainer.getHeight() + translationY + Math.max(AndroidUtilities.statusBarHeight + dp(56) + topBulletinContainer.getHeight(), getSheetTop()));
+            if (topBulletinContainer != null) {
+                topBulletinContainer.setTranslationY(-topBulletinContainer.getTop() - topBulletinContainer.getHeight() + translationY + Math.max(AndroidUtilities.statusBarHeight + dp(56) + topBulletinContainer.getHeight(), getSheetTop()));
+            }
         }
 
         private Boolean lightStatusBarFull;
