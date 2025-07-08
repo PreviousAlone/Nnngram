@@ -5098,6 +5098,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
                     if (!photoEntry.isVideo && photoEntry.imagePath != null) {
                         info.path = photoEntry.imagePath;
+                        if (photoEntry.highQuality) {
+                            info.originalPhotoEntry = photoEntry.clone();
+                        }
                     } else if (photoEntry.path != null) {
                         info.path = photoEntry.path;
                     }
@@ -5110,6 +5113,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     info.videoEditedInfo = videoEditedInfo;
                     info.canDeleteAfter = true;
                     info.hasMediaSpoilers = photoEntry.hasSpoiler;
+                    info.highQuality = photoEntry.editedInfo == null && photoEntry.highQuality;
                     photos.add(info);
                     photoEntry.reset();
                     sending = true;
