@@ -102,8 +102,6 @@ dependencies {
     implementation(libs.ktor.client.contentNegotiation)
     implementation(libs.ktor.serialization.json)
 
-    implementation(files("libs/ffmpeg-kit-video-4.4.LTS.aar"))
-    implementation(libs.smart.exception.java)
     implementation(libs.lottie)
 
     implementation(libs.mediarouter)
