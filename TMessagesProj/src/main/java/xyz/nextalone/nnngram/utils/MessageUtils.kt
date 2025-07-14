@@ -1036,7 +1036,7 @@ class MessageUtils(num: Int) : BaseController(num) {
                     Log.d("VideoToGif", "FFmpeg extracted ${frames.size} frames, creating GIF with GifEncoder")
 
                     // Convert Array<Bitmap> to List<Bitmap>
-                    val frameList = frames.map { it }
+                    val frameList = frames.toList()
 
                     val frameDelay = (1000.0 / originalFps).toInt().coerceAtLeast(10)
 
