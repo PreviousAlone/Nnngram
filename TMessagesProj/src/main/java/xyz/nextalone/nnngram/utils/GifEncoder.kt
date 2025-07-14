@@ -28,6 +28,10 @@ import java.io.OutputStream
 import kotlin.math.max
 
 class GifEncoder {
+    companion object {
+        private const val TAG = "GifEncoder"
+    }
+
     private var width = 0
     private var height = 0
     private var x = 0
@@ -39,9 +43,9 @@ class GifEncoder {
     private var started = false
     private var out: OutputStream? = null
     private var image: Bitmap? = null
-    private var pixels: ByteArray? = null
+    private var pixels: IntArray? = null
     private var indexedPixels: ByteArray? = null
-    private var colorDepth = 0
+    private var colorDepth = 8
     private var colorTab: ByteArray? = null
     private var usedEntry = BooleanArray(256)
     private var palSize = 7
@@ -50,87 +54,75 @@ class GifEncoder {
     private var firstFrame = true
     private var sizeSet = false
     private var sample = 10
-    private var currentFramePlaceholder: ByteArray? = null
+    private var currentFramePlaceholder: Int = 0
     private var currentFrameHasTransparency = false
     private var globalQuantizer: NeuQuant? = null
+    private var rgbBuffer: ByteArray? = null
 
     fun setDelay(ms: Int) {
         delay = maxOf(1, (ms + 5) / 10)
     }
 
-    fun setDispose(code: Int) {
-        if (code >= 0) {
-            dispose = code
-        }
-    }
-
     fun setRepeat(iter: Int) {
-        if (iter >= 0) {
-            repeat = iter
-        }
-    }
-
-    fun setTransparent(c: Int) {
-        transparent = c
+        repeat = if (iter >= 0) iter else -1
     }
 
     fun addFrame(im: Bitmap?): Boolean {
-        if (im == null || !started) {
-            return false
-        }
-        var ok = true
-        try {
-            if (!sizeSet) {
-                setSize(im.width, im.height)
-            }
-            image?.recycle()
-            image = im
-            getImagePixels()
+        if (im == null || !started) return false
+
+        return try {
+            if (!sizeSet) setSize(im.width, im.height)
+
+            processFrame(im)
             analyzePixels()
+
             if (firstFrame) {
                 writeLSD()
                 writePalette()
-                if (repeat >= 0) {
-                    writeNetscapeExt()
-                }
+                if (repeat >= 0) writeNetscapeExt()
             }
+
             writeGraphicCtrlExt()
             writeImageDesc()
             writePixels()
             firstFrame = false
+            true
         } catch (_: IOException) {
-            ok = false
+            Log.e(TAG, "Error adding frame")
+            false
         }
-        return ok
     }
 
     fun finish(): Boolean {
         if (!started) return false
-        var ok = true
-        started = false
-        try {
+
+        return try {
+            started = false
             out?.write(0x3b)
             out?.flush()
-            if (closeStream) {
-                out?.close()
-            }
-        } catch (e: IOException) {
-            ok = false
+            if (closeStream) out?.close()
+            cleanup()
+            true
+        } catch (_: IOException) {
+            Log.e(TAG, "Error finishing GIF")
+            false
         }
+    }
 
-        // Reset for subsequent use
+    private fun cleanup() {
         transIndex = 0
         out = null
+        image?.recycle()
         image = null
         pixels = null
         indexedPixels = null
         colorTab = null
-        currentFramePlaceholder = null
+        rgbBuffer = null
+        currentFramePlaceholder = 0
         currentFrameHasTransparency = false
         globalQuantizer = null
         closeStream = false
         firstFrame = true
-        return ok
     }
 
     fun setFrameRate(fps: Float) {
@@ -171,140 +163,129 @@ class GifEncoder {
     }
 
     private fun analyzePixels() {
-        val len = pixels!!.size
-        val nPix = len / 4  // ARGB format
+        val nPix = pixels!!.size
         indexedPixels = ByteArray(nPix)
-
         var hasTransparent = false
-        val alphaThreshold = 128
+        var transparentPixelCount = 0
 
-        // Check for transparency
         for (i in 0 until nPix) {
-            val alphaIndex = i * 4 + 3
-            if (alphaIndex < len && (pixels!![alphaIndex].toInt() and 0xff) < alphaThreshold) {
+            val pixel = pixels!![i]
+            val alpha = (pixel ushr 24) and 0xFF
+            if (alpha < 128) {
                 hasTransparent = true
-                break
+                transparentPixelCount++
             }
         }
 
-        Log.d("GifEncoder", "Frame analysis: hasTransparent=$hasTransparent, nPix=$nPix")
-
-        // Store transparency state for later use in writeGraphicCtrlExt
+        Log.d(TAG, "Frame analysis: hasTransparent=$hasTransparent, transparentPixels=$transparentPixelCount, totalPixels=$nPix")
         currentFrameHasTransparency = hasTransparent
 
-        // Convert ARGB to RGB for quantization
-        val rgbPixels = ByteArray(nPix * 3)
+        val rgbSize = nPix * 3
+        if (rgbBuffer == null || rgbBuffer!!.size != rgbSize) rgbBuffer = ByteArray(rgbSize)
 
-        // Find and cache a safe placeholder color for this frame only if we have transparency
-        var safePlaceholder: ByteArray? = null
         if (hasTransparent) {
-            safePlaceholder = findSafePlaceholderColor(nPix)
-            currentFramePlaceholder = safePlaceholder
-            Log.d(
-                "GifEncoder",
-                "Found transparency, using placeholder color: [${safePlaceholder[0]}, ${safePlaceholder[1]}, ${safePlaceholder[2]}]"
-            )
+            currentFramePlaceholder = findSafePlaceholderColorOptimized()
+            Log.d(TAG, "Using placeholder color: 0x${Integer.toHexString(currentFramePlaceholder)}")
         } else {
-            Log.d("GifEncoder", "No transparency detected in this frame")
-            // Reset transIndex for non-transparent frames
             transIndex = 0
         }
 
-        for (i in 0 until nPix) {
-            val srcIndex = i * 4
-            val dstIndex = i * 3
-            val alpha = if (srcIndex + 3 < len) pixels!![srcIndex + 3].toInt() and 0xff else 255
+        convertPixelsToRGB(hasTransparent)
 
-            if (hasTransparent && alpha < alphaThreshold) {
-                rgbPixels[dstIndex] = safePlaceholder!![0]   // B
-                rgbPixels[dstIndex + 1] = safePlaceholder[1] // G
-                rgbPixels[dstIndex + 2] = safePlaceholder[2] // R
-            } else {
-                rgbPixels[dstIndex] = if (srcIndex < len) pixels!![srcIndex] else 0             // B
-                rgbPixels[dstIndex + 1] = if (srcIndex + 1 < len) pixels!![srcIndex + 1] else 0 // G
-                rgbPixels[dstIndex + 2] = if (srcIndex + 2 < len) pixels!![srcIndex + 2] else 0 // R
-            }
-        }
-
-        val nq = NeuQuant(rgbPixels, rgbPixels.size, sample)
-
-        if (firstFrame) {
+        val quantizer = if (firstFrame) {
+            val nq = NeuQuant(rgbBuffer!!, rgbSize, sample)
             globalQuantizer = nq
             colorTab = nq.process()
 
-            // Convert map from BGR to RGB
-            var i = 0
-            while (i < colorTab!!.size) {
+            for (i in colorTab!!.indices step 3) {
                 val temp = colorTab!![i]
                 colorTab!![i] = colorTab!![i + 2]
                 colorTab!![i + 2] = temp
                 usedEntry[i / 3] = false
-                i += 3
             }
-            Log.d("GifEncoder", "Created global color table for first frame")
+            Log.d(TAG, "Created global color table for first frame")
+            nq
         } else {
-            Log.d("GifEncoder", "Reusing global color table for frame")
+            Log.d(TAG, "Reusing global color table")
+            globalQuantizer!!
         }
 
-        // Use the global quantizer for all frames
-        val quantizer = globalQuantizer ?: nq
+        if (hasTransparent) {
+            val r = (currentFramePlaceholder ushr 16) and 0xFF
+            val g = (currentFramePlaceholder ushr 8) and 0xFF
+            val b = currentFramePlaceholder and 0xFF
 
-        if (hasTransparent && safePlaceholder != null) {
-            transIndex = quantizer.map(
-                safePlaceholder[0].toInt() and 0xff,
-                safePlaceholder[1].toInt() and 0xff,
-                safePlaceholder[2].toInt() and 0xff
-            )
+            transIndex = quantizer.map(b, g, r)
+            Log.d(TAG, "Transparent index set to: $transIndex")
 
-            Log.d("GifEncoder", "Transparent index set to: $transIndex")
-
-            if (firstFrame) {
-                val paletteIndex = transIndex * 3
-                if (paletteIndex + 2 < colorTab!!.size) {
-                    colorTab!![paletteIndex] = safePlaceholder[2]     // R
-                    colorTab!![paletteIndex + 1] = safePlaceholder[1] // G  
-                    colorTab!![paletteIndex + 2] = safePlaceholder[0] // B
-                    Log.d(
-                        "GifEncoder",
-                        "Set palette entry $transIndex to transparent color [${safePlaceholder[2]}, ${safePlaceholder[1]}, ${safePlaceholder[0]}]"
-                    )
-                }
-            }
-        } else {
-            transIndex = 0
-            Log.d("GifEncoder", "No transparency index set")
+            if (firstFrame) updatePaletteForTransparency(r, g, b)
         }
 
-        // Map image pixels to new palette
-        var transparentPixelCount = 0
-        for (j in 0 until nPix) {
-            val srcIndex = j * 4
-            val alpha = if (srcIndex + 3 < len) pixels!![srcIndex + 3].toInt() and 0xff else 255
+        mapPixelsToIndices(quantizer, hasTransparent)
 
-            if (hasTransparent && alpha < alphaThreshold) {
-                indexedPixels!![j] = transIndex.toByte()
-                transparentPixelCount++
-            } else {
-                val rgbIndex = j * 3
-                val index = quantizer.map(
-                    rgbPixels[rgbIndex].toInt() and 0xff,
-                    rgbPixels[rgbIndex + 1].toInt() and 0xff,
-                    rgbPixels[rgbIndex + 2].toInt() and 0xff
-                )
-                usedEntry[index] = true
-                indexedPixels!![j] = index.toByte()
-            }
-        }
-
-        Log.d("GifEncoder", "Indexed $transparentPixelCount transparent pixels to index $transIndex")
-
-        pixels = null
         colorDepth = 8
         palSize = 7
 
         if (transparent != -1 && !hasTransparent) {
             transIndex = findClosest(transparent)
-            Log.d("GifEncoder", "Legacy transparent color handling: transIndex=$transIndex")
+            Log.d(TAG, "Legacy transparent color handling: transIndex=$transIndex")
+        }
+    }
+
+    private fun convertPixelsToRGB(hasTransparent: Boolean) {
+        val placeholderR = if (hasTransparent) (currentFramePlaceholder ushr 16) and 0xFF else 0
+        val placeholderG = if (hasTransparent) (currentFramePlaceholder ushr 8) and 0xFF else 0
+        val placeholderB = if (hasTransparent) currentFramePlaceholder and 0xFF else 0
+
+        for (i in pixels!!.indices) {
+            val pixel = pixels!![i]
+            val alpha = (pixel ushr 24) and 0xFF
+            val rgbIndex = i * 3
+
+            if (hasTransparent && alpha < 128) {
+                rgbBuffer!![rgbIndex] = placeholderB.toByte()
+                rgbBuffer!![rgbIndex + 1] = placeholderG.toByte()
+                rgbBuffer!![rgbIndex + 2] = placeholderR.toByte()
+            } else {
+                rgbBuffer!![rgbIndex] = (pixel and 0xFF).toByte()
+                rgbBuffer!![rgbIndex + 1] = ((pixel ushr 8) and 0xFF).toByte()
+                rgbBuffer!![rgbIndex + 2] = ((pixel ushr 16) and 0xFF).toByte()
+            }
+        }
+    }
+
+    private fun mapPixelsToIndices(quantizer: NeuQuant, hasTransparent: Boolean) {
+        var transparentCount = 0
+
+        for (i in pixels!!.indices) {
+            val pixel = pixels!![i]
+            val alpha = (pixel ushr 24) and 0xFF
+
+            if (hasTransparent && alpha < 128) {
+                indexedPixels!![i] = transIndex.toByte()
+                transparentCount++
+            } else {
+                val rgbIndex = i * 3
+                val index = quantizer.map(
+                    rgbBuffer!![rgbIndex].toInt() and 0xFF,
+                    rgbBuffer!![rgbIndex + 1].toInt() and 0xFF,
+                    rgbBuffer!![rgbIndex + 2].toInt() and 0xFF
+                )
+                usedEntry[index] = true
+                indexedPixels!![i] = index.toByte()
+            }
+        }
+
+        Log.d(TAG, "Mapped $transparentCount transparent pixels to index $transIndex")
+    }
+
+    private fun updatePaletteForTransparency(r: Int, g: Int, b: Int) {
+        val paletteIndex = transIndex * 3
+        if (paletteIndex + 2 < colorTab!!.size) {
+            colorTab!![paletteIndex] = r.toByte()
+            colorTab!![paletteIndex + 1] = g.toByte()
+            colorTab!![paletteIndex + 2] = b.toByte()
+            Log.d(TAG, "Set palette entry $transIndex to transparent color [$r, $g, $b]")
         }
     }
 
@@ -332,64 +313,53 @@ class GifEncoder {
         return minpos
     }
 
-    private fun getImagePixels() {
-        val w = image!!.width
-        val h = image!!.height
-        if (w != width || h != height) {
-            val temp = createBitmap(width, height)
-            val g = Canvas(temp)
-            g.drawBitmap(image!!, 0f, 0f, Paint())
-            image = temp
-        }
-        val data = getImageData(image!!)
-        pixels = ByteArray(data.size * 4)  // ARGB format
-        for (i in data.indices) {
-            val td = data[i]
-            val tind = i * 4
-            pixels!![tind] = (td and 0xFF).toByte()           // B
-            pixels!![tind + 1] = ((td shr 8) and 0xFF).toByte()  // G
-            pixels!![tind + 2] = ((td shr 16) and 0xFF).toByte() // R
-            pixels!![tind + 3] = ((td shr 24) and 0xFF).toByte() // A
-        }
-    }
+    private fun processFrame(bitmap: Bitmap) {
+        val w = bitmap.width
+        val h = bitmap.height
 
-    private fun getImageData(img: Bitmap): IntArray {
-        val w = img.width
-        val h = img.height
-        val data = IntArray(w * h)
-        img.getPixels(data, 0, w, 0, 0, w, h)
-        return data
+        val processedBitmap = if (w != width || h != height) {
+            val temp = createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(temp)
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+            canvas.drawBitmap(bitmap, 0f, 0f, paint)
+            temp
+        } else {
+            bitmap
+        }
+
+        val pixelCount = width * height
+        if (pixels == null || pixels!!.size != pixelCount) {
+            pixels = IntArray(pixelCount)
+        }
+
+        processedBitmap.getPixels(pixels!!, 0, width, 0, 0, width, height)
+        if (processedBitmap !== bitmap) processedBitmap.recycle()
     }
 
     private fun writeGraphicCtrlExt() {
-        out!!.write(0x21)
-        out!!.write(0xf9)
-        out!!.write(4)
-        var transp = 0
-        var disp = 0
+        val out = this.out ?: return
 
-        // Use the stored transparency state from analyzePixels
-        if (currentFrameHasTransparency) {
-            transp = 1
-            disp = 2
-            Log.d("GifEncoder", "Setting transparency flag: transIndex=$transIndex")
+        out.write(0x21)
+        out.write(0xf9)
+        out.write(4)
+
+        val (transp, disp) = if (currentFrameHasTransparency) {
+            Log.d(TAG, "Setting transparency flag: transIndex=$transIndex")
+            1 to 2
         } else {
-            Log.d("GifEncoder", "No transparency flag set")
-            disp = 1
+            Log.d(TAG, "No transparency flag set")
+            0 to 1
         }
 
-        if (dispose >= 0) {
-            disp = dispose and 7
-        }
-        disp = disp shl 2
-        out!!.write(0 or disp or 0 or transp)
+        val finalDisp = if (dispose >= 0) (dispose and 7) else disp
+        out.write((finalDisp shl 2) or transp)
         writeShort(delay)
-        out!!.write(if (transp == 1) transIndex else 0)
-        out!!.write(0)
+        out.write(if (transp == 1) transIndex else 0)
+        out.write(0)
 
         Log.d(
-            "GifEncoder",
-            "Graphic Control Extension: transp=$transp, disp=${disp shr 2}, delay=$delay, transIndex=${if (transp == 1) transIndex else 0}"
+            TAG,
+            "Graphic Control Extension: transp=$transp, disp=$finalDisp, delay=$delay, transIndex=${if (transp == 1) transIndex else 0}"
         )
     }
 
@@ -432,30 +402,30 @@ class GifEncoder {
     }
 
     private fun writePixels() {
-        Log.d("GifEncoder", "Writing pixels: ${indexedPixels!!.size} indexed pixels, colorDepth=$colorDepth")
-        val encoder = LZWEncoder(width, height, indexedPixels!!, colorDepth)
+        val indexedPixels = this.indexedPixels ?: return
+        Log.d(TAG, "Writing pixels: ${indexedPixels.size} indexed pixels, colorDepth=$colorDepth")
+        val encoder = LZWEncoder(width, height, indexedPixels, colorDepth)
         encoder.encode(out!!)
-        Log.d("GifEncoder", "Finished writing pixels for frame")
+        Log.d(TAG, "Finished writing pixels for frame")
     }
 
     private fun writeShort(value: Int) {
-        out!!.write(value and 0xff)
-        out!!.write((value shr 8) and 0xff)
-    }
-
-    private fun writeString(s: String) {
-        for (i in s.indices) {
-            out!!.write(s[i].code)
+        out?.apply {
+            write(value and 0xff)
+            write((value ushr 8) and 0xff)
         }
     }
 
-    /**
-     * NeuQuant Neural-Net Quantization Algorithm
-     */
+    private fun writeString(s: String) {
+        out?.apply {
+            s.forEach { char ->
+                write(char.code)
+            }
+        }
+    }
+
     private class NeuQuant(
-        private val thepicture: ByteArray,
-        private val lengthcount: Int,
-        private var samplefac: Int
+        private val thepicture: ByteArray, private val lengthcount: Int, private var samplefac: Int
     ) {
         companion object {
             const val NETSIZE = 256
@@ -496,9 +466,11 @@ class GifEncoder {
         init {
             for (i in 0 until NETSIZE) {
                 val p = network[i]
-                p[0] = (i shl (NETBIASSHIFT + 8)) / NETSIZE
-                p[1] = p[0]
-                p[2] = p[0]
+                val value = (i shl (NETBIASSHIFT + 8)) / NETSIZE
+                p[0] = value
+                p[1] = value
+                p[2] = value
+                p[3] = i
                 freq[i] = INTBIAS / NETSIZE
                 bias[i] = 0
             }
@@ -756,14 +728,8 @@ class GifEncoder {
         }
     }
 
-    /**
-     * LZW Encoder
-     */
     private class LZWEncoder(
-        private val imgW: Int,
-        private val imgH: Int,
-        private val pixAry: ByteArray,
-        private val initCodeSize: Int
+        private val imgW: Int, private val imgH: Int, private val pixAry: ByteArray, private val initCodeSize: Int
     ) {
         companion object {
             const val EOF = -1
@@ -785,20 +751,23 @@ class GifEncoder {
         private var eofCode = 0
         private var curAccum = 0
         private var curBits = 0
+
         private val masks = intArrayOf(
             0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF,
             0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF
         )
+
         private var aCount = 0
         private val accum = ByteArray(256)
         private var remaining = 0
         private var curPixel = 0
 
         fun encode(os: OutputStream) {
-            os.write(max(2, initCodeSize))
+            val codeSize = max(2, initCodeSize)
+            os.write(codeSize)
             remaining = imgW * imgH
             curPixel = 0
-            compress(max(2, initCodeSize) + 1, os)
+            compress(codeSize + 1, os)
             os.write(0)
         }
 
@@ -858,11 +827,7 @@ class GifEncoder {
 
         private fun output(code: Int, outs: OutputStream) {
             curAccum = curAccum and masks[curBits]
-            if (curBits > 0) {
-                curAccum = curAccum or (code shl curBits)
-            } else {
-                curAccum = code
-            }
+            curAccum = if (curBits > 0) curAccum or (code shl curBits) else code
             curBits += nBits
             while (curBits >= 8) {
                 charOut((curAccum and 0xff).toByte(), outs)
@@ -921,53 +886,29 @@ class GifEncoder {
             return pix.toInt() and 0xff
         }
 
-        private fun maxcode(nBits: Int): Int {
-            return (1 shl nBits) - 1
-        }
+        private fun maxcode(nBits: Int): Int = (1 shl nBits) - 1
     }
 
-    /**
-     * Find a safe placeholder color that doesn't exist in the current frame
-     * Returns [B, G, R] byte array
-     */
-    private fun findSafePlaceholderColor(nPix: Int): ByteArray {
-        if (pixels == null) return byteArrayOf(-1, 0, -1)
+    private fun findSafePlaceholderColorOptimized(): Int {
+        if (pixels == null) return 0xFF00FF
 
-        val len = pixels!!.size
-        val alphaThreshold = 128
-        val existingColors = mutableSetOf<Int>()
+        val existingColors = HashSet<Int>(pixels!!.size / 4)
 
-        for (i in 0 until nPix) {
-            val srcIndex = i * 4
-            val alpha = if (srcIndex + 3 < len) pixels!![srcIndex + 3].toInt() and 0xff else 255
-
-            if (alpha >= alphaThreshold) {
-                val b = if (srcIndex < len) pixels!![srcIndex].toInt() and 0xff else 0
-                val g = if (srcIndex + 1 < len) pixels!![srcIndex + 1].toInt() and 0xff else 0
-                val r = if (srcIndex + 2 < len) pixels!![srcIndex + 2].toInt() and 0xff else 0
-                val colorInt = (r shl 16) or (g shl 8) or b
-                existingColors.add(colorInt)
+        for (pixel in pixels!!) {
+            val alpha = (pixel ushr 24) and 0xFF
+            if (alpha >= 128) {
+                val rgb = pixel and 0xFFFFFF
+                existingColors.add(rgb)
             }
         }
 
-        val priorityColors = arrayOf(
-            byteArrayOf(-1, 0, -1),
-            byteArrayOf(0, -1, -1),
-            byteArrayOf(-1, -1, 0),
-            byteArrayOf(1, 1, 1),
-            byteArrayOf(-2, -2, -2),
-            byteArrayOf(-1, 0, 0),
-            byteArrayOf(0, -1, 0),
-            byteArrayOf(0, 0, -1),
+        val priorityColors = intArrayOf(
+            0xFF00FF, 0x00FFFF, 0xFFFF00, 0x010101, 0xFEFEFE, 0xFF0000, 0x00FF00, 0x0000FF
         )
 
         for (color in priorityColors) {
-            val r = color[2].toInt() and 0xff
-            val g = color[1].toInt() and 0xff
-            val b = color[0].toInt() and 0xff
-            val colorInt = (r shl 16) or (g shl 8) or b
-            if (!existingColors.contains(colorInt)) {
-                Log.d("GifEncoder", "Using priority placeholder color: [$b, $g, $r] (RGB: $r, $g, $b)")
+            if (!existingColors.contains(color)) {
+                Log.d(TAG, "Using priority placeholder color: 0x${Integer.toHexString(color)}")
                 return color
             }
         }
@@ -975,16 +916,16 @@ class GifEncoder {
         for (r in 1..255) {
             for (g in 0..255) {
                 for (b in 0..255) {
-                    val colorInt = (r shl 16) or (g shl 8) or b
-                    if (!existingColors.contains(colorInt)) {
-                        Log.d("GifEncoder", "Found safe placeholder color: [$b, $g, $r] (RGB: $r, $g, $b)")
-                        return byteArrayOf(b.toByte(), g.toByte(), r.toByte())
+                    val color = (r shl 16) or (g shl 8) or b
+                    if (!existingColors.contains(color)) {
+                        Log.d(TAG, "Found safe placeholder color: 0x${Integer.toHexString(color)}")
+                        return color
                     }
                 }
             }
         }
 
-        Log.w("GifEncoder", "Using fallback placeholder color: [255, 0, 255] (magenta)")
-        return byteArrayOf(-1, 0, -1)
+        Log.w(TAG, "Using fallback placeholder color: 0xFF00FF")
+        return 0xFF00FF
     }
 }
