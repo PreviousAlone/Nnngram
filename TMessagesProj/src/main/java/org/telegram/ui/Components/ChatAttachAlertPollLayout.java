@@ -1270,10 +1270,6 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
         }
     }
 
-    public boolean hasDoneItem() {
-        return true;
-    }
-
     private void hideEmojiPopup(boolean byBackButton) {
         if (!isPremium) {
             return;
@@ -1332,10 +1328,6 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
 
     public boolean isAnimatePopupClosing() {
         return isAnimatePopupClosing;
-    }
-
-    public boolean isDoneItemEnabled() {
-        return doneItemEnabled;
     }
 
     public boolean isPopupShowing() {
@@ -1830,7 +1822,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
                     break;
                 }
                 default: {
-                    PollEditTextCell cell = new PollEditTextCell(mContext, false, isPremium ? PollEditTextCell.TYPE_EMOJI : PollEditTextCell.TYPE_DEFAULT, v -> {
+                    PollEditTextCell cell = new PollEditTextCell(mContext, false, isPremium ? PollEditTextCell.TYPE_EMOJI : PollEditTextCell.TYPE_DEFAULT,null , v -> {
                         if (v.getTag() != null) {
                             return;
                         }
@@ -1873,7 +1865,7 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
                                 listAdapter.notifyItemChanged(emptyRow);
                             }
                         }
-                    }, null, resourcesProvider) {
+                    }, resourcesProvider) {
 
                         @Override
                         protected void onActionModeStart(EditTextBoldCursor editText, ActionMode actionMode) {
