@@ -4234,6 +4234,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     int added = 0;
                     for (int a = 0; a < arr.size(); a++) {
                         MessageObject message = arr.get(a);
+                        if (message.isHiddenSensitive())
+                            continue;
                         if (imagesByIdsTemp[loadIndex].indexOfKey(message.getId()) < 0) {
                             imagesByIdsTemp[loadIndex].put(message.getId(), message);
                             if (opennedFromMedia) {
@@ -7286,7 +7288,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         pickerViewSendButton.setContentDescription(getString("Send", R.string.Send));
         ScaleStateListAnimator.apply(pickerViewSendButton);
         pickerViewSendButton.setOnClickListener(v -> {
-            if (parentChatActivity != null && parentChatActivity.editingMessageObject != null && parentChatActivity.editingMessageObject.needResendWhenEdit()) {
+            if (parentChatActivity != null && parentChatActivity.editingMessageObject != null && parentChatActivity.editingMessageObject.needResendWhenEdit() && !ChatObject.canManageMonoForum(currentAccount, parentChatActivity.editingMessageObject.getDialogId())) {
                 final MessageSuggestionParams params = parentFragment != null && parentChatActivity.messageSuggestionParams != null ?
                         parentChatActivity.messageSuggestionParams :
                         MessageSuggestionParams.of(parentChatActivity.editingMessageObject.messageOwner.suggested_post);
@@ -14090,7 +14092,15 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 containerView.setTag(null);
             }
         } else if (messages != null) {
-            imagesArr.addAll(messages);
+            for (int i = 0; i < messages.size(); ++i) {
+                final MessageObject msg = messages.get(i);
+                if (i == index || !msg.isHiddenSensitive()) {
+                    if (i == index) {
+                        index = imagesArr.size();
+                    }
+                    imagesArr.add(msg);
+                }
+            }
             for (int a = 0; a < imagesArr.size(); a++) {
                 MessageObject message = imagesArr.get(a);
                 imagesByIds[message.getDialogId() == currentDialogId ? 0 : 1].put(message.getId(), message);
@@ -14257,7 +14267,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                         imagesArr.clear();
                         for (int i = 0; i < messageObjects.size(); ++i) {
                             MessageObject msg = messageObjects.get(i);
-                            if (MediaDataController.getMediaType(msg.messageOwner) != sharedMediaType)
+                            if (MediaDataController.getMediaType(msg.messageOwner) != sharedMediaType || msg.isHiddenSensitive())
                                 continue;
                             imagesArr.add(msg);
                             imagesByIds[0].put(msg.getId(), msg);
