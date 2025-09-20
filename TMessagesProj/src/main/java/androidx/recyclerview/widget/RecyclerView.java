@@ -2,19 +2,17 @@
  * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this software.
- *  If not, see
- * <https://www.gnu.org/licenses/>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -5249,6 +5247,13 @@ public class RecyclerView extends ViewGroup implements ScrollingView,
                 || mAdapterHelper.hasPendingUpdates();
     }
 
+    public boolean canStopFlinger = true;
+    private boolean isFlingerWorking = false;
+
+    public boolean isFlingerWorking() {
+        return isFlingerWorking;
+    }
+
     class ViewFlinger implements Runnable {
         private int mLastFlingX;
         private int mLastFlingY;
@@ -5268,6 +5273,7 @@ public class RecyclerView extends ViewGroup implements ScrollingView,
         @Override
         public void run() {
             if (mLayout == null) {
+                canStopFlinger = true;
                 stop();
                 return; // no layout, cannot scroll.
             }
@@ -5288,6 +5294,7 @@ public class RecyclerView extends ViewGroup implements ScrollingView,
             // Keep a local reference so that if it is changed during onAnimation method, it won't
             // cause unexpected behaviors
             final OverScroller scroller = mOverScroller;
+            isFlingerWorking = true;
             if (scroller.computeScrollOffset()) {
                 final int x = scroller.getCurrX();
                 final int y = scroller.getCurrY();
@@ -5402,6 +5409,8 @@ public class RecyclerView extends ViewGroup implements ScrollingView,
                 }
             }
 
+            isFlingerWorking = false;
+
             SmoothScroller smoothScroller = mLayout.mSmoothScroller;
             // call this after the onAnimation is complete not to have inconsistent callbacks etc.
             if (smoothScroller != null && smoothScroller.isPendingInitialRun()) {
@@ -5509,6 +5518,7 @@ public class RecyclerView extends ViewGroup implements ScrollingView,
         }
 
         public void stop() {
+            if (!canStopFlinger) return;
             removeCallbacks(this);
             mOverScroller.abortAnimation();
         }
@@ -11790,8 +11800,8 @@ public class RecyclerView extends ViewGroup implements ScrollingView,
          * stop calling SmoothScroller in each animation step.</p>
          */
         void start(RecyclerView recyclerView, LayoutManager layoutManager) {
-
             // Stop any previous ViewFlinger animations now because we are about to start a new one.
+            recyclerView.canStopFlinger = true;
             recyclerView.mViewFlinger.stop();
 
             if (mStarted) {

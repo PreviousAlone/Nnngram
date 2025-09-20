@@ -12,10 +12,6 @@ import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
 import org.telegram.messenger.time.FastDateFormat;
 import org.telegram.messenger.video.MediaCodecVideoConvertor;
 import org.telegram.tgnet.TLObject;
@@ -86,9 +82,11 @@ public class FileLog {
     }
 
     public void init() {
+        return;
     }
 
     public static void ensureInitied() {
+        return;
     }
 
     public static String getNetworkLogPath() {
@@ -169,9 +167,6 @@ public class FileLog {
     }
 
     public static void fatal(final Throwable e, boolean logToAppCenter) {
-        if (e instanceof OutOfMemoryError) {
-            getInstance().dumpMemory(false);
-        }
         if (needSent(e) && logToAppCenter) {
             AndroidUtilities.appCenterLog(e);
         }

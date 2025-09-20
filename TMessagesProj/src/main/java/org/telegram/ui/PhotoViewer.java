@@ -1,20 +1,18 @@
 /*
- * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
+ * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
  * https://github.com/qwq233/Nullgram
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 2 of the License.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with this software.
- *  If not, see
- * <https://www.gnu.org/licenses/>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.telegram.ui;
@@ -14795,7 +14793,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                             compressItem.setVisibility(View.GONE);
                         } else {
                             showVideoTimeline(true, animated);
-                            if (sendPhotoType != SELECT_TYPE_AVATAR) {
+                            if (sendPhotoType != SELECT_TYPE_AVATAR && sendPhotoType != SELECT_TYPE_STICKER) {
                                 videoAvatarTooltip.setVisibility(View.GONE);
                                 cropItem.setVisibility(View.VISIBLE);
                                 cropItem.setTag(1);
@@ -14840,7 +14838,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     isCurrentVideo = false;
                     if (object instanceof MediaController.PhotoEntry && !((MediaController.PhotoEntry) object).isVideo) {
                         final MediaController.PhotoEntry entry = (MediaController.PhotoEntry) object;
-                        if (!entry.isVideo && (currentIndex == index ? getCurrentVideoEditedInfo() : entry.editedInfo) == null && sendPhotoType != SELECT_TYPE_STICKER) {
+                        if (!entry.isVideo && sendPhotoType != SELECT_TYPE_STICKER && (currentIndex == index ? getCurrentVideoEditedInfo() : entry.editedInfo) == null) {
                             compressItem.setVisibility(View.VISIBLE);
                             compressItem.setPhotoState(highQuality);
                         } else {
