@@ -5629,7 +5629,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         idTextView.setInAnimation(context, R.anim.alpha_in);
         idTextView.setOutAnimation(context, R.anim.alpha_out);
         idTextView.setLongClickable(true);
-        avatarContainer2.addView(idTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 118 + 4, -2, 4, 0));
+        if (Config.showIdAndDc) {
+            avatarContainer2.addView(idTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 118 + 4, -2, 4, 0));
+        }
 
         ratingView = new StarRatingView(context);
         ratingView.setLayoutParams(LayoutHelper.createFrame(32, 32, Gravity.LEFT, 118 - 6, -2, 0, 0));
@@ -9391,18 +9393,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             onlineTextView[1].requestLayout();
             mediaCounterTextView.requestLayout();
         }
-
-        width2 = idTextView.getPaint().measureText(idTextView.getText().toString());
-        layoutParams = (FrameLayout.LayoutParams) idTextView.getLayoutParams();
-        prevWidth = layoutParams.width;
-        layoutParams.rightMargin = (int) Math.ceil(idTextView.getTranslationX() + AndroidUtilities.dp(8) + AndroidUtilities.dp(40) * (1.0f - diff));
-        if (width < width2) {
-            layoutParams.width = (int) Math.ceil(width);
-        } else {
-            layoutParams.width = LayoutHelper.WRAP_CONTENT;
-        }
-        if (prevWidth != layoutParams.width) {
-            idTextView.requestLayout();
+        if (Config.showIdAndDc) {
+            width2 = idTextView.getPaint().measureText(idTextView.getText().toString());
+            layoutParams = (FrameLayout.LayoutParams) idTextView.getLayoutParams();
+            prevWidth = layoutParams.width;
+            layoutParams.rightMargin = (int) Math.ceil(idTextView.getTranslationX() + AndroidUtilities.dp(8) + AndroidUtilities.dp(40) * (1.0f - diff));
+            if (width < width2) {
+                layoutParams.width = (int) Math.ceil(width);
+            } else {
+                layoutParams.width = LayoutHelper.WRAP_CONTENT;
+            }
+            if (prevWidth != layoutParams.width) {
+                idTextView.requestLayout();
+            }
         }
     }
 

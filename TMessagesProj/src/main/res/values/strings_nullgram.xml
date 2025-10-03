@@ -412,4 +412,5 @@
     <string name="PlayerDecoderSoftware">Prefer app decoders</string>
     <string name="PlayerDecoderHardware">Only device decoders</string>
     <string name="PlayerDecoderPerferHW">Prefer device decoders</string>
+    <string name="showIdAndDc">Show ID and DC</string>
 </resources>

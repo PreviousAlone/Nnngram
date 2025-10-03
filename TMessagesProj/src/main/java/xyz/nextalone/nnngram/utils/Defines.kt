@@ -238,6 +238,7 @@ object Defines {
     @BooleanConfig const val searchHashtagInCurrentChat = "searchHashtagInCurrentChat"
     @BooleanConfig const val cancelLoadingVideoWhenClose = "cancelLoadingVideoWhenClose"
     @BooleanConfig const val hideSavedAndArchivedMessagesInList = "hideSavedAndArchivedMessagesInList"
+    @BooleanConfig(true) const val showIdAndDc = "showIdAndDc"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"

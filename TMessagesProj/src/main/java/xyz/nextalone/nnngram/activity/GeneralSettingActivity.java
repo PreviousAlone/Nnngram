@@ -116,6 +116,7 @@ public class GeneralSettingActivity extends BaseActivity {
     private int hideProxyEntryInTitleRow;
     private int showProxyEntryInDrawerRow;
     private int hideFilterMuteAllRow;
+    private int showIdAndDcRow;
 
     private int devicesRow;
     private int useSystemEmojiRow;
@@ -449,6 +450,11 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.showProxyEntryInDrawer);
             }
+        } else if (position == showIdAndDcRow) {
+            Config.toggleShowIdAndDc();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.showIdAndDc);
+            }
         }
     }
 
@@ -522,6 +528,7 @@ public class GeneralSettingActivity extends BaseActivity {
         hideFilterMuteAllRow = addRow("hideFilterMuteAll");
         hideProxyEntryInTitleRow = addRow();
         showProxyEntryInDrawerRow = addRow("showProxyEntryInDrawer");
+        showIdAndDcRow = addRow("showIdAndDc");
         general2Row = addRow();
 
         devicesRow = addRow();
@@ -749,6 +756,8 @@ public class GeneralSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.hideProxyEntryInTitle), Config.hideProxyEntryInTitle, true);
                     } else if (position == showProxyEntryInDrawerRow) {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.showProxyEntryInDrawer), Config.showProxyEntryInDrawer, true);
+                    } else if (position == showIdAndDcRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.showIdAndDc), Config.showIdAndDc, true);
                     }
                     break;
                 }
