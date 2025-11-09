@@ -272,7 +272,7 @@ public class MessagesController extends BaseController implements NotificationCe
     private long lastViewsCheckTime;
     public SparseIntArray premiumFeaturesTypesToPosition = new SparseIntArray();
     public SparseIntArray businessFeaturesTypesToPosition = new SparseIntArray();
-    
+
     public ArrayList<DialogFilter> dialogFilters = new ArrayList<>();
     public ArrayList<DialogFilter> frozenDialogFilters = null;
     public ArrayList<Long> hiddenUndoChats = new ArrayList<>();
@@ -14847,6 +14847,10 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public void deleteParticipantFromChat(long chatId, TLRPC.User user, TLRPC.Chat chat, boolean forceDelete, boolean revoke) {
+        deleteParticipantFromChat(chatId, user, chat, forceDelete, revoke, 0);
+    }
+
+    public void deleteParticipantFromChat(long chatId, TLRPC.User user, TLRPC.Chat chat, boolean forceDelete, boolean revoke, int until_date) {
         if (user == null && chat == null) {
             return;
         }
@@ -14887,6 +14891,7 @@ public class MessagesController extends BaseController implements NotificationCe
                 req.banned_rights.send_polls = true;
                 req.banned_rights.invite_users = true;
                 req.banned_rights.change_info = true;
+                req.banned_rights.until_date = until_date;
                 request = req;
             }
         } else {
@@ -23272,7 +23277,7 @@ public class MessagesController extends BaseController implements NotificationCe
         }
 
         public final ArrayList<MessageObject> list = new ArrayList<>();
-        
+
         public MessageObject toMessageObject(TLRPC.Document document) {
             final TLRPC.TL_message msg = new TLRPC.TL_message();
             msg.id = SharedConfig.getLastLocalId();
@@ -23350,7 +23355,7 @@ public class MessagesController extends BaseController implements NotificationCe
             if (getFirstDocument() != lastFirstDocument) {
                 updateFirstMusic();
             }
-            
+
             final MessageObject after = toPosition == 0 ? null : list.get(toPosition - 1);
 
             final TLRPC.Document doc = fromItem.getDocument();
