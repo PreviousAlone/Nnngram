@@ -20,6 +20,7 @@
 package xyz.nextalone.nnngram.activity;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -238,6 +239,7 @@ public class MessageDetailActivity extends BaseActivity implements NotificationC
             var uri = FileProvider.getUriForFile(getParentActivity(), ApplicationLoader.getApplicationId() + ".provider", new File(filePath));
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.setClipData(ClipData.newRawUri(null, uri));
             intent.setDataAndType(uri, messageObject.getMimeType());
             startActivityForResult(Intent.createChooser(intent, LocaleController.getString("ShareFile", R.string.ShareFile)), 500);
         } else if (position == channelRow || position == groupRow) {

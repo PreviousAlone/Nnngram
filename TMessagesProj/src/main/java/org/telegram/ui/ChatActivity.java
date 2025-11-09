@@ -1297,7 +1297,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     public final static int OPTION_GIFT = 108;
     public final static int OPTION_EDIT_TODO = 109;
     public final static int OPTION_ADD_TO_TODO = 110;
-    
+
     public final static int OPTION_SUGGESTION_EDIT_PRICE = 111;
     public final static int OPTION_SUGGESTION_EDIT_TIME = 112;
     public final static int OPTION_SUGGESTION_EDIT_MESSAGE = 113;
@@ -9205,7 +9205,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (currentUser != null || currentChat != null) {
             BackButtonRecentMenu.addToRecentDialogs(currentAccount, currentUser != null ? currentUser.id : -currentChat.id);
         }
-        
+
         if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
             savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
             savedMessagesHint.setMultilineText(true);
@@ -15003,7 +15003,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         public String text;
         public ArrayList<TLRPC.MessageEntity> entities;
         public int offset, length;
-        
+
         public TLRPC.TodoItem task;
 
         private ReplyQuote(long peerId, @NonNull MessageObject message, int start, int end) {
@@ -33843,7 +33843,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 File f = new File(path);
                 if (Build.VERSION.SDK_INT >= 24) {
                     try {
-                        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getParentActivity(), ApplicationLoader.getApplicationId() + ".provider", f));
+                        Uri uri = FileProvider.getUriForFile(getParentActivity(), ApplicationLoader.getApplicationId() + ".provider", f);
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+                        intent.setClipData(ClipData.newRawUri(null, uri));
                         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     } catch (Exception ignore) {
                         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
@@ -40196,7 +40198,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (true) {
                 selectedObject = messageObject;
                 selectedObjectGroup = null;
-                
+
                 TodoItemMenu menu = new TodoItemMenu(getContext(), getResourceProvider());
                 menu.setCell(ChatActivity.this, cell, task.id);
 
@@ -45341,7 +45343,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         final int type = getMessageType(message);
         CharSequence messageTextToTranslate = null;
         int[] messageIdToTranslate = new int[]{message.getId()};
-        
+
         boolean allowChatActions = true;
         boolean allowPin;
         if (chatMode == MODE_SAVED || chatMode == MODE_QUICK_REPLIES) {
@@ -45402,7 +45404,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (currentChat != null && (!ChatObject.canSendMessages(currentChat))) {
             allowChatActions = false;
         }
-        
+
         if (selectedObject.type != MessageObject.TYPE_EMOJIS && selectedObject.type != MessageObject.TYPE_ANIMATED_STICKER && selectedObject.type != MessageObject.TYPE_STICKER) {
             messageTextToTranslate = getMessageCaption(message, groupedMessages, messageIdToTranslate);
             if (messageTextToTranslate == null && selectedObject.isPoll()) {
@@ -45427,7 +45429,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (selectedObject.translated || selectedObject.isRestrictedMessage) {
             messageTextToTranslate = null;
         }
-        
+
         if (message.isSponsored() && !getUserConfig().isPremium() && !getMessagesController().premiumFeaturesBlocked() && !message.sponsoredCanReport) {
             items.add(LocaleController.getString(R.string.HideAd));
             options.add(OPTION_HIDE_SPONSORED_MESSAGE);

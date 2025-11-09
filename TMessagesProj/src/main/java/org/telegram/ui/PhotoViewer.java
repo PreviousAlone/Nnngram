@@ -33,6 +33,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -2949,7 +2950,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         default boolean isEditingMessageResend() {
             return false;
         }
-        
+
         default void spoilerPressed() {}
     }
 
@@ -4519,7 +4520,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 }
                 if (Build.VERSION.SDK_INT >= 24) {
                     try {
-                        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(parentActivity, ApplicationLoader.getApplicationId() + ".provider", f));
+                        Uri uri = FileProvider.getUriForFile(parentActivity, ApplicationLoader.getApplicationId() + ".provider", f);
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+                        intent.setClipData(ClipData.newRawUri(null, uri));
                         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     } catch (Exception ignore) {
                         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
@@ -7351,7 +7354,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             });
             sendPopupLayout.setShownFromBottom(false);
             sendPopupLayout.setBackgroundColor(0xf9222222);
-            
+
             Object currentObject = imagesArrLocals.get(currentIndex);
             boolean canSpoiler = fragment instanceof ChatActivity && !((ChatActivity) fragment).isSecretChat() && currentObject instanceof MediaController.PhotoEntry;
             boolean spoilerEnabled = false;
@@ -7359,7 +7362,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 MediaController.PhotoEntry entry = (MediaController.PhotoEntry) currentObject;
                 spoilerEnabled = entry.hasSpoiler;
             }
-            
+
             final boolean canEdit = placeProvider != null && placeProvider.canEdit(currentIndex);
             final boolean canReplace = placeProvider != null && placeProvider.canReplace(currentIndex);
             final int[] order = {4, 3, 2, 0, 1, 5};
@@ -7405,7 +7408,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 } else if (a == 5 && !canSpoiler) {
                     continue;
                 }
-                
+
                 ActionBarMenuSubItem cell = new ActionBarMenuSubItem(parentActivity, a == 0, a == 3, resourcesProvider);
                 if (a == 0) {
                     if (UserObject.isUserSelf(user)) {
