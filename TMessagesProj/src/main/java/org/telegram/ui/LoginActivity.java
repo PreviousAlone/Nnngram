@@ -1,24 +1,14 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
+ * This is the source code of Telegram for Android v. 5.x.x.
+ * It is licensed under GNU GPL v. 2 or later.
+ * You should have received a copy of the license in this archive (see LICENSE).
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 2 of the License.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * Copyright Nikolai Kudashov, 2013-2018.
  */
 
 package org.telegram.ui;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
-import static org.telegram.messenger.AndroidUtilities.getTypeface;
 import static org.telegram.messenger.AndroidUtilities.replaceArrows;
 import static org.telegram.messenger.AndroidUtilities.replaceSingleTag;
 import static org.telegram.messenger.LocaleController.formatString;
@@ -69,6 +59,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Layout;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -77,6 +68,7 @@ import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.text.style.ReplacementSpan;
 import android.util.Base64;
 import android.util.TypedValue;
@@ -100,11 +92,13 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
 import org.json.JSONException;
@@ -139,7 +133,6 @@ import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_account;
-import org.telegram.tgnet.tl.TL_stars;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.AlertDialog;
@@ -162,7 +155,6 @@ import org.telegram.ui.Components.ImageUpdater;
 import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LinkPath;
-import org.telegram.ui.Components.LinkSpanDrawable;
 import org.telegram.ui.Components.LoadingDrawable;
 import org.telegram.ui.Components.LoginOrView;
 import org.telegram.ui.Components.OutlineTextContainerView;
@@ -178,7 +170,6 @@ import org.telegram.ui.Components.ScaleStateListAnimator;
 import org.telegram.ui.Components.SimpleThemeDescription;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.SlideView;
-import org.telegram.ui.Components.Text;
 import org.telegram.ui.Components.TextStyleSpan;
 import org.telegram.ui.Components.TextViewSwitcher;
 import org.telegram.ui.Components.TransformableLoginButtonView;
@@ -187,6 +178,7 @@ import org.telegram.ui.Components.VerticalPositionAutoAnimator;
 import org.telegram.ui.Components.spoilers.SpoilersTextView;
 import org.telegram.ui.Stars.ExplainStarsSheet;
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
+import org.telegram.ui.bots.BotWebViewSheet;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -393,6 +385,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     private boolean needRequestPermissions;
 
     private Runnable emailChangeFinishCallback;
+    private @Nullable Runnable emailChangeSkipCallback;
+    private @Nullable TextView emailChangeSkipButton;
+    private boolean emailChangeNonSkippable;
+    private boolean emailChangeIsSuggestion;
+
 
     private boolean[] doneProgressVisible = new boolean[2];
     private Runnable[] editDoneCallback = new Runnable[2];
@@ -484,6 +481,16 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         return this;
     }
 
+    public LoginActivity changeEmail(Runnable onFinishCallback, Runnable onSkipCallback, boolean isNonSkippable) {
+        activityMode = MODE_CHANGE_LOGIN_EMAIL;
+        currentViewNum = VIEW_ADD_EMAIL;
+        emailChangeFinishCallback = onFinishCallback;
+        emailChangeSkipCallback = onSkipCallback;
+        emailChangeNonSkippable = isNonSkippable;
+        emailChangeIsSuggestion = true;
+        return this;
+    }
+
     public LoginActivity cancelAccountDeletion(String phone, Bundle params, TLRPC.TL_auth_sentCode sentCode) {
         cancelDeletionPhone = phone;
         cancelDeletionParams = params;
@@ -519,11 +526,13 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
         }
         getNotificationCenter().removeObserver(this, NotificationCenter.didUpdateConnectionState);
+        getNotificationCenter().removeObserver(this, NotificationCenter.newSuggestionsAvailable);
     }
 
     @Override
     public boolean onFragmentCreate() {
         getNotificationCenter().addObserver(this, NotificationCenter.didUpdateConnectionState);
+        getNotificationCenter().addObserver(this, NotificationCenter.newSuggestionsAvailable);
         return super.onFragmentCreate();
     }
 
@@ -564,9 +573,9 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 }
                 if (Bulletin.getVisibleBulletin() != null && Bulletin.getVisibleBulletin().isShowing()) {
                     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-                    marginLayoutParams.bottomMargin = AndroidUtilities.dp(16) + Bulletin.getVisibleBulletin().getLayout().getMeasuredHeight() - AndroidUtilities.dp(10) + keyboardOffset;
+                    marginLayoutParams.bottomMargin = dp(16) + Bulletin.getVisibleBulletin().getLayout().getMeasuredHeight() - dp(10) + keyboardOffset;
                 } else {
-                    marginLayoutParams.bottomMargin = AndroidUtilities.dp(16) + keyboardOffset;
+                    marginLayoutParams.bottomMargin = dp(16) + keyboardOffset;
                 }
 
                 int statusBarHeight = AndroidUtilities.isTablet() ? 0 : AndroidUtilities.statusBarHeight;
@@ -581,6 +590,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
                 marginLayoutParams = (MarginLayoutParams) radialProgressView.getLayoutParams();
                 marginLayoutParams.topMargin = AndroidUtilities.dp(16) + statusBarHeight;
+
+                if (emailChangeSkipButton != null) {
+                    marginLayoutParams = (MarginLayoutParams) emailChangeSkipButton.getLayoutParams();
+                    marginLayoutParams.topMargin = AndroidUtilities.dp(16) + statusBarHeight;
+                }
 
                 if (measureKeyboardHeight() > AndroidUtilities.dp(20) && keyboardView.getVisibility() != GONE && !isCustomKeyboardForceDisabled() && !customKeyboardWasVisible) {
                     if (keyboardAnimator != null) {
@@ -753,6 +767,23 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         int padding = AndroidUtilities.dp(4);
         backButtonView.setPadding(padding, padding, padding, padding);
         sizeNotifierFrameLayout.addView(backButtonView, LayoutHelper.createFrame(32, 32, Gravity.LEFT | Gravity.TOP, 16, 16, 0, 0));
+
+        if (emailChangeSkipCallback != null && !emailChangeNonSkippable && emailChangeIsSuggestion) {
+            emailChangeSkipButton = new TextView(context);
+            emailChangeSkipButton.setGravity(Gravity.CENTER | Gravity.LEFT);
+            emailChangeSkipButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+            emailChangeSkipButton.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+            emailChangeSkipButton.setPadding(AndroidUtilities.dp(16), 0, AndroidUtilities.dp(16), 0);
+            emailChangeSkipButton.setText(getString(R.string.YourEmailSkip));
+            emailChangeSkipButton.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
+            sizeNotifierFrameLayout.addView(emailChangeSkipButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 30, Gravity.TOP | Gravity.RIGHT, 0, 16, 16, 0));
+            emailChangeSkipButton.setOnClickListener(v -> {
+                if (emailChangeSkipCallback != null) {
+                    emailChangeSkipCallback.run();
+                }
+                finishFragment();
+            });
+        }
 
         moreButtonView = new ActionBarMenuItem(context, null, 0, Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         moreButtonView.setIcon(R.drawable.ic_ab_other);
@@ -1205,7 +1236,16 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     }
 
     @Override
+    public boolean isSwipeBackEnabled(MotionEvent event) {
+        return !emailChangeIsSuggestion;
+    }
+
+    @Override
     public boolean onBackPressed() {
+        if (emailChangeIsSuggestion && currentViewNum == VIEW_ADD_EMAIL) {
+            return false;
+        }
+
         if (currentViewNum == VIEW_PHONE_INPUT || activityMode == MODE_CHANGE_LOGIN_EMAIL && currentViewNum == VIEW_ADD_EMAIL) {
             for (int a = 0; a < views.length; a++) {
                 if (views[a] != null) {
@@ -1737,8 +1777,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 }
             });
             pagesAnimation.playTogether(
-                ObjectAnimator.ofFloat(outView, View.TRANSLATION_X, back ? AndroidUtilities.displaySize.x : -AndroidUtilities.displaySize.x),
-                ObjectAnimator.ofFloat(newView, View.TRANSLATION_X, 0));
+                    ObjectAnimator.ofFloat(outView, View.TRANSLATION_X, back ? AndroidUtilities.displaySize.x : -AndroidUtilities.displaySize.x),
+                    ObjectAnimator.ofFloat(newView, View.TRANSLATION_X, 0));
             pagesAnimation.setDuration(300);
             pagesAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
             pagesAnimation.start();
@@ -1813,6 +1853,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.mainUserInfoChanged);
                 LocaleController.getInstance().loadRemoteLanguages(currentAccount);
+                RestrictedLanguagesSelectActivity.checkRestrictedLanguages(true);
             }
         } else if (getParentActivity() instanceof ExternalActionActivity) {
             ((ExternalActionActivity) getParentActivity()).onFinishLogin();
@@ -1944,14 +1985,14 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             params.putString("phoneHash", auth.phone_code_hash);
             params.putString("support_email_address", auth.support_email_address);
             params.putString("support_email_subject", auth.support_email_subject);
+            params.putString("currency", auth.currency);
+            params.putLong("amount", auth.amount);
             setPage(VIEW_PAY, true, params, true);
             return;
         }
         if (res.type instanceof TLRPC.TL_auth_sentCodeTypeFirebaseSms && !res.type.verifiedFirebase && !isRequestingFirebaseSms) {
-            AlertUtil.showSimpleAlert(getContext(),LocaleController.getString("SmsDisabled", R.string.SmsDisabled));
-            return;
-
-/*            if (PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()) {
+            if (PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()) {
+                TLRPC.TL_auth_sentCodeTypeFirebaseSms r = (TLRPC.TL_auth_sentCodeTypeFirebaseSms) res.type;
                 needShowProgress(0);
                 isRequestingFirebaseSms = true;
                 final String phone = params.getString("phoneFormated");
@@ -2062,7 +2103,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 FileLog.d("{GOOGLE_PLAY_SERVICES_NOT_AVAILABLE} Resend firebase sms because firebase is not available");
                 resendCodeFromSafetyNet(params, res, "GOOGLE_PLAY_SERVICES_NOT_AVAILABLE");
             }
-            return;*/
+            return;
         }
 
         params.putString("phoneHash", res.phone_code_hash);
@@ -2165,6 +2206,35 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         private boolean nextPressed = false;
         private boolean confirmedNumber = false;
 
+        private int titleClickCount = 0;
+        private long lastTitleClick = 0;
+        private Toast lastTitleToast;
+        private void showDebugMenu() {
+            new AlertDialog.Builder(getContext())
+                .setTitle(LocaleController.getString(R.string.SettingsDebug))
+                .setItems(new String[] {
+                    BuildVars.LOGS_ENABLED ? LocaleController.getString(R.string.DebugMenuDisableLogs) : LocaleController.getString(R.string.DebugMenuEnableLogs),
+                    LocaleController.getString(R.string.DebugSendLogs)
+                }, (di, b) -> {
+                    if (b == 0) {
+                        BuildVars.LOGS_ENABLED = !BuildVars.LOGS_ENABLED;
+                        ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Context.MODE_PRIVATE).edit().putBoolean("logsEnabled", BuildVars.LOGS_ENABLED).commit();
+                        BulletinFactory.of(LoginActivity.this).createSimpleBulletin(R.raw.chats_infotip, BuildVars.LOGS_ENABLED ? "Logs enabled." : "Logs disabled.").show();
+                        if (BuildVars.LOGS_ENABLED) {
+                            FileLog.d("app start time = " + ApplicationLoader.startTime);
+                            try {
+                                FileLog.d("buildVersion = " + ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0).versionCode);
+                            } catch (Exception e) {
+                                FileLog.e(e);
+                            }
+                        }
+                    } else {
+                        ProfileActivity.sendLogs(getParentActivity(), false);
+                    }
+                })
+                .show();
+        }
+
         @SuppressLint("SuspiciousIndentation")
         public PhoneView(Context context) {
             super(context);
@@ -2177,20 +2247,41 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             titleView.setTypeface(AndroidUtilities.bold());
             titleView.setText(getString(activityMode == MODE_CHANGE_PHONE_NUMBER ? R.string.ChangePhoneNewNumber : R.string.YourNumber));
             titleView.setGravity(Gravity.CENTER);
-            titleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+            titleView.setLineSpacing(dp(2), 1.0f);
             addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 32, 0, 32, 0));
+            titleView.setOnClickListener(v -> {
+                if (lastTitleToast != null) {
+                    lastTitleToast.cancel();
+                    lastTitleToast = null;
+                }
+                final long now = System.currentTimeMillis();
+                if (titleClickCount > 0 && now - lastTitleClick > 1500) {
+                    titleClickCount = 0;
+                }
+                titleClickCount++;
+                lastTitleClick = now;
+
+                if (titleClickCount >= 5) {
+                    titleClickCount = 0;
+                    lastTitleClick = 0;
+                    showDebugMenu();
+                } else if (titleClickCount > 1) {
+                    lastTitleToast = Toast.makeText(context, LocaleController.formatPluralString("DebugMenuLoginToast", 5 - titleClickCount), Toast.LENGTH_SHORT);
+                    lastTitleToast.show();
+                }
+            });
 
             subtitleView = new TextView(context);
             subtitleView.setText(getString(activityMode == MODE_CHANGE_PHONE_NUMBER ? R.string.ChangePhoneHelp : R.string.StartText));
             subtitleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             subtitleView.setGravity(Gravity.CENTER);
-            subtitleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+            subtitleView.setLineSpacing(dp(2), 1.0f);
             addView(subtitleView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 32, 8, 32, 0));
 
             countryButton = new TextViewSwitcher(context);
             countryButton.setFactory(() -> {
                 TextView tv = new TextView(context);
-                tv.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(12), AndroidUtilities.dp(16), AndroidUtilities.dp(12));
+                tv.setPadding(dp(16), dp(12), dp(16), dp(12));
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
                 tv.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                 tv.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
@@ -2614,7 +2705,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             if (activityMode == MODE_LOGIN) {
                 testBackendCheckBox = new CheckBoxCell(context, 2);
-                testBackendCheckBox.setText(LocaleController.getString("TestBackend", R.string.TestBackend), "", testBackend, false);
+                testBackendCheckBox.setText(getString(R.string.DebugTestBackend), "", testBackend, false);
                 addView(testBackendCheckBox, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 16, 0, 16 + (LocaleController.isRTL && AndroidUtilities.isSmallScreen() ? Build.VERSION.SDK_INT >= 21 ? 56 : 60 : 0), 0));
                 bottomMargin -= 24;
                 testBackendCheckBox.setOnClickListener(v -> {
@@ -3298,16 +3389,13 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             req.api_hash = appHash;
             req.api_id = appId;
             req.phone_number = phone;
-            req.settings = new TLRPC.TL_codeSettings();
-            req.settings.allow_flashcall = simcardAvailable && allowCall && allowCancelCall && allowReadCallLog;
-            req.settings.allow_missed_call = simcardAvailable && allowCall;
-            req.settings.allow_app_hash = PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices();
-            ArrayList<TLRPC.TL_auth_loggedOut> tokens = AuthTokensHelper.getSavedLogOutTokens();
-            req.settings.allow_flashcall = simcardAvailable && allowCall && allowCancelCall && allowReadCallLog;
-            req.settings.allow_missed_call = simcardAvailable && allowCall;
-            req.settings.allow_app_hash = req.settings.allow_firebase = PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices();
+
+            TLRPC.TL_codeSettings settings = new TLRPC.TL_codeSettings();
+            settings.allow_flashcall = simcardAvailable && allowCall && allowCancelCall && allowReadCallLog;
+            settings.allow_missed_call = simcardAvailable && allowCall;
+            settings.allow_app_hash = settings.allow_firebase = PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices();
             if (forceDisableSafetyNet || TextUtils.isEmpty(BuildVars.SAFETYNET_KEY)) {
-                req.settings.allow_firebase = false;
+                settings.allow_firebase = false;
             }
 
             ArrayList<TLRPC.TL_auth_authorization> loginTokens = AuthTokensHelper.getSavedLogInTokens();
@@ -3316,66 +3404,67 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                     if (loginTokens.get(i).future_auth_token == null) {
                         continue;
                     }
-                    if (req.settings.logout_tokens == null) {
-                        req.settings.logout_tokens = new ArrayList<>();
+                    if (settings.logout_tokens == null) {
+                        settings.logout_tokens = new ArrayList<>();
                     }
                     if (BuildVars.DEBUG_VERSION) {
                         FileLog.d("login token to check " + new String(loginTokens.get(i).future_auth_token, StandardCharsets.UTF_8));
                     }
-                    req.settings.logout_tokens.add(loginTokens.get(i).future_auth_token);
-                    if (req.settings.logout_tokens.size() >= 20) {
+                    settings.logout_tokens.add(loginTokens.get(i).future_auth_token);
+                    if (settings.logout_tokens.size() >= 20) {
                         break;
                     }
                 }
             }
+            ArrayList<TLRPC.TL_auth_loggedOut> tokens = AuthTokensHelper.getSavedLogOutTokens();
             if (tokens != null) {
                 for (int i = 0; i < tokens.size(); i++) {
-                    if (req.settings.logout_tokens == null) {
-                        req.settings.logout_tokens = new ArrayList<>();
+                    if (settings.logout_tokens == null) {
+                        settings.logout_tokens = new ArrayList<>();
                     }
-                    req.settings.logout_tokens.add(tokens.get(i).future_auth_token);
-                    if (req.settings.logout_tokens.size() >= 20) {
+                    settings.logout_tokens.add(tokens.get(i).future_auth_token);
+                    if (settings.logout_tokens.size() >= 20) {
                         break;
                     }
                 }
                 AuthTokensHelper.saveLogOutTokens(tokens);
             }
-            if (req.settings.logout_tokens != null) {
-                req.settings.flags |= 64;
+            if (settings.logout_tokens != null) {
+                settings.flags |= 64;
             }
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
             preferences.edit().remove("sms_hash_code").apply();
-            if (req.settings.allow_app_hash) {
-                preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).apply();
+            if (settings.allow_app_hash) {
+                preferences.edit().putString("sms_hash", BuildVars.getSmsHash()).apply();
             } else {
                 preferences.edit().remove("sms_hash").apply();
             }
-            if (req.settings.allow_flashcall) {
+            if (settings.allow_flashcall) {
                 try {
                     final Set<String> numbers = getUserPhoneNumbers();
                     if (!numbers.isEmpty()) {
-                        req.settings.unknown_number = false;
-                        req.settings.current_number = numbers.stream().anyMatch(number -> PhoneNumberUtils.compare(phone, number));
+                        settings.unknown_number = false;
+                        settings.current_number = numbers.stream().anyMatch(number -> PhoneNumberUtils.compare(phone, number));
                     } else {
-                        req.settings.unknown_number = true;
+                        settings.unknown_number = true;
                         if (UserConfig.getActivatedAccountsCount() > 0) {
-                            req.settings.allow_flashcall = false;
+                            settings.allow_flashcall = false;
                         } else {
-                            req.settings.current_number = false;
+                            settings.current_number = false;
                         }
                     }
                 } catch (Exception e) {
-                    req.settings.allow_flashcall = false;
+                    settings.unknown_number = true;
                     FileLog.e(e);
                 }
             }
 
-            TLObject req1;
+            TLObject req;
             if (activityMode == MODE_CHANGE_PHONE_NUMBER) {
                 TL_account.sendChangePhoneCode changePhoneCode = new TL_account.sendChangePhoneCode();
                 changePhoneCode.phone_number = phone;
-                changePhoneCode.settings = req.settings;
-                req1 = changePhoneCode;
+                changePhoneCode.settings = settings;
+                req = changePhoneCode;
             } else {
                 ConnectionsManager.getInstance(currentAccount).cleanup(false);
 
@@ -3383,8 +3472,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 sendCode.api_hash = BuildVars.APP_HASH;
                 sendCode.api_id = BuildVars.APP_ID;
                 sendCode.phone_number = phone;
-                sendCode.settings = req.settings;
-                req1 = sendCode;
+                sendCode.settings = settings;
+                req = sendCode;
             }
 
             final Bundle params = new Bundle();
@@ -3996,6 +4085,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                     NotificationCenter.getGlobalInstance().removeObserver(LoginActivitySmsView.this, NotificationCenter.didReceiveSmsCode);
                     waitingForEvent = false;
                     destroyCodeTimer();
+                    isResendingCode = false;
                     resendCode();
                 }
             });
@@ -4133,8 +4223,16 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                         mailer.setData(Uri.parse("mailto:"));
                                         mailer.putExtra(Intent.EXTRA_EMAIL, new String[]{"sms@telegram.org"});
                                         mailer.putExtra(Intent.EXTRA_SUBJECT, emailPhone + " Android Registration/Login Issue " + version + (paid ? " #paidauth" : ""));
-                                        StringBuilder text = new StringBuilder();
-                                        text.append("Phone: ").append(requestPhone).append("\n");
+
+                                        StringBuilder body = new StringBuilder();
+                                        body.append("Technical Details (PLEASE DO NOT EDIT OR REMOVE)\n");
+
+                                        body.append("Device: ").append(Build.MANUFACTURER).append(" ").append(Build.MODEL).append("\n");
+                                        body.append("OS version: SDK ").append(android.os.Build.VERSION.SDK_INT).append("\n");
+                                        body.append("Locale: ").append(Locale.getDefault()).append("\n");
+                                        body.append("\n");
+                                        body.append("Target Phone: +").append(requestPhone).append("\n");
+                                        body.append("\n");
                                         try {
                                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
                                                 final SubscriptionManager subscriptionManager = SubscriptionManager.from(getContext());
@@ -4152,13 +4250,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                                     for (SubscriptionInfo info : infos) {
                                                         final String number = info.getNumber();
                                                         if (!TextUtils.isEmpty(number)) {
-                                                            text.append("SIM");
-                                                            text.append(info.getSimSlotIndex());
-                                                            text.append(": ").append(number);
-                                                            if (!TextUtils.isEmpty(info.getCarrierName())) {
-                                                                text.append(" (").append(info.getCarrierName()).append(")");
-                                                            }
-                                                            text.append("\n");
+                                                            final String sim = "SIM" + info.getSimSlotIndex();
+                                                            body.append(sim).append(".Phone: ").append(number).append("\n");
+                                                            body.append(sim).append(".MCC: ").append(info.getMcc()).append("\n");
+                                                            body.append(sim).append(".MNC: ").append(info.getMnc()).append("\n");
+                                                            body.append(sim).append(".Carrier: ").append(TextUtils.isEmpty(info.getCarrierName()) ? "unknown" : info.getCarrierName()).append("\n\n");
                                                         }
                                                     }
                                                 }
@@ -4167,7 +4263,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                                     final TelephonyManager tm = (TelephonyManager) ApplicationLoader.applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
                                                     final String number = tm.getLine1Number();
                                                     if (!TextUtils.isEmpty(number)) {
-                                                        text.append("SIM: ").append(number).append("\n");
+                                                        body.append("SIM0.Phone: ").append(number).append("\n");
+                                                        body.append("SIM0.MCC: unknown\n");
+                                                        body.append("SIM0.MNC: unknown\n");
+                                                        body.append("SIM0.Carrier: unknown\n\n");
                                                     }
                                                 } catch (Exception e) {
                                                     FileLog.e(e);
@@ -4176,35 +4275,56 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                         } catch (Exception e) {
                                             FileLog.e(e);
                                         }
-                                        text.append("App version: ").append(version).append("\n");
-                                        text.append("OS version: SDK ").append(Build.VERSION.SDK_INT).append("\n");
-                                        text.append("Device: ").append(Build.MANUFACTURER + " " + Build.MODEL + " (" + Build.DEVICE + ")").append("\n");
-                                        if (finalNetworkOperator != null) {
-                                            text.append("Operator: ").append(finalNetworkOperator).append("\n");
-                                        }
-                                        text.append("Locale: ").append(Locale.getDefault()).append("\n");
-                                        if (AndroidUtilities.isInAirplaneMode(context)) {
-                                            text.append("In airplane mode\n");
-                                        }
-                                        text.append("Wi-Fi: ").append(AndroidUtilities.isWifiEnabled(context) ? "Enabled" : "Disabled").append("\n");
-                                        if (Build.VERSION.SDK_INT >= 23) {
+                                        if (Build.VERSION.SDK_INT >= 29) {
                                             try {
                                                 TelephonyManager tm = context.getSystemService(TelephonyManager.class);
                                                 ConnectivityManager cm = context.getSystemService(ConnectivityManager.class);
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                                    SignalStrength signal = tm.getSignalStrength();
-                                                    if (signal != null) {
-                                                        text.append("Signal: ").append(signal.getLevel()).append("/4\n");
-                                                    }
+                                                SignalStrength signal = tm.getSignalStrength();
+                                                if (signal != null) {
+                                                    body.append("Signal: ").append(signal.getLevel()).append("/4\n");
+                                                } else {
+                                                    body.append("Signal: unknown\n");
                                                 }
                                             } catch (Exception e) {
                                                 FileLog.e(e);
                                             }
+                                        } else {
+                                            body.append("Signal: unknown\n");
                                         }
+                                        body.append("Wi-Fi: ").append(AndroidUtilities.isWifiEnabled(context)).append("\n");
+                                        body.append("Airplane Mode: ").append(AndroidUtilities.isInAirplaneMode(context)).append("\n");
+                                        body.append("\n");
+                                        body.append("App: ").append(BuildVars.APP_ID).append("\n");
+                                        final String versionType;
+                                        switch (pInfo.versionCode % 10) {
+                                            case 1:
+                                            case 2:
+                                                versionType = "store";
+                                                break;
+                                            default:
+                                            case 9:
+                                                if (ApplicationLoader.isStandaloneBuild()) {
+                                                    versionType = "direct";
+                                                } else if (ApplicationLoader.isBetaBuild()) {
+                                                    versionType = "beta";
+                                                } else if (ApplicationLoader.isHuaweiStoreBuild()) {
+                                                    versionType = "huawei";
+                                                } else {
+                                                    versionType = "universal";
+                                                }
+                                                break;
+                                        }
+                                        body.append("App version: ").append(version).append(" ").append(versionType).append("\n");
+                                        body.append("\n");
+                                        body.append("Issue: ").append(paid ? "no_otp" : "no_otp_paid").append("\n");
                                         if (!TextUtils.isEmpty(lastError)) {
-                                            text.append("Error: ").append(lastError).append("\n");
+                                            body.append("Error: ").append(lastError).append("\n");
                                         }
-                                        mailer.putExtra(Intent.EXTRA_TEXT, text.toString());
+                                        body.append("\n\n================================================\n");
+                                        body.append("WRITE YOUR COMMENT HERE:\n");
+                                        body.append("\n");
+                                        body.append("\n");
+                                        mailer.putExtra(Intent.EXTRA_TEXT, body.toString());
                                         getContext().startActivity(Intent.createChooser(mailer, "Send email..."));
                                     } catch (Exception e) {
                                         needShowAlert(getString(R.string.AppName), getString("NoMailInstalled", R.string.NoMailInstalled));
@@ -4547,16 +4667,16 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             if (currentType != AUTH_TYPE_FRAGMENT_SMS) {
                 if (currentType == AUTH_TYPE_MESSAGE) {
                     if (nextType == AUTH_TYPE_FLASH_CALL || nextType == AUTH_TYPE_CALL || nextType == AUTH_TYPE_MISSED_CALL) {
-                        problemText.setText(getString("DidNotGetTheCodePhone", R.string.DidNotGetTheCodePhone));
+                        problemText.setText(getString(R.string.DidNotGetTheCodePhone));
                     } else if (nextType == AUTH_TYPE_FRAGMENT_SMS) {
-                        problemText.setText(getString("DidNotGetTheCodeFragment", R.string.DidNotGetTheCodeFragment));
+                        problemText.setText(getString(R.string.DidNotGetTheCodeFragment));
                     } else if (nextType == 0) {
-                        problemText.setText(getString("DidNotGetTheCode", R.string.DidNotGetTheCode));
+                        problemText.setText(getString(R.string.DidNotGetTheCode));
                     } else {
-                        problemText.setText(getString("DidNotGetTheCodeSms", R.string.DidNotGetTheCodeSms));
+                        problemText.setText(getString(R.string.DidNotGetTheCodeSms));
                     }
                 } else {
-                    problemText.setText(getString("DidNotGetTheCode", R.string.DidNotGetTheCode));
+                    problemText.setText(getString(R.string.DidNotGetTheCode));
                 }
             }
 
@@ -4587,6 +4707,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                     } else if (nextType == AUTH_TYPE_SMS || nextType == AUTH_TYPE_PHRASE || nextType == AUTH_TYPE_WORD) {
                         timeText.setText(LocaleController.formatString("SmsAvailableIn", R.string.SmsAvailableIn, 1, 0));
                     }
+                } else {
+                    timeText.setVisibility(GONE);
                 }
                 String callLogNumber = restore ? AndroidUtilities.obtainLoginPhoneCall(pattern) : null;
                 if (callLogNumber != null) {
@@ -4771,7 +4893,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                 if (nextType == AUTH_TYPE_CALL) {
                                     timeText.setText(getString("RequestCallButton", R.string.RequestCallButton));
                                 } else if (nextType == AUTH_TYPE_MISSED_CALL || nextType == AUTH_TYPE_FLASH_CALL) {
-                                    timeText.setText(getString("RequestMissedCall", R.string.RequestMissedCall));
+                                    timeText.setText(getString(R.string.RequestMissedCall));
                                 } else {
                                     timeText.setText(getString("RequestSmsButton", R.string.RequestSmsButton));
                                 }
@@ -5485,7 +5607,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             addView(confirmTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 12, 8, 12, 0));
 
             outlineCodeField = new OutlineTextContainerView(context);
-            outlineCodeField.setText(LocaleController.getString(R.string.EnterPassword));
+            outlineCodeField.setText(getString(R.string.EnterPassword));
             codeField = new EditTextAutoFill(context);
             codeField.setCursorSize(AndroidUtilities.dp(20));
             codeField.setCursorWidth(1.5f);
@@ -6007,6 +6129,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
         private TextView titleView;
         private TextView subtitleView;
+        private TextView signInWithGoogleView;
         private LoginOrView loginOrView;
         private RLottieImageView inboxImageView;
 
@@ -6015,6 +6138,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
         private String phone, emailPhone;
         private String requestPhone, phoneHash;
+
+        private GoogleSignInAccount googleAccount;
 
         public LoginActivitySetupEmail(Context context) {
             super(context);
@@ -6071,13 +6196,38 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             addView(emailOutlineView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 58, 16, 24, 16, 0));
 
+            signInWithGoogleView = new TextView(context);
+            signInWithGoogleView.setGravity(Gravity.LEFT);
+            signInWithGoogleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            signInWithGoogleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+            signInWithGoogleView.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16));
+            signInWithGoogleView.setMaxLines(2);
+
+            SpannableStringBuilder str = new SpannableStringBuilder("d ");
+            Drawable dr = ContextCompat.getDrawable(context, R.drawable.googleg_standard_color_18);
+            dr.setBounds(0, AndroidUtilities.dp(9), AndroidUtilities.dp(18), AndroidUtilities.dp(18 + 9));
+            str.setSpan(new ImageSpan(dr, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            str.setSpan(new ReplacementSpan() {
+                @Override
+                public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
+                    return AndroidUtilities.dp(12);
+                }
+
+                @Override
+                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
+            }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            str.append(getString(R.string.SignInWithGoogle));
+            signInWithGoogleView.setText(str);
+
             loginOrView = new LoginOrView(context);
 
             Space space = new Space(context);
             addView(space, LayoutHelper.createLinear(0, 0, 1f));
 
             FrameLayout bottomContainer = new FrameLayout(context);
+            bottomContainer.addView(signInWithGoogleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 24));
             bottomContainer.addView(loginOrView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 16, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 70));
+            loginOrView.setMeasureAfter(signInWithGoogleView);
             addView(bottomContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             VerticalPositionAutoAnimator.attach(bottomContainer);
 
@@ -6091,9 +6241,26 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onActivityResultReceived);
 
                         if (request == BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE) {
+                            try {
+                                googleAccount = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+                                onNextPressed(null);
+                            } catch (ApiException e) {
+                                FileLog.e(e);
+                            }
                         }
                     }
                 }, NotificationCenter.onActivityResultReceived);
+
+                GoogleSignInClient googleClient = GoogleSignIn.getClient(getContext(), new GoogleSignInOptions.Builder()
+                        .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
+                        .requestEmail()
+                        .build());
+                googleClient.signOut().addOnCompleteListener(command -> {
+                    if (getParentActivity() == null || getParentActivity().isFinishing()) {
+                        return;
+                    }
+                    getParentActivity().startActivityForResult(googleClient.getSignInIntent(), BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE);
+                });
             });
         }
 
@@ -6102,6 +6269,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             titleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             subtitleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText6));
             emailField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+            signInWithGoogleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
             loginOrView.updateColors();
 
             emailOutlineView.invalidate();
@@ -6109,7 +6277,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
         @Override
         public boolean needBackButton() {
-            return true;
+            return !emailChangeIsSuggestion;
         }
 
         @Override
@@ -6131,6 +6299,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             int v = params.getBoolean("googleSignInAllowed") && PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices() ? VISIBLE : GONE;
             loginOrView.setVisibility(v);
+            signInWithGoogleView.setVisibility(v);
 
             showKeyboard(emailField);
             emailField.requestFocus();
@@ -6158,7 +6327,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 return;
             }
 
-            String email = emailField.getText().toString();
+            String email = googleAccount != null ? googleAccount.getEmail() : emailField.getText().toString();
             Bundle params = new Bundle();
             params.putString("phone", phone);
             params.putString("ephone", emailPhone);
@@ -6166,6 +6335,44 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             params.putString("phoneHash", phoneHash);
             params.putString("email", email);
             params.putBoolean("setup", true);
+
+            if (googleAccount != null) {
+                TL_account.verifyEmail verifyEmail = new TL_account.verifyEmail();
+                if (activityMode == MODE_CHANGE_LOGIN_EMAIL) {
+                    verifyEmail.purpose = new TLRPC.TL_emailVerifyPurposeLoginChange();
+                } else {
+                    TLRPC.TL_emailVerifyPurposeLoginSetup purpose = new TLRPC.TL_emailVerifyPurposeLoginSetup();
+                    purpose.phone_number = requestPhone;
+                    purpose.phone_code_hash = phoneHash;
+                    verifyEmail.purpose = purpose;
+                }
+                TLRPC.TL_emailVerificationGoogle verificationGoogle = new TLRPC.TL_emailVerificationGoogle();
+                verificationGoogle.token = googleAccount.getIdToken();
+                verifyEmail.verification = verificationGoogle;
+
+                googleAccount = null;
+                ConnectionsManager.getInstance(currentAccount).sendRequest(verifyEmail, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+                    if (response instanceof TL_account.TL_emailVerified && activityMode == MODE_CHANGE_LOGIN_EMAIL) {
+                        finishFragment();
+                        emailChangeFinishCallback.run();
+                    } else if (response instanceof TL_account.TL_emailVerifiedLogin) {
+                        TL_account.TL_emailVerifiedLogin emailVerifiedLogin = (TL_account.TL_emailVerifiedLogin) response;
+
+                        params.putString("email", emailVerifiedLogin.email);
+                        fillNextCodeParams(params, emailVerifiedLogin.sent_code);
+                    } else if (error != null) {
+                        if (error.text.contains("EMAIL_NOT_ALLOWED")) {
+                            needShowAlert(getString(R.string.RestorePasswordNoEmailTitle), getString(R.string.EmailNotAllowed));
+                        } else if (error.text.contains("EMAIL_TOKEN_INVALID")) {
+                            needShowAlert(getString(R.string.RestorePasswordNoEmailTitle), getString(R.string.EmailTokenInvalid));
+                        } else if (error.code != -1000) {
+                            AlertsCreator.processError(currentAccount, error, LoginActivity.this, verifyEmail);
+                        }
+                    }
+                }), ConnectionsManager.RequestFlagFailOnServerErrors | ConnectionsManager.RequestFlagWithoutLogin);
+
+                return;
+            }
 
             if (TextUtils.isEmpty(email)) {
                 onPasscodeError(false);
@@ -6254,6 +6461,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         private CodeFieldContainer codeFieldContainer;
         private TextView titleView;
         private TextView confirmTextView;
+        private TextView signInWithGoogleView;
         private FrameLayout resendFrameLayout;
         private TextView resendCodeView;
         private FrameLayout cantAccessEmailFrameLayout;
@@ -6266,6 +6474,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         private boolean resetRequestPending;
         private Bundle currentParams;
         private boolean nextPressed;
+        private GoogleSignInAccount googleAccount;
 
         private int resetAvailablePeriod, resetPendingDate;
         private String phone, emailPhone, email;
@@ -6331,6 +6540,61 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             };
 
             addView(codeFieldContainer, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 42, Gravity.CENTER_HORIZONTAL, 0, setup ? 48 : 32, 0, 0));
+
+            signInWithGoogleView = new TextView(context);
+            signInWithGoogleView.setGravity(Gravity.CENTER);
+            signInWithGoogleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            signInWithGoogleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+            signInWithGoogleView.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16));
+            signInWithGoogleView.setMaxLines(2);
+
+            SpannableStringBuilder str = new SpannableStringBuilder("d ");
+            Drawable dr = ContextCompat.getDrawable(context, R.drawable.googleg_standard_color_18);
+            dr.setBounds(0, AndroidUtilities.dp(9), AndroidUtilities.dp(18), AndroidUtilities.dp(18 + 9));
+            str.setSpan(new ImageSpan(dr, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            str.setSpan(new ReplacementSpan() {
+                @Override
+                public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
+                    return AndroidUtilities.dp(12);
+                }
+
+                @Override
+                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
+            }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            str.append(getString(R.string.SignInWithGoogle));
+            signInWithGoogleView.setText(str);
+
+            signInWithGoogleView.setOnClickListener(view -> {
+                NotificationCenter.getGlobalInstance().addObserver(new NotificationCenter.NotificationCenterDelegate() {
+                    @Override
+                    public void didReceivedNotification(int id, int account, Object... args) {
+                        int request = (int) args[0];
+                        int result = (int) args[1];
+                        Intent data = (Intent) args[2];
+                        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onActivityResultReceived);
+
+                        if (request == BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE) {
+                            try {
+                                googleAccount = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+                                onNextPressed(null);
+                            } catch (ApiException e) {
+                                FileLog.e(e);
+                            }
+                        }
+                    }
+                }, NotificationCenter.onActivityResultReceived);
+
+                GoogleSignInClient googleClient = GoogleSignIn.getClient(getContext(), new GoogleSignInOptions.Builder()
+                                .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
+                                .requestEmail()
+                                .build());
+                googleClient.signOut().addOnCompleteListener(command -> {
+                    if (getParentActivity() == null) {
+                        return;
+                    }
+                    getParentActivity().startActivityForResult(googleClient.getSignInIntent(), BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE);
+                });
+            });
 
             cantAccessEmailFrameLayout = new FrameLayout(context);
             AndroidUtilities.updateViewVisibilityAnimated(cantAccessEmailFrameLayout, activityMode != MODE_CHANGE_LOGIN_EMAIL && !isSetup, 1f, false);
@@ -6481,6 +6745,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 bottomContainer.addView(errorViewSwitcher, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP));
                 bottomContainer.addView(cantAccessEmailFrameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP));
                 bottomContainer.addView(loginOrView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 16, Gravity.CENTER, 0, 0, 0, 16));
+                bottomContainer.addView(signInWithGoogleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 0, 0, 0, 16));
             }
             addView(bottomContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f));
         }
@@ -6530,6 +6795,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         public void updateColors() {
             titleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             confirmTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText6));
+            signInWithGoogleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
             loginOrView.updateColors();
             resendCodeView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
             cantAccessEmailView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
@@ -6648,6 +6914,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             int v = params.getBoolean("googleSignInAllowed") && PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices() ? VISIBLE : GONE;
             loginOrView.setVisibility(v);
+            signInWithGoogleView.setVisibility(v);
 
             showKeyboard(codeFieldContainer.codeField[0]);
             codeFieldContainer.requestFocus();
@@ -6783,7 +7050,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
 
             code = codeFieldContainer.getCode();
-            if (code.length() == 0) {
+            if (code.length() == 0 && googleAccount == null) {
                 onPasscodeError(false);
                 return;
             }
@@ -6812,9 +7079,15 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 TLRPC.TL_auth_signIn request = new TLRPC.TL_auth_signIn();
                 request.phone_number = requestPhone;
                 request.phone_code_hash = phoneHash;
-                TLRPC.TL_emailVerificationCode verification = new TLRPC.TL_emailVerificationCode();
-                verification.code = code;
-                request.email_verification = verification;
+                if (googleAccount != null) {
+                    TLRPC.TL_emailVerificationGoogle verification = new TLRPC.TL_emailVerificationGoogle();
+                    verification.token = googleAccount.getIdToken();
+                    request.email_verification = verification;
+                } else {
+                    TLRPC.TL_emailVerificationCode verification = new TLRPC.TL_emailVerificationCode();
+                    verification.code = code;
+                    request.email_verification = verification;
+                }
                 request.flags |= 2;
                 req = request;
             }
@@ -6919,10 +7192,15 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                         }
                     }
                 }
+                googleAccount = null;
             }), ConnectionsManager.RequestFlagFailOnServerErrors | ConnectionsManager.RequestFlagWithoutLogin);
         }
 
         private void animateSuccess(Runnable callback) {
+            if (googleAccount != null) {
+                callback.run();
+                return;
+            }
             for (int i = 0; i < codeFieldContainer.codeField.length; i++) {
                 int finalI = i;
                 codeFieldContainer.postDelayed(()-> codeFieldContainer.codeField[finalI].animateSuccessProgress(1f), i * 75L);
@@ -8081,12 +8359,12 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                     avatarProgressView.setVisibility(View.VISIBLE);
 
                     avatarAnimation.playTogether(ObjectAnimator.ofFloat(avatarEditor, View.ALPHA, 0.0f),
-                        ObjectAnimator.ofFloat(avatarProgressView, View.ALPHA, 1.0f));
+                            ObjectAnimator.ofFloat(avatarProgressView, View.ALPHA, 1.0f));
                 } else {
                     avatarEditor.setVisibility(View.VISIBLE);
 
                     avatarAnimation.playTogether(ObjectAnimator.ofFloat(avatarEditor, View.ALPHA, 1.0f),
-                        ObjectAnimator.ofFloat(avatarProgressView, View.ALPHA, 0.0f));
+                            ObjectAnimator.ofFloat(avatarProgressView, View.ALPHA, 0.0f));
                 }
                 avatarAnimation.setDuration(180);
                 avatarAnimation.addListener(new AnimatorListenerAdapter() {
@@ -9228,6 +9506,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     public void didReceivedNotification(int id, int account, Object... args) {
         if (id == NotificationCenter.didUpdateConnectionState) {
             updateProxyButton(true, false);
+        } else if (id == NotificationCenter.newSuggestionsAvailable) {
+            if (emailChangeIsSuggestion && !getMessagesController().hasSetupEmailSuggestion()) {
+                finishFragment();
+            }
         }
     }
 
@@ -9636,6 +9918,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                         resId = R.string.ReturnEnteringPhrase;
                     } else if (nextType == AUTH_TYPE_WORD) {
                         resId = R.string.ReturnEnteringWord;
+                    } else if (nextType == AUTH_TYPE_FLASH_CALL) {
+                        resId = R.string.ReturnPhoneCall;
                     } else {
                         resId = R.string.ReturnEnteringSMS;
                     }
@@ -10241,10 +10525,14 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             addView(button, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.FILL_HORIZONTAL, 0, 16, 0, 16));
         }
 
+        private Bundle params;
+        private String lastError;
+
         @Override
         public void setParams(Bundle params, boolean restore) {
             super.setParams(params, restore);
 
+            this.params = params;
             final String countryCode = params == null ? null : params.getString("country");
             final String countryName = LocaleController.getCountryName(countryCode);
 
@@ -10259,8 +10547,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             final String phoneHash = params == null ? null : params.getString("phoneHash");
             final String support_email_email = params == null ? null : params.getString("support_email_email");
             final String support_email_subject = params == null ? null : params.getString("support_email_subject");
-
-            final String[] lastError = new String[1];
+            final String currency = params == null ? null : params.getString("currency");
+            final long amount = params == null ? 0 : params.getLong("amount");
 
             optionsButton.setOnClickListener(v -> {
                 ItemOptions.makeOptions(LoginActivity.this, optionsButton)
@@ -10281,7 +10569,15 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                             } else {
                                 mailer.putExtra(Intent.EXTRA_SUBJECT, "Android Registration/Login Billing Issue #billing_issue");
                             }
-                            StringBuilder text = new StringBuilder();
+
+                            StringBuilder body = new StringBuilder();
+                            body.append("Technical Details (PLEASE DO NOT EDIT OR REMOVE)\n");
+                            body.append("Device: ").append(Build.MANUFACTURER).append(" ").append(Build.MODEL).append("\n");
+                            body.append("OS version: SDK ").append(android.os.Build.VERSION.SDK_INT).append("\n");
+                            body.append("Locale: ").append(Locale.getDefault()).append("\n");
+                            body.append("\n");
+                            body.append("Target Phone: +").append(phone).append("\n");
+                            body.append("\n");
                             try {
                                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
                                     final SubscriptionManager subscriptionManager = SubscriptionManager.from(getContext());
@@ -10299,13 +10595,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                         for (SubscriptionInfo info : infos) {
                                             final String number = info.getNumber();
                                             if (!TextUtils.isEmpty(number)) {
-                                                text.append("SIM");
-                                                text.append(info.getSimSlotIndex());
-                                                text.append(": ").append(number);
-                                                if (!TextUtils.isEmpty(info.getCarrierName())) {
-                                                    text.append(" (").append(info.getCarrierName()).append(")");
-                                                }
-                                                text.append("\n");
+                                                final String sim = "SIM" + info.getSimSlotIndex();
+                                                body.append(sim).append(".Phone: ").append(number).append("\n");
+                                                body.append(sim).append(".MCC: ").append(info.getMcc()).append("\n");
+                                                body.append(sim).append(".MNC: ").append(info.getMnc()).append("\n");
+                                                body.append(sim).append(".Carrier: ").append(TextUtils.isEmpty(info.getCarrierName()) ? "unknown" : info.getCarrierName()).append("\n\n");
                                             }
                                         }
                                     }
@@ -10314,7 +10608,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                         final TelephonyManager tm = (TelephonyManager) ApplicationLoader.applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
                                         final String number = tm.getLine1Number();
                                         if (!TextUtils.isEmpty(number)) {
-                                            text.append("SIM: ").append(number).append("\n");
+                                            body.append("SIM0.Phone: ").append(number).append("\n");
+                                            body.append("SIM0.MCC: unknown\n");
+                                            body.append("SIM0.MNC: unknown\n");
+                                            body.append("SIM0.Carrier: unknown\n\n");
                                         }
                                     } catch (Exception e) {
                                         FileLog.e(e);
@@ -10323,33 +10620,56 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                             } catch (Exception e) {
                                 FileLog.e(e);
                             }
-                            text.append("App version: ").append(version).append("\n");
-                            text.append("OS version: SDK ").append(Build.VERSION.SDK_INT).append("\n");
-                            text.append("Device: ").append(Build.MANUFACTURER + " " + Build.MODEL + " (" + Build.DEVICE + ")").append("\n");
-                            text.append("Locale: ").append(Locale.getDefault()).append("\n");
-                            if (AndroidUtilities.isInAirplaneMode(ApplicationLoader.applicationContext)) {
-                                text.append("In airplane mode\n");
-                            }
-                            text.append("Wi-Fi: ").append(AndroidUtilities.isWifiEnabled(ApplicationLoader.applicationContext) ? "Enabled" : "Disabled").append("\n");
-                            if (Build.VERSION.SDK_INT >= 23) {
+                            if (Build.VERSION.SDK_INT >= 29) {
                                 try {
-                                    TelephonyManager tm = ApplicationLoader.applicationContext.getSystemService(TelephonyManager.class);
-                                    ConnectivityManager cm = ApplicationLoader.applicationContext.getSystemService(ConnectivityManager.class);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                        SignalStrength signal = tm.getSignalStrength();
-                                        if (signal != null) {
-                                            text.append("Signal: ").append(signal.getLevel()).append("/4\n");
-                                        }
+                                    TelephonyManager tm = getContext().getSystemService(TelephonyManager.class);
+                                    ConnectivityManager cm = getContext().getSystemService(ConnectivityManager.class);
+                                    SignalStrength signal = tm.getSignalStrength();
+                                    if (signal != null) {
+                                        body.append("Signal: ").append(signal.getLevel()).append("/4\n");
+                                    } else {
+                                        body.append("Signal: unknown\n");
                                     }
                                 } catch (Exception e) {
                                     FileLog.e(e);
                                 }
+                            } else {
+                                body.append("Signal: unknown\n");
                             }
-                            if (!TextUtils.isEmpty(lastError[0])) {
-                                text.append("Error: ").append(lastError[0]).append("\n");
+                            body.append("Wi-Fi: ").append(AndroidUtilities.isWifiEnabled(getContext())).append("\n");
+                            body.append("Airplane Mode: ").append(AndroidUtilities.isInAirplaneMode(getContext())).append("\n");
+                            body.append("\n");
+                            body.append("App: ").append(BuildVars.APP_ID).append("\n");
+                            final String versionType;
+                            switch (pInfo.versionCode % 10) {
+                                case 1:
+                                case 2:
+                                    versionType = "store";
+                                    break;
+                                default:
+                                case 9:
+                                    if (ApplicationLoader.isStandaloneBuild()) {
+                                        versionType = "direct";
+                                    } else if (ApplicationLoader.isBetaBuild()) {
+                                        versionType = "beta";
+                                    } else if (ApplicationLoader.isHuaweiStoreBuild()) {
+                                        versionType = "huawei";
+                                    } else {
+                                        versionType = "universal";
+                                    }
+                                    break;
                             }
-                            text.append("\n\n#billing_issue");
-                            mailer.putExtra(Intent.EXTRA_TEXT, text.toString());
+                            body.append("App version: ").append(version).append(" ").append(versionType).append("\n");
+                            body.append("\n");
+                            body.append("Issue: ").append("billing_issue").append("\n");
+                            if (!TextUtils.isEmpty(lastError)) {
+                                body.append("Error: ").append(lastError).append("\n");
+                            }
+                            body.append("\n\n================================================\n");
+                            body.append("WRITE YOUR COMMENT HERE:\n");
+                            body.append("\n");
+                            body.append("\n");
+                            mailer.putExtra(Intent.EXTRA_TEXT, body.toString());
                             getContext().startActivity(Intent.createChooser(mailer, "Send email..."));
                         } catch (Exception e) {
                             needShowAlert(getString(R.string.AppName), getString("NoMailInstalled", R.string.NoMailInstalled));
@@ -10369,6 +10689,72 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 button.setEnabled(false);
                 button.setText(getString(R.string.Unavailable), false);
             }
+        }
+
+        private boolean polling;
+        private String pollingPhoneNumber;
+        private String pollingPhoneCodeHash;
+        private long pollingFormId;
+        private int pollingRequestId = -1;
+        private void startPoll(String phone_number, String phone_code_hash, long form_id) {
+            if (polling) return;
+
+            polling = true;
+            pollingPhoneNumber = phone_number;
+            pollingPhoneCodeHash = phone_code_hash;
+            pollingFormId = form_id;
+
+            button.setLoading(true);
+
+            poll();
+        }
+
+        private void poll() {
+            if (!polling) return;
+
+            final TLRPC.TL_checkPaidAuth req = new TLRPC.TL_checkPaidAuth();
+
+            req.form_id = pollingFormId;
+            req.phone_number = pollingPhoneNumber;
+            req.phone_code_hash = pollingPhoneCodeHash;
+
+            pollingRequestId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+                pollingRequestId = -1;
+                if (res instanceof TLRPC.auth_SentCode) {
+                    polling = false;
+                    button.setLoading(false);
+                    fillNextCodeParams(params, (TLRPC.auth_SentCode) res);
+                } else if (err != null) {
+                    if (err.text != null && err.text.startsWith("FLOOD_WAIT_")) {
+                        final int seconds = Integer.parseInt(err.text.substring("FLOOD_WAIT_".length()));
+                        AndroidUtilities.runOnUIThread(this::poll, seconds * 1000);
+                    } else if (err.text != null && "PHONE_CODE_EXPIRED".equalsIgnoreCase(err.text)) {
+                        onBackPressed(true);
+                        setPage(VIEW_PHONE_INPUT, true, null, true);
+                        needShowAlert(getString(R.string.RestorePasswordNoEmailTitle), getString(R.string.CodeExpired));
+                    } else {
+                        lastError = err.text;
+                        polling = false;
+                        button.setLoading(false);
+                        BulletinFactory.of(slideViewsContainer, null).createSimpleBulletin(R.raw.error, formatString(R.string.UnknownErrorCode, err.text));
+                    }
+                }
+            }), ConnectionsManager.RequestFlagWithoutLogin | ConnectionsManager.RequestFlagInvokeAfter | ConnectionsManager.RequestFlagDoNotWaitFloodWait);
+        }
+
+        private void stopPoll() {
+            if (pollingRequestId >= 0) {
+                ConnectionsManager.getInstance(currentAccount).cancelRequest(pollingRequestId, true);
+                pollingRequestId = -1;
+            }
+            polling = false;
+            button.setLoading(false);
+        }
+
+        @Override
+        public void onHide() {
+            super.onHide();
+            stopPoll();
         }
     }
 

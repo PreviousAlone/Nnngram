@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this software.
- *  If not, see
- * <https://www.gnu.org/licenses/>
- */
-
 package org.telegram.ui.Components;
 
 import android.animation.Animator;
@@ -79,13 +60,13 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
     private final static int SHADOW_DURATION = 150;
     private final static float SCALE_START = 0.25f;
 
-    public View dimView;
+//    public View dimView;
     public LinearLayout recyclerContainer;
     public TextView headerText;
 
     protected boolean runningCustomSprings;
 
-    private TLRPC.ChatFull chatFull;
+    private TLRPC.Peer defPeer;
     private TLRPC.TL_channels_sendAsPeers sendAsPeers;
     private final int currentAccount;
 
@@ -109,10 +90,19 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
     private List<Bulletin> bulletins = new ArrayList<>();
 
     @SuppressLint("WrongConstant")
-    public SenderSelectPopup(Context context, ChatActivity parentFragment, MessagesController messagesController, TLRPC.ChatFull chatFull, TLRPC.TL_channels_sendAsPeers sendAsPeers, OnSelectCallback selectCallback) {
+    public SenderSelectPopup(
+        Context context,
+        ChatActivity parentFragment,
+        MessagesController messagesController,
+        boolean isChannel,
+        TLRPC.Peer defPeer,
+        TLRPC.TL_channels_sendAsPeers sendAsPeers,
+        OnSelectCallback selectCallback,
+        Theme.ResourcesProvider resourcesProvider
+    ) {
         super(context);
 
-        this.chatFull = chatFull;
+        this.defPeer = defPeer;
         this.sendAsPeers = sendAsPeers;
         this.currentAccount = parentFragment == null ? UserConfig.selectedAccount : parentFragment.getCurrentAccount();
 
@@ -126,18 +116,18 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
         setBackgroundDrawable(null);
 
         Drawable shadowDrawable = ContextCompat.getDrawable(context, R.drawable.popup_fixed_alert).mutate();
-        shadowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground), PorterDuff.Mode.MULTIPLY));
+        shadowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
         scrimPopupContainerLayout.setBackground(shadowDrawable);
 
         Rect padding = new Rect();
         shadowDrawable.getPadding(padding);
         scrimPopupContainerLayout.setPadding(padding.left, padding.top, padding.right, padding.bottom);
 
-        dimView = new View(context);
-        dimView.setBackgroundColor(0x33000000);
+//        dimView = new View(context);
+//        dimView.setBackgroundColor(0x33000000);
 
         int maxHeight = AndroidUtilities.dp(450);
-        int maxWidth = (int) (parentFragment.contentView.getWidth() * 0.75f);
+        int maxWidth = (int) ((parentFragment == null ? AndroidUtilities.displaySize.x : parentFragment.contentView.getWidth()) * 0.75f);
         recyclerContainer = new LinearLayout(context) {
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -151,7 +141,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
         };
         recyclerContainer.setOrientation(LinearLayout.VERTICAL);
         headerText = new TextView(context);
-        headerText.setTextColor(Theme.getColor(Theme.key_dialogTextBlue));
+        headerText.setTextColor(Theme.getColor(Theme.key_dialogTextBlue, resourcesProvider));
         headerText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         headerText.setText(LocaleController.getString(R.string.SendMessageAsTitle));
         headerText.setTypeface(AndroidUtilities.bold(), Typeface.BOLD);
@@ -197,7 +187,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
             @NonNull
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new RecyclerListView.Holder(new SenderView(parent.getContext()));
+                return new RecyclerListView.Holder(new SenderView(parent.getContext(), resourcesProvider));
             }
 
             @Override
@@ -247,7 +237,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
                         senderView.subtitle.setText(text);
                         senderView.avatar.setAvatar(chat);
                     }
-                    senderView.avatar.setSelected((chatFull.default_send_as != null ? chatFull.default_send_as.channel_id == peer.channel_id : position == 0)  || flag == 0, false);
+                    senderView.avatar.setSelected(defPeer != null ? defPeer.channel_id == peer.channel_id : position == 0, false);
                 } else {
                     TLRPC.User user = messagesController.getUser(peerId);
                     if (user != null) {
@@ -262,7 +252,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
                         senderView.subtitle.setText(text);
                         senderView.avatar.setAvatar(user);
                     }
-                    senderView.avatar.setSelected((chatFull.default_send_as != null ? chatFull.default_send_as.user_id == peer.user_id : position == 0) || flag == 1, false);
+                    senderView.avatar.setSelected(defPeer != null ? defPeer.user_id == peer.user_id : position == 0, false);
                 }
             }
 
@@ -341,26 +331,26 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
                     windowManager.addView(bulletinContainer, params);
                 }
 
-                final TLRPC.Chat chat = chatFull == null ? null : MessagesController.getInstance(currentAccount).getChat(chatFull.id);
-                final boolean toChannel = ChatObject.isChannelAndNotMegaGroup(chat);
-                Bulletin bulletin = Bulletin.make(bulletinContainer, new SelectSendAsPremiumHintBulletinLayout(context, parentFragment.themeDelegate, toChannel, () -> {
-                    if (parentFragment != null) {
-                        parentFragment.presentFragment(new PremiumPreviewFragment("select_sender"));
-                        dismiss();
-                    }
-                }), Bulletin.DURATION_SHORT);
-                bulletin.getLayout().addCallback(new Bulletin.Layout.Callback() {
-                    @Override
-                    public void onShow(@NonNull Bulletin.Layout layout) {
-                        bulletins.add(bulletin);
-                    }
+                if (parentFragment != null) {
+                    Bulletin bulletin = Bulletin.make(bulletinContainer, new SelectSendAsPremiumHintBulletinLayout(context, parentFragment.themeDelegate, isChannel, () -> {
+                        if (parentFragment != null) {
+                            parentFragment.presentFragment(new PremiumPreviewFragment("select_sender"));
+                            dismiss();
+                        }
+                    }), Bulletin.DURATION_SHORT);
+                    bulletin.getLayout().addCallback(new Bulletin.Layout.Callback() {
+                        @Override
+                        public void onShow(@NonNull Bulletin.Layout layout) {
+                            bulletins.add(bulletin);
+                        }
 
-                    @Override
-                    public void onHide(@NonNull Bulletin.Layout layout) {
-                        bulletins.remove(bulletin);
-                    }
-                });
-                bulletin.show();
+                        @Override
+                        public void onHide(@NonNull Bulletin.Layout layout) {
+                            bulletins.remove(bulletin);
+                        }
+                    });
+                    bulletin.show();
+                }
 
                 AndroidUtilities.runOnUIThread(bulletinHideCallback = () -> windowManager.removeView(bulletinContainer), Bulletin.DURATION_SHORT + 1000);
                 return;
@@ -427,7 +417,6 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
         recyclerContainer.setPivotY(0);
 
         List<TLRPC.TL_sendAsPeer> peers = sendAsPeers.peers;
-        TLRPC.Peer defPeer = chatFull.default_send_as != null ? chatFull.default_send_as : null;
         if (defPeer != null) {
             int itemHeight = AndroidUtilities.dp(14 + AVATAR_SIZE_DP);
             int totalRecyclerHeight = peers.size() * itemHeight;
@@ -454,7 +443,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
         scrimPopupContainerLayout.setScaleY(SCALE_START);
         recyclerContainer.setAlpha(SCALE_START);
 
-        dimView.setAlpha(0);
+//        dimView.setAlpha(0);
 
         List<SpringAnimation> newSpringAnimations = Arrays.asList(
                 new SpringAnimation(scrimPopupContainerLayout, DynamicAnimation.SCALE_X)
@@ -474,11 +463,11 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
                 new SpringAnimation(recyclerContainer, DynamicAnimation.ALPHA)
                         .setSpring(new SpringForce(1f)
                                 .setStiffness(SPRING_STIFFNESS)
-                                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY)),
-                new SpringAnimation(dimView, DynamicAnimation.ALPHA)
-                        .setSpring(new SpringForce(1f)
-                                .setStiffness(SPRING_STIFFNESS)
                                 .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY))
+//                new SpringAnimation(dimView, DynamicAnimation.ALPHA)
+//                        .setSpring(new SpringForce(1f)
+//                                .setStiffness(SPRING_STIFFNESS)
+//                                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY))
         );
 
         for (SpringAnimation animation : newSpringAnimations) {
@@ -507,7 +496,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
         scrimPopupContainerLayout.setScaleX(1);
         scrimPopupContainerLayout.setScaleY(1);
         recyclerContainer.setAlpha(1);
-        dimView.setAlpha(1);
+//        dimView.setAlpha(1);
 
         List<SpringAnimation> newSpringAnimations = new ArrayList<>();
         newSpringAnimations.addAll(Arrays.asList(
@@ -528,22 +517,29 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
                 new SpringAnimation(recyclerContainer, DynamicAnimation.ALPHA)
                         .setSpring(new SpringForce(SCALE_START)
                                 .setStiffness(SPRING_STIFFNESS)
-                                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY)),
-                new SpringAnimation(dimView, DynamicAnimation.ALPHA)
-                        .setSpring(new SpringForce(0f)
-                                .setStiffness(SPRING_STIFFNESS)
                                 .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY))
-                        .addEndListener((animation, canceled, value, velocity) -> {
-                            if (dimView.getParent() != null) {
-                                ((ViewGroup)dimView.getParent()).removeView(dimView);
-                            }
-                            dismiss();
-                        })
+//                new SpringAnimation(dimView, DynamicAnimation.ALPHA)
+//                        .setSpring(new SpringForce(0f)
+//                                .setStiffness(SPRING_STIFFNESS)
+//                                .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY))
+//                        .addEndListener((animation, canceled, value, velocity) -> {
+//                            if (dimView.getParent() != null) {
+//                                ((ViewGroup)dimView.getParent()).removeView(dimView);
+//                            }
+//                            dismiss();
+//                        })
         ));
-        newSpringAnimations.addAll(Arrays.asList(animations));
+        for (int i = 0; i < animations.length; ++i) {
+            if (animations[i] != null) {
+                newSpringAnimations.add(animations[i]);
+            }
+        }
 
         runningCustomSprings = animations.length > 0;
-        newSpringAnimations.get(0).addEndListener((animation, canceled, value, velocity) -> runningCustomSprings = false);
+        newSpringAnimations.get(0).addEndListener((animation, canceled, value, velocity) -> {
+            runningCustomSprings = false;
+            dismiss();
+        });
         for (SpringAnimation springAnimation : newSpringAnimations) {
             springAnimations.add(springAnimation);
             springAnimation.addEndListener((animation, canceled, value, velocity) -> {
@@ -561,7 +557,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
         public final TextView title;
         public final TextView subtitle;
 
-        public SenderView(Context context) {
+        public SenderView(Context context, Theme.ResourcesProvider resourcesProvider) {
             super(context);
             setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             setOrientation(HORIZONTAL);
@@ -578,14 +574,14 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
             addView(textRow, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1f, 12, 0, 0, 0));
 
             title = new TextView(context);
-            title.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
+            title.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider));
             title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
             title.setTag(this.title);
             title.setMaxLines(1);
             textRow.addView(title);
 
             subtitle = new TextView(context);
-            subtitle.setTextColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem), 0x66));
+            subtitle.setTextColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), 0x66));
             subtitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             subtitle.setTag(this.subtitle);
             subtitle.setMaxLines(1);
