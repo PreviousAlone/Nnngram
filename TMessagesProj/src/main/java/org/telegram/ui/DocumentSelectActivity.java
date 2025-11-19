@@ -564,7 +564,7 @@ public class DocumentSelectActivity extends BaseFragment {
 
                         @Override
                         public void actionButtonPressed(boolean canceled, boolean notify,
-                                                        int scheduleDate) {
+                                                        int scheduleDate, int scheduleRepeatPeriod) {
                             removeSelfFromStack();
                             if (!canceled) {
                                 sendSelectedPhotos(selectedPhotos, selectedPhotosOrder, notify,
@@ -813,7 +813,7 @@ public class DocumentSelectActivity extends BaseFragment {
                             AlertsCreator.createScheduleDatePickerDialog(getParentActivity(),
                                 chatActivity.getDialogId(), this::sendSelectedFiles);
                         } else if (num == 2) {
-                            sendSelectedFiles(!Config.alwaysSendWithoutSound, 0);
+                            sendSelectedFiles(!Config.alwaysSendWithoutSound, 0, 0);
                         }
                     });
                     itemCells[a].setOnLongClickListener(v -> {
@@ -1090,7 +1090,7 @@ public class DocumentSelectActivity extends BaseFragment {
         delegate.didSelectPhotos(media, notify, scheduleDate);
     }
 
-    private void sendSelectedFiles(boolean notify, int scheduleDate) {
+    private void sendSelectedFiles(boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
         if (selectedFiles.size() == 0 || delegate == null || sendPressed) {
             return;
         }

@@ -248,9 +248,10 @@ public class SendOptionsMenuLayout extends LinearLayout {
                 if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
                     sendPopupWindow.dismiss();
                 }
-                AlertsCreator.createScheduleDatePickerDialog(parentActivity, 0, (notify, scheduleDate) -> {
+                AlertsCreator.createScheduleDatePickerDialog(parentActivity, 0, (notify, scheduleDate, scheduleRepeatPeriod) -> {
                     forwardParams.notify = notify;
                     forwardParams.scheduleDate = scheduleDate;
+                    forwardParams.scheduleRepeatPeriod = scheduleRepeatPeriod;
                     delegate.sendMessage();
                 }, resourcesProvider);
             });

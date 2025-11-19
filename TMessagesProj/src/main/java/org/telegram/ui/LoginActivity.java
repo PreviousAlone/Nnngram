@@ -101,6 +101,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.play.core.integrity.IntegrityManager;
+import com.google.android.play.core.integrity.IntegrityManagerFactory;
+import com.google.android.play.core.integrity.IntegrityTokenRequest;
+import com.google.android.play.core.integrity.IntegrityTokenResponse;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.telegram.PhoneFormat.PhoneFormat;
@@ -155,6 +161,7 @@ import org.telegram.ui.Components.ImageUpdater;
 import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LinkPath;
+import org.telegram.ui.Components.LinkSpanDrawable;
 import org.telegram.ui.Components.LoadingDrawable;
 import org.telegram.ui.Components.LoginOrView;
 import org.telegram.ui.Components.OutlineTextContainerView;
@@ -3365,7 +3372,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
 
             ConnectionsManager.getInstance(currentAccount).cleanup(false);
-            final TLRPC.TL_auth_sendCode req = new TLRPC.TL_auth_sendCode();
+            TLRPC.TL_auth_sendCode req = new TLRPC.TL_auth_sendCode();
             String appHash = BuildVars.APP_HASH;
             int appId = BuildVars.APP_ID;
             switch(Config.getCustomAPI()){
@@ -3459,12 +3466,12 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 }
             }
 
-            TLObject req;
+            TLObject req1;
             if (activityMode == MODE_CHANGE_PHONE_NUMBER) {
                 TL_account.sendChangePhoneCode changePhoneCode = new TL_account.sendChangePhoneCode();
                 changePhoneCode.phone_number = phone;
                 changePhoneCode.settings = settings;
-                req = changePhoneCode;
+                req1 = changePhoneCode;
             } else {
                 ConnectionsManager.getInstance(currentAccount).cleanup(false);
 
@@ -3473,7 +3480,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 sendCode.api_id = BuildVars.APP_ID;
                 sendCode.phone_number = phone;
                 sendCode.settings = settings;
-                req = sendCode;
+                req1 = sendCode;
             }
 
             final Bundle params = new Bundle();
@@ -6139,7 +6146,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         private String phone, emailPhone;
         private String requestPhone, phoneHash;
 
-        private GoogleSignInAccount googleAccount;
+//        private GoogleSignInAccount googleAccount;
 
         public LoginActivitySetupEmail(Context context) {
             super(context);
@@ -6196,28 +6203,28 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             addView(emailOutlineView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 58, 16, 24, 16, 0));
 
-            signInWithGoogleView = new TextView(context);
-            signInWithGoogleView.setGravity(Gravity.LEFT);
-            signInWithGoogleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            signInWithGoogleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-            signInWithGoogleView.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16));
-            signInWithGoogleView.setMaxLines(2);
-
-            SpannableStringBuilder str = new SpannableStringBuilder("d ");
-            Drawable dr = ContextCompat.getDrawable(context, R.drawable.googleg_standard_color_18);
-            dr.setBounds(0, AndroidUtilities.dp(9), AndroidUtilities.dp(18), AndroidUtilities.dp(18 + 9));
-            str.setSpan(new ImageSpan(dr, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            str.setSpan(new ReplacementSpan() {
-                @Override
-                public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
-                    return AndroidUtilities.dp(12);
-                }
-
-                @Override
-                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
-            }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            str.append(getString(R.string.SignInWithGoogle));
-            signInWithGoogleView.setText(str);
+//            signInWithGoogleView = new TextView(context);
+//            signInWithGoogleView.setGravity(Gravity.LEFT);
+//            signInWithGoogleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+//            signInWithGoogleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+//            signInWithGoogleView.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16));
+//            signInWithGoogleView.setMaxLines(2);
+//
+//            SpannableStringBuilder str = new SpannableStringBuilder("d ");
+//            Drawable dr = ContextCompat.getDrawable(context, R.drawable.googleg_standard_color_18);
+//            dr.setBounds(0, AndroidUtilities.dp(9), AndroidUtilities.dp(18), AndroidUtilities.dp(18 + 9));
+//            str.setSpan(new ImageSpan(dr, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            str.setSpan(new ReplacementSpan() {
+//                @Override
+//                public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
+//                    return AndroidUtilities.dp(12);
+//                }
+//
+//                @Override
+//                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
+//            }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            str.append(getString(R.string.SignInWithGoogle));
+//            signInWithGoogleView.setText(str);
 
             loginOrView = new LoginOrView(context);
 
@@ -6225,43 +6232,43 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             addView(space, LayoutHelper.createLinear(0, 0, 1f));
 
             FrameLayout bottomContainer = new FrameLayout(context);
-            bottomContainer.addView(signInWithGoogleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 24));
+//            bottomContainer.addView(signInWithGoogleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 24));
             bottomContainer.addView(loginOrView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 16, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 70));
             loginOrView.setMeasureAfter(signInWithGoogleView);
             addView(bottomContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             VerticalPositionAutoAnimator.attach(bottomContainer);
 
-            bottomContainer.setOnClickListener(view -> {
-                NotificationCenter.getGlobalInstance().addObserver(new NotificationCenter.NotificationCenterDelegate() {
-                    @Override
-                    public void didReceivedNotification(int id, int account, Object... args) {
-                        int request = (int) args[0];
-                        int result = (int) args[1];
-                        Intent data = (Intent) args[2];
-                        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onActivityResultReceived);
+//            bottomContainer.setOnClickListener(view -> {
+//                NotificationCenter.getGlobalInstance().addObserver(new NotificationCenter.NotificationCenterDelegate() {
+//                    @Override
+//                    public void didReceivedNotification(int id, int account, Object... args) {
+//                        int request = (int) args[0];
+//                        int result = (int) args[1];
+//                        Intent data = (Intent) args[2];
+//                        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onActivityResultReceived);
+//
+//                        if (request == BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE) {
+//                            try {
+//                                googleAccount = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+//                                onNextPressed(null);
+//                            } catch (ApiException e) {
+//                                FileLog.e(e);
+//                            }
+//                        }
+//                    }
+//                }, NotificationCenter.onActivityResultReceived);
 
-                        if (request == BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE) {
-                            try {
-                                googleAccount = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-                                onNextPressed(null);
-                            } catch (ApiException e) {
-                                FileLog.e(e);
-                            }
-                        }
-                    }
-                }, NotificationCenter.onActivityResultReceived);
-
-                GoogleSignInClient googleClient = GoogleSignIn.getClient(getContext(), new GoogleSignInOptions.Builder()
-                        .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
-                        .requestEmail()
-                        .build());
-                googleClient.signOut().addOnCompleteListener(command -> {
-                    if (getParentActivity() == null || getParentActivity().isFinishing()) {
-                        return;
-                    }
-                    getParentActivity().startActivityForResult(googleClient.getSignInIntent(), BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE);
-                });
-            });
+//                GoogleSignInClient googleClient = GoogleSignIn.getClient(getContext(), new GoogleSignInOptions.Builder()
+//                        .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
+//                        .requestEmail()
+//                        .build());
+//                googleClient.signOut().addOnCompleteListener(command -> {
+//                    if (getParentActivity() == null || getParentActivity().isFinishing()) {
+//                        return;
+//                    }
+//                    getParentActivity().startActivityForResult(googleClient.getSignInIntent(), BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE);
+//                });
+//            });
         }
 
         @Override
@@ -6474,7 +6481,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         private boolean resetRequestPending;
         private Bundle currentParams;
         private boolean nextPressed;
-        private GoogleSignInAccount googleAccount;
+//        private GoogleSignInAccount googleAccount;
 
         private int resetAvailablePeriod, resetPendingDate;
         private String phone, emailPhone, email;
@@ -6541,60 +6548,60 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             addView(codeFieldContainer, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 42, Gravity.CENTER_HORIZONTAL, 0, setup ? 48 : 32, 0, 0));
 
-            signInWithGoogleView = new TextView(context);
-            signInWithGoogleView.setGravity(Gravity.CENTER);
-            signInWithGoogleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            signInWithGoogleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-            signInWithGoogleView.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16));
-            signInWithGoogleView.setMaxLines(2);
-
-            SpannableStringBuilder str = new SpannableStringBuilder("d ");
-            Drawable dr = ContextCompat.getDrawable(context, R.drawable.googleg_standard_color_18);
-            dr.setBounds(0, AndroidUtilities.dp(9), AndroidUtilities.dp(18), AndroidUtilities.dp(18 + 9));
-            str.setSpan(new ImageSpan(dr, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            str.setSpan(new ReplacementSpan() {
-                @Override
-                public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
-                    return AndroidUtilities.dp(12);
-                }
-
-                @Override
-                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
-            }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            str.append(getString(R.string.SignInWithGoogle));
-            signInWithGoogleView.setText(str);
-
-            signInWithGoogleView.setOnClickListener(view -> {
-                NotificationCenter.getGlobalInstance().addObserver(new NotificationCenter.NotificationCenterDelegate() {
-                    @Override
-                    public void didReceivedNotification(int id, int account, Object... args) {
-                        int request = (int) args[0];
-                        int result = (int) args[1];
-                        Intent data = (Intent) args[2];
-                        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onActivityResultReceived);
-
-                        if (request == BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE) {
-                            try {
-                                googleAccount = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-                                onNextPressed(null);
-                            } catch (ApiException e) {
-                                FileLog.e(e);
-                            }
-                        }
-                    }
-                }, NotificationCenter.onActivityResultReceived);
-
-                GoogleSignInClient googleClient = GoogleSignIn.getClient(getContext(), new GoogleSignInOptions.Builder()
-                                .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
-                                .requestEmail()
-                                .build());
-                googleClient.signOut().addOnCompleteListener(command -> {
-                    if (getParentActivity() == null) {
-                        return;
-                    }
-                    getParentActivity().startActivityForResult(googleClient.getSignInIntent(), BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE);
-                });
-            });
+//            signInWithGoogleView = new TextView(context);
+//            signInWithGoogleView.setGravity(Gravity.CENTER);
+//            signInWithGoogleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+//            signInWithGoogleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+//            signInWithGoogleView.setPadding(AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16));
+//            signInWithGoogleView.setMaxLines(2);
+//
+//            SpannableStringBuilder str = new SpannableStringBuilder("d ");
+//            Drawable dr = ContextCompat.getDrawable(context, R.drawable.googleg_standard_color_18);
+//            dr.setBounds(0, AndroidUtilities.dp(9), AndroidUtilities.dp(18), AndroidUtilities.dp(18 + 9));
+//            str.setSpan(new ImageSpan(dr, ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            str.setSpan(new ReplacementSpan() {
+//                @Override
+//                public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
+//                    return AndroidUtilities.dp(12);
+//                }
+//
+//                @Override
+//                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
+//            }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            str.append(getString(R.string.SignInWithGoogle));
+//            signInWithGoogleView.setText(str);
+//
+//            signInWithGoogleView.setOnClickListener(view -> {
+//                NotificationCenter.getGlobalInstance().addObserver(new NotificationCenter.NotificationCenterDelegate() {
+//                    @Override
+//                    public void didReceivedNotification(int id, int account, Object... args) {
+//                        int request = (int) args[0];
+//                        int result = (int) args[1];
+//                        Intent data = (Intent) args[2];
+//                        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onActivityResultReceived);
+//
+//                        if (request == BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE) {
+//                            try {
+//                                googleAccount = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
+//                                onNextPressed(null);
+//                            } catch (ApiException e) {
+//                                FileLog.e(e);
+//                            }
+//                        }
+//                    }
+//                }, NotificationCenter.onActivityResultReceived);
+//
+//                GoogleSignInClient googleClient = GoogleSignIn.getClient(getContext(), new GoogleSignInOptions.Builder()
+//                                .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
+//                                .requestEmail()
+//                                .build());
+//                googleClient.signOut().addOnCompleteListener(command -> {
+//                    if (getParentActivity() == null) {
+//                        return;
+//                    }
+//                    getParentActivity().startActivityForResult(googleClient.getSignInIntent(), BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE);
+//                });
+//            });
 
             cantAccessEmailFrameLayout = new FrameLayout(context);
             AndroidUtilities.updateViewVisibilityAnimated(cantAccessEmailFrameLayout, activityMode != MODE_CHANGE_LOGIN_EMAIL && !isSetup, 1f, false);

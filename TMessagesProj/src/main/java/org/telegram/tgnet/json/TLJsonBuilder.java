@@ -56,7 +56,7 @@ public class TLJsonBuilder {
             result2.putOpt(key, value);
         } catch (JSONException e) {
             FileLog.e(e);
-            if (BuildConfig.DEBUG_PRIVATE_VERSION) {
+            if (BuildConfig.DEBUG) {
                 throw new RuntimeException(e);
             }
         }

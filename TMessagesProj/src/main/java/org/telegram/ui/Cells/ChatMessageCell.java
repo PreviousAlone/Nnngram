@@ -249,6 +249,7 @@ import me.vkryl.android.animator.FactorAnimator;
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.Log;
 import xyz.nextalone.nnngram.utils.NeteaseEmbed;
 import xyz.nextalone.nnngram.utils.StringUtils;
 import xyz.nextalone.nnngram.utils.Utils;

@@ -41,6 +41,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -59,6 +60,7 @@ import android.util.Property;
 import android.util.StateSet;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -422,6 +424,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private boolean proxyItemVisible;
     private ActionBarMenuItem searchItem;
     private ActionBarMenuItem optionsItem;
+    private ActionBarMenuItem speedItem;
     private AnimatorSet speedAnimator;
     private ActionBarMenuItem doneItem;
     private ProxyDrawable proxyDrawable;
@@ -11958,6 +11961,65 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (DialogObject.isEncryptedDialog(did)) {
                 hasEncrypted = true;
                 break;
+            }
+        }
+        ActionBarPopupWindow.ActionBarPopupWindowLayout sendPopupLayout2 = new ActionBarPopupWindow.ActionBarPopupWindowLayout(parentActivity, resourcesProvider);
+        sendPopupLayout2.setAnimationEnabled(false);
+        sendPopupLayout2.setOnTouchListener(new View.OnTouchListener() {
+            private android.graphics.Rect popupRect = new android.graphics.Rect();
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
+                        v.getHitRect(popupRect);
+                        if (!popupRect.contains((int) event.getX(), (int) event.getY())) {
+                            sendPopupWindow.dismiss();
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+        sendPopupLayout2.setDispatchKeyEventListener(keyEvent -> {
+            if (keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount() == 0 && sendPopupWindow != null && sendPopupWindow.isShowing()) {
+                sendPopupWindow.dismiss();
+            }
+        });
+        sendPopupLayout2.setShownFromBottom(false);
+        sendPopupLayout2.setupRadialSelectors(getThemedColor(Theme.key_dialogButtonSelector));
+
+        ActionBarMenuSubItem sendWithoutSound = new ActionBarMenuSubItem(parentActivity, true, true, resourcesProvider);
+        sendWithoutSound.setTextAndIcon(LocaleController.getString(R.string.SendWithoutSound), R.drawable.input_notify_off);
+        sendWithoutSound.setMinimumWidth(dp(196));
+        sendPopupLayout2.addView(sendWithoutSound, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+        sendWithoutSound.setOnClickListener(v -> {
+            if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
+                sendPopupWindow.dismiss();
+            }
+            this.notify = false;
+            if (delegate == null || selectedDialogs.isEmpty()) {
+                return;
+            }
+            ArrayList<MessagesStorage.TopicKey> topicKeys = new ArrayList<>();
+            for (int i = 0; i < selectedDialogs.size(); i++) {
+                topicKeys.add(MessagesStorage.TopicKey.of(selectedDialogs.get(i), 0));
+            }
+            delegate.didSelectDialogs(DialogsActivity.this, topicKeys, commentView.getFieldText(), false, notify, scheduleDate, null);
+        });
+
+        boolean onlyMyself = false;
+        boolean canSchedule = true;
+        for (int i = 0; i < selectedDialogs.size(); ++i) {
+            final long did = selectedDialogs.get(i);
+            if (onlyMyself && did != getUserConfig().getClientUserId())
+                onlyMyself = false;
+            if (DialogObject.isEncryptedDialog(did)) {
+                canSchedule = false;
+            }
+            TLRPC.Chat chat = getMessagesController().getChat(-did);
+            if (chat != null && !ChatObject.canWriteToChat(chat)) {
+                canSchedule = false;
             }
         }
         final boolean onlyMyselfFinal = onlyMyself;

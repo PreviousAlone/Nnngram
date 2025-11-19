@@ -55,5 +55,6 @@ public interface ForwardContext {
         public boolean noCaption = false;
         public boolean notify = true;
         public int scheduleDate = 0;
+        public int scheduleRepeatPeriod = 0;
     }
 }

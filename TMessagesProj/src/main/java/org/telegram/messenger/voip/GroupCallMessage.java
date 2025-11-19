@@ -1,12 +1,12 @@
 package org.telegram.messenger.voip;
 
+import androidx.annotation.Nullable;
+
 import org.telegram.messenger.MediaDataController;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 
 import java.util.ArrayList;
-
-import javax.annotation.Nullable;
 
 import me.vkryl.core.BitwiseUtils;
 

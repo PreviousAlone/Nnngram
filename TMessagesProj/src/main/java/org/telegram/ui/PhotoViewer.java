@@ -12,6 +12,7 @@ import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.dpf2;
 import static org.telegram.messenger.AndroidUtilities.lerp;
 import static org.telegram.messenger.LocaleController.getString;
+import static org.telegram.ui.ChatActivity.MODE_SAVED;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -5724,7 +5725,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         info.masks = null;
                         info.ttl = 0;
                         media.add(info);
-                        SendMessagesHelper.prepareSendingMedia(parentChatActivity.getAccountInstance(), media, parentChatActivity.getUserConfig().getClientUserId(), null, null, null, null, true, true, null, false, 0, 0, false, null, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, false, 0, parentChatActivity.getSendMonoForumPeerId(), parentChatActivity.getSendMessageSuggestionParams());
+                        SendMessagesHelper.prepareSendingMedia(parentChatActivity.getAccountInstance(), media, parentChatActivity.getUserConfig().getClientUserId(), null, null, null, null, true, true, null, false, 0, 0, MODE_SAVED, false, null, parentChatActivity.quickReplyShortcut, parentChatActivity.getQuickReplyId(), 0, false, 0, parentChatActivity.getSendMonoForumPeerId(), parentChatActivity.getSendMessageSuggestionParams());
                         BulletinFactory.global().showForwardedBulletinWithTag(parentChatActivity.getUserConfig().getClientUserId(), 1);
                     } else {
                         var accountInstance = AccountInstance.getInstance(currentAccount);
@@ -13990,7 +13991,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                 } else if (!messageObject.scheduled && !messageObject.isQuickReply() && !messageObject.isSponsored() && !(MessageObject.getMedia(messageObject.messageOwner) instanceof TLRPC.TL_messageMediaInvoice) && !(MessageObject.getMedia(messageObject.messageOwner) instanceof TLRPC.TL_messageMediaWebPage) && (messageObject.messageOwner.action == null || messageObject.messageOwner.action instanceof TLRPC.TL_messageActionEmpty)) {
                     needSearchImageInArr = true;
                     imagesByIds[0].put(messageObject.getId(), messageObject);
-                    if (parentChatActivity == null || !parentChatActivity.isThreadChat() && parentChatActivity.getChatMode() != ChatActivity.MODE_SAVED && parentChatActivity.getChatMode() != ChatActivity.MODE_QUICK_REPLIES) {
+                    if (parentChatActivity == null || !parentChatActivity.isThreadChat() && parentChatActivity.getChatMode() != MODE_SAVED && parentChatActivity.getChatMode() != ChatActivity.MODE_QUICK_REPLIES) {
                         menuItem.showSubItem(gallery_menu_showinchat);
                         boolean canWrite = true;
                         long dialogId = messageObject.getDialogId();
@@ -14882,7 +14883,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             if (parentChatActivity != null) {
                 TLRPC.Chat chat = null;
                 TLRPC.User user = null;
-                if (parentChatActivity.getChatMode() == ChatActivity.MODE_SAVED) {
+                if (parentChatActivity.getChatMode() == MODE_SAVED) {
                     long did = parentChatActivity.getSavedDialogId();
                     if (did >= 0) {
                         user = parentChatActivity.getMessagesController().getUser(did);
@@ -14897,7 +14898,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     title = chat.title;
                 } else {
                     if (UserObject.isUserSelf(user)) {
-                        title = getString(parentChatActivity.getChatMode() == ChatActivity.MODE_SAVED ? R.string.MyNotes : R.string.SavedMessages);
+                        title = getString(parentChatActivity.getChatMode() == MODE_SAVED ? R.string.MyNotes : R.string.SavedMessages);
                     } else if (UserObject.isAnonymous(user)) {
                         title = getString(R.string.AnonymousForward);
                     } else {

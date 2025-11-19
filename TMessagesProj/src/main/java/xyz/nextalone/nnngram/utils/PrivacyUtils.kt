@@ -56,7 +56,7 @@ object PrivacyUtils {
     private fun postCheckPhoneNumberVisible(ctx: Context, account: Int) {
 
         ConnectionsManager.getInstance(account).sendRequest(TL_account.getPrivacy().apply {
-            key = TLRPC.InputPrivacyKey.inputPrivacyKeyPhoneNumber
+            key = TLRPC.TL_inputPrivacyKeyPhoneNumber()
         }, { response, _ ->
             if (response is TL_account.privacyRules) {
                 if (response.rules.isEmpty()) {
@@ -79,7 +79,7 @@ object PrivacyUtils {
 
     private fun postCheckAddMeByPhone(ctx: Context, account: Int) {
         ConnectionsManager.getInstance(account).sendRequest(TL_account.getPrivacy().apply {
-            key = TLRPC.InputPrivacyKey.inputPrivacyKeyAddedByPhone
+            key = TLRPC.TL_inputPrivacyKeyAddedByPhone()
         }, { response, _ ->
             if (response is TL_account.privacyRules) {
                 if (response.rules.isEmpty()) {
@@ -102,7 +102,7 @@ object PrivacyUtils {
 
     private fun postCheckAllowP2p(ctx: Context, account: Int) {
         ConnectionsManager.getInstance(account).sendRequest(TL_account.getPrivacy().apply {
-            key = TLRPC.InputPrivacyKey.inputPrivacyKeyPhoneP2P
+            key = TLRPC.TL_inputPrivacyKeyPhoneP2P()
         }, { response, _ ->
             if (response is TL_account.privacyRules) {
                 if (response.rules.isEmpty()) {
@@ -156,9 +156,9 @@ object PrivacyUtils {
         builder.setPositiveButton(LocaleController.getString("ApplySuggestion", R.string.ApplySuggestion)) { _, _ ->
             ConnectionsManager.getInstance(account).sendRequest(TL_account.setPrivacy().apply {
                 key = when (type) {
-                    0 -> TLRPC.InputPrivacyKey.inputPrivacyKeyPhoneNumber
-                    1 -> TLRPC.InputPrivacyKey.inputPrivacyKeyAddedByPhone
-                    else -> TLRPC.InputPrivacyKey.inputPrivacyKeyPhoneP2P
+                    0 -> TLRPC.TL_inputPrivacyKeyPhoneNumber()
+                    1 -> TLRPC.TL_inputPrivacyKeyAddedByPhone()
+                    else -> TLRPC.TL_inputPrivacyKeyPhoneP2P()
                 }
                 rules = arrayListOf(
                     when (type) {
