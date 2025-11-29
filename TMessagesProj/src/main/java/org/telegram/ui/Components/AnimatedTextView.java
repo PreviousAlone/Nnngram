@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this software.
- *  If not, see
- * <https://www.gnu.org/licenses/>
- */
-
 package org.telegram.ui.Components;
 
 import static org.telegram.messenger.AndroidUtilities.lerp;
@@ -389,6 +370,10 @@ public class AnimatedTextView extends View {
             }
             final int width = overrideFullWidth > 0 ? overrideFullWidth : bounds.width();
             if (animated) {
+                if (TextUtils.equals(text, currentText)) {
+                    return;
+                }
+
                 if (allowCancel) {
                     if (animator != null) {
                         animator.cancel();
@@ -397,10 +382,6 @@ public class AnimatedTextView extends View {
                 } else if (isAnimating()) {
                     toSetText = text;
                     toSetTextMoveDown = moveDown;
-                    return;
-                }
-
-                if (text.equals(currentText)) {
                     return;
                 }
 
@@ -1227,7 +1208,7 @@ public class AnimatedTextView extends View {
     public void setText(CharSequence text, boolean animated, boolean moveDown) {
         animated = !first && animated;
         first = false;
-        if (animated) {
+        if (animated && !TextUtils.equals(text, drawable.getText())) {
             if (drawable.allowCancel) {
                 if (drawable.animator != null) {
                     drawable.animator.cancel();
@@ -1359,5 +1340,9 @@ public class AnimatedTextView extends View {
 
     public void setIncludeFontPadding(boolean includeFontPadding) {
         this.drawable.setIncludeFontPadding(includeFontPadding);
+    }
+
+    public void setAllowCancel(boolean allow) {
+        this.drawable.setAllowCancel(allow);
     }
 }

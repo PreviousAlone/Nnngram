@@ -99,6 +99,7 @@ import org.telegram.messenger.Utilities;
 import org.telegram.messenger.VideoEditedInfo;
 import org.telegram.messenger.camera.CameraController;
 import org.telegram.messenger.camera.CameraView;
+import org.telegram.messenger.voip.VoIPService;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenu;
@@ -524,7 +525,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
         }
 
         @Override
-        public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, boolean forceDocument) {
+        public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean forceDocument) {
             parentAlert.sent = true;
             MediaController.PhotoEntry photoEntry = getPhotoEntryAtPosition(index);
             if (photoEntry != null) {
@@ -570,7 +571,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                 if (parentAlert != null) {
                     parentAlert.setButtonPressed(true);
                 }
-                parentAlert.delegate.didPressedButton(7, true, notify, scheduleDate, 0, parentAlert.isCaptionAbove(), forceDocument, payStars);
+                parentAlert.delegate.didPressedButton(7, true, notify, scheduleDate, 0, 0, parentAlert.isCaptionAbove(), forceDocument, payStars);
                 selectedPhotos.clear();
                 cameraPhotos.clear();
                 selectedPhotosOrder.clear();
@@ -944,7 +945,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                         addToSelectedPhotos(photoEntry, -1);
                     }
                     parentAlert.applyCaption();
-                    parentAlert.delegate.didPressedButton(7, true, true, 0, 0, parentAlert.isCaptionAbove(), false, 0);
+                    parentAlert.delegate.didPressedButton(7, true, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, 0);
                     selectedPhotos.clear();
                     cameraPhotos.clear();
                     selectedPhotosOrder.clear();
@@ -1042,7 +1043,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                     openCamera(true);
                 } else {
                     if (parentAlert.delegate != null) {
-                        parentAlert.delegate.didPressedButton(0, false, true, 0, 0, parentAlert.isCaptionAbove(), false, 0);
+                        parentAlert.delegate.didPressedButton(0, false, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, 0);
                     }
                 }
             }
@@ -1053,7 +1054,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             }
             if (position == 0 && selectedAlbumEntry == galleryAlbumEntry) {
                 if (parentAlert.delegate != null) {
-                    parentAlert.delegate.didPressedButton(0, false, true, 0, 0, parentAlert.isCaptionAbove(), false, 0);
+                    parentAlert.delegate.didPressedButton(0, false, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, 0);
                 }
                 return true;
             } else if (view instanceof PhotoAttachPhotoCell) {
@@ -1655,7 +1656,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             }
             selectedPhotos.put(-1, photoEntry);
             selectedPhotosOrder.add(-1);
-            parentAlert.delegate.didPressedButton(7, true, false, 0, 0, parentAlert.isCaptionAbove(), false, 0);
+            parentAlert.delegate.didPressedButton(7, true, false, 0, 0, 0, parentAlert.isCaptionAbove(), false, 0);
             if (!avatarConstructorFragment.finishOnDone) {
                 if (parentAlert.baseFragment != null) {
                     parentAlert.baseFragment.removeSelfFromStack();
@@ -2114,7 +2115,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             public void needAddMorePhotos() {
                 cancelTakingPhotos = false;
                 if (mediaFromExternalCamera) {
-                    parentAlert.delegate.didPressedButton(0, true, true, 0, 0, parentAlert.isCaptionAbove(), false, 0);
+                    parentAlert.delegate.didPressedButton(0, true, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, 0);
                     return;
                 }
                 if (!cameraOpened) {
@@ -2127,7 +2128,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             }
 
             @Override
-            public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, boolean forceDocument) {
+            public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean forceDocument) {
                 if (cameraPhotos.isEmpty() || parentAlert.destroyed) {
                     return;
                 }
@@ -2159,7 +2160,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                         parentAlert.setButtonPressed(true);
                     }
                     closeCamera(false);
-                    parentAlert.delegate.didPressedButton(forceDocument ? 4 : 8, true, notify, scheduleDate, 0, parentAlert.isCaptionAbove(), forceDocument, payStars);
+                    parentAlert.delegate.didPressedButton(forceDocument ? 4 : 8, true, notify, scheduleDate, 0, 0, parentAlert.isCaptionAbove(), forceDocument, payStars);
                     cameraPhotos.clear();
                     selectedPhotosOrder.clear();
                     selectedPhotos.clear();
@@ -2414,7 +2415,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             cameraView.setFpsLimit(-1);
         }
         AndroidUtilities.hideKeyboard(this);
-        AndroidUtilities.setLightNavigationBar(parentAlert.getWindow(), false);
+        AndroidUtilities.setLightNavigationBar(parentAlert, false);
         parentAlert.getWindow().addFlags(FLAG_KEEP_SCREEN_ON);
         if (animated) {
             setCameraOpenProgress(0);
@@ -2501,7 +2502,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
     }
 
     public void showCamera() {
-        if (parentAlert.paused || !mediaEnabled) {
+        if (parentAlert.paused || !mediaEnabled || !CameraView.isCameraAllowed()) {
             return;
         }
         if (cameraView == null) {
@@ -2864,7 +2865,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             AndroidUtilities.cancelRunOnUIThread(zoomControlHideRunnable);
             zoomControlHideRunnable = null;
         }
-        AndroidUtilities.setLightNavigationBar(parentAlert.getWindow(), AndroidUtilities.computePerceivedBrightness(getThemedColor(Theme.key_windowBackgroundGray)) > 0.721);
+        AndroidUtilities.setLightNavigationBar(parentAlert, AndroidUtilities.computePerceivedBrightness(getThemedColor(Theme.key_windowBackgroundGray)) > 0.721);
         if (animated) {
             additionCloseCameraY = cameraView.getTranslationY();
 
@@ -3314,26 +3315,26 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
         }
         if (id == group) {
             if (parentAlert.editingMessageObject == null && parentAlert.baseFragment instanceof ChatActivity && ((ChatActivity) parentAlert.baseFragment).isInScheduleMode()) {
-                AlertsCreator.createScheduleDatePickerDialog(getContext(), ((ChatActivity) parentAlert.baseFragment).getDialogId(), (notify, scheduleDate) -> {
+                AlertsCreator.createScheduleDatePickerDialog(getContext(), ((ChatActivity) parentAlert.baseFragment).getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> {
                     parentAlert.applyCaption();
-                    parentAlert.delegate.didPressedButton(7, false, notify, scheduleDate, 0, parentAlert.isCaptionAbove(), false, 0);
+                    parentAlert.delegate.didPressedButton(7, false, notify, scheduleDate, 0, 0, parentAlert.isCaptionAbove(), false, 0);
                 }, resourcesProvider);
             } else {
                 AlertsCreator.ensurePaidMessageConfirmation(parentAlert.currentAccount, parentAlert.getDialogId(), selectedPhotos.size() + parentAlert.getAdditionalMessagesCount(), payStars -> {
                     parentAlert.applyCaption();
-                    parentAlert.delegate.didPressedButton(7, false, true, 0, 0, parentAlert.isCaptionAbove(), false, payStars);
+                    parentAlert.delegate.didPressedButton(7, false, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, payStars);
                 });
             }
         } else if (id == compress) {
             if (parentAlert.editingMessageObject == null && parentAlert.baseFragment instanceof ChatActivity && ((ChatActivity) parentAlert.baseFragment).isInScheduleMode()) {
-                AlertsCreator.createScheduleDatePickerDialog(getContext(), ((ChatActivity) parentAlert.baseFragment).getDialogId(), (notify, scheduleDate) -> {
+                AlertsCreator.createScheduleDatePickerDialog(getContext(), ((ChatActivity) parentAlert.baseFragment).getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> {
                     parentAlert.applyCaption();
-                    parentAlert.delegate.didPressedButton(4, true, notify, scheduleDate, 0, parentAlert.isCaptionAbove(), false, 0);
+                    parentAlert.delegate.didPressedButton(4, true, notify, scheduleDate, 0, 0, parentAlert.isCaptionAbove(), false, 0);
                 }, resourcesProvider);
             } else {
                 AlertsCreator.ensurePaidMessageConfirmation(parentAlert.currentAccount, parentAlert.getDialogId(), selectedPhotos.size() + parentAlert.getAdditionalMessagesCount(), payStars -> {
                     parentAlert.applyCaption();
-                    parentAlert.delegate.didPressedButton(4, true, true, 0, 0, parentAlert.isCaptionAbove(), false, payStars);
+                    parentAlert.delegate.didPressedButton(4, true, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, payStars);
                 });
             }
         } else if (id == spoiler || id == spoiler_update) {

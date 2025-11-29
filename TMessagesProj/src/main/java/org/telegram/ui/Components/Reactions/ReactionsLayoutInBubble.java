@@ -34,7 +34,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,6 +45,7 @@ import androidx.recyclerview.widget.ChatListItemAnimator;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.BotForumHelper;
 import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.ImageLocation;
@@ -188,6 +188,15 @@ public class ReactionsLayoutInBubble {
         hasPaidReaction = false;
         reactionButtons.clear();
         if (messageObject != null) {
+            boolean forceLikeDislikeReactions = false; /*!messageObject.isOutOwner()
+                    && !messageObject.isBotPendingDraft
+                    && BotForumHelper.isBotForum(currentAccount, messageObject.getDialogId())
+                    && messageObject.messageOwner.action == null;*/
+
+            if (forceLikeDislikeReactions && messageObject.messageOwner.reactions == null) {
+                messageObject.messageOwner.reactions = new TLRPC.TL_messageReactions();
+            }
+
             comparator.dialogId = messageObject.getDialogId();
             if (messageObject.messageOwner.reactions != null && messageObject.messageOwner.reactions.results != null) {
                 int totalCount = 0;
@@ -195,6 +204,9 @@ public class ReactionsLayoutInBubble {
                     totalCount += messageObject.messageOwner.reactions.results.get(i).count;
                 }
                 boolean includeEmptyStarButton = false;
+                boolean includeEmptyLikeButton = forceLikeDislikeReactions;
+                boolean includeEmptyDislikeButton = forceLikeDislikeReactions;
+
                 final TLRPC.ChatFull chatInfo = MessagesController.getInstance(currentAccount).getChatFull(-messageObject.getDialogId());
                 if (!isSmall && !messageObject.messageOwner.reactions.results.isEmpty() && chatInfo != null && chatInfo.paid_reactions_available) {
                     boolean hasPaidReaction = false;
@@ -202,18 +214,42 @@ public class ReactionsLayoutInBubble {
                         TLRPC.ReactionCount reactionCount = messageObject.messageOwner.reactions.results.get(i);
                         if (reactionCount.reaction instanceof TLRPC.TL_reactionPaid) {
                             hasPaidReaction = true;
-                            break;
+                        }
+                        if (reactionCount.reaction instanceof TLRPC.TL_reactionEmoji) {
+                            String emoji = ((TLRPC.TL_reactionEmoji) reactionCount.reaction).emoticon;
+                            if (TextUtils.equals("\uD83D\uDC4D", emoji)) {
+                                includeEmptyLikeButton = false;
+                            }
+                            if (TextUtils.equals("\uD83D\uDC4E", emoji)) {
+                                includeEmptyDislikeButton = false;
+                            }
                         }
                     }
                     if (!hasPaidReaction) {
                         includeEmptyStarButton = true;
                     }
                 }
-                for (int i = (includeEmptyStarButton ? -1 : 0); i < messageObject.messageOwner.reactions.results.size(); i++) {
+
+                ArrayList<TLRPC.Reaction> forcedReactions = new ArrayList<>();
+                if (includeEmptyStarButton) {
+                    forcedReactions.add(new TLRPC.TL_reactionPaid());
+                }
+                if (includeEmptyLikeButton) {
+                    TLRPC.TL_reactionEmoji emoji = new TLRPC.TL_reactionEmoji();
+                    emoji.emoticon = "\uD83D\uDC4D";
+                    forcedReactions.add(emoji);
+                }
+                if (includeEmptyDislikeButton) {
+                    TLRPC.TL_reactionEmoji emoji = new TLRPC.TL_reactionEmoji();
+                    emoji.emoticon = "\uD83D\uDC4E";
+                    forcedReactions.add(emoji);
+                }
+
+                for (int i = (-forcedReactions.size()); i < messageObject.messageOwner.reactions.results.size(); i++) {
                     TLRPC.ReactionCount reactionCount;
-                    if (i == -1) {
+                    if (i < 0) {
                         reactionCount = new TLRPC.TL_reactionCount();
-                        reactionCount.reaction = new TLRPC.TL_reactionPaid();
+                        reactionCount.reaction = forcedReactions.get(forcedReactions.size() + i);
                         reactionCount.chosen = false;
                         reactionCount.count = 0;
                     } else {
@@ -465,7 +501,9 @@ public class ReactionsLayoutInBubble {
     }
 
     public boolean hasOverlay() {
-        return hasPaidReaction && !(isEmpty && outButtons.isEmpty()) && LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS);
+        return hasPaidReaction && !(isEmpty && outButtons.isEmpty())
+            && LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS)
+            && LiteMode.isEnabled(LiteMode.FLAG_PARTICLES);
     }
 
     public void drawOverlay(Canvas canvas, float animationProgress) {
@@ -968,7 +1006,7 @@ public class ReactionsLayoutInBubble {
 
         public void drawOverlay(Canvas canvas, float x, float y, float progress, float alpha, boolean drawOverlayScrim) {
             if (particles == null) return;
-            if (!LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS)) return;
+            if (!LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS) || !LiteMode.isEnabled(LiteMode.FLAG_PARTICLES)) return;
 
             AndroidUtilities.rectTmp.set(x, y, x + width, y + height);
             float rad = height / 2f;

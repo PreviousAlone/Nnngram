@@ -662,7 +662,6 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
                 drawBackground = false;
             }
         }
-        containerView.setFitsSystemWindows(21 <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < 35);
         View rootView = containerView;
         if (needStarsBalance) {
             if (fullscreenContainerView == null) {
@@ -670,7 +669,6 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
                 fullscreenContainerView.setOnClickListener(v -> {
                     dismiss();
                 });
-//                fullscreenContainerView.setFitsSystemWindows(Build.VERSION.SDK_INT >= 21);
             }
             if (starsBalanceCloud == null) {
                 starsBalanceCloud = new BalanceCloud(getContext(), UserConfig.selectedAccount, resourcesProvider);

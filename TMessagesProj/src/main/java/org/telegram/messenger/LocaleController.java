@@ -20,6 +20,7 @@
 package org.telegram.messenger;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
+import static org.telegram.messenger.AndroidUtilities.formatWholeNumber;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -1673,6 +1674,14 @@ public class LocaleController {
         return stringBuilder.toString();
     }
 
+    public static String formatNumberWithMillion(long count, char symbol) {
+        if (count < 1_000_000) {
+            return formatNumber(count, symbol);
+        }
+
+        return formatWholeNumber((int) count, 1_000_000);
+    }
+
     public static String formatString(@StringRes int res, Object... args) {
         String key = resourcesCacheMap.get(res);
         if (key == null) {
@@ -2252,16 +2261,16 @@ public class LocaleController {
 
             if (dateDay == day && year == dateYear) {
                 if (shortFormat) {
-                    return LocaleController.formatString("TodayAtFormatted", R.string.TodayAtFormatted, getInstance().getFormatterDay().format(new Date(date)));
+                    return LocaleController.formatString(R.string.TodayAtFormatted, getInstance().getFormatterDay().format(new Date(date)));
                 } else {
-                    return LocaleController.formatString("TodayAtFormattedWithToday", R.string.TodayAtFormattedWithToday, getInstance().getFormatterDay().format(new Date(date)));
+                    return LocaleController.formatString(R.string.TodayAtFormattedWithToday, getInstance().getFormatterDay().format(new Date(date)));
                 }
             } else if (dateDay + 1 == day && year == dateYear) {
-                return LocaleController.formatString("YesterdayAtFormatted", R.string.YesterdayAtFormatted, getInstance().getFormatterDay().format(new Date(date)));
+                return LocaleController.formatString(R.string.YesterdayAtFormatted, getInstance().getFormatterDay().format(new Date(date)));
             } else if (Math.abs(System.currentTimeMillis() - date) < 31536000000L) {
-                return LocaleController.formatString("formatDateAtTime", R.string.formatDateAtTime, getInstance().getFormatterDayMonth().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
+                return LocaleController.formatString(R.string.formatDateAtTime, getInstance().getFormatterDayMonth().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
             } else {
-                return LocaleController.formatString("formatDateAtTime", R.string.formatDateAtTime, getInstance().getFormatterYear().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
+                return LocaleController.formatString(R.string.formatDateAtTime, getInstance().getFormatterYear().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
             }
         } catch (Exception e) {
             FileLog.e(e);
@@ -2948,11 +2957,11 @@ public class LocaleController {
             date *= 1000;
             String format;
             if (Math.abs(System.currentTimeMillis() - date) < 31536000000L) {
-                format = LocaleController.formatString("formatDateAtTime", R.string.formatDateAtTime, getInstance().getFormatterDayMonth().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
+                format = LocaleController.formatString(R.string.formatDateAtTime, getInstance().getFormatterDayMonth().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
             } else {
-                format = LocaleController.formatString("formatDateAtTime", R.string.formatDateAtTime, getInstance().getFormatterYear().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
+                format = LocaleController.formatString(R.string.formatDateAtTime, getInstance().getFormatterYear().format(new Date(date)), getInstance().getFormatterDay().format(new Date(date)));
             }
-            return formatString("ChannelOtherSubscriberJoined", R.string.ChannelOtherSubscriberJoined, format);
+            return formatString(R.string.ChannelOtherSubscriberJoined, format);
         } catch (Exception e) {
             FileLog.e(e);
         }

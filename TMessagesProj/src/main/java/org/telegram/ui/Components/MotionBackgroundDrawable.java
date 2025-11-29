@@ -55,6 +55,7 @@ import org.telegram.tgnet.TLRPC;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Random;
 
 public class MotionBackgroundDrawable extends Drawable {
 
@@ -302,6 +303,7 @@ public class MotionBackgroundDrawable extends Drawable {
 
     public void switchToNextPosition(boolean fast) {
         if (posAnimationProgress < 1.0f || !LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
+            invalidateParent();
             return;
         }
         rotatingPreview = false;
@@ -453,8 +455,15 @@ public class MotionBackgroundDrawable extends Drawable {
 
 
     private List<WallpaperGiftPatternPosition> giftPatternPositions;
+    private int giftPosition;
     public void setPatternGiftPositions(List<WallpaperGiftPatternPosition> giftPositions) {
         giftPatternPositions = giftPositions;
+    }
+
+    public void setGiftPatternRandomSeed(long seed) {
+        if (giftPatternPositions != null) {
+            giftPosition = new Random(seed).nextInt(giftPatternPositions.size());
+        }
     }
 
     public void setGiftPatternBitmap(Bitmap bitmap) {
@@ -805,7 +814,7 @@ public class MotionBackgroundDrawable extends Drawable {
                 paint2.setAlpha((int) ((Math.abs(intensity) / 100f) * alpha * patternAlpha));
                 canvas.drawBitmap(patternBitmap, null, rect, paint2);
                 paint.setAlpha((int) ((Math.abs(intensity) / 100f) * alpha * patternAlpha * 0.8f));
-                drawGiftPatternsForPositiveIntensity(canvas, rect, paint2, 6);
+                drawGiftPatternsForPositiveIntensity(canvas, rect, paint2, giftPosition);
             }
         }
         canvas.restore();
@@ -978,7 +987,7 @@ public class MotionBackgroundDrawable extends Drawable {
                 paint2.setAlpha((int) ((Math.abs(intensity) / 100f) * alpha * patternAlpha));
                 canvas.drawBitmap(patternBitmap, null, rect, paint2);
                 paint.setAlpha((int) ((Math.abs(intensity) / 100f) * alpha * patternAlpha * 0.8f));
-                drawGiftPatternsForPositiveIntensity(canvas, rect, paint2, 6);
+                drawGiftPatternsForPositiveIntensity(canvas, rect, paint2, giftPosition);
             }
         }
         canvas.restore();
@@ -1205,7 +1214,7 @@ public class MotionBackgroundDrawable extends Drawable {
 
                 canvas.save();
                 canvas.concat(r.matrix);
-                if (a == 6 && giftImageReceiver != null) {
+                if (a == giftPosition && giftImageReceiver != null) {
                     giftImageReceiver.setImageCoords(r.rect);
                     giftImageReceiver.draw(canvas);
                 } else {

@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.nanohttpd)
     implementation(libs.mediarouter)
     implementation(libs.recaptcha)
+    implementation(libs.multidex)
 
     implementation(libs.kotlin.stdlib.common)
     implementation(libs.kotlin.stdlib)

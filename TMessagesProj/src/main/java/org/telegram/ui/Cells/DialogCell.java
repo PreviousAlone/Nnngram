@@ -737,6 +737,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         if (isForumCell()) {
             return false;
         }
+        if (storyParams.drawnLive) {
+            return false;
+        }
         if (user == null || user.self) {
             return false;
         }
@@ -755,7 +758,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     }
 
     private void checkTtl() {
-        showTtl = ttlPeriod > 0 && !hasCall && !isOnline() && !(checkBox != null && checkBox.isChecked());
+        showTtl = ttlPeriod > 0 && !hasCall && !isOnline() && !(checkBox != null && checkBox.isChecked()) && !storyParams.drawnLive;
         ttlProgress = showTtl ? 1.0f : 0.0f;
     }
 
@@ -2060,6 +2063,12 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                             }
                             nameString = getString(R.string.SavedMessages);
                         }
+                    } else if (isTopic) {
+                        if (topicIconInName == null) {
+                            topicIconInName = new Drawable[1];
+                        }
+                        topicIconInName[0] = null;
+                        nameString = showTopicIconInName ? ForumUtilities.getTopicSpannedName(forumTopic, Theme.dialogs_namePaint[paintIndex], topicIconInName, false) : AndroidUtilities.escape(forumTopic.title);
                     } else {
                         nameString = AndroidUtilities.escape(UserObject.getUserName(user));
                     }
@@ -4341,6 +4350,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                     storyParams.forceState = StoriesUtilities.STATE_HAS_UNREAD;
                 }
                 StoriesUtilities.drawAvatarWithStory(currentDialogId, canvas, avatarImage, storyParams);
+                if (storyParams.drawnLive) {
+                    checkTtl();
+                }
                 storyParams.forceState = s;
             }
         }
@@ -4569,7 +4581,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             return false;
         }
         if (isDialogCell && currentDialogFolderId == 0 && !stars) {
-            showTtl = ttlPeriod > 0 && !isOnline() && !hasCall;
+            showTtl = ttlPeriod > 0 && !isOnline() && !hasCall && !storyParams.drawnLive;
             if (rightFragmentOpenedProgress != 1f && (showTtl || ttlProgress > 0)) {
                 if (timerDrawable == null || (timerDrawable.getTime() != ttlPeriod && ttlPeriod > 0)) {
                     timerDrawable = TimerDrawable.getTtlIconForDialogs(ttlPeriod);

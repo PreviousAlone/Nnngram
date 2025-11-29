@@ -72,7 +72,6 @@ import org.telegram.ui.Components.EffectsTextView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.NumberPicker;
 import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.Stars.StarsIntroActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -421,7 +420,7 @@ public class BoostDialogs {
             calendar.setTimeInMillis(System.currentTimeMillis() + (long) dayPicker.getValue() * 24 * 3600 * 1000);
             calendar.set(Calendar.HOUR_OF_DAY, hourPicker.getValue());
             calendar.set(Calendar.MINUTE, minutePicker.getValue() * 5);
-            datePickerDelegate.didSelectDate(true, (int) (calendar.getTimeInMillis() / 1000));
+            datePickerDelegate.didSelectDate(true, (int) (calendar.getTimeInMillis() / 1000), 0);
             builder.getDismissRunnable().run();
         });
 

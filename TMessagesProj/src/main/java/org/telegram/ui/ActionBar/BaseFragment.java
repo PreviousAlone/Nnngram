@@ -1,20 +1,9 @@
 /*
- * Copyright (C) 2019-2024 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
+ * This is the source code of Telegram for Android v. 5.x.x.
+ * It is licensed under GNU GPL v. 2 or later.
+ * You should have received a copy of the license in this archive (see LICENSE).
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this software.
- *  If not, see
- * <https://www.gnu.org/licenses/>
+ * Copyright Nikolai Kudashov, 2013-2018.
  */
 
 package org.telegram.ui.ActionBar;
@@ -27,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -52,6 +42,7 @@ import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DownloadController;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.GiftAuctionController;
 import org.telegram.messenger.LocationController;
 import org.telegram.messenger.MediaController;
 import org.telegram.messenger.MediaDataController;
@@ -295,11 +286,7 @@ public abstract class BaseFragment {
     public void setInPreviewMode(boolean value) {
         inPreviewMode = value;
         if (actionBar != null) {
-            if (inPreviewMode) {
-                actionBar.setOccupyStatusBar(false);
-            } else {
-                actionBar.setOccupyStatusBar(Build.VERSION.SDK_INT >= 21);
-            }
+            actionBar.setOccupyStatusBar(!inPreviewMode);
         }
     }
 
@@ -507,8 +494,7 @@ public abstract class BaseFragment {
         }
     }
 
-    public void onUserLeaveHint() {
-    }
+    public void onUserLeaveHint() {}
 
     @CallSuper
     public void onResume() {
@@ -748,9 +734,17 @@ public abstract class BaseFragment {
             c.run();
         }
         updateSheetsVisibility();
+        checkSystemBarColors();
     }
 
-    private void updateSheetsVisibility() {
+    protected void checkSystemBarColors() {
+        Activity activity = getParentActivity();
+        if (activity instanceof LaunchActivity) {
+            ((LaunchActivity) activity).checkSystemBarColors(true, true, true);
+        }
+    }
+
+    protected void updateSheetsVisibility() {
         if (sheetsStack == null) return;
         for (int i = 0; i < sheetsStack.size(); ++i) {
             AttachedSheet sheet = sheetsStack.get(i);
@@ -867,6 +861,10 @@ public abstract class BaseFragment {
 
     public MessagesController getMessagesController() {
         return getAccountInstance().getMessagesController();
+    }
+
+    public GiftAuctionController getGiftAuctionsController() {
+        return getAccountInstance().getGiftAuctionsController();
     }
 
     protected ContactsController getContactsController() {
@@ -999,7 +997,7 @@ public abstract class BaseFragment {
                 if (params == null || !params.occupyNavigationBar) {
                     fixNavigationBar(Theme.getColor(Theme.key_dialogBackgroundGray, fragment.getResourceProvider()));
                 } else {
-                    AndroidUtilities.setLightNavigationBar(bottomSheet[0].getWindow(), true);
+                    AndroidUtilities.setLightNavigationBar(bottomSheet[0], true);
                 }
                 AndroidUtilities.setLightStatusBar(getWindow(), fragment.isLightStatusBar());
                 fragment.onBottomSheetCreated();
@@ -1109,20 +1107,26 @@ public abstract class BaseFragment {
     }
 
     public void setNavigationBarColor(int color) {
+        if (isSupportEdgeToEdge()) {
+            return;
+        }
+
         Activity activity = getParentActivity();
         if (activity instanceof LaunchActivity) {
             LaunchActivity launchActivity = (LaunchActivity) activity;
-            launchActivity.setNavigationBarColor(color, true);
+            launchActivity.setNavigationBarColor(color);
         } else {
             if (activity != null) {
                 Window window = activity.getWindow();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && window != null && window.getNavigationBarColor() != color) {
-                    window.setNavigationBarColor(color);
-                    final float brightness = AndroidUtilities.computePerceivedBrightness(color);
-                    AndroidUtilities.setLightNavigationBar(window, brightness >= 0.721f);
+                    // window.setNavigationBarColor(color);
                 }
             }
         }
+
+        final float brightness = AndroidUtilities.computePerceivedBrightness(color);
+        AndroidUtilities.setLightNavigationBar(activity, brightness >= 0.721f);
+
         if (parentLayout != null) {
             parentLayout.setNavigationBarColor(color);
         }
@@ -1290,6 +1294,30 @@ public abstract class BaseFragment {
         return storyViewer;
     }
 
+    public StoryViewer getOrCreateStoryViewer(int account) {
+        if (sheetsStack == null) {
+            sheetsStack = new ArrayList<>();
+        }
+        StoryViewer storyViewer = null;
+        if (!sheetsStack.isEmpty() && sheetsStack.get(sheetsStack.size() - 1) instanceof StoryViewer) {
+            storyViewer = (StoryViewer) sheetsStack.get(sheetsStack.size() - 1);
+        }
+        if (storyViewer != null && storyViewer.currentAccount != account) {
+            storyViewer.close(true);
+            removeSheet(storyViewer);
+            storyViewer = null;
+        }
+        if (storyViewer == null) {
+            storyViewer = new StoryViewer(this);
+            if (parentLayout != null && parentLayout.isSheet()) {
+                storyViewer.fromBottomSheet = true;
+            }
+            sheetsStack.add(storyViewer);
+            updateSheetsVisibility();
+        }
+        return storyViewer;
+    }
+
     public void removeSheet(BaseFragment.AttachedSheet sheet) {
         if (sheetsStack == null) return;
         sheetsStack.remove(sheet);
@@ -1359,4 +1387,8 @@ public abstract class BaseFragment {
         public boolean occupyNavigationBar;
     }
 
+    public boolean isSupportEdgeToEdge() {
+        // warn: overridden method must return a constant
+        return false;
+    }
 }
