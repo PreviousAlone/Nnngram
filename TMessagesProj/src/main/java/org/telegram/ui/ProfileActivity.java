@@ -12615,9 +12615,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (chatInfo != null && chatInfo.linked_chat_id != 0) {
                         otherItem.addSubItem(view_discussion, R.drawable.msg_channel, LocaleController.getString("OpenChannel2", R.string.OpenChannel2));
                     }
-                    if (chatInfo != null && chatInfo.linked_chat_id != 0) {
-                        otherItem.addSubItem(view_discussion, R.drawable.msg_channel, LocaleController.getString("OpenChannel2", R.string.OpenChannel2));
-                    }
                     if (isTopic && ChatObject.canDeleteTopic(currentAccount, chat, topicId)) {
                         otherItem.addSubItem(delete_topic, R.drawable.msg_delete, LocaleController.getPluralString("DeleteTopics", 1));
                     }
@@ -12629,12 +12626,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (ChatObject.isPublic(chat)) {
                         otherItem.addSubItem(share, R.drawable.msg_share, LocaleController.getString(R.string.BotShare));
                         shareAction = !chat.creator;
-                    }
-                    if (Config.channelAlias) {
-                        otherItem.addSubItem(aliasChannelName, R.drawable.msg_fave, LocaleController.getString("setChannelAliasName", R.string.setChannelAliasName));
-                    }
-                    if (Config.linkedUser) {
-                        otherItem.addSubItem(setLinkedUser, R.drawable.msg_fave, LocaleController.getString("setLinkedUser", R.string.setLinkedUser));
                     }
                     if (Config.channelAlias) {
                         otherItem.addSubItem(aliasChannelName, R.drawable.msg_fave, LocaleController.getString("setChannelAliasName", R.string.setChannelAliasName));
