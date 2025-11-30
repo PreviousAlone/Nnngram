@@ -205,6 +205,11 @@ public class MainSettingActivity extends BaseActivity {
         return fragmentView;
     }
 
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
+
 
     @Override
     public void onResume() {
