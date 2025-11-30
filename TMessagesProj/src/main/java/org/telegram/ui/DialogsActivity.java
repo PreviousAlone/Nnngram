@@ -92,6 +92,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -118,6 +120,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.NotificationsController;
+import org.telegram.ui.Components.inset.WindowInsetsStateHolder;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
@@ -276,6 +279,28 @@ import xyz.nextalone.nnngram.utils.UpdateUtils;
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FloatingDebugProvider {
 
     public final static boolean DISPLAY_SPEEDOMETER_IN_DOWNLOADS_SEARCH = true;
+
+    private final WindowInsetsStateHolder windowInsetsStateHolder = new WindowInsetsStateHolder(this::applyInsetsToList);
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
+
+    private void applyInsetsToList() {
+        if (viewPages != null) {
+            for (int i = 0; i < viewPages.length; i++) {
+                ViewPage vp = viewPages[i];
+                if (vp != null && vp.listView != null) {
+                    int bottom = Math.max(windowInsetsStateHolder.getCurrentMaxBottomInset(), AndroidUtilities.navigationBarHeight);
+                    vp.listView.setPadding(vp.listView.getPaddingLeft(), vp.listView.getPaddingTop(), vp.listView.getPaddingRight(), 0);
+                    if (vp.dialogsAdapter != null) {
+                        vp.dialogsAdapter.setBottomInset(bottom);
+                    }
+                }
+            }
+        }
+    }
 
     private boolean canShowFilterTabsView;
     private boolean filterTabsViewIsVisible;
@@ -2112,9 +2137,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (!onlySelect || (initialDialogsType == DIALOGS_TYPE_FORWARD && Config.showTabsOnForward)) {
                 ignoreLayout = true;
                 if (hasStories || (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE)) {
-                    t = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+                    t = ActionBar.getCurrentActionBarHeight() + (isSupportEdgeToEdge() ? 0 : (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0));
                 } else {
-                    t = inPreviewMode ? AndroidUtilities.statusBarHeight : 0;
+                    t = isSupportEdgeToEdge() ? 0 : (inPreviewMode ? AndroidUtilities.statusBarHeight : 0);
                 }
                 if (hasStories && !actionModeFullyShowed) {
                     t += dp(DialogStoriesCell.HEIGHT_IN_DP);
@@ -2130,7 +2155,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
                 if (t != getPaddingTop()) {
                     setTopGlowOffset(t);
-                    setPadding(0, t, 0, 0);
+                    setPadding(0, t, 0, getPaddingBottom());
                     if (hasStories) {
                         parentPage.progressView.setPaddingTop(t - dp(DialogStoriesCell.HEIGHT_IN_DP));
                     } else {
@@ -3928,6 +3953,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         ContentView contentView = new ContentView(context);
         fragmentView = contentView;
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            windowInsetsStateHolder.setInsets(insets);
+            applyInsetsToList();
+            return WindowInsetsCompat.CONSUMED;
+        });
+        windowInsetsStateHolder.attach(fragmentView);
+        ViewCompat.requestApplyInsets(fragmentView);
 
         int pagesCount = folderId == 0 && (initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) ? 2 : 1;
         viewPages = new ViewPage[pagesCount];
@@ -4252,6 +4284,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             viewPage.listView.setLayoutManager(viewPage.layoutManager);
             viewPage.listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
             viewPage.addView(viewPage.listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+            applyInsetsToList();
             viewPage.listView.setOnItemClickListener((view, position, x, y) -> {
                 if (view instanceof GraySectionCell)
                     return;
