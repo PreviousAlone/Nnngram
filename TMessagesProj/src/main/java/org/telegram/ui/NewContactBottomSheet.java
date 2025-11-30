@@ -66,6 +66,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
@@ -579,6 +581,14 @@ public class NewContactBottomSheet extends BottomSheet implements AdapterView.On
                 updatedTextPhone();
             }
         });
+
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            contentLayout.setClipToPadding(false);
+            contentLayout.setPadding(contentLayout.getPaddingLeft(), contentLayout.getPaddingTop(), contentLayout.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         phoneField.setOnEditorActionListener((textView, i, keyEvent) -> {
             if (i == EditorInfo.IME_ACTION_NEXT) {
                 doneButtonContainer.callOnClick();
