@@ -144,8 +144,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
     private TLRPC.RequestPeerType requestPeerType;
     public boolean isEmpty;
 
-    private int bottomInset;
-
     public DialogsAdapter(DialogsActivity fragment, Context context, int type, int folder, boolean onlySelect, ArrayList<Long> selected, int account, TLRPC.RequestPeerType requestPeerType) {
         mContext = context;
         parentFragment = fragment;
@@ -160,13 +158,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
             this.preloader = new DialogsPreloader();
         }
         this.requestPeerType = requestPeerType;
-    }
-
-    public void setBottomInset(int inset) {
-        bottomInset = inset;
-        if (recyclerListView != null) {
-            recyclerListView.invalidate();
-        }
     }
 
     public void setRecyclerListView(RecyclerListView recyclerListView) {
@@ -1368,10 +1359,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
 
         public LastEmptyView(Context context) {
             super(context);
-            Drawable drawable = Theme.getThemedDrawableByKey(context, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
-            CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
-            combinedDrawable.setFullsize(true);
-            setBackground(combinedDrawable);
         }
 
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -1464,7 +1451,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
             if (isTransitionSupport) {
                 height += AndroidUtilities.dp(1000);
             }
-            height += Math.max(0, bottomInset);
             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
         }
     }

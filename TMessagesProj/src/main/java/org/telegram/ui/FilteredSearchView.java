@@ -43,6 +43,8 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -296,7 +298,7 @@ public class FilteredSearchView extends FrameLayout implements NotificationCente
         parentFragment = fragment;
         Context context = parentActivity = fragment.getParentActivity();
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-        recyclerListView = new BlurredRecyclerView(context) {
+        recyclerListView = new RecyclerListView(context) {
 
             @Override
             protected void dispatchDraw(Canvas canvas) {
@@ -381,6 +383,13 @@ public class FilteredSearchView extends FrameLayout implements NotificationCente
             }
         });
         addView(recyclerListView);
+        ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            recyclerListView.setClipToPadding(false);
+            recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), AndroidUtilities.dp(3) + bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(this);
 
         recyclerListView.setSectionsType(RecyclerListView.SECTIONS_TYPE_DATE);
         recyclerListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -1548,6 +1557,13 @@ public class FilteredSearchView extends FrameLayout implements NotificationCente
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(this);
+        if (rootInsets != null) {
+            int bottomInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            recyclerListView.setClipToPadding(false);
+            recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), AndroidUtilities.dp(3) + bottomInset);
+        }
+        ViewCompat.requestApplyInsets(this);
         NotificationCenter.getInstance(lastAccount = UserConfig.selectedAccount).addObserver(this, NotificationCenter.emojiLoaded);
     }
 

@@ -293,10 +293,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 ViewPage vp = viewPages[i];
                 if (vp != null && vp.listView != null) {
                     int bottom = Math.max(windowInsetsStateHolder.getCurrentMaxBottomInset(), AndroidUtilities.navigationBarHeight);
-                    vp.listView.setPadding(vp.listView.getPaddingLeft(), vp.listView.getPaddingTop(), vp.listView.getPaddingRight(), 0);
-                    if (vp.dialogsAdapter != null) {
-                        vp.dialogsAdapter.setBottomInset(bottom);
-                    }
+                    vp.listView.setPadding(vp.listView.getPaddingLeft(), vp.listView.getPaddingTop(), vp.listView.getPaddingRight(), bottom);
                 }
             }
         }
@@ -3956,6 +3953,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
             windowInsetsStateHolder.setInsets(insets);
             applyInsetsToList();
+            if (searchViewPager != null) {
+                ViewCompat.dispatchApplyWindowInsets(searchViewPager, insets);
+            }
             return WindowInsetsCompat.CONSUMED;
         });
         windowInsetsStateHolder.attach(fragmentView);

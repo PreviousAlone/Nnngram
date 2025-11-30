@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -84,7 +86,7 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
         this.parentFragment = fragment;
         this.parentActivity = fragment.getParentActivity();
         this.currentAccount = currentAccount;
-        recyclerListView = new BlurredRecyclerView(getContext()) {
+        recyclerListView = new RecyclerListView(getContext()) {
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
                 super.onLayout(changed, l, t, r, b);
@@ -94,6 +96,13 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelperCallback());
         itemTouchHelper.attachToRecyclerView(recyclerListView);
         addView(recyclerListView);
+        ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            recyclerListView.setClipToPadding(false);
+            recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(this);
         recyclerListView.setLayoutManager(new LinearLayoutManager(fragment.getParentActivity()) {
             @Override
             public boolean supportsPredictiveItemAnimations() {
@@ -101,6 +110,9 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
             }
         });
         recyclerListView.setAdapter(adapter);
+        recyclerListView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+        recyclerListView.setClipToPadding(false);
+        recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), AndroidUtilities.navigationBarHeight);
         recyclerListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {

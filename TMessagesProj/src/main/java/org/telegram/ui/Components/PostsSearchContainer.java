@@ -40,6 +40,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -118,6 +120,13 @@ public class PostsSearchContainer extends FrameLayout {
             }
         });
         addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
+        ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(this);
 
         emptyParentView = new FrameLayout(context);
 
