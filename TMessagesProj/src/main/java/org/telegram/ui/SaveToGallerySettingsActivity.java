@@ -21,6 +21,8 @@ import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ContactsController;
@@ -155,6 +157,13 @@ public class SaveToGallerySettingsActivity extends BaseFragment {
         recyclerListView.setItemAnimator(defaultItemAnimator);
         recyclerListView.setLayoutManager(new LinearLayoutManager(context));
         recyclerListView.setAdapter(adapter = new Adapter());
+        ViewCompat.setOnApplyWindowInsetsListener(frameLayout, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            recyclerListView.setClipToPadding(false);
+            recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(frameLayout);
         recyclerListView.setOnItemClickListener((view, position, x, y) -> {
             if (position == savePhotosRow) {
                 SaveToGallerySettingsHelper.Settings settings = getSettings();
@@ -267,6 +276,11 @@ public class SaveToGallerySettingsActivity extends BaseFragment {
         }
         updateRows();
         return fragmentView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private void updateRows() {
