@@ -428,6 +428,12 @@ TimeDelta JitterEstimator::GetJitterEstimate(
   TimeDelta jitter = CalculateEstimate() + OPERATING_SYSTEM_JITTER;
   Timestamp now = clock_->CurrentTime();
 
+  // Defensive check: ensure timestamp is valid
+  if (!now.IsFinite() || now.IsMinusInfinity()) {
+    RTC_LOG(LS_WARNING) << "Invalid timestamp in GetJitterEstimate, using zero jitter";
+    return TimeDelta::Zero();
+  }
+
   if (now - latest_nack_ > kNackCountTimeout)
     nack_count_ = 0;
 
@@ -465,12 +471,25 @@ TimeDelta JitterEstimator::GetJitterEstimate(
 
 Frequency JitterEstimator::GetFrameRate() const {
   TimeDelta mean_frame_period = TimeDelta::Micros(fps_counter_.ComputeMean());
-  if (mean_frame_period <= TimeDelta::Zero())
+
+  // Defensive checks: ensure mean_frame_period is valid before division
+  if (mean_frame_period <= TimeDelta::Zero() ||
+      !mean_frame_period.IsFinite() ||
+      mean_frame_period.IsInfinite()) {
+    RTC_LOG(LS_WARNING) << "Invalid mean frame period: "
+                        << mean_frame_period.ms() << "ms, returning zero fps";
     return Frequency::Zero();
+  }
 
   Frequency fps = 1 / mean_frame_period;
-  // Sanity check.
-  RTC_DCHECK_GE(fps, Frequency::Zero());
+
+  // Sanity check - if this fails, log and return zero instead of crashing
+  if (!fps.IsFinite() || fps < Frequency::Zero()) {
+    RTC_LOG(LS_ERROR) << "Calculated invalid fps from mean_frame_period="
+                      << mean_frame_period.ms() << "ms, returning zero";
+    return Frequency::Zero();
+  }
+
   return std::min(fps, kMaxFramerateEstimate);
 }
 }  // namespace webrtc

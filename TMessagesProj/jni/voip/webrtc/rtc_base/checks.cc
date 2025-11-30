@@ -14,6 +14,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
 
 #include "absl/strings/string_view.h"
 
@@ -66,8 +67,16 @@ namespace webrtc_checks_impl {
 RTC_NORETURN void WriteFatalLog(absl::string_view output) {
 #if defined(WEBRTC_ANDROID)
   std::string output_str(output);
-  __android_log_print(ANDROID_LOG_ERROR, RTC_LOG_TAG_ANDROID, "%s\n",
-                      output_str.c_str());
+  // Log to Android logcat with full detail
+  __android_log_print(ANDROID_LOG_FATAL, RTC_LOG_TAG_ANDROID,
+                      "=== WebRTC Fatal Error ===\n%s", output_str.c_str());
+  // Also try to log to a crash file for later analysis
+  FILE* crash_log = fopen("/sdcard/webrtc_crash.log", "a");
+  if (crash_log) {
+    fprintf(crash_log, "=== WebRTC Fatal Error at %ld ===\n%s\n",
+            time(nullptr), output_str.c_str());
+    fclose(crash_log);
+  }
 #endif
   fflush(stdout);
   fwrite(output.data(), output.size(), 1, stderr);
@@ -81,6 +90,11 @@ RTC_NORETURN void WriteFatalLog(absl::string_view output) {
 RTC_NORETURN void WriteFatalLog(const char* file,
                                 int line,
                                 absl::string_view output) {
+#if defined(WEBRTC_ANDROID)
+  // Log detailed location information
+  __android_log_print(ANDROID_LOG_FATAL, RTC_LOG_TAG_ANDROID,
+                      "Fatal check failed at %s:%d", file, line);
+#endif
   WriteFatalLog(output);
 }
 

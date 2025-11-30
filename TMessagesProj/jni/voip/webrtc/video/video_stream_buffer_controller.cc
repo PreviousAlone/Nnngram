@@ -11,6 +11,7 @@
 #include "video/video_stream_buffer_controller.h"
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <utility>
 
@@ -255,6 +256,18 @@ void VideoStreamBufferController::OnFrameReady(
       rtt_mult_add_cap_ms =
           TimeDelta::Millis(rtt_mult_settings_->rtt_mult_add_cap_ms);
     }
+
+    // Defensive check: validate parameters before calling GetJitterEstimate
+    if (!std::isfinite(rtt_mult) || rtt_mult < 0.0) {
+      RTC_LOG(LS_WARNING) << "Invalid rtt_mult=" << rtt_mult
+                          << ", using 0.0 instead";
+      rtt_mult = 0.0;
+    }
+    if (rtt_mult_add_cap_ms.has_value() && !rtt_mult_add_cap_ms->IsFinite()) {
+      RTC_LOG(LS_WARNING) << "Invalid rtt_mult_add_cap_ms, clearing it";
+      rtt_mult_add_cap_ms = absl::nullopt;
+    }
+
     timing_->SetJitterDelay(
         jitter_estimator_.GetJitterEstimate(rtt_mult, rtt_mult_add_cap_ms));
     timing_->UpdateCurrentDelay(render_time, now);
