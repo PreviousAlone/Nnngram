@@ -121,6 +121,7 @@ import androidx.core.math.MathUtils;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
@@ -3128,10 +3129,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     int paddingBottom;
                     if (isInLandscapeMode) {
                         paddingTop = getHeaderExtraHeight() + actionBarHeight;
-                        paddingBottom = 0;
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = navInset;
                     } else {
                         paddingTop = listView.getMeasuredWidth() + getActionsExtraHeight();
-                        paddingBottom = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = Math.max(navInset, Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight)));
                     }
                     if (banFromGroup != 0) {
                         paddingBottom += dp(48);
@@ -3155,10 +3170,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     int paddingBottom;
                     if (isInLandscapeMode || AndroidUtilities.isTablet()) {
                         paddingTop = getHeaderExtraHeight();
-                        paddingBottom = 0;
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = navInset;
                     } else {
                         paddingTop = listView.getMeasuredWidth() + getActionsExtraHeight();
-                        paddingBottom = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = Math.max(navInset, Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight)));
                     }
                     if (banFromGroup != 0) {
                         paddingBottom += AndroidUtilities.dp(48);
@@ -4191,6 +4220,17 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         defaultItemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         listView.setClipToPadding(false);
         listView.setHideIfEmpty(false);
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            if (searchListView != null) {
+                searchListView.setClipToPadding(false);
+                searchListView.setPadding(searchListView.getPaddingLeft(), searchListView.getPaddingTop(), searchListView.getPaddingRight(), bottomInset);
+            }
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
 
         layoutManager = new LinearLayoutManager(context) {
 
@@ -5171,10 +5211,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             textView.setText(LocaleController.getString(R.string.BanFromTheGroup));
             frameLayout1.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 0, 1, 0, 0));
 
-            listView.setPadding(0, getHeaderExtraHeight(), 0, AndroidUtilities.dp(48));
+            int navInset = 0;
+            WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+            if (rootInsets != null) {
+                navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            } else {
+                navInset = AndroidUtilities.navigationBarHeight;
+            }
+            listView.setPadding(0, getHeaderExtraHeight(), 0, AndroidUtilities.dp(48) + navInset);
             listView.setBottomGlowOffset(AndroidUtilities.dp(48));
         } else {
-            listView.setPadding(0, getHeaderExtraHeight(), 0, 0);
+            int navInset = 0;
+            WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+            if (rootInsets != null) {
+                navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            } else {
+                navInset = AndroidUtilities.navigationBarHeight;
+            }
+            listView.setPadding(0, getHeaderExtraHeight(), 0, navInset);
         }
 
         topView = new TopView(context);
@@ -9377,6 +9431,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     public RecyclerListView getListView() {
         return listView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private void needLayoutText(float diff) {

@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserObject;
@@ -21,6 +22,8 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalRecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +51,13 @@ public class BotBiometrySettings extends BaseFragment {
 
         listView = new UniversalRecyclerView(this, this::fillItems, this::onClick, this::onLongClick);
         contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
+        ViewCompat.setOnApplyWindowInsetsListener(contentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(contentView);
 
         BotBiometry.getBots(getContext(), currentAccount, bots -> {
             biometryBots.clear();
@@ -58,6 +68,11 @@ public class BotBiometrySettings extends BaseFragment {
         });
 
         return fragmentView = contentView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private final ArrayList<BotBiometry.Bot> biometryBots = new ArrayList<>();
