@@ -55,6 +55,8 @@ import androidx.annotation.Keep;
 import androidx.collection.LongSparseArray;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BotWebViewVibrationEffect;
@@ -974,6 +976,15 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
                 }
             }
         });
+
+        ViewCompat.setOnApplyWindowInsetsListener(frameLayout, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            emptyView.setPadding(emptyView.getPaddingLeft(), emptyView.getPaddingTop(), emptyView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(frameLayout);
         listView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -1068,6 +1079,11 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
 
         updateHint();
         return fragmentView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private void updateButtonsVisibility() {

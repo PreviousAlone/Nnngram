@@ -1233,7 +1233,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     searchViewPager.postsSearchContainer.setKeyboardHeight(keyboardSize);
                     int contentWidthSpec = View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY);
                     int h = View.MeasureSpec.getSize(heightMeasureSpec) + keyboardSize;
-                    int contentHeightSpec = View.MeasureSpec.makeMeasureSpec(Math.max(dp(10), h - inputFieldHeight + dp(2) - (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) - topPadding) - (searchTabsView == null ? 0 : dp(44)), View.MeasureSpec.EXACTLY);
+                    int contentHeightSpec = View.MeasureSpec.makeMeasureSpec(Math.max(dp(10), h - inputFieldHeight + dp(2) - (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) - topPadding), View.MeasureSpec.EXACTLY);
                     child.measure(contentWidthSpec, contentHeightSpec);
                     child.setPivotX(child.getMeasuredWidth() / 2);
                 } else if (commentView != null && commentView.isPopupView(child)) {
@@ -1255,6 +1255,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 } else {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 }
+            }
+
+            int desiredTopPadding = Math.max(0, getActionBarFullHeight() - actionBar.getMeasuredHeight());
+            if (fragmentContextTopPadding != desiredTopPadding) {
+                fragmentContextTopPadding = desiredTopPadding;
+                updateTopPadding();
             }
 
             if (portrait != wasPortrait) {
@@ -1347,7 +1353,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         dialogStoriesCell.getPremiumHint().layout(childLeft, childTop - dp(24 + 8 + 22) + height, childLeft + width, childTop - dp(24 + 8 + 22) + height + dialogStoriesCell.getPremiumHint().getMeasuredHeight());
                     }
                 } else if (child == searchViewPager) {
-                    childTop = (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) + topPadding + (searchTabsView == null ? 0 : dp(44));
+                    childTop = (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) + topPadding;
                 } else if (child instanceof DatabaseMigrationHint) {
                     childTop = actionBar.getMeasuredHeight();
                 } else if (child instanceof ViewPage) {
@@ -3953,6 +3959,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
             windowInsetsStateHolder.setInsets(insets);
             applyInsetsToList();
+            if (fragmentView instanceof ContentView) {
+                ContentView cv = (ContentView) fragmentView;
+                int top = Math.max(0, cv.getActionBarFullHeight() - actionBar.getMeasuredHeight());
+                cv.setPadding(cv.getPaddingLeft(), top, cv.getPaddingRight(), cv.getPaddingBottom());
+            }
             if (searchViewPager != null) {
                 ViewCompat.dispatchApplyWindowInsets(searchViewPager, insets);
             }
