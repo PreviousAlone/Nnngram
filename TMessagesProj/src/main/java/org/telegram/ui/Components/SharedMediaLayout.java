@@ -2506,6 +2506,7 @@ import xyz.nextalone.nnngram.utils.Defines;
                     updateOptionsSearch(true);
                 }
             };
+            giftsContainer.setBottomInset(lastBottomInset);
 
             storiesContainer = new ProfileStoriesCollectionTabs(context,
                 getStoriesController().getStoryAlbumsList(dialog_id),
@@ -3543,6 +3544,9 @@ import xyz.nextalone.nnngram.utils.Defines;
         lastBottomInset = bottomInset;
         for (int i = 0; i < mediaPages.length; i++) {
             applyBottomInsetToPage(mediaPages[i]);
+        }
+        if (giftsContainer != null) {
+            giftsContainer.setBottomInset(lastBottomInset);
         }
     }
 
