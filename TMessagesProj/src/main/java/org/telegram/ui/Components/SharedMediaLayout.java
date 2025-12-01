@@ -161,8 +161,8 @@ import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.utils.Defines;
 
-    @SuppressWarnings("unchecked")
-    public class SharedMediaLayout extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, DialogCell.DialogCellDelegate {
+@SuppressWarnings("unchecked")
+public class SharedMediaLayout extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, DialogCell.DialogCellDelegate {
 
     public static final int TAB_PHOTOVIDEO = 0;
     public static final int TAB_FILES = 1;
