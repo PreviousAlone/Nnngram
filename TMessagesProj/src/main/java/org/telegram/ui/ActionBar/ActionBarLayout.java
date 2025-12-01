@@ -3208,8 +3208,9 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
             final int tabsInset = tabsHeight > 0 ? systemInsets.bottom + tabsHeight : 0;
 
             if (layoutContainer.isSupportEdgeToEdge) {
-                if (lp.bottomMargin != tabsInset) {
-                    lp.bottomMargin = tabsInset;
+                final int edgeToEdgeBottomMargin = tabsHeight;
+                if (lp.bottomMargin != edgeToEdgeBottomMargin) {
+                    lp.bottomMargin = edgeToEdgeBottomMargin;
                     child.requestLayout();
                 }
 

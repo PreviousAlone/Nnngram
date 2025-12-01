@@ -3039,7 +3039,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                             child.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(heightSize - inputFieldHeight - AndroidUtilities.statusBarHeight, MeasureSpec.EXACTLY));
                         }
                     } else {
-                        child.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(child.getLayoutParams().height + AndroidUtilities.navigationBarHeight, MeasureSpec.EXACTLY));
+                        child.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(child.getLayoutParams().height + navigationBarHeight, MeasureSpec.EXACTLY));
                     }
                 } else if (child == captionScrollView) {
                     int bottomMargin = bottomLayoutHeight;
@@ -3138,7 +3138,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 } else if (child == topCaptionEdit.mentionContainer) {
                     childTop += actionBar.getMeasuredHeight();
                 } else if (captionEdit.editText.isPopupView(child) || topCaptionEdit.editText.isPopupView(child)) {
-                    childTop = (_b - t) - height + (!inBubbleMode && !AndroidUtilities.isInMultiwindow ? AndroidUtilities.navigationBarHeight : 0);
+                    childTop = (_b - t) - height + (!inBubbleMode && !AndroidUtilities.isInMultiwindow ? navigationBarHeight : 0);
                 } else if (child == selectedPhotosListView) {
                     childTop = actionBar.getMeasuredHeight() + dp(5);
                 } else if (child == muteButton || child == editCoverButton) {
@@ -17255,12 +17255,12 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                         xPos = (windowView.getMeasuredWidth() - getLeftInset() - getRightInset() - layoutParams.width * scale) / 2.0f + getLeftInset();
                     } else {
                         scaleX = (float) (windowView.getMeasuredWidth()) / layoutParams.width;
-                        scaleY = (float) (AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0)) / layoutParams.height;
+                        scaleY = (float) (AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0) + navigationBarHeight) / layoutParams.height;
                         scale = Math.min(scaleX, scaleY);
                         if (sendPhotoType == SELECT_TYPE_STICKER) {
                             scale *= scale1();
                         }
-                        yPos = ((AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0)) - (layoutParams.height * scale)) / 2.0f;
+                        yPos = ((AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0) + navigationBarHeight) - (layoutParams.height * scale)) / 2.0f;
                         xPos = (windowView.getMeasuredWidth() - layoutParams.width * scale) / 2.0f;
                         rotate = 0;
                         animateToRotate = 0;
@@ -17920,7 +17920,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     scale2 = Math.max(scaleX, scaleY);
                 } else {
                     scaleX = (float) windowView.getMeasuredWidth() / layoutParams.width;
-                    scaleY = (float) (AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0)) / layoutParams.height;
+                    scaleY = (float) (AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0) + navigationBarHeight) / layoutParams.height;
                     scale2 = Math.min(scaleX, scaleY);
                 }
                 float width = layoutParams.width * scale * scale2;
@@ -17932,7 +17932,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     float measuredHeight = (float) photoCropView.getMeasuredHeight() - statusBarHeight;
                     yPos = (measuredHeight - height) / 2.0f;
                 } else {
-                    yPos = ((AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0)) - height) / 2.0f;
+                    yPos = ((AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0) + navigationBarHeight) - height) / 2.0f;
                 }
                 for (int i = 0; i < animatingImageViews.length; i++) {
                     animatingImageViews[i].setLayoutParams(layoutParams);
@@ -18459,9 +18459,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             if ((mode == EDIT_MODE_NONE || mode == EDIT_MODE_STICKER_MASK || mode == EDIT_MODE_COVER) && sendPhotoType != SELECT_TYPE_AVATAR && isStatusBarVisible()) {
                 height += AndroidUtilities.statusBarHeight;
             }
-//            if (mode == EDIT_MODE_NONE && sendPhotoType == 2) {
-//                height += AndroidUtilities.navigationBarHeight;
-//            }
+            height += navigationBarHeight;
         }
         if (mode == EDIT_MODE_NONE && sendPhotoType == SELECT_TYPE_AVATAR || mode == EDIT_MODE_CROP) {
             height -= dp(48 + 32 + 64);
@@ -19039,7 +19037,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             if (renderNode == null) {
                 renderNode = new RenderNode("photo viewer");
             }
-            renderNode.setPosition(0, 0, canvas.getWidth(), canvas.getHeight() + AndroidUtilities.navigationBarHeight);
+            renderNode.setPosition(0, 0, canvas.getWidth(), canvas.getHeight() + navigationBarHeight);
             canvas = renderNode.beginRecording();
         }
         if (parentFragment != null && parentFragment.getFragmentView() != null) {
@@ -19863,7 +19861,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         }
 
         int top = (int) (AndroidUtilities.statusBarHeight * 1.5f) + ActionBar.getCurrentActionBarHeight();
-        int bottom = AndroidUtilities.navigationBarHeight + pickerView.getHeight() + (captionEdit.getVisibility() == View.VISIBLE ? captionEdit.getEditTextHeightClosedKeyboard() / 2 + dp(20) : 0);
+        int bottom = navigationBarHeight + pickerView.getHeight() + (captionEdit.getVisibility() == View.VISIBLE ? captionEdit.getEditTextHeightClosedKeyboard() / 2 + dp(20) : 0);
 
         if (clipFancyShadows == null) {
             clipFancyShadows = new Path();
@@ -19879,10 +19877,10 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             bottomFancyShadowPaint.setShader(bottomFancyShadow);
         }
 
-        canvas.saveLayerAlpha(0, 0, containerView.getWidth(), containerView.getHeight() + AndroidUtilities.navigationBarHeight, (int) (maxAlpha * (backgroundDrawable.getAlpha() - 127) * (1f / 127f * 255f)), Canvas.ALL_SAVE_FLAG);
+        canvas.saveLayerAlpha(0, 0, containerView.getWidth(), containerView.getHeight() + navigationBarHeight, (int) (maxAlpha * (backgroundDrawable.getAlpha() - 127) * (1f / 127f * 255f)), Canvas.ALL_SAVE_FLAG);
         clipFancyShadows.rewind();
         clipFancyShadows.addRect(0, 0, containerView.getWidth(), top, Path.Direction.CW);
-        clipFancyShadows.addRect(0, containerView.getHeight() + AndroidUtilities.navigationBarHeight - bottom, containerView.getWidth(), containerView.getHeight() + AndroidUtilities.navigationBarHeight, Path.Direction.CW);
+        clipFancyShadows.addRect(0, containerView.getHeight() + navigationBarHeight - bottom, containerView.getWidth(), containerView.getHeight() + navigationBarHeight, Path.Direction.CW);
         canvas.clipPath(clipFancyShadows);
         canvas.drawColor(0xff000000);
         drawCaptionBlur(canvas, shadowBlurer, 0, 0, true, true, false);
@@ -19894,10 +19892,10 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
         canvas.drawRect(0, 0, containerView.getWidth(), top, topFancyShadowPaint);
         bottomFancyShadowMatrix.reset();
         bottomFancyShadowMatrix.postScale(1, bottom / 16f);
-        bottomFancyShadowMatrix.postTranslate(0, containerView.getHeight() - bottom + AndroidUtilities.navigationBarHeight);
+        bottomFancyShadowMatrix.postTranslate(0, containerView.getHeight() - bottom + navigationBarHeight);
         bottomFancyShadow.setLocalMatrix(bottomFancyShadowMatrix);
         bottomFancyShadowPaint.setAlpha(0xbb);
-        canvas.drawRect(0, containerView.getHeight() + AndroidUtilities.navigationBarHeight - bottom, containerView.getWidth(), containerView.getHeight() + AndroidUtilities.navigationBarHeight, bottomFancyShadowPaint);
+        canvas.drawRect(0, containerView.getHeight() + navigationBarHeight - bottom, containerView.getWidth(), containerView.getHeight() + navigationBarHeight, bottomFancyShadowPaint);
         canvas.restore();
         canvas.restore();
     }

@@ -56,6 +56,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -723,7 +725,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
         } else if (currentStep == 1) {
             fragmentView = new ScrollView(context);
             ScrollView scrollView = (ScrollView) fragmentView;
-            scrollView.setFillViewport(true);
+            scrollView.setFillViewport(false);
             linearLayout = new LinearLayout(context);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             scrollView.addView(linearLayout, new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -926,9 +928,17 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             linearLayout.addView(adminedInfoCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             updatePrivatePublic();
+
+            // edge-to-edge: parent consumes system bars; avoid adding extra bottom inset
+            linearLayout.setClipToPadding(false);
         }
 
         return fragmentView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private void generateLink() {

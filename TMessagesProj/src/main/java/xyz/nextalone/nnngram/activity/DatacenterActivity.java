@@ -51,7 +51,6 @@ import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Components.BackupImageView;
-import org.telegram.ui.Components.BlurredRecyclerView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
@@ -81,14 +80,13 @@ public class DatacenterActivity extends BaseActivity implements NotificationCent
 
         actionBar.setDrawBlurBackground(frameLayout);
 
-        listView = new BlurredRecyclerView(context);
+        listView = new RecyclerListView(context);
         listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 frameLayout.invalidateBlur();
             }
         });
-        listView.additionalClipBottom = AndroidUtilities.dp(200);
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
         //noinspection ConstantConditions
@@ -102,10 +100,7 @@ public class DatacenterActivity extends BaseActivity implements NotificationCent
         listView.setOnItemLongClickListener((view, position, x, y) -> false);
 
         if (dcToHighlight != 0) {
-            listView.highlightRow(() -> {
-                layoutManager.scrollToPositionWithOffset(datacentersRow + dcToHighlight, AndroidUtilities.dp(60));
-                return datacentersRow + dcToHighlight;
-            });
+            layoutManager.scrollToPositionWithOffset(datacentersRow + dcToHighlight, AndroidUtilities.dp(60));
         }
         return fragmentView;
     }

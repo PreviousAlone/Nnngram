@@ -121,6 +121,7 @@ import androidx.core.math.MathUtils;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
@@ -3128,10 +3129,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     int paddingBottom;
                     if (isInLandscapeMode) {
                         paddingTop = getHeaderExtraHeight() + actionBarHeight;
-                        paddingBottom = 0;
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = sharedMediaRow == -1 ? navInset : 0;
                     } else {
                         paddingTop = listView.getMeasuredWidth() + getActionsExtraHeight();
-                        paddingBottom = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int gap = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = Math.max(gap, sharedMediaRow == -1 ? navInset : 0);
                     }
                     if (banFromGroup != 0) {
                         paddingBottom += dp(48);
@@ -3155,10 +3171,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     int paddingBottom;
                     if (isInLandscapeMode || AndroidUtilities.isTablet()) {
                         paddingTop = getHeaderExtraHeight();
-                        paddingBottom = 0;
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = sharedMediaRow == -1 ? navInset : 0;
                     } else {
                         paddingTop = listView.getMeasuredWidth() + getActionsExtraHeight();
-                        paddingBottom = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int gap = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = Math.max(gap, sharedMediaRow == -1 ? navInset : 0);
                     }
                     if (banFromGroup != 0) {
                         paddingBottom += AndroidUtilities.dp(48);
@@ -3621,6 +3652,17 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             @Override
             protected void onSelectedTabChanged() {
                 updateSelectedMediaTabText();
+                if (myProfile && bottomButtonsContainer != null && sharedMediaLayout != null) {
+                    int type = sharedMediaLayout.getSelectedTab();
+                    boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
+                    if (!isStoriesTab) {
+                        bottomButtonsContainer.setTranslationY(bottomButtonsContainer.getHeight());
+                        bottomButtonsContainer.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                    } else {
+                        updateBottomButtonY();
+                        bottomButtonsContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+                    }
+                }
             }
 
             @Override
@@ -3716,6 +3758,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     checkStoriesButtonText(lastStoriesSelectedCount, true);
                     updateBottomButtonY();
+                    if (bottomButtonsContainer != null) {
+                        int type = sharedMediaLayout.getSelectedTab();
+                        boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
+                        if (!isStoriesTab) {
+                            bottomButtonsContainer.setTranslationY(bottomButtonsContainer.getHeight());
+                            bottomButtonsContainer.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                        } else {
+                            bottomButtonsContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+                        }
+                    }
                 }
             }
 
@@ -3724,6 +3776,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 super.onBottomButtonVisibilityChange();
                 if (myProfile && bottomButtonContainer[0] != null && sharedMediaLayout != null) {
                     bottomButtonContainer[0].setTranslationY(dp(72) * (1f - sharedMediaLayout.getBottomButtonStoriesVisibility()));
+                    int type = sharedMediaLayout.getSelectedTab();
+                    boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
+                    if (!isStoriesTab && bottomButtonsContainer != null) {
+                        hideBottomButtonsContainer();
+                    }
                 }
             }
 
@@ -5955,7 +6012,20 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         createFloatingActionButton(getContext());
 
         if (myProfile) {
-            contentView.addView(bottomButtonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 72 + (1 / AndroidUtilities.density), Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
+            bottomButtonsContainer.setClipToPadding(false);
+            final int baseHeightPx = AndroidUtilities.dp(72) + (int) (1 / AndroidUtilities.density);
+            FrameLayout.LayoutParams lp = LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, baseHeightPx, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL);
+            contentView.addView(bottomButtonsContainer, lp);
+            ViewCompat.setOnApplyWindowInsetsListener(bottomButtonsContainer, (v, insets) -> {
+                WindowInsetsCompat r = ViewCompat.getRootWindowInsets(v);
+                int bottomInset = r != null ? Math.max(r.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight) : AndroidUtilities.navigationBarHeight;
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
+                params.height = baseHeightPx + bottomInset;
+                v.setLayoutParams(params);
+                v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+                return insets;
+            });
+            ViewCompat.requestApplyInsets(bottomButtonsContainer);
         }
 
         if (actionsView != null && actionsView.hasCall()) {
@@ -6054,9 +6124,31 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         return getHeaderOnlyExtraHeight() + getActionsExtraHeight();
     }
 
+    private void hideBottomButtonsContainer() {
+        if (bottomButtonsContainer == null) return;
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) bottomButtonsContainer.getLayoutParams();
+        int h = params != null && params.height > 0 ? params.height : bottomButtonsContainer.getHeight();
+        if (h <= 0) {
+            h = AndroidUtilities.dp(72) + (int) (1 / AndroidUtilities.density) + AndroidUtilities.navigationBarHeight;
+        }
+        bottomButtonsContainer.setTranslationY(h);
+    }
+
     private void updateBottomButtonY() {
         if (bottomButtonsContainer == null) {
             return;
+        }
+        if (sharedMediaLayout != null) {
+            int type = sharedMediaLayout.getSelectedTab();
+            boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
+            if (!isStoriesTab) {
+                hideBottomButtonsContainer();
+                final Bulletin bulletin = Bulletin.getVisibleBulletin();
+                if (bulletin != null) {
+                    bulletin.updatePosition();
+                }
+                return;
+            }
         }
         bottomButtonsContainer.setTranslationY(sharedMediaLayout != null && sharedMediaLayout.isAttachedToWindow() ? Math.max(0, dp(72 + 64 + 48) - (listView.getMeasuredHeight() - sharedMediaLayout.getY())) : dp(72));
         final Bulletin bulletin = Bulletin.getVisibleBulletin();
@@ -9377,6 +9469,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     public RecyclerListView getListView() {
         return listView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private void needLayoutText(float diff) {
