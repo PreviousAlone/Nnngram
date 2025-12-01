@@ -118,6 +118,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class CallLogActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -578,6 +580,11 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		getNotificationCenter().removeObserver(this, NotificationCenter.groupCallUpdated);
 	}
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
 	@Override
 	public View createView(Context context) {
 		greenDrawable = getParentActivity().getResources().getDrawable(R.drawable.ic_call_made_green_18dp).mutate();
@@ -786,6 +793,13 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		fragmentContextView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.TOP | Gravity.LEFT, 0, -36, 0, 0));
 		frameLayout.addView(fragmentContextView);
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
 		return fragmentView;
 	}
 

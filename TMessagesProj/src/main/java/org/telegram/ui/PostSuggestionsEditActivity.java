@@ -52,6 +52,8 @@ import org.telegram.ui.Components.UniversalRecyclerView;
 import org.telegram.ui.Stars.StarsIntroActivity;
 
 import java.util.ArrayList;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class PostSuggestionsEditActivity extends BaseFragment {
     private final long currentChatId;
@@ -87,6 +89,11 @@ public class PostSuggestionsEditActivity extends BaseFragment {
         suggestionsStarsCount = initialSuggestionsStarsCount;
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -127,6 +134,13 @@ public class PostSuggestionsEditActivity extends BaseFragment {
         listView = new UniversalRecyclerView(context, currentAccount, classGuid, this::fillItems, this::onItemClick, null, resourceProvider);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

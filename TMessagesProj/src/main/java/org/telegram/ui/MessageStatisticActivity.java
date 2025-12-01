@@ -97,6 +97,8 @@ import org.telegram.ui.Stories.StoriesListPlaceProvider;
 import org.telegram.ui.Stories.StoriesUtilities;
 
 import java.util.ArrayList;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class MessageStatisticActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -281,6 +283,11 @@ public class MessageStatisticActivity extends BaseFragment implements Notificati
         return false;
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -569,6 +576,13 @@ public class MessageStatisticActivity extends BaseFragment implements Notificati
         });
 
         updateMenu();
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

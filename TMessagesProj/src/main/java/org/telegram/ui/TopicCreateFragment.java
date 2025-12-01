@@ -77,6 +77,8 @@ import org.telegram.ui.Components.ReplaceableIconDrawable;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 
 import java.util.ArrayList;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class TopicCreateFragment extends BaseFragment {
 
@@ -133,6 +135,11 @@ public class TopicCreateFragment extends BaseFragment {
         return super.onFragmentCreate();
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         if (topicForEdit != null) {
@@ -551,6 +558,12 @@ public class TopicCreateFragment extends BaseFragment {
             selectEmoji(0L, true);
         }
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

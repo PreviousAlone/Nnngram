@@ -13,9 +13,16 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.Components.spoilers.SpoilerEffect;
 import org.telegram.ui.Components.spoilers.SpoilerEffect2;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class SpoilersShowcase extends BaseFragment {
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         final ViewGroup renderView = new FrameLayout(context) {
@@ -52,6 +59,12 @@ public class SpoilersShowcase extends BaseFragment {
         FrameLayout container = new FrameLayout(context);
         container.addView(renderView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView = container;
     }
 

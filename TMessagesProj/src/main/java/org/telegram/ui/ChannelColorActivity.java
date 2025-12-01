@@ -120,6 +120,8 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class ChannelColorActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -341,6 +343,11 @@ public class ChannelColorActivity extends BaseFragment implements NotificationCe
 
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         TLRPC.Chat chat = getMessagesController().getChat(-dialogId);
@@ -530,6 +537,13 @@ public class ChannelColorActivity extends BaseFragment implements NotificationCe
                 return buttonContainer.getMeasuredHeight();
             }
         });
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView = contentView;
     }
 

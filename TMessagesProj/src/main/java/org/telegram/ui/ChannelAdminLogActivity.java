@@ -166,6 +166,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import xyz.nextalone.gen.Config;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class ChannelAdminLogActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -851,6 +853,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         }*/
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         if (chatMessageCellsCache.isEmpty()) {
@@ -1564,6 +1571,13 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
 
         updateEmptyPlaceholder();
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            chatListView.setClipToPadding(false);
+            chatListView.setPadding(chatListView.getPaddingLeft(), chatListView.getPaddingTop(), chatListView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

@@ -60,6 +60,8 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class OpeningHoursActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -71,6 +73,11 @@ public class OpeningHoursActivity extends BaseFragment implements NotificationCe
     private CrossfadeDrawable doneButtonDrawable;
     private ActionBarMenuItem doneButton;
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -103,6 +110,13 @@ public class OpeningHoursActivity extends BaseFragment implements NotificationCe
 
         setValue();
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView = contentView;
     }
 

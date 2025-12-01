@@ -32,6 +32,8 @@ import org.telegram.ui.Components.ListView.AdapterWithDiffUtils;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class CacheChatsExceptionsFragment extends BaseFragment {
 
@@ -52,6 +54,11 @@ public class CacheChatsExceptionsFragment extends BaseFragment {
         super(bundle);
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         FrameLayout frameLayout = new FrameLayout(context);
@@ -162,6 +169,13 @@ public class CacheChatsExceptionsFragment extends BaseFragment {
         frameLayout.addView(recyclerListView);
         frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
         updateRows();
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            recyclerListView.setClipToPadding(false);
+            recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

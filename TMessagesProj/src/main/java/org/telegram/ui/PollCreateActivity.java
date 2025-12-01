@@ -104,6 +104,8 @@ import org.telegram.ui.Stories.recorder.KeyboardNotifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class PollCreateActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate {
 
@@ -355,6 +357,11 @@ public class PollCreateActivity extends BaseFragment implements NotificationCent
         }
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
@@ -852,6 +859,13 @@ public class PollCreateActivity extends BaseFragment implements NotificationCent
 
         checkDoneButton();
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

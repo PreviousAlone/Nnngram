@@ -12,6 +12,9 @@ import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.Delegates.MemberRequestsDelegate;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import org.telegram.messenger.AndroidUtilities;
 
 public class MemberRequestsActivity extends BaseFragment {
 
@@ -32,6 +35,11 @@ public class MemberRequestsActivity extends BaseFragment {
         };
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setAllowOverlayTitle(true);
@@ -73,6 +81,12 @@ public class MemberRequestsActivity extends BaseFragment {
         FrameLayout rootLayout = delegate.getRootLayout();
         delegate.loadMembers();
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView = rootLayout;
     }
 

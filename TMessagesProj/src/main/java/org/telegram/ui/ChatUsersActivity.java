@@ -104,6 +104,8 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import xyz.nextalone.nnngram.utils.Log;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class ChatUsersActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -610,6 +612,11 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
         getNotificationCenter().removeObserver(this, NotificationCenter.dialogDeleted);
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         searching = false;
@@ -1404,6 +1411,13 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
             searchItem.openSearch(false);
         }
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

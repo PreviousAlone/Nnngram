@@ -161,6 +161,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.crypto.Cipher;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class PassportActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -986,6 +988,11 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         }
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
 
@@ -1356,6 +1363,13 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         } else if (currentActivityType == TYPE_MANAGE) {
             createManageInterface(context);
         }
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            scrollView.setClipToPadding(false);
+            scrollView.setPadding(scrollView.getPaddingLeft(), scrollView.getPaddingTop(), scrollView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

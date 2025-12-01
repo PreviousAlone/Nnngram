@@ -56,6 +56,8 @@ import org.telegram.ui.Components.ViewPagerFixed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class DataUsage2Activity extends BaseFragment {
 
@@ -74,6 +76,11 @@ public class DataUsage2Activity extends BaseFragment {
     private ViewPagerFixed.Adapter pageAdapter;
     private ViewPagerFixed.TabsView tabsView;
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -118,6 +125,13 @@ public class DataUsage2Activity extends BaseFragment {
 
         frameLayout.addView(pager, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL, 0, 48, 0, 0));
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            pager.setClipToPadding(false);
+            pager.setPadding(pager.getPaddingLeft(), pager.getPaddingTop(), pager.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView = frameLayout;
     }
 

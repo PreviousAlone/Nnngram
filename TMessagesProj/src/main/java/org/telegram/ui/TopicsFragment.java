@@ -157,6 +157,8 @@ import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 
 import xyz.nextalone.nnngram.ui.BackButtonRecentMenu;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class TopicsFragment extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, ChatActivityInterface, RightSlidingDialogContainer.BaseFragmentWithFullscreen {
 
@@ -400,6 +402,11 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         chatActivity.finishFragment();
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         fragmentView = contentView = new SizeNotifierFrameLayout(context) {
@@ -1455,6 +1462,13 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         }
 
         BackButtonRecentMenu.addToRecentDialogs(currentAccount, -chatId);
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            recyclerListView.setClipToPadding(false);
+            recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

@@ -23,6 +23,9 @@ import org.telegram.ui.Components.UniversalRecyclerView;
 import org.telegram.ui.Stars.BotStarsController;
 
 import java.util.ArrayList;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import org.telegram.messenger.AndroidUtilities;
 
 public class SuggestedAffiliateProgramsFragment extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -47,6 +50,11 @@ public class SuggestedAffiliateProgramsFragment extends BaseFragment implements 
     private BackDrawable backDrawable;
     private UniversalRecyclerView listView;
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonDrawable(backDrawable = new BackDrawable(false));
@@ -73,6 +81,13 @@ public class SuggestedAffiliateProgramsFragment extends BaseFragment implements 
         );
         fragmentView = contentView;
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

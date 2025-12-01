@@ -42,6 +42,8 @@ import org.telegram.ui.Components.SizeNotifierFrameLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class PhotoPickerSearchActivity extends BaseFragment {
 
@@ -90,6 +92,11 @@ public class PhotoPickerSearchActivity extends BaseFragment {
         gifsSearch = new PhotoPickerActivity(1, null, selectedPhotos, selectedPhotosOrder, selectPhotoType, allowCaption, chatActivity, false);
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackgroundColor(Theme.getColor(Theme.key_dialogBackground));
@@ -666,6 +673,12 @@ public class PhotoPickerSearchActivity extends BaseFragment {
             );
         }
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

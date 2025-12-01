@@ -38,6 +38,8 @@ import org.telegram.ui.Components.StickersAlert;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class ArchivedStickersActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -89,6 +91,11 @@ public class ArchivedStickersActivity extends BaseFragment implements Notificati
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.stickersDidLoad);
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -171,6 +178,13 @@ public class ArchivedStickersActivity extends BaseFragment implements Notificati
             }
         });
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

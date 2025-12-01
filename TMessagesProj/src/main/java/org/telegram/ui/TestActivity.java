@@ -20,6 +20,9 @@ import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
 import org.webrtc.CameraEnumerator;
 import org.webrtc.VideoCapturer;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import org.telegram.messenger.AndroidUtilities;
 
 @TargetApi(18)
 public class TestActivity extends BaseFragment {
@@ -38,6 +41,11 @@ public class TestActivity extends BaseFragment {
         super.onFragmentDestroy();
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -57,6 +65,12 @@ public class TestActivity extends BaseFragment {
         frameLayout.setBackgroundColor(0xffffffff);
         fragmentView = frameLayout;
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

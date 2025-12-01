@@ -151,6 +151,18 @@ android {
         jvmToolchain(Version.java.toString().toInt())
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    tasks.withType<JavaCompile> {
+        options.apply {
+            isFork = true
+            forkOptions.jvmArgs = listOf("-Xmx8g", "-XX:MaxMetaspaceSize=1g")
+        }
+    }
+
     signingConfigs {
         create("release") {
             storeFile = File(projectDir, "config/release.keystore")

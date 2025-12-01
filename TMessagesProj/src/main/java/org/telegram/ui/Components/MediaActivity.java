@@ -81,6 +81,8 @@ import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class MediaActivity extends BaseFragment implements SharedMediaLayout.SharedMediaPreloaderDelegate, FloatingDebugProvider, NotificationCenter.NotificationCenterDelegate {
 
@@ -189,6 +191,11 @@ public class MediaActivity extends BaseFragment implements SharedMediaLayout.Sha
         }
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonDrawable(backDrawable = new BackDrawable(false));
@@ -856,6 +863,12 @@ public class MediaActivity extends BaseFragment implements SharedMediaLayout.Sha
         if (type == TYPE_STORIES && initialTab == SharedMediaLayout.TAB_ARCHIVED_STORIES) {
             sharedMediaLayout.onTabProgress(9f);
         }
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

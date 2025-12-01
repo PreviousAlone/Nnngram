@@ -89,6 +89,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import xyz.nextalone.gen.Config;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class CalendarActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -279,6 +281,11 @@ public class CalendarActivity extends BaseFragment implements NotificationCenter
         }
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         textPaint.setTextSize(AndroidUtilities.dp(16));
@@ -465,6 +472,13 @@ public class CalendarActivity extends BaseFragment implements NotificationCenter
             removeDaysButton.setTextColor(Theme.getColor(Theme.key_text_RedBold));
         }
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

@@ -88,6 +88,8 @@ import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class AvatarConstructorFragment extends BaseFragment {
 
@@ -181,6 +183,11 @@ public class AvatarConstructorFragment extends BaseFragment {
         this.avatarFor = avatarFor;
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         hasOwnBackground = true;
@@ -547,6 +554,12 @@ public class AvatarConstructorFragment extends BaseFragment {
             onPreviewClick();
         });
         fragmentView = nestedSizeNotifierLayout;
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

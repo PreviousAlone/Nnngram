@@ -80,6 +80,8 @@ import org.telegram.ui.Components.spoilers.SpoilersTextView;
 import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class QuickRepliesActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -91,6 +93,11 @@ public class QuickRepliesActivity extends BaseFragment implements NotificationCe
     private ActionBarMenuItem editItem;
     private ActionBarMenuItem deleteItem;
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonDrawable(new BackDrawable(false));
@@ -158,6 +165,13 @@ public class QuickRepliesActivity extends BaseFragment implements NotificationCe
         listView.listenReorder(this::whenReordered);
         contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            listView.setClipToPadding(false);
+            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView = contentView;
     }
 

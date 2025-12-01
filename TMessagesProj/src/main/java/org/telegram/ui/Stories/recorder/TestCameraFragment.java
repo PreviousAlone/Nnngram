@@ -14,9 +14,17 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.webrtc.EglBase;
 import org.webrtc.RendererCommon;
 import org.webrtc.TextureViewRenderer;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import org.telegram.messenger.AndroidUtilities;
 
 public class TestCameraFragment extends BaseFragment {
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
 
@@ -58,6 +66,12 @@ public class TestCameraFragment extends BaseFragment {
 
         ((FrameLayout) fragmentView).addView(tv);
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 }

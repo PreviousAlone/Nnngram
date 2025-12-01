@@ -121,6 +121,8 @@ import java.util.HashMap;
 
 import xyz.nextalone.nnngram.helpers.QrHelper;
 import xyz.nextalone.nnngram.utils.PermissionUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class CameraScanActivity extends BaseFragment {
 
@@ -309,6 +311,11 @@ public class CameraScanActivity extends BaseFragment {
         }
     }
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -800,6 +807,12 @@ public class CameraScanActivity extends BaseFragment {
         }
         fragmentView.setKeepScreenOn(true);
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

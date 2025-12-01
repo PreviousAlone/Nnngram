@@ -39,6 +39,8 @@ import org.telegram.ui.Adapters.MessagesSearchAdapter;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.ChatActivityContainer;
 import org.telegram.ui.Stories.StoriesController;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class HashtagActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -125,6 +127,11 @@ public class HashtagActivity extends BaseFragment implements NotificationCenter.
     private TextView storiesTotalTextView;
 
 
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
@@ -298,6 +305,12 @@ public class HashtagActivity extends BaseFragment implements NotificationCenter.
 
         transit(false, false);
 
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 
