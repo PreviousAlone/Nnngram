@@ -17920,7 +17920,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     scale2 = Math.max(scaleX, scaleY);
                 } else {
                     scaleX = (float) windowView.getMeasuredWidth() / layoutParams.width;
-                    scaleY = (float) (AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0)) / layoutParams.height;
+                    scaleY = (float) (AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0) + navigationBarHeight) / layoutParams.height;
                     scale2 = Math.min(scaleX, scaleY);
                 }
                 float width = layoutParams.width * scale * scale2;
@@ -17932,7 +17932,7 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
                     float measuredHeight = (float) photoCropView.getMeasuredHeight() - statusBarHeight;
                     yPos = (measuredHeight - height) / 2.0f;
                 } else {
-                    yPos = ((AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0)) - height) / 2.0f;
+                    yPos = ((AndroidUtilities.displaySize.y + (isStatusBarVisible() ? AndroidUtilities.statusBarHeight : 0) + navigationBarHeight) - height) / 2.0f;
                 }
                 for (int i = 0; i < animatingImageViews.length; i++) {
                     animatingImageViews[i].setLayoutParams(layoutParams);
