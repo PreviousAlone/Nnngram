@@ -4107,8 +4107,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
         if (paddingTop < 0) {
             paddingTop = 0;
         }
-        if (gridView.getPaddingTop() != paddingTop) {
-            gridView.setPadding(dp(6), paddingTop, dp(6), dp(48));
+        int bottomPadding = dp(48) + (parentAlert != null ? parentAlert.getNavigationBarInset() : 0);
+        if (gridView.getPaddingTop() != paddingTop || gridView.getPaddingBottom() != bottomPadding) {
+            gridView.setPadding(dp(6), paddingTop, dp(6), bottomPadding);
         }
         dropDown.setTextSize(!AndroidUtilities.isTablet() && AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y ? 18 : 20);
         ignoreLayout = false;

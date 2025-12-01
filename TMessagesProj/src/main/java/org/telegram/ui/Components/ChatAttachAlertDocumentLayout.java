@@ -328,7 +328,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
         backgroundListView.setLayoutManager(backgroundLayoutManager = new FillLastLinearLayoutManager(context, LinearLayoutManager.VERTICAL, false, AndroidUtilities.dp(56), backgroundListView));
         backgroundListView.setClipToPadding(false);
         backgroundListView.setAdapter(backgroundListAdapter = new ListAdapter(context));
-        backgroundListView.setPadding(0, 0, 0, AndroidUtilities.dp(48));
+        backgroundListView.setPadding(0, 0, 0, AndroidUtilities.dp(48) + (parentAlert != null ? parentAlert.getNavigationBarInset() : 0));
         addView(backgroundListView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         backgroundListView.setVisibility(View.GONE);
 
@@ -375,7 +375,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
         });
         listView.setClipToPadding(false);
         listView.setAdapter(listAdapter);
-        listView.setPadding(0, 0, 0, AndroidUtilities.dp(48));
+        listView.setPadding(0, 0, 0, AndroidUtilities.dp(48) + (parentAlert != null ? parentAlert.getNavigationBarInset() : 0));
         addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         searchAdapter = new SearchAdapter(context);
 
@@ -639,7 +639,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
         backgroundListAdapter.notifyDataSetChanged();
         backgroundListView.setVisibility(View.VISIBLE);
 
-        backgroundListView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom());
+        backgroundListView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), AndroidUtilities.dp(48) + (parentAlert != null ? parentAlert.getNavigationBarInset() : 0));
         int p = layoutManager.findFirstVisibleItemPosition();
         if (p >= 0) {
             View childView = layoutManager.findViewByPosition(p);
@@ -733,7 +733,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
         }
         if (listView.getPaddingTop() != padding) {
             ignoreLayout = true;
-            listView.setPadding(0, padding, 0, AndroidUtilities.dp(48));
+            listView.setPadding(0, padding, 0, AndroidUtilities.dp(48) + (parentAlert != null ? parentAlert.getNavigationBarInset() : 0));
             ignoreLayout = false;
         }
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) filtersView.getLayoutParams();
