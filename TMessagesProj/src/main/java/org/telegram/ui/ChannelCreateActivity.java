@@ -725,7 +725,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
         } else if (currentStep == 1) {
             fragmentView = new ScrollView(context);
             ScrollView scrollView = (ScrollView) fragmentView;
-            scrollView.setFillViewport(true);
+            scrollView.setFillViewport(false);
             linearLayout = new LinearLayout(context);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             scrollView.addView(linearLayout, new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -929,13 +929,8 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
 
             updatePrivatePublic();
 
-            ViewCompat.setOnApplyWindowInsetsListener((View) fragmentView, (v, insets) -> {
-                final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-                linearLayout.setClipToPadding(false);
-                linearLayout.setPadding(linearLayout.getPaddingLeft(), linearLayout.getPaddingTop(), linearLayout.getPaddingRight(), bottomInset);
-                return WindowInsetsCompat.CONSUMED;
-            });
-            ViewCompat.requestApplyInsets((View) fragmentView);
+            // edge-to-edge: parent consumes system bars; avoid adding extra bottom inset
+            linearLayout.setClipToPadding(false);
         }
 
         return fragmentView;

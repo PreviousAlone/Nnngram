@@ -3129,10 +3129,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     int paddingBottom;
                     if (isInLandscapeMode) {
                         paddingTop = getHeaderExtraHeight() + actionBarHeight;
-                        paddingBottom = 0;
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = sharedMediaRow == -1 ? navInset : 0;
                     } else {
                         paddingTop = listView.getMeasuredWidth() + getActionsExtraHeight();
-                        paddingBottom = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int gap = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = Math.max(gap, sharedMediaRow == -1 ? navInset : 0);
                     }
                     if (banFromGroup != 0) {
                         paddingBottom += dp(48);
@@ -3156,10 +3171,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     int paddingBottom;
                     if (isInLandscapeMode || AndroidUtilities.isTablet()) {
                         paddingTop = getHeaderExtraHeight();
-                        paddingBottom = 0;
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = sharedMediaRow == -1 ? navInset : 0;
                     } else {
                         paddingTop = listView.getMeasuredWidth() + getActionsExtraHeight();
-                        paddingBottom = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int gap = Math.max(0, getMeasuredHeight() - (listContentHeight + getHeaderExtraHeight() + actionBarHeight));
+                        int navInset = 0;
+                        WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(fragmentView);
+                        if (rootInsets != null) {
+                            navInset = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
+                        } else {
+                            navInset = AndroidUtilities.navigationBarHeight;
+                        }
+                        paddingBottom = Math.max(gap, sharedMediaRow == -1 ? navInset : 0);
                     }
                     if (banFromGroup != 0) {
                         paddingBottom += AndroidUtilities.dp(48);
@@ -5956,7 +5986,20 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         createFloatingActionButton(getContext());
 
         if (myProfile) {
-            contentView.addView(bottomButtonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 72 + (1 / AndroidUtilities.density), Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
+            bottomButtonsContainer.setClipToPadding(false);
+            final int baseHeightPx = AndroidUtilities.dp(72) + (int) (1 / AndroidUtilities.density);
+            FrameLayout.LayoutParams lp = LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, baseHeightPx, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL);
+            contentView.addView(bottomButtonsContainer, lp);
+            ViewCompat.setOnApplyWindowInsetsListener(bottomButtonsContainer, (v, insets) -> {
+                WindowInsetsCompat r = ViewCompat.getRootWindowInsets(v);
+                int bottomInset = r != null ? Math.max(r.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight) : AndroidUtilities.navigationBarHeight;
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
+                params.height = baseHeightPx + bottomInset;
+                v.setLayoutParams(params);
+                v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
+                return insets;
+            });
+            ViewCompat.requestApplyInsets(bottomButtonsContainer);
         }
 
         if (actionsView != null && actionsView.hasCall()) {
