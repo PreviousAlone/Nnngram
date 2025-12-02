@@ -3473,12 +3473,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                     requestLayout();
                 }
                 setVisibleHeight(lastVisibleHeight);
-                WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(this);
-                int bottom = 0;
-                if (rootInsets != null) {
-                    bottom = Math.max(rootInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-                }
-                applyBottomInset(bottom);
             });
 
             addView(scrollSlidingTextTabStrip, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.TOP));
@@ -3547,7 +3541,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
     }
 
     private void applyBottomInset(int bottomInset) {
-        lastBottomInset = bottomInset + getAudioOverlayPadding();
+        lastBottomInset = bottomInset;
         for (int i = 0; i < mediaPages.length; i++) {
             applyBottomInsetToPage(mediaPages[i]);
         }
@@ -11054,13 +11048,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
 
     public boolean isSearchingStories() {
         return !TextUtils.isEmpty(getStoriesHashtag()) || getStoriesArea() != null;
-    }
-
-    public int getAudioOverlayPadding() {
-        if (fragmentContextView != null && fragmentContextView.getVisibility() == VISIBLE) {
-            return (int) Math.max(0, fragmentContextView.getTopPadding());
-        }
-        return 0;
     }
 
     public static class SharedMediaListView extends InternalListView {
