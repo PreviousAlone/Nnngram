@@ -310,6 +310,7 @@
     <string name="RegistrationDateOlder">晚于 %s</string>
     <string name="RegistrationDateApproximately">大约 %s</string>
     <string name="showRPCError">显示 RPC 错误</string>
+    <string name="showFragmentSwitchToast">显示页面切换 Toast</string>
     <string name="enablePanguOnReceiving">接受信息 Pangu 化</string>
     <string name="enablePanguOnSending">发送信息 Pangu 化</string>
     <string name="panguInfo">使文字更具可读性。在 CJK（中文、日文、韩文）、半宽英文、数字和符号字符之间间隔中自动插入空格</string>

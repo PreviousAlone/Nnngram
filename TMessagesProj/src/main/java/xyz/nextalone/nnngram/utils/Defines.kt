@@ -95,6 +95,7 @@ object Defines {
     @BooleanConfig(true) const val markdownParseLinks = "markdownParseLinks"
     @BooleanConfig(true) const val newMarkdownParser = "newMarkdownParser"
     @BooleanConfig const val showRPCError = "showRPCError"
+    @BooleanConfig const val showFragmentSwitchToast = "showFragmentSwitchToast"
     @BooleanConfig const val enablePanguOnSending = "enablePanguOnSending"
     @BooleanConfig const val enablePanguOnReceiving = "enablePanguOnReceiving"
     @BooleanConfig const val showExactTime = "showExactTime"

@@ -68,6 +68,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int linkedUserRow;
     private int overrideChannelAliasRow;
     private int showRPCErrorRow;
+    private int showFragmentSwitchToastRow;
     private int enableXiaomiHyperAiRow;
 
     private int specialRow;
@@ -209,6 +210,11 @@ public class ExperimentSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.showRPCError);
             }
+        } else if (position == showFragmentSwitchToastRow) {
+            Config.toggleShowFragmentSwitchToast();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.showFragmentSwitchToast);
+            }
         } else if (position == enablePanguOnSendingRow) {
             Config.toggleEnablePanguOnSending();
             if (view instanceof TextCheckCell) {
@@ -281,6 +287,7 @@ public class ExperimentSettingActivity extends BaseActivity {
         }
         var user = UserConfig.getInstance(currentAccount).getCurrentUser();
         showRPCErrorRow = user != null && user.developer() ? addRow("showRPCError") : -1;
+        showFragmentSwitchToastRow = user != null && user.developer() ? addRow("showFragmentSwitchToast") : -1;
         if (getSystemProperty("ro.mi.os.version.name") != null) {
             enableXiaomiHyperAiRow = addRow("enableXiaomiHyperAi");
         }
@@ -416,6 +423,8 @@ public class ExperimentSettingActivity extends BaseActivity {
                             Config.alwaysSendWithoutSound, true);
                     } else if (position == showRPCErrorRow) {
                         textCell.setTextAndCheck(LocaleController.getString("showRPCError", R.string.showRPCError), Config.showRPCError, true);
+                    } else if (position == showFragmentSwitchToastRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("showFragmentSwitchToast", R.string.showFragmentSwitchToast), Config.showFragmentSwitchToast, true);
                     } else if (position == enablePanguOnSendingRow) {
                         textCell.setTextAndCheck(LocaleController.getString("enablePanguOnSending", R.string.enablePanguOnSending), Config.enablePanguOnSending,
                             true);

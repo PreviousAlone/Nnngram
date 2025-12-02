@@ -314,6 +314,7 @@
     <string name="RegistrationDateOlder">Older than %s</string>
     <string name="RegistrationDateApproximately">Approximately %s</string>
     <string name="showRPCError">Show RPC Error</string>
+    <string name="showFragmentSwitchToast">Show Fragment Switch Toast</string>
     <string name="pangu" translatable="false">Pangu</string>
     <string name="enablePanguOnReceiving">Enable Pangu on receiving</string>
     <string name="enablePanguOnSending">Enable Pangu on sending</string>
