@@ -34,6 +34,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,6 +79,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
     RecyclerListView listView;
     LinearLayoutManager layoutManager;
     Adapter adapter;
+    private int systemBarsBottomInset;
 
     Bulletin restrictBulletin;
 
@@ -149,6 +152,16 @@ public class LiteModeSettingsActivity extends BaseFragment {
         FLAGS_CHAT = AndroidUtilities.isTablet() ? (LiteMode.FLAGS_CHAT & ~LiteMode.FLAG_CHAT_FORUM_TWOCOLUMN) : LiteMode.FLAGS_CHAT;
 
         updateItems();
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
 
         return fragmentView;
     }
@@ -1069,5 +1082,10 @@ public class LiteModeSettingsActivity extends BaseFragment {
         LiteMode.savePreference();
         AnimatedEmojiDrawable.updateAll();
         Theme.reloadWallpaper(true);
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

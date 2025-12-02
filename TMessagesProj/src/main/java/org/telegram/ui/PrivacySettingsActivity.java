@@ -45,6 +45,8 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -142,6 +144,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
     private int rowCount;
 
     private final ArrayList<BotBiometry.Bot> biometryBots = new ArrayList<>();
+    private int systemBarsBottomInset;
 
     private boolean deleteAccountUpdate;
     private boolean secretMapUpdate;
@@ -630,6 +633,16 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
             biometryBots.clear();
             biometryBots.addAll(bots);
             updateRows(true);
+        });
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
         });
 
         return fragmentView;
@@ -1397,5 +1410,10 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextCheckCell.class}, new String[]{"checkBox"}, null, null, null, Theme.key_switchTrackChecked));
 
         return themeDescriptions;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

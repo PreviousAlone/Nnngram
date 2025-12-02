@@ -59,6 +59,8 @@ import android.widget.TextView;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -145,6 +147,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
     @SuppressWarnings("FieldCanBeLocal")
     private LinearLayoutManager layoutManager;
     private ThemesHorizontalListCell themesHorizontalListCell;
+    private int systemBarsBottomInset;
 
     private ArrayList<Theme.ThemeInfo> darkThemes = new ArrayList<>();
     private ArrayList<Theme.ThemeInfo> defaultThemes = new ArrayList<>();
@@ -1487,6 +1490,16 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             itemAnimator.setSupportsChangeAnimations(false);
             listView.setItemAnimator(itemAnimator);
         }
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
 
         if (highlightSensitiveRow) {
             updateRows(false);
@@ -2943,5 +2956,10 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

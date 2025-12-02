@@ -41,6 +41,8 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -103,6 +105,7 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
     private ArrayList<NotificationException> exceptionChannels = null;
     private ArrayList<NotificationException> exceptionStories = null;
     private ArrayList<NotificationException> exceptionAutoStories = null;
+    private int systemBarsBottomInset;
 
     private int accountsSectionRow;
     private int accountsAllRow;
@@ -774,6 +777,16 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
             }
         });
 
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
+
         return fragmentView;
     }
 
@@ -1236,5 +1249,10 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LINKCOLOR, new Class[]{TextInfoPrivacyCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteLinkText));
 
         return themeDescriptions;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

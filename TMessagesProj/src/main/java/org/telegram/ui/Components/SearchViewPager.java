@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -147,6 +149,15 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
     private FilteredSearchView.Delegate filteredSearchViewDelegate;
     private FilteredSearchView noMediaFiltersSearchView;
     private int keyboardSize;
+
+    private int systemBarsBottomInset;
+    private int searchListBaseBottomPadding;
+    private int channelsListBaseBottomPadding;
+    private int botsListBaseBottomPadding;
+    private int hashtagListBaseBottomPadding;
+    private int noMediaFiltersListBaseBottomPadding;
+    private int downloadsListBaseBottomPadding;
+    private HashMap<RecyclerListView, Integer> listBaseBottomPadding = new HashMap<>();
 
     private boolean showOnlyDialogsAdapter;
     protected boolean includeDownloads() {
@@ -594,6 +605,13 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         postsSearchContainer = new PostsSearchContainer(context, fragment);
 
         setAdapter(viewPagerAdapter = new ViewPagerAdapter());
+
+        ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            updateBottomInsets(bottom);
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(this);
     }
 
     public ActionBarMenu getActionMode() {
@@ -1219,6 +1237,68 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         }
     }
 
+    private void applyBottomInsetToList(RecyclerListView list, int basePadding) {
+        if (list == null) return;
+        list.setClipToPadding(false);
+        list.setPadding(list.getPaddingLeft(), list.getPaddingTop(), list.getPaddingRight(), basePadding + systemBarsBottomInset);
+    }
+
+    private void applyBottomInsetToList(RecyclerListView list) {
+        if (list == null) return;
+        Integer base = listBaseBottomPadding.get(list);
+        if (base == null) {
+            base = list.getPaddingBottom();
+            listBaseBottomPadding.put(list, base);
+        }
+        applyBottomInsetToList(list, base);
+    }
+
+    private void updateBottomInsets(int bottom) {
+        if (systemBarsBottomInset == bottom) return;
+        systemBarsBottomInset = bottom;
+
+        if (searchListBaseBottomPadding == 0 && searchListView != null) {
+            searchListBaseBottomPadding = searchListView.getPaddingBottom();
+        }
+        if (channelsListBaseBottomPadding == 0 && channelsSearchListView != null) {
+            channelsListBaseBottomPadding = channelsSearchListView.getPaddingBottom();
+        }
+        if (botsListBaseBottomPadding == 0 && botsSearchListView != null) {
+            botsListBaseBottomPadding = botsSearchListView.getPaddingBottom();
+        }
+        if (hashtagListBaseBottomPadding == 0 && hashtagSearchListView != null) {
+            hashtagListBaseBottomPadding = hashtagSearchListView.getPaddingBottom();
+        }
+        if (noMediaFiltersListBaseBottomPadding == 0 && noMediaFiltersSearchView != null && noMediaFiltersSearchView.recyclerListView != null) {
+            noMediaFiltersListBaseBottomPadding = noMediaFiltersSearchView.recyclerListView.getPaddingBottom();
+        }
+        if (downloadsListBaseBottomPadding == 0 && downloadsContainer != null && downloadsContainer.recyclerListView != null) {
+            downloadsListBaseBottomPadding = downloadsContainer.recyclerListView.getPaddingBottom();
+        }
+
+        applyBottomInsetToList(searchListView, searchListBaseBottomPadding);
+        applyBottomInsetToList(channelsSearchListView, channelsListBaseBottomPadding);
+        applyBottomInsetToList(botsSearchListView, botsListBaseBottomPadding);
+        applyBottomInsetToList(hashtagSearchListView, hashtagListBaseBottomPadding);
+        if (noMediaFiltersSearchView != null) {
+            applyBottomInsetToList(noMediaFiltersSearchView.recyclerListView, noMediaFiltersListBaseBottomPadding);
+        }
+        if (downloadsContainer != null) {
+            applyBottomInsetToList(downloadsContainer.recyclerListView, downloadsListBaseBottomPadding);
+        }
+
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child instanceof FilteredSearchView) {
+                applyBottomInsetToList(((FilteredSearchView) child).recyclerListView);
+            } else if (child instanceof SearchDownloadsContainer) {
+                applyBottomInsetToList(((SearchDownloadsContainer) child).recyclerListView);
+            } else if (child == searchContainer && noMediaFiltersSearchView != null) {
+                applyBottomInsetToList(noMediaFiltersSearchView.recyclerListView);
+            }
+        }
+    }
+
     public void showOnlyDialogsAdapter(boolean showOnlyDialogsAdapter) {
         this.showOnlyDialogsAdapter = showOnlyDialogsAdapter;
     }
@@ -1445,6 +1525,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                     }
                 });
                 downloadsContainer.setUiCallback(SearchViewPager.this);
+                applyBottomInsetToList(downloadsContainer.recyclerListView);
                 return downloadsContainer;
             } else if (viewType == 6) {
                 return postsSearchContainer;
@@ -1459,6 +1540,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                         fragmentView.invalidateBlur();
                     }
                 });
+                applyBottomInsetToList(filteredSearchView.recyclerListView);
                 return filteredSearchView;
             }
         }
@@ -1489,6 +1571,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         @Override
         public void bindView(View view, int position, int viewType) {
             search(view, position, lastSearchString, true);
+            if (view instanceof FilteredSearchView) {
+                applyBottomInsetToList(((FilteredSearchView) view).recyclerListView);
+            } else if (view instanceof SearchDownloadsContainer) {
+                applyBottomInsetToList(((SearchDownloadsContainer) view).recyclerListView);
+            }
         }
 
         private class Item {

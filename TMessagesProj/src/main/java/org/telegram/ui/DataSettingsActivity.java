@@ -36,6 +36,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -77,6 +79,7 @@ public class DataSettingsActivity extends BaseFragment {
     private RecyclerListView listView;
     @SuppressWarnings("FieldCanBeLocal")
     private LinearLayoutManager layoutManager;
+    private int systemBarsBottomInset;
 
     private ArrayList<File> storageDirs;
 
@@ -605,6 +608,16 @@ public class DataSettingsActivity extends BaseFragment {
         itemAnimator.setSupportsChangeAnimations(false);
         listView.setItemAnimator(itemAnimator);
 
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
+
         return fragmentView;
     }
 
@@ -996,5 +1009,10 @@ public class DataSettingsActivity extends BaseFragment {
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextInfoPrivacyCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText4));
 
         return themeDescriptions;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

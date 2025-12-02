@@ -287,6 +287,8 @@ public class Bulletin {
         if (!showing && containerLayout != null) {
             showing = true;
             layout.setTop(top);
+            int bottomInset = Math.max(AndroidUtilities.getViewInset(containerLayout), containerLayout.getPaddingBottom());
+            parentLayout.setPadding(parentLayout.getPaddingLeft(), parentLayout.getPaddingTop(), parentLayout.getPaddingRight(), bottomInset);
 
             CharSequence text = layout.getAccessibilityText();
             if (text != null) {
@@ -304,6 +306,10 @@ public class Bulletin {
             layout.onAttach(this);
 
             containerLayout.addOnLayoutChangeListener(containerLayoutListener = (v, left, top1, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                int inset = Math.max(AndroidUtilities.getViewInset(containerLayout), containerLayout.getPaddingBottom());
+                if (parentLayout.getPaddingBottom() != inset) {
+                    parentLayout.setPadding(parentLayout.getPaddingLeft(), parentLayout.getPaddingTop(), parentLayout.getPaddingRight(), inset);
+                }
                 if (currentDelegate != null && !currentDelegate.allowLayoutChanges()) {
                     return;
                 }

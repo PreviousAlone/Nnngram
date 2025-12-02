@@ -29,6 +29,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BotWebViewVibrationEffect;
@@ -56,6 +58,7 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
 
     private RecyclerListView listView;
     private ListAdapter adapter;
+    private int systemBarsBottomInset;
 
     private boolean changed = false;
     private TLRPC.GlobalPrivacySettings settings;
@@ -137,6 +140,16 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
             settings = new TLRPC.TL_globalPrivacySettings();
         }
         updateItems(false);
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
 
         return fragmentView;
     }
@@ -320,5 +333,10 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
         } else if (id == NotificationCenter.dialogFiltersUpdated) {
             updateItems(true);
         }
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

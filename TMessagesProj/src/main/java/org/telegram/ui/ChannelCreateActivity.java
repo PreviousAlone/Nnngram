@@ -56,6 +56,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -167,6 +169,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
     private Utilities.Callback2<BaseFragment, Long> onFinishListener;
 
     private final static int done_button = 1;
+    private int systemBarsBottomInset;
 
     public ChannelCreateActivity(Bundle args) {
         super(args);
@@ -551,6 +554,15 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             sizeNotifierFrameLayout.addView(linearLayout, new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+            ViewCompat.setOnApplyWindowInsetsListener(sizeNotifierFrameLayout, (v, insets) -> {
+                int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                if (systemBarsBottomInset != bottom) {
+                    systemBarsBottomInset = bottom;
+                    linearLayout.setPadding(linearLayout.getPaddingLeft(), linearLayout.getPaddingTop(), linearLayout.getPaddingRight(), linearLayout.getPaddingBottom() + systemBarsBottomInset);
+                }
+                return insets;
+            });
+
             FrameLayout frameLayout = new FrameLayout(context);
             linearLayout.addView(frameLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
@@ -724,9 +736,19 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             fragmentView = new ScrollView(context);
             ScrollView scrollView = (ScrollView) fragmentView;
             scrollView.setFillViewport(true);
+            scrollView.setClipToPadding(false);
             linearLayout = new LinearLayout(context);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             scrollView.addView(linearLayout, new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, insets) -> {
+                int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                if (systemBarsBottomInset != bottom) {
+                    systemBarsBottomInset = bottom;
+                    scrollView.setPadding(scrollView.getPaddingLeft(), scrollView.getPaddingTop(), scrollView.getPaddingRight(), scrollView.getPaddingBottom() + systemBarsBottomInset);
+                }
+                return insets;
+            });
 
             TLRPC.Chat chat = getMessagesController().getChat(chatId);
             isGroup = chat != null && (!ChatObject.isChannel(chat) || ChatObject.isMegagroup(chat));
@@ -929,6 +951,11 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
         }
 
         return fragmentView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private void generateLink() {
