@@ -205,8 +205,10 @@ object Defines {
         1714986438,  // CI Channel
         1477185964,  // Discussion Group
         1068402676,  // Kitsune
-        784901712,  // NextAlone
-        457896977   // Queally rw
+        784901712,   // NextAlone
+        457896977,   // Queally rw
+        625965913,   // YuKongA
+        676660002,   // Xtao
     )
 
     @BooleanConfig const val doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe"
