@@ -5209,6 +5209,30 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             updateButton = ApplicationLoader.applicationLoaderInstance.takeUpdateButton(context);
             if (updateButton != null) {
                 contentView.addView(updateButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM));
+                ViewCompat.setOnApplyWindowInsetsListener(updateButton, (v, insets) -> {
+                    WindowInsetsCompat root = ViewCompat.getRootWindowInsets(v);
+                    int bottom = 0;
+                    if (root != null) {
+                        bottom = root.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + root.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                    }
+                    FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) v.getLayoutParams();
+                    int targetHeight = AndroidUtilities.dp(48) + bottom;
+                    boolean changed = false;
+                    if (lp.height != targetHeight) {
+                        lp.height = targetHeight;
+                        changed = true;
+                    }
+                    if (lp.bottomMargin != 0) {
+                        lp.bottomMargin = 0;
+                        changed = true;
+                    }
+                    if (changed) {
+                        v.setLayoutParams(lp);
+                    }
+                    v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottom);
+                    return insets;
+                });
+                ViewCompat.requestApplyInsets(updateButton);
                 updateButton.onTranslationUpdate(ty -> {
                     additionalFloatingTranslation2 = dp(48) - ty;
                     if (additionalFloatingTranslation2 < 0) {
