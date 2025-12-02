@@ -42,6 +42,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -112,6 +114,7 @@ public class ProxySettingsActivity extends BaseFragment {
     private SharedConfig.ProxyInfo currentProxyInfo;
 
     private boolean ignoreOnTextChange;
+    private int systemBarsBottomInset;
 
     private static final int done_button = 1;
 
@@ -564,6 +567,16 @@ public class ProxySettingsActivity extends BaseFragment {
         pasteString = null;
         updatePasteCell();
 
+        scrollView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                scrollView.setPadding(scrollView.getPaddingLeft(), scrollView.getPaddingTop(), scrollView.getPaddingRight(), scrollView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
+
         return fragmentView;
     }
 
@@ -834,5 +847,10 @@ public class ProxySettingsActivity extends BaseFragment {
         }
 
         return arrayList;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

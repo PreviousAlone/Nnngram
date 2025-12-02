@@ -121,6 +121,7 @@ import androidx.core.math.MathUtils;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
@@ -522,6 +523,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private float searchTransitionProgress;
     private Animator searchViewTransition;
     private boolean searchMode;
+
+    private int systemBarsBottomInset;
 
     private FlagSecureReason flagSecure;
 
@@ -4233,6 +4236,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         listView.setGlowColor(0);
         listView.setAdapter(listAdapter);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                if (bottomPaddingRow >= 0 && listAdapter != null) {
+                    listAdapter.notifyItemChanged(bottomPaddingRow);
+                }
+            }
+            return insets;
+        });
         listView.setOnItemClickListener((view, position, x, y) -> {
             if (getParentActivity() == null) {
                 return;
@@ -5173,8 +5186,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             listView.setPadding(0, getHeaderExtraHeight(), 0, AndroidUtilities.dp(48));
             listView.setBottomGlowOffset(AndroidUtilities.dp(48));
+            ViewCompat.requestApplyInsets(listView);
         } else {
             listView.setPadding(0, getHeaderExtraHeight(), 0, 0);
+            ViewCompat.requestApplyInsets(listView);
         }
 
         topView = new TopView(context);
@@ -13659,9 +13674,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 if (paddingHeight <= 0) {
                                     paddingHeight = 0;
                                 }
+                                paddingHeight = Math.max(paddingHeight, systemBarsBottomInset);
                                 setMeasuredDimension(listView.getMeasuredWidth(), lastPaddingHeight = paddingHeight);
                             } else {
-                                setMeasuredDimension(listView.getMeasuredWidth(), lastPaddingHeight);
+                                int paddingHeight = Math.max(lastPaddingHeight, systemBarsBottomInset);
+                                setMeasuredDimension(listView.getMeasuredWidth(), paddingHeight);
                             }
                         }
                     };
@@ -17259,5 +17276,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         span.setColor(color);
         spannableStringBuilder.setSpan(span, 0, spannableStringBuilder.length(), 0);
         return spannableStringBuilder;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

@@ -62,6 +62,8 @@ import androidx.annotation.Keep;
 import androidx.collection.LongSparseArray;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -117,6 +119,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
     private ImageView floatingButton;
     private boolean ignoreScrollEvent;
     private int selectedCount;
+    private int systemBarsBottomInset;
 
     private int type;
     private int containerHeight;
@@ -834,6 +837,19 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                     AndroidUtilities.hideKeyboard(editText);
                 }
             }
+        });
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+                if (floatingButton != null) {
+                    floatingButton.setTranslationY(-systemBarsBottomInset);
+                }
+            }
+            return insets;
         });
 
         floatingButton = new ImageView(context);
@@ -1684,5 +1700,10 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
         themeDescriptions.add(new ThemeDescription(spansContainer, 0, new Class[]{GroupCreateSpan.class}, null, null, null, Theme.key_avatar_backgroundBlue));
 
         return themeDescriptions;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

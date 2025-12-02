@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -111,6 +113,7 @@ public class SaveToGallerySettingsActivity extends BaseFragment {
     Adapter adapter;
 
     RecyclerListView recyclerListView;
+    private int systemBarsBottomInset;
 
     ArrayList<Item> items = new ArrayList<>();
     LongSparseArray<SaveToGallerySettingsHelper.DialogException> exceptionsDialogs = new LongSparseArray<>();
@@ -266,6 +269,16 @@ public class SaveToGallerySettingsActivity extends BaseFragment {
 
         }
         updateRows();
+
+        recyclerListView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(recyclerListView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), recyclerListView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
         return fragmentView;
     }
 
@@ -659,5 +672,10 @@ public class SaveToGallerySettingsActivity extends BaseFragment {
                 invalidate();
             }
         }
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

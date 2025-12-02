@@ -18,6 +18,8 @@ import android.widget.FrameLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -39,6 +41,7 @@ public class QuickRepliesSettingsActivity extends BaseFragment {
 
 	private ListAdapter listAdapter;
 	private RecyclerListView listView;
+	private int systemBarsBottomInset;
 
 	private int reply1Row;
 	private int reply2Row;
@@ -91,6 +94,16 @@ public class QuickRepliesSettingsActivity extends BaseFragment {
 		listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 		frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
 		listView.setAdapter(listAdapter);
+
+		listView.setClipToPadding(false);
+		ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+			int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+			if (systemBarsBottomInset != bottom) {
+				systemBarsBottomInset = bottom;
+				listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+			}
+			return insets;
+		});
 
 		return fragmentView;
 	}
@@ -248,5 +261,10 @@ public class QuickRepliesSettingsActivity extends BaseFragment {
 		themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextSettingsCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteValueText));
 
 		return themeDescriptions;
+	}
+
+	@Override
+	public boolean isSupportEdgeToEdge() {
+		return true;
 	}
 }

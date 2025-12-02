@@ -31,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -63,6 +65,7 @@ public class TopicsNotifySettingsFragments extends BaseFragment {
 
     RecyclerListView recyclerListView;
     long dialogId;
+    private int systemBarsBottomInset;
 
     ArrayList<Item> items = new ArrayList<>();
     HashSet<Integer> exceptionsTopics = new HashSet<>();
@@ -169,6 +172,16 @@ public class TopicsNotifySettingsFragments extends BaseFragment {
         });
         frameLayout.addView(recyclerListView);
         frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+
+        recyclerListView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(recyclerListView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                recyclerListView.setPadding(recyclerListView.getPaddingLeft(), recyclerListView.getPaddingTop(), recyclerListView.getPaddingRight(), recyclerListView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
         return fragmentView;
     }
 
@@ -304,5 +317,10 @@ public class TopicsNotifySettingsFragments extends BaseFragment {
             }
             return true;
         }
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

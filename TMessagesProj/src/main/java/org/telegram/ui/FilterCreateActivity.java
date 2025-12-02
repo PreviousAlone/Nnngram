@@ -63,6 +63,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -136,6 +138,7 @@ public class FilterCreateActivity extends BaseFragment {
     private ListAdapter adapter;
     private ActionBarMenuItem doneItem;
     private UndoView undoView;
+    private int systemBarsBottomInset;
 
     private int nameRow = -1;
 
@@ -641,6 +644,16 @@ public class FilterCreateActivity extends BaseFragment {
         checkDoneButton(false);
 
         loadInvites();
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
 
         return fragmentView;
     }
@@ -2937,5 +2950,10 @@ public class FilterCreateActivity extends BaseFragment {
             addView(rightTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 18, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, 22, 17, 22, 0));
             ScaleStateListAnimator.apply(rightTextView, 0.04f, 1.2f);
         }
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }
