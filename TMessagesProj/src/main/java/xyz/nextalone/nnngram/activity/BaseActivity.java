@@ -33,8 +33,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -56,7 +54,7 @@ import org.telegram.ui.Cells.TextDetailSettingsCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextRadioCell;
 import org.telegram.ui.Cells.TextSettingsCell;
-// removed BlurredRecyclerView for EdgeToEdge correctness
+import org.telegram.ui.Components.BlurredRecyclerView;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
@@ -68,7 +66,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public abstract class BaseActivity extends BaseFragment {
-    protected RecyclerListView listView;
+    protected BlurredRecyclerView listView;
     protected BaseListAdapter listAdapter;
     protected LinearLayoutManager layoutManager;
     protected Theme.ResourcesProvider resourcesProvider;
@@ -142,13 +140,14 @@ public abstract class BaseActivity extends BaseFragment {
 
         actionBar.setDrawBlurBackground(frameLayout);
 
-        listView = new RecyclerListView(context);
+        listView = new BlurredRecyclerView(context);
         listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 frameLayout.invalidateBlur();
             }
         });
+        listView.additionalClipBottom = AndroidUtilities.dp(200);
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
         //noinspection ConstantConditions
@@ -175,19 +174,7 @@ public abstract class BaseActivity extends BaseFragment {
             }
             return false;
         });
-        ViewCompat.setOnApplyWindowInsetsListener(frameLayout, (v, insets) -> {
-            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-            listView.setClipToPadding(false);
-            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(frameLayout);
         return fragmentView;
-    }
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
     }
 
     @Override
@@ -361,7 +348,7 @@ public abstract class BaseActivity extends BaseFragment {
         protected void drawList(Canvas blurCanvas, boolean top, ArrayList<IViewWithInvalidateCallback> views) {
             for (int j = 0; j < listView.getChildCount(); j++) {
                 View child = listView.getChildAt(j);
-                if (child.getY() < AndroidUtilities.dp(100)) {
+                if (child.getY() < listView.blurTopPadding + AndroidUtilities.dp(100)) {
                     int restore = blurCanvas.save();
                     blurCanvas.translate(getX() + child.getX(), getY() + listView.getY() + child.getY());
                     child.draw(blurCanvas);

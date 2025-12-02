@@ -22,8 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
@@ -193,14 +191,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         itemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         listView.setItemAnimator(itemAnimator);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        ViewCompat.setOnApplyWindowInsetsListener(frameLayout, (v, insets) -> {
-            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-            listView.setClipToPadding(false);
-            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
-            emptyView.setPadding(emptyView.getPaddingLeft(), emptyView.getPaddingTop(), emptyView.getPaddingRight(), bottomInset);
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(frameLayout);
 
         listView.setOnItemClickListener((view, position) -> {
             try {
@@ -373,11 +363,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         });
 
         return fragmentView;
-    }
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
     }
 
     @Override

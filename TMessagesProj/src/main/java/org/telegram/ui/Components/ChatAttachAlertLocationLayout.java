@@ -1158,10 +1158,9 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
             }
             parentAlert.setAllowNestedScroll(true);
         }
-        int bottomPadding = parentAlert != null ? parentAlert.getNavigationBarInset() : 0;
-        if (listView.getPaddingTop() != padding || listView.getPaddingBottom() != bottomPadding) {
+        if (listView.getPaddingTop() != padding) {
             ignoreLayout = true;
-            listView.setPadding(0, padding, 0, bottomPadding);
+            listView.setPadding(0, padding, 0, 0);
             ignoreLayout = false;
         }
     }

@@ -23,8 +23,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -277,7 +275,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         }
         fragmentView = (SizeNotifierFrameLayout) fragment.getFragmentView();
 
-        searchListView = new RecyclerListView(context) {
+        searchListView = new BlurredRecyclerView(context) {
             @Override
             protected void dispatchDraw(Canvas canvas) {
                 if (dialogsSearchAdapter != null && itemAnimator != null && searchLayoutManager != null && dialogsSearchAdapter.showMoreAnimation) {
@@ -372,31 +370,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
             }
         });
 
-        ViewCompat.setOnApplyWindowInsetsListener(searchContainer, (v, insets) -> {
-            final int bottom = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-            if (searchListView != null) {
-                searchListView.setClipToPadding(false);
-                searchListView.setPadding(searchListView.getPaddingLeft(), searchListView.getPaddingTop(), searchListView.getPaddingRight(), bottom);
-            }
-            if (channelsSearchListView != null) {
-                channelsSearchListView.setClipToPadding(false);
-                channelsSearchListView.setPadding(channelsSearchListView.getPaddingLeft(), channelsSearchListView.getPaddingTop(), channelsSearchListView.getPaddingRight(), bottom);
-            }
-            if (botsSearchListView != null) {
-                botsSearchListView.setClipToPadding(false);
-                botsSearchListView.setPadding(botsSearchListView.getPaddingLeft(), botsSearchListView.getPaddingTop(), botsSearchListView.getPaddingRight(), bottom);
-            }
-            if (hashtagSearchListView != null) {
-                hashtagSearchListView.setClipToPadding(false);
-                hashtagSearchListView.setPadding(hashtagSearchListView.getPaddingLeft(), hashtagSearchListView.getPaddingTop(), hashtagSearchListView.getPaddingRight(), bottom);
-            }
-            if (noMediaFiltersSearchView != null) {
-                ViewCompat.dispatchApplyWindowInsets(noMediaFiltersSearchView, insets);
-            }
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(searchContainer);
-
         channelsSearchContainer = new FrameLayout(context);
 
         channelsItemAnimator = new DefaultItemAnimator() {
@@ -411,7 +384,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         channelsItemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         channelsItemAnimator.setDurations(350);
 
-        channelsSearchListView = new RecyclerListView(context);
+        channelsSearchListView = new BlurredRecyclerView(context);
         channelsSearchListView.setItemAnimator(channelsItemAnimator);
         channelsSearchListView.setPivotY(0);
         channelsSearchListView.setVerticalScrollBarEnabled(true);
@@ -488,7 +461,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         botsItemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         botsItemAnimator.setDurations(350);
 
-        botsSearchListView = new RecyclerListView(context);
+        botsSearchListView = new BlurredRecyclerView(context);
         botsSearchListView.setItemAnimator(botsItemAnimator);
         botsSearchListView.setPivotY(0);
         botsSearchListView.setVerticalScrollBarEnabled(true);
@@ -558,7 +531,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         hashtagItemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         hashtagItemAnimator.setDurations(350);
 
-        hashtagSearchListView = new RecyclerListView(context);
+        hashtagSearchListView = new BlurredRecyclerView(context);
         hashtagSearchListView.setItemAnimator(hashtagItemAnimator);
         hashtagSearchListView.setPivotY(0);
         hashtagSearchListView.setVerticalScrollBarEnabled(true);
@@ -621,19 +594,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         postsSearchContainer = new PostsSearchContainer(context, fragment);
 
         setAdapter(viewPagerAdapter = new ViewPagerAdapter());
-
-        ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
-            if (searchContainer != null) ViewCompat.dispatchApplyWindowInsets(searchContainer, insets);
-            if (channelsSearchContainer != null) ViewCompat.dispatchApplyWindowInsets(channelsSearchContainer, insets);
-            if (botsSearchContainer != null) ViewCompat.dispatchApplyWindowInsets(botsSearchContainer, insets);
-            if (hashtagSearchContainer != null) ViewCompat.dispatchApplyWindowInsets(hashtagSearchContainer, insets);
-            if (downloadsContainer != null) ViewCompat.dispatchApplyWindowInsets(downloadsContainer, insets);
-            if (postsSearchContainer != null) ViewCompat.dispatchApplyWindowInsets(postsSearchContainer, insets);
-            View current = getCurrentView();
-            if (current != null) ViewCompat.dispatchApplyWindowInsets(current, insets);
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(this);
     }
 
     public ActionBarMenu getActionMode() {
@@ -667,7 +627,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         if (tabsView != null) {
             tabsView.finishAddingTabs();
         }
-        ViewCompat.requestApplyInsets(this);
     }
 
     public boolean includeFolder() {
@@ -1113,31 +1072,30 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
         showActionMode(true);
     }
 
-        @Override
-        protected void onItemSelected(View currentPage, View oldPage, int position, int oldPosition) {
-            if (position == 0) {
-                if (noMediaFiltersSearchView.getVisibility() == View.VISIBLE) {
-                    noMediaFiltersSearchView.setDelegate(filteredSearchViewDelegate, false);
-                    dialogsSearchAdapter.setFiltersDelegate(null, false);
-                } else {
-                    noMediaFiltersSearchView.setDelegate(null, false);
-                    dialogsSearchAdapter.setFiltersDelegate(filteredSearchViewDelegate, true);
-                }
-            } else if (currentPage instanceof FilteredSearchView) {
-                boolean update = false;
-                if (oldPosition == 0 && noMediaFiltersSearchView.getVisibility() != View.VISIBLE) {
-                    update = true;
-                }
-                ((FilteredSearchView) currentPage).setDelegate(filteredSearchViewDelegate, update);
-                ViewCompat.requestApplyInsets(currentPage);
-            }
-            if (oldPage instanceof FilteredSearchView) {
-                ((FilteredSearchView) oldPage).setDelegate(null, false);
-            } else {
+    @Override
+    protected void onItemSelected(View currentPage, View oldPage, int position, int oldPosition) {
+        if (position == 0) {
+            if (noMediaFiltersSearchView.getVisibility() == View.VISIBLE) {
+                noMediaFiltersSearchView.setDelegate(filteredSearchViewDelegate, false);
                 dialogsSearchAdapter.setFiltersDelegate(null, false);
+            } else {
                 noMediaFiltersSearchView.setDelegate(null, false);
+                dialogsSearchAdapter.setFiltersDelegate(filteredSearchViewDelegate, true);
             }
+        } else if (currentPage instanceof FilteredSearchView) {
+            boolean update = false;
+            if (oldPosition == 0 && noMediaFiltersSearchView.getVisibility() != View.VISIBLE) {
+                update = true;
+            }
+            ((FilteredSearchView) currentPage).setDelegate(filteredSearchViewDelegate, update);
         }
+        if (oldPage instanceof FilteredSearchView) {
+            ((FilteredSearchView) oldPage).setDelegate(null, false);
+        } else {
+            dialogsSearchAdapter.setFiltersDelegate(null, false);
+            noMediaFiltersSearchView.setDelegate(null, false);
+        }
+    }
 
     public void getThemeDescriptions(ArrayList<ThemeDescription> arrayList) {
         for (int i = 0; i < searchListView.getChildCount(); ++i) {
@@ -1487,7 +1445,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                     }
                 });
                 downloadsContainer.setUiCallback(SearchViewPager.this);
-                ViewCompat.requestApplyInsets(downloadsContainer);
                 return downloadsContainer;
             } else if (viewType == 6) {
                 return postsSearchContainer;
@@ -1502,7 +1459,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                         fragmentView.invalidateBlur();
                     }
                 });
-                ViewCompat.requestApplyInsets(filteredSearchView);
                 return filteredSearchView;
             }
         }

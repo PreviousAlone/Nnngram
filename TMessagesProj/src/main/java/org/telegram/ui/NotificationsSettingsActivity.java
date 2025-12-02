@@ -41,8 +41,6 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -220,11 +218,6 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
         getMessagesController().reloadReactionsNotifySettings();
 
         return super.onFragmentCreate();
-    }
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
     }
 
     private void loadExceptions() {
@@ -473,13 +466,6 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
         listView.setVerticalScrollBarEnabled(false);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         listView.setAdapter(adapter = new ListAdapter(context));
-        ViewCompat.setOnApplyWindowInsetsListener(frameLayout, (v, insets) -> {
-            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-            listView.setClipToPadding(false);
-            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(frameLayout);
         listView.setOnItemClickListener((view, position, x, y) -> {
             boolean enabled = false;
             if (getParentActivity() == null) {

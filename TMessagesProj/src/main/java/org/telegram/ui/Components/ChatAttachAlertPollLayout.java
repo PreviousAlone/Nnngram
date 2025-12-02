@@ -715,10 +715,6 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
             listView.setItemAnimator(null);
             listAdapter.notifyItemChanged(paddingRow);
         }
-        int bottomPadding = parentAlert != null ? parentAlert.getNavigationBarInset() : 0;
-        if (listView.getPaddingBottom() != bottomPadding || listView.getPaddingTop() != topPadding) {
-            listView.setPadding(listView.getPaddingLeft(), topPadding, listView.getPaddingRight(), bottomPadding);
-        }
         ignoreLayout = false;
     }
 

@@ -75,8 +75,6 @@ import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
@@ -451,11 +449,6 @@ public class QrActivity extends BaseFragment {
         prevSystemUiVisibility = getParentActivity().getWindow().getDecorView().getSystemUiVisibility();
         applyScreenSettings();
         return fragmentView;
-    }
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
     }
 
     private boolean phoneIsPublic() {
@@ -1421,9 +1414,6 @@ public class QrActivity extends BaseFragment {
         private final BaseFragment fragment;
         private final Window window;
         private final Drawable backgroundDrawable;
-        private int navigationBarInset;
-        private int baseTopPadding;
-        private int baseBottomPadding;
 
         public final FrameLayout rootLayout;
         public final TextView titleView;
@@ -1536,19 +1526,6 @@ public class QrActivity extends BaseFragment {
                     return who == backgroundDrawable || super.verifyDrawable(who);
                 }
             };
-
-            ViewCompat.setOnApplyWindowInsetsListener(rootLayout, (v, insets) -> {
-                WindowInsetsCompat r = ViewCompat.getRootWindowInsets(v);
-                navigationBarInset = r != null ? Math.max(r.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight) : AndroidUtilities.navigationBarHeight;
-                if (baseTopPadding == 0 && baseBottomPadding == 0) {
-                    baseTopPadding = rootLayout.getPaddingTop();
-                    baseBottomPadding = rootLayout.getPaddingBottom();
-                }
-                rootLayout.setPadding(rootLayout.getPaddingLeft(), baseTopPadding, rootLayout.getPaddingRight(), baseBottomPadding + navigationBarInset);
-                rootLayout.requestLayout();
-                return insets;
-            });
-            ViewCompat.requestApplyInsets(rootLayout);
 
             titleView = new TextView(context);
             titleView.setEllipsize(TextUtils.TruncateAt.MIDDLE);

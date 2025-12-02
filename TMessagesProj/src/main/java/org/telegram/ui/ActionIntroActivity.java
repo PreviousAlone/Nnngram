@@ -114,11 +114,6 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
     }
 
     @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
-    }
-
-    @Override
     public View createView(Context context) {
         if (actionBar != null) {
             actionBar.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));

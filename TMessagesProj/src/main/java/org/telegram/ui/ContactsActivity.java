@@ -56,8 +56,6 @@ import androidx.collection.LongSparseArray;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -296,7 +294,6 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
                     sortByName = SharedConfig.sortContactsByName;
                     listViewAdapter.setSortType(sortByName ? 1 : 2, false);
                     sortItem.setIcon(sortByName ? R.drawable.msg_contacts_time : R.drawable.msg_contacts_name);
-                    ViewCompat.requestApplyInsets((View) fragmentView);
                 }
             }
         });
@@ -484,15 +481,6 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
 
         listView.setEmptyView(emptyView);
         listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
-
-        ViewCompat.setOnApplyWindowInsetsListener(frameLayout, (v, insets) -> {
-            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-            listView.setClipToPadding(false);
-            listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), bottomInset);
-            emptyView.setPadding(emptyView.getPaddingLeft(), emptyView.getPaddingTop(), emptyView.getPaddingRight(), bottomInset);
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(frameLayout);
 
         listView.setOnItemClickListener((view, position, x, y) -> {
             if (listView.getAdapter() == searchListViewAdapter) {
@@ -885,11 +873,6 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
         listViewAdapter.setStories(getMessagesController().storiesController.getHiddenList(), false);
 
         return fragmentView;
-    }
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
     }
 
     @Override

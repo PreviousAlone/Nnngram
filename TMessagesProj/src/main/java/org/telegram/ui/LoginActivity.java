@@ -100,8 +100,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -540,11 +538,6 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     }
 
     private View cachedFragmentView;
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
-    }
     @Override
     public View createView(Context context) {
         if (cachedFragmentView != null) {
@@ -991,12 +984,6 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             fillNextCodeParams(cancelDeletionParams, cancelDeletionCode, false);
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
-            final int bottomInset = Math.max(insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom, AndroidUtilities.navigationBarHeight);
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomInset);
-            return WindowInsetsCompat.CONSUMED;
-        });
-        ViewCompat.requestApplyInsets(fragmentView);
         return fragmentView;
     }
 

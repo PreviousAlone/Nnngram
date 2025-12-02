@@ -2246,10 +2246,6 @@ public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
         return (int) (bottomInset * (1f - hideSystemVerticalInsetsProgress));
     }
 
-    public int getBottomInsetRaw() {
-        return bottomInset;
-    }
-
     public void onConfigurationChanged(android.content.res.Configuration newConfig) {
 
     }

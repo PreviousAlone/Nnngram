@@ -148,7 +148,6 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
     private final CharSequence sendGiftsToFriendsText, addGiftsText;
     private final ButtonWithCounterView button;
     private int buttonContainerHeightDp;
-    private int bottomInsetPx;
 
     private final LinearLayout checkboxLayout;
     private final TextView checkboxTextView;
@@ -1400,24 +1399,17 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
     public void updateButton() {
         if (viewPager == null) return;
         float ty;
-        int measured = buttonContainer.getMeasuredHeight();
-        if (measured <= 0) {
-            measured = dp(buttonContainerHeightDp) + bottomInsetPx;
-        }
         if (viewPager.getCurrentPosition() == viewPager.getNextPosition()) {
             final float hide = shouldHideButton(viewPager.getCurrentPosition()) ? 1.0f : 0.0f;
-            ty = (measured + 2) * hide;
+            ty = (dp(10 + 48 + 10) + 2) * hide;
         } else {
             final float hide = (
                 (shouldHideButton(viewPager.getCurrentPosition()) ? 1.0f : 0.0f) * viewPager.getCurrentPositionAlpha() +
                 (shouldHideButton(viewPager.getNextPosition()) ? 1.0f : 0.0f) * viewPager.getNextPositionAlpha()
             );
-            ty = (measured + 2) * hide;
+            ty = (dp(10 + 48 + 10) + 2) * hide;
         }
-        ty += -buttonContainer.getTop() + Math.max(dp(240), visibleHeight) - measured - 1;
-        if (visibleHeight < dp(240)) {
-            ty += Math.min(dp(240) - visibleHeight, measured);
-        }
+        ty += -buttonContainer.getTop() + Math.max(dp(240), visibleHeight) - dp(buttonContainerHeightDp) - 1;
         bulletinContainer.setTranslationY(ty - dp(200));
         buttonContainer.setTranslationY(ty);
         button.setText(!collections.isMine() || viewPager.getPositionAnimated() < 0.5f ? sendGiftsToFriendsText : addGiftsText, true);
@@ -1426,22 +1418,11 @@ public class ProfileGiftsContainer extends FrameLayout implements NotificationCe
 
     public int getBottomOffset() {
         float ty = buttonContainer.getTranslationY();
-        int measured = buttonContainer.getMeasuredHeight();
-        if (measured <= 0) {
-            measured = dp(buttonContainerHeightDp) + bottomInsetPx;
-        }
-        ty -= -buttonContainer.getTop() + Math.max(dp(240), visibleHeight) - measured - 1;
+        ty -= -buttonContainer.getTop() + Math.max(dp(240), visibleHeight) - dp(buttonContainerHeightDp) - 1;
         if (visibleHeight < dp(240)) {
-            ty += Math.min(dp(240) - visibleHeight, measured);
+            ty += Math.min(dp(240) - visibleHeight, dp(buttonContainerHeightDp));
         }
-        return (int) (measured - ty);
-    }
-
-    public void setBottomInset(int inset) {
-        bottomInsetPx = inset;
-        if (buttonContainer != null) {
-            buttonContainer.setPadding(buttonContainer.getPaddingLeft(), buttonContainer.getPaddingTop(), buttonContainer.getPaddingRight(), inset);
-        }
+        return (int) (dp(buttonContainerHeightDp) - ty);
     }
 
     public boolean canFilter() {

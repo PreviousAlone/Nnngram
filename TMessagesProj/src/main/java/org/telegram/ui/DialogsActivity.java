@@ -92,8 +92,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -120,7 +118,6 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.NotificationsController;
-import org.telegram.ui.Components.inset.WindowInsetsStateHolder;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
@@ -279,25 +276,6 @@ import xyz.nextalone.nnngram.utils.UpdateUtils;
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, FloatingDebugProvider {
 
     public final static boolean DISPLAY_SPEEDOMETER_IN_DOWNLOADS_SEARCH = true;
-
-    private final WindowInsetsStateHolder windowInsetsStateHolder = new WindowInsetsStateHolder(this::applyInsetsToList);
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
-    }
-
-    private void applyInsetsToList() {
-        if (viewPages != null) {
-            for (int i = 0; i < viewPages.length; i++) {
-                ViewPage vp = viewPages[i];
-                if (vp != null && vp.listView != null) {
-                    int bottom = Math.max(windowInsetsStateHolder.getCurrentMaxBottomInset(), AndroidUtilities.navigationBarHeight);
-                    vp.listView.setPadding(vp.listView.getPaddingLeft(), vp.listView.getPaddingTop(), vp.listView.getPaddingRight(), bottom);
-                }
-            }
-        }
-    }
 
     private boolean canShowFilterTabsView;
     private boolean filterTabsViewIsVisible;
@@ -1233,7 +1211,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     searchViewPager.postsSearchContainer.setKeyboardHeight(keyboardSize);
                     int contentWidthSpec = View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY);
                     int h = View.MeasureSpec.getSize(heightMeasureSpec) + keyboardSize;
-                    int contentHeightSpec = View.MeasureSpec.makeMeasureSpec(Math.max(dp(10), h - inputFieldHeight + dp(2) - (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) - topPadding), View.MeasureSpec.EXACTLY);
+                    int contentHeightSpec = View.MeasureSpec.makeMeasureSpec(Math.max(dp(10), h - inputFieldHeight + dp(2) - (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) - topPadding) - (searchTabsView == null ? 0 : dp(44)), View.MeasureSpec.EXACTLY);
                     child.measure(contentWidthSpec, contentHeightSpec);
                     child.setPivotX(child.getMeasuredWidth() / 2);
                 } else if (commentView != null && commentView.isPopupView(child)) {
@@ -1255,12 +1233,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 } else {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 }
-            }
-
-            int desiredTopPadding = Math.max(0, getActionBarFullHeight() - actionBar.getMeasuredHeight());
-            if (fragmentContextTopPadding != desiredTopPadding) {
-                fragmentContextTopPadding = desiredTopPadding;
-                updateTopPadding();
             }
 
             if (portrait != wasPortrait) {
@@ -1353,7 +1325,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         dialogStoriesCell.getPremiumHint().layout(childLeft, childTop - dp(24 + 8 + 22) + height, childLeft + width, childTop - dp(24 + 8 + 22) + height + dialogStoriesCell.getPremiumHint().getMeasuredHeight());
                     }
                 } else if (child == searchViewPager) {
-                    childTop = (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) + topPadding;
+                    childTop = (onlySelect && initialDialogsType != DIALOGS_TYPE_FORWARD ? 0 : actionBar.getMeasuredHeight()) + topPadding + (searchTabsView == null ? 0 : dp(44));
                 } else if (child instanceof DatabaseMigrationHint) {
                     childTop = actionBar.getMeasuredHeight();
                 } else if (child instanceof ViewPage) {
@@ -2140,9 +2112,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (!onlySelect || (initialDialogsType == DIALOGS_TYPE_FORWARD && Config.showTabsOnForward)) {
                 ignoreLayout = true;
                 if (hasStories || (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE)) {
-                    t = ActionBar.getCurrentActionBarHeight() + (isSupportEdgeToEdge() ? 0 : (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0));
+                    t = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
                 } else {
-                    t = isSupportEdgeToEdge() ? 0 : (inPreviewMode ? AndroidUtilities.statusBarHeight : 0);
+                    t = inPreviewMode ? AndroidUtilities.statusBarHeight : 0;
                 }
                 if (hasStories && !actionModeFullyShowed) {
                     t += dp(DialogStoriesCell.HEIGHT_IN_DP);
@@ -2158,7 +2130,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
                 if (t != getPaddingTop()) {
                     setTopGlowOffset(t);
-                    setPadding(0, t, 0, getPaddingBottom());
+                    setPadding(0, t, 0, 0);
                     if (hasStories) {
                         parentPage.progressView.setPaddingTop(t - dp(DialogStoriesCell.HEIGHT_IN_DP));
                     } else {
@@ -3956,21 +3928,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         ContentView contentView = new ContentView(context);
         fragmentView = contentView;
-        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
-            windowInsetsStateHolder.setInsets(insets);
-            applyInsetsToList();
-            if (fragmentView instanceof ContentView) {
-                ContentView cv = (ContentView) fragmentView;
-                int top = Math.max(0, cv.getActionBarFullHeight() - actionBar.getMeasuredHeight());
-                cv.setPadding(cv.getPaddingLeft(), top, cv.getPaddingRight(), cv.getPaddingBottom());
-            }
-            if (searchViewPager != null) {
-                ViewCompat.dispatchApplyWindowInsets(searchViewPager, insets);
-            }
-            return WindowInsetsCompat.CONSUMED;
-        });
-        windowInsetsStateHolder.attach(fragmentView);
-        ViewCompat.requestApplyInsets(fragmentView);
 
         int pagesCount = folderId == 0 && (initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) ? 2 : 1;
         viewPages = new ViewPage[pagesCount];
@@ -4295,7 +4252,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             viewPage.listView.setLayoutManager(viewPage.layoutManager);
             viewPage.listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
             viewPage.addView(viewPage.listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-            applyInsetsToList();
             viewPage.listView.setOnItemClickListener((view, position, x, y) -> {
                 if (view instanceof GraySectionCell)
                     return;

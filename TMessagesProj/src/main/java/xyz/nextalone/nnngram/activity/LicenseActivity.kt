@@ -40,7 +40,7 @@ import org.telegram.ui.ActionBar.Theme.ResourcesProvider
 import org.telegram.ui.Cells.HeaderCell
 import org.telegram.ui.Cells.ShadowSectionCell
 import org.telegram.ui.Cells.TextInfoPrivacyCell
-// removed BlurredRecyclerView for EdgeToEdge correctness
+import org.telegram.ui.Components.BlurredRecyclerView
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.RecyclerListView.SelectionAdapter
@@ -113,10 +113,11 @@ class LicenseActivity : BaseFragment() {
             setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray))
         }.also { fragmentView = it }
 
-        RecyclerListView(context).apply {
+        BlurredRecyclerView(context).apply {
             setClipToPadding(false)
             setItemAnimator(null)
             setItemViewCacheSize(20)
+            additionalClipBottom = AndroidUtilities.dp(200f)
             isVerticalScrollBarEnabled = false
             layoutManager = LinearLayoutManager(context)
             adapter = LicenseAdapter(list)
