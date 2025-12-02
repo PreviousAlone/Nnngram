@@ -55,6 +55,8 @@ import androidx.annotation.Keep;
 import androidx.collection.LongSparseArray;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BotWebViewVibrationEffect;
@@ -121,6 +123,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
     private FrameLayout buttonsContainer;
     private LinearLayout buttonsLayout;
     private ButtonWithCounterView voiceButton, videoButton;
+    private int systemBarsBottomInset;
 
     private int measuredContainerHeight;
     private int containerHeight;
@@ -858,6 +861,16 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
         listView.setVerticalScrollbarPosition(LocaleController.isRTL ? View.SCROLLBAR_POSITION_LEFT : View.SCROLLBAR_POSITION_RIGHT);
         listView.addItemDecoration(itemDecoration = new GroupCreateDividerItemDecoration());
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL, 0, 0, 0, isCall ? 14 + 48 + 14 : 0));
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
+        });
         listView.setOnItemClickListener((view, position) -> {
             if (position == adapter.createCallLinkRow) {
                 CallLogActivity.createCallLink(context, currentAccount, resourceProvider, this::finishFragment);
@@ -1040,10 +1053,10 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
             buttonShadow.setBackgroundColor(Theme.getColor(Theme.key_divider, resourceProvider));
             buttonsContainer.addView(buttonShadow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 1f / AndroidUtilities.density, Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, 0, 0, 0));
 
-            buttonsLayout = new LinearLayout(context);
-            buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
-            buttonsLayout.setPadding(dp(14), dp(14), dp(14), dp(14));
-            buttonsContainer.addView(buttonsLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
+        buttonsLayout = new LinearLayout(context);
+        buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
+        buttonsLayout.setPadding(dp(14), dp(14), dp(14), dp(14));
+        buttonsContainer.addView(buttonsLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
 
             voiceButton = new ButtonWithCounterView(context, resourceProvider);
             SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -1063,11 +1076,25 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
             buttonsLayout.addView(videoButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, 1, Gravity.FILL, 6, 0, 0, 0));
             videoButton.setOnClickListener(v -> onCallUsersSelected(getSelectedUsers(), false));
 
-            frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
+        frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
+
+        ViewCompat.setOnApplyWindowInsetsListener(buttonsContainer, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                buttonsLayout.setPadding(buttonsLayout.getPaddingLeft(), buttonsLayout.getPaddingTop(), buttonsLayout.getPaddingRight(), dp(14) + systemBarsBottomInset);
+            }
+            return insets;
+        });
         }
 
         updateHint();
         return fragmentView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     private void updateButtonsVisibility() {

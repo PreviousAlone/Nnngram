@@ -34,6 +34,8 @@ import android.widget.TextView;
 
 import androidx.annotation.IntDef;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
@@ -85,6 +87,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
     private String currentGroupCreateDisplayAddress;
     private Location currentGroupCreateLocation;
     private boolean showingAsBottomSheet;
+    private int systemBarsBottomInset;
 
     private ActionIntroQRLoginDelegate qrLoginDelegate;
 
@@ -241,7 +244,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             y = (int) (height * 0.39f);
                             descriptionText.layout(x, y, x + descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
                             x = (int) (width * 0.4f + (width * 0.6f - buttonTextView.getMeasuredWidth()) / 2);
-                            y = (int) (height * 0.69f);
+                            y = (int) (height * 0.69f) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
                         } else {
                             int y = (int) (height * 0.188f);
@@ -251,7 +254,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             y = (int) (height * 0.731f);
                             descriptionText.layout(0, y, descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
                             int x = (width - buttonTextView.getMeasuredWidth()) / 2;
-                            y = (int) (height * 0.853f);
+                            y = (int) (height * 0.853f) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
                         }
                         break;
@@ -269,7 +272,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             int x = (getMeasuredWidth() - descriptionLayout.getMeasuredWidth()) / 2;
                             descriptionLayout.layout(x, y, x + descriptionLayout.getMeasuredWidth(), y + descriptionLayout.getMeasuredHeight());
                             x = (width - buttonTextView.getMeasuredWidth()) / 2;
-                            y = (int) (height * 0.853f);
+                            y = (int) (height * 0.853f) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
                         } else if (r > b) {
                             int y = (height - imageView.getMeasuredHeight()) / 2;
@@ -281,7 +284,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             y = (int) (height * 0.25f);
                             descriptionLayout.layout(x, y, x + descriptionLayout.getMeasuredWidth(), y + descriptionLayout.getMeasuredHeight());
                             x = (int) (width * 0.4f + (width * 0.6f - buttonTextView.getMeasuredWidth()) / 2);
-                            y = (int) (height * 0.78f);
+                            y = (int) (height * 0.78f) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
                         } else {
                             int y;
@@ -301,7 +304,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             int x = (getMeasuredWidth() - descriptionLayout.getMeasuredWidth()) / 2;
                             descriptionLayout.layout(x, y, x + descriptionLayout.getMeasuredWidth(), y + descriptionLayout.getMeasuredHeight());
                             x = (width - buttonTextView.getMeasuredWidth()) / 2;
-                            y = (int) (height * 0.853f);
+                            y = (int) (height * 0.853f) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
                         }
                         break;
@@ -318,7 +321,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             y = (int) (height * 0.31f);
                             descriptionText.layout(x, y, x + descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
                             x = (int) (width * 0.4f + (width * 0.6f - buttonTextView.getMeasuredWidth()) / 2);
-                            y = (int) (height * 0.78f);
+                            y = (int) (height * 0.78f) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
                         } else {
                             int y = (int) (height * 0.3f);
@@ -329,7 +332,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             y += titleTextView.getTextSize() + AndroidUtilities.dp(16);
                             descriptionText.layout(0, y, descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
                             x = (width - buttonTextView.getMeasuredWidth()) / 2;
-                            y = height - buttonTextView.getMeasuredHeight() - AndroidUtilities.dp(48);
+                            y = height - buttonTextView.getMeasuredHeight() - AndroidUtilities.dp(48) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
                         }
                         break;
@@ -346,7 +349,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             y = (int) (height * 0.24f);
                             descriptionText.layout(x, y, x + descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
                             x = (int) (width * 0.4f + (width * 0.6f - buttonTextView.getMeasuredWidth()) / 2);
-                            y = (int) (height * 0.8f);
+                            y = (int) (height * 0.8f) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
 
                             x = (int) (width * 0.4f + (width * 0.6f - subtitleTextView.getMeasuredWidth()) / 2);
@@ -361,7 +364,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             y += titleTextView.getTextSize() + AndroidUtilities.dp(16);
                             descriptionText.layout(0, y, descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
                             x = (width - buttonTextView.getMeasuredWidth()) / 2;
-                            y = height - buttonTextView.getMeasuredHeight() - AndroidUtilities.dp(48);
+                            y = height - buttonTextView.getMeasuredHeight() - AndroidUtilities.dp(48) - systemBarsBottomInset;
                             buttonTextView.layout(x, y, x + buttonTextView.getMeasuredWidth(), y + buttonTextView.getMeasuredHeight());
 
                             x = (width - subtitleTextView.getMeasuredWidth()) / 2;
@@ -376,6 +379,15 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
         fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
         ViewGroup viewGroup = (ViewGroup) fragmentView;
         viewGroup.setOnTouchListener((v, event) -> true);
+
+        ViewCompat.setOnApplyWindowInsetsListener(fragmentView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                v.requestLayout();
+            }
+            return insets;
+        });
 
         if (actionBar != null) {
             viewGroup.addView(actionBar);
@@ -748,5 +760,10 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
     public boolean isLightStatusBar() {
         int color = Theme.getColor(Theme.key_windowBackgroundWhite, null, true);
         return ColorUtils.calculateLuminance(color) > 0.7f;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }
