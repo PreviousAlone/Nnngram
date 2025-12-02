@@ -33,6 +33,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -70,6 +72,7 @@ public abstract class BaseActivity extends BaseFragment {
     protected BaseListAdapter listAdapter;
     protected LinearLayoutManager layoutManager;
     protected Theme.ResourcesProvider resourcesProvider;
+    private int systemBarsBottomInset;
 
     protected int rowCount;
     protected static final Object PARTIAL = new Object();
@@ -173,6 +176,18 @@ public abstract class BaseActivity extends BaseFragment {
                 return true;
             }
             return false;
+        });
+
+        listView.setClipToPadding(false);
+        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                // Added by YuKongA
+                // Need to subtract `listView.blurTopPadding` first, because listView always adds it in setPadding!
+                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop() - listView.blurTopPadding, listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+            }
+            return insets;
         });
         return fragmentView;
     }
@@ -334,6 +349,11 @@ public abstract class BaseActivity extends BaseFragment {
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
         }
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     class BlurContentView extends SizeNotifierFrameLayout {
