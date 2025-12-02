@@ -302,6 +302,10 @@ object UpdateUtils {
                             continue
                         }
                         val apkDocument = msg.media.document
+                        if (apkDocument == null) {
+                            Log.d("checkUpdate", "res.messages.get(i).media.document == null")
+                            continue
+                        }
                         val fileName = if (apkDocument.attributes.size == 0) "" else apkDocument.attributes[0].file_name
                         Log.d("checkUpdate", "file_name： ${apkDocument.attributes[0].file_name}")
 
