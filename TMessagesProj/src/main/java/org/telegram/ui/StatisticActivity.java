@@ -226,6 +226,7 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
     private DiffUtilsCallback diffUtilsCallback;
     private StoriesController.StoriesList storiesList;
     private int storiesListId;
+    private int systemBarsBottomInset;
 
     private final Runnable showProgressbar = new Runnable() {
         @Override
@@ -699,11 +700,14 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
             });
             ViewCompat.setOnApplyWindowInsetsListener(storiesTabsView, (v, insets) -> {
                 int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-                ViewGroup.LayoutParams lp0 = v.getLayoutParams();
-                if (lp0 instanceof FrameLayout.LayoutParams) {
-                    FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
-                    lp.bottomMargin = bottom;
-                    v.setLayoutParams(lp);
+                if (systemBarsBottomInset != bottom) {
+                    systemBarsBottomInset = bottom;
+                    ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+                    if (lp0 instanceof FrameLayout.LayoutParams) {
+                        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                        lp.bottomMargin = bottom;
+                        v.setLayoutParams(lp);
+                    }
                 }
                 return insets;
             });

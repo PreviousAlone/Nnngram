@@ -258,6 +258,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
     private boolean openTransitionStarted;
     private FlickerLoadingView flickerLoadingView;
     private View progressBar;
+    private int systemBarsBottomInset;
 
     public interface ChatUsersActivityDelegate {
         default void didAddParticipantToList(long uid, TLObject participant) {
@@ -825,7 +826,10 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
         listView.setClipToPadding(false);
         ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
             int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + bottom);
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + bottom);
+            }
             return insets;
         });
         ViewCompat.requestApplyInsets(listView);

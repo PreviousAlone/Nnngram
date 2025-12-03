@@ -265,6 +265,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
     private HashMap<String, Object> invitesCache = new HashMap<>();
     private HashMap<Long, TLRPC.User> usersMap;
     private boolean linviteLoading;
+    private int systemBarsBottomInset;
 
     private PhotoViewer.PhotoViewerProvider provider = new PhotoViewer.EmptyPhotoViewerProvider() {
 
@@ -1491,12 +1492,15 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         });
         ViewCompat.setOnApplyWindowInsetsListener(bottomOverlayChat, (v, insets) -> {
             int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-            v.setPadding(v.getPaddingLeft(), dp(3), v.getPaddingRight(), bottom);
-            ViewGroup.LayoutParams lp0 = v.getLayoutParams();
-            if (lp0 instanceof FrameLayout.LayoutParams) {
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
-                lp.height = dp(51) + bottom;
-                v.setLayoutParams(lp);
+            if (systemBarsBottomInset != bottom) {
+                systemBarsBottomInset = bottom;
+                v.setPadding(v.getPaddingLeft(), dp(3), v.getPaddingRight(), bottom);
+                ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+                if (lp0 instanceof FrameLayout.LayoutParams) {
+                    FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                    lp.height = dp(51) + bottom;
+                    v.setLayoutParams(lp);
+                }
             }
             return insets;
         });
