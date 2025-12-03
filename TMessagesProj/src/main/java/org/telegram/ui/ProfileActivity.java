@@ -5988,7 +5988,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 updateBottomButtonY();
                 return insets;
             });
-        ViewCompat.requestApplyInsets(bottomButtonsContainer);
+            ViewCompat.requestApplyInsets(bottomButtonsContainer);
             updateBottomButtonsBackground();
         }
 
@@ -6028,7 +6028,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             ViewGroup.LayoutParams lp0 = v.getLayoutParams();
             if (lp0 instanceof FrameLayout.LayoutParams) {
                 FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
-                int base = AndroidUtilities.dp(48) + AndroidUtilities.dp(10) * 2 + (int) (1.0f / AndroidUtilities.density);
+
                 lp.height = FrameLayout.LayoutParams.WRAP_CONTENT; // ensure WRAP_CONTENT respects padding
                 v.setLayoutParams(lp);
             }
