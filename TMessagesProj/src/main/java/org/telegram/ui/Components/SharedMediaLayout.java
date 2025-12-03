@@ -2906,8 +2906,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                             }
                             if (getAdapter() == storiesAdapter) {
                                 mediaPage.buttonView.setVisibility(View.VISIBLE);
-                                mediaPage.buttonView.setTranslationY(getY() + top - dp(72));
+                                mediaPage.buttonView.setTranslationY(getY() + top - dp(72) - lastBottomInset);
                             } else {
+                                mediaPage.buttonView.setVisibility(View.GONE);
                                 if (archivedHintPaint == null) {
                                     archivedHintPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                                     archivedHintPaint.setTextSize(dp(14));
