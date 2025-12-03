@@ -41,6 +41,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -104,6 +106,7 @@ public class CachedMediaLayout extends FrameLayout implements NestedSizeNotifier
     private final ActionBarMenuItem clearItem;
     private final ViewPagerFixed.TabsView tabs;
     private final View divider;
+    private int systemBarsBottomInset;
 
     BaseFragment parentFragment;
 
@@ -171,6 +174,30 @@ public class CachedMediaLayout extends FrameLayout implements NestedSizeNotifier
                 itemAnimator.setSupportsChangeAnimations(false);
                 recyclerListView.setClipToPadding(false);
                 recyclerListView.setPadding(0, 0, 0, bottomPadding);
+                ViewCompat.setOnApplyWindowInsetsListener(recyclerListView, (v, insets) -> {
+                    int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                    if (systemBarsBottomInset != bottom) {
+                        systemBarsBottomInset = bottom;
+                        v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomPadding + bottom);
+                    }
+                    return insets;
+                });
+                recyclerListView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                    @Override
+                    public void onViewAttachedToWindow(@NonNull View v) {
+                        WindowInsetsCompat ri = ViewCompat.getRootWindowInsets(v);
+                        if (ri != null) {
+                            int bottom = ri.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + ri.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                            if (systemBarsBottomInset != bottom) {
+                                v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottomPadding + bottom);
+                            }
+                        }
+                        ViewCompat.requestApplyInsets(v);
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(@NonNull View v) { }
+                });
                 recyclerListView.setOnItemClickListener(new RecyclerListView.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
@@ -282,6 +309,13 @@ public class CachedMediaLayout extends FrameLayout implements NestedSizeNotifier
             }
 
         });
+
+        ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            setBottomPadding(bottomPadding > 0 ? bottomPadding : bottom);
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(this);
 
         actionModeLayout = new LinearLayout(context);
         actionModeLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));

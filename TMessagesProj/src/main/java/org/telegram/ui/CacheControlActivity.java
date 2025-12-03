@@ -3226,4 +3226,9 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
         }
         return super.onBackPressed();
     }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
 }

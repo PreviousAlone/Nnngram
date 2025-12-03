@@ -50,6 +50,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.collection.ArraySet;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
@@ -224,6 +226,7 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
     private DiffUtilsCallback diffUtilsCallback;
     private StoriesController.StoriesList storiesList;
     private int storiesListId;
+    private int systemBarsBottomInset;
 
     private final Runnable showProgressbar = new Runnable() {
         @Override
@@ -695,7 +698,32 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
                     return dp(64);
                 }
             });
+            ViewCompat.setOnApplyWindowInsetsListener(storiesTabsView, (v, insets) -> {
+                int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                if (systemBarsBottomInset != bottom) {
+                    systemBarsBottomInset = bottom;
+                    ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+                    if (lp0 instanceof FrameLayout.LayoutParams) {
+                        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                        lp.bottomMargin = bottom;
+                        v.setLayoutParams(lp);
+                    }
+                }
+                return insets;
+            });
+            ViewCompat.requestApplyInsets(storiesTabsView);
         }
+        ViewCompat.setOnApplyWindowInsetsListener(viewPagerFixed, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+            if (lp0 instanceof FrameLayout.LayoutParams) {
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                lp.bottomMargin = (showTabs ? dp(64) : 0) + bottom;
+                v.setLayoutParams(lp);
+            }
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(viewPagerFixed);
         new KeyboardNotifier(contentLayout, keyboardHeight -> {
             if (storiesTabsView != null) {
                 storiesTabsView.setVisibility(keyboardHeight > dp(20) ? View.GONE : View.VISIBLE);
@@ -3378,5 +3406,10 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
             return false;
         }
         return super.isSwipeBackEnabled(event);
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

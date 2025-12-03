@@ -30,6 +30,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,6 +62,7 @@ import java.util.Arrays;
 public class DataUsage2Activity extends BaseFragment {
 
     private Theme.ResourcesProvider resourcesProvider;
+    private int systemBarsBottomInset;
 
     public DataUsage2Activity() {
         this(null);
@@ -117,6 +120,7 @@ public class DataUsage2Activity extends BaseFragment {
         frameLayout.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.FILL_HORIZONTAL));
 
         frameLayout.addView(pager, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL, 0, 48, 0, 0));
+        ViewCompat.requestApplyInsets(frameLayout);
 
         return fragmentView = frameLayout;
     }
@@ -142,6 +146,7 @@ public class DataUsage2Activity extends BaseFragment {
         public void bindView(View view, int position, int viewType) {
             ((ListView) view).setType(position);
             ((ListView) view).scrollToPosition(0);
+            ViewCompat.requestApplyInsets(view);
         }
 
         @Override
@@ -215,6 +220,31 @@ public class DataUsage2Activity extends BaseFragment {
             super(context);
             setLayoutManager(layoutManager = new LinearLayoutManager(context));
             setAdapter(adapter = new Adapter());
+            setClipToPadding(false);
+            ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+                int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+               if (systemBarsBottomInset != bottom) {
+                   systemBarsBottomInset = bottom;
+                   v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + bottom);
+               }
+                return insets;
+            });
+            addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View v) {
+                    WindowInsetsCompat ri = ViewCompat.getRootWindowInsets(v);
+                    if (ri != null) {
+                        int bottom = ri.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + ri.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                        if (systemBarsBottomInset != bottom) {
+                            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + bottom);
+                        }
+                    }
+                    ViewCompat.requestApplyInsets(v);
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View v) { }
+            });
             setOnItemClickListener((view, position) -> {
                 if (view instanceof Cell && position >= 0 && position < itemInners.size()) {
                     ItemInner item = itemInners.get(position);
@@ -1104,5 +1134,10 @@ public class DataUsage2Activity extends BaseFragment {
             return true;
         }
         return pager.getCurrentPosition() == 0;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }
