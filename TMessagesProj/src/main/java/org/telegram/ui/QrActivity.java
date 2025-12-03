@@ -75,6 +75,8 @@ import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
@@ -1438,6 +1440,7 @@ public class QrActivity extends BaseFragment {
         private float changeDayNightViewProgress;
         protected boolean isLightDarkChangeAnimation;
         private boolean prevIsPortrait;
+        private int systemBarsBottomInset;
 
         public ThemeListViewController(BaseFragment fragment, Window window) {
             this.fragment = fragment;
@@ -1526,6 +1529,17 @@ public class QrActivity extends BaseFragment {
                     return who == backgroundDrawable || super.verifyDrawable(who);
                 }
             };
+
+            ViewCompat.setOnApplyWindowInsetsListener(rootLayout, (v, insets) -> {
+                int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                if (systemBarsBottomInset == 0) {
+                    systemBarsBottomInset = bottom;
+                    rootLayout.setPadding(rootLayout.getPaddingLeft(), rootLayout.getPaddingTop(), rootLayout.getPaddingRight(), rootLayout.getPaddingBottom() + bottom);
+                    rootLayout.requestLayout();
+                }
+                return insets;
+            });
+            ViewCompat.requestApplyInsets(rootLayout);
 
             titleView = new TextView(context);
             titleView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
@@ -1905,5 +1919,10 @@ public class QrActivity extends BaseFragment {
     interface OnItemSelectedListener {
 
         void onItemSelected(EmojiThemes theme, int position);
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

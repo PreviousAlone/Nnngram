@@ -27,6 +27,8 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,6 +82,7 @@ public class DataUsageActivity extends BaseFragment {
     };
 
     private boolean swipeBackEnabled = true;
+    private int systemBarsBottomInset;
 
     public DataUsageActivity() {
         super();
@@ -465,6 +468,15 @@ public class DataUsageActivity extends BaseFragment {
             viewPages[a].listView.setSectionsType(RecyclerListView.SECTIONS_TYPE_DATE);
             viewPages[a].listView.setLayoutManager(layoutManager);
             viewPages[a].addView(viewPages[a].listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+            ViewCompat.setOnApplyWindowInsetsListener(viewPages[a].listView, (v, insets) -> {
+                int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                if (systemBarsBottomInset != bottom) {
+                    systemBarsBottomInset = bottom;
+                    v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + bottom);
+                }
+                return insets;
+            });
+            ViewCompat.requestApplyInsets(viewPages[a].listView);
             viewPages[a].listView.setOnItemClickListener((view, position) -> {
                 if (getParentActivity() == null) {
                     return;
@@ -535,6 +547,11 @@ public class DataUsageActivity extends BaseFragment {
         swipeBackEnabled = scrollSlidingTextTabStrip.getCurrentTabId() == scrollSlidingTextTabStrip.getFirstTabId();
 
         return fragmentView;
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 
     @Override
