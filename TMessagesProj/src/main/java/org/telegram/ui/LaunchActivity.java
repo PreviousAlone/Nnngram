@@ -6478,8 +6478,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
             }
         } else {
-            boolean notify = dialogsFragment == null || dialogsFragment.forwardContext == null || dialogsFragment.forwardContext.getForwardParams().notify;
-            int scheduleDate = dialogsFragment == null || dialogsFragment.forwardContext == null ? 0 : dialogsFragment.forwardContext.getForwardParams().scheduleDate;
+            boolean notify = dialogsFragment == null || (dialogsFragment.forwardContext == null ? _notify : dialogsFragment.forwardContext.getForwardParams().notify || _notify);
+            int scheduleDate = _scheduleDate != 0 ? _scheduleDate : dialogsFragment.forwardContext == null ? 0 : dialogsFragment.forwardContext.getForwardParams().scheduleDate;
             final ChatActivity fragment;
             if (dids.size() <= 1) {
                 final long did = dids.get(0).dialogId;
