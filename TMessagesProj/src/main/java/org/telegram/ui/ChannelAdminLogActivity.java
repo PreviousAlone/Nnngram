@@ -80,6 +80,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.collection.LongSparseArray;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -1487,6 +1489,18 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
             builder.setTitle(getString("EventLogInfoTitle", R.string.EventLogInfoTitle));
             showDialog(builder.create());
         });
+        ViewCompat.setOnApplyWindowInsetsListener(bottomOverlayChat, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            v.setPadding(v.getPaddingLeft(), dp(3), v.getPaddingRight(), bottom);
+            ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+            if (lp0 instanceof FrameLayout.LayoutParams) {
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                lp.height = dp(51) + bottom;
+                v.setLayoutParams(lp);
+            }
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(bottomOverlayChat);
 
         searchContainer = new FrameLayout(context) {
             @Override
@@ -1504,6 +1518,18 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         searchContainer.setClickable(true);
         searchContainer.setPadding(0, dp(3), 0, 0);
         contentView.addView(searchContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 51, Gravity.BOTTOM));
+        ViewCompat.setOnApplyWindowInsetsListener(searchContainer, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            v.setPadding(v.getPaddingLeft(), dp(3), v.getPaddingRight(), bottom);
+            ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+            if (lp0 instanceof FrameLayout.LayoutParams) {
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                lp.height = dp(51) + bottom;
+                v.setLayoutParams(lp);
+            }
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(searchContainer);
 
         /*searchUpButton = new ImageView(context);
         searchUpButton.setScaleType(ImageView.ScaleType.CENTER);
@@ -4313,5 +4339,10 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
             savedScrollPosition = -1;
             savedScrollEventId = 0;
         }
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }
