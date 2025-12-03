@@ -860,7 +860,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private boolean waitCanSendStoryRequest;
     private FrameLayout bottomButtonsContainer;
     private FrameLayout[] bottomButtonContainer;
-    private View[] bottomButtonInsetSpacer;
     private SpannableStringBuilder bottomButtonPostText;
     private SpannableStringBuilder bottomButtonPostTextAlbum;
     private ButtonWithCounterView[] bottomButton;
@@ -3442,10 +3441,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         if (myProfile) {
             bottomButtonsContainer = new FrameLayout(context);
+            bottomButtonsContainer.setBackgroundColor(Color.TRANSPARENT);
 
             bottomButtonContainer = new FrameLayout[2];
             bottomButton = new ButtonWithCounterView[2];
-            bottomButtonInsetSpacer = new View[2];
             for (int a = 0; a < 2; ++a) {
                 bottomButtonContainer[a] = new FrameLayout(context);
                 bottomButtonContainer[a].setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
@@ -3598,11 +3597,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 });
                 bottomButtonContainer[a].addView(bottomButton[a], LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 12, 12, 12, 12));
 
-                View insetSpacer = new View(context);
-                insetSpacer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
-                bottomButtonInsetSpacer[a] = insetSpacer;
-                bottomButtonContainer[a].addView(insetSpacer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
-
                 bottomButtonsContainer.addView(bottomButtonContainer[a], LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
                 if (a == 1 || !getMessagesController().storiesEnabled()) {
                     bottomButtonContainer[a].setTranslationY(dp(72));
@@ -3631,17 +3625,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             @Override
             protected void onSelectedTabChanged() {
                 updateSelectedMediaTabText();
-                if (myProfile && bottomButtonsContainer != null && sharedMediaLayout != null) {
-                    int type = sharedMediaLayout.getSelectedTab();
-                    boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
-                    if (!isStoriesTab) {
-                        bottomButtonsContainer.setTranslationY(bottomButtonsContainer.getHeight());
-                        bottomButtonsContainer.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-                    } else {
-                        updateBottomButtonY();
-                        bottomButtonsContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
-                    }
-                }
+                updateBottomButtonsBackground();
             }
 
             @Override
@@ -3737,16 +3721,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     checkStoriesButtonText(lastStoriesSelectedCount, true);
                     updateBottomButtonY();
-                    if (bottomButtonsContainer != null) {
-                        int type = sharedMediaLayout.getSelectedTab();
-                        boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
-                        if (!isStoriesTab) {
-                            bottomButtonsContainer.setTranslationY(bottomButtonsContainer.getHeight());
-                            bottomButtonsContainer.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-                        } else {
-                            bottomButtonsContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
-                        }
-                    }
                 }
             }
 
@@ -3755,11 +3729,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 super.onBottomButtonVisibilityChange();
                 if (myProfile && bottomButtonContainer[0] != null && sharedMediaLayout != null) {
                     bottomButtonContainer[0].setTranslationY(dp(72) * (1f - sharedMediaLayout.getBottomButtonStoriesVisibility()));
-                    int type = sharedMediaLayout.getSelectedTab();
-                    boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
-                    if (!isStoriesTab && bottomButtonsContainer != null) {
-                        hideBottomButtonsContainer();
-                    }
                 }
             }
 
@@ -4276,7 +4245,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 if (bottomPaddingRow >= 0 && listAdapter != null) {
                     listAdapter.notifyItemChanged(bottomPaddingRow);
                 }
-                updateBottomButtonsInset();
             }
             return insets;
         });
@@ -6005,7 +5973,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         if (myProfile) {
             contentView.addView(bottomButtonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 72 + (1 / AndroidUtilities.density), Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
-            updateBottomButtonsInset();
+            ViewCompat.setOnApplyWindowInsetsListener(bottomButtonsContainer, (v, insets) -> {
+                int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+                v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottom);
+                ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+                if (lp0 instanceof FrameLayout.LayoutParams) {
+                    FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                    int base = AndroidUtilities.dp(72) + (int) (1.0f / AndroidUtilities.density);
+                    if (lp.height != base + bottom) {
+                        lp.height = base + bottom;
+                        v.setLayoutParams(lp);
+                    }
+                }
+                updateBottomButtonY();
+                return insets;
+            });
+        ViewCompat.requestApplyInsets(bottomButtonsContainer);
+            updateBottomButtonsBackground();
         }
 
         if (actionsView != null && actionsView.hasCall()) {
@@ -6038,6 +6022,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         bottomButton2Container.setVisibility(View.GONE);
         bottomButton2Container.setTranslationY(dp(69));
         contentView.addView(bottomButton2Container, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
+        ViewCompat.setOnApplyWindowInsetsListener(bottomButton2Container, (v, insets) -> {
+            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottom);
+            ViewGroup.LayoutParams lp0 = v.getLayoutParams();
+            if (lp0 instanceof FrameLayout.LayoutParams) {
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
+                int base = AndroidUtilities.dp(48) + AndroidUtilities.dp(10) * 2 + (int) (1.0f / AndroidUtilities.density);
+                lp.height = FrameLayout.LayoutParams.WRAP_CONTENT; // ensure WRAP_CONTENT respects padding
+                v.setLayoutParams(lp);
+            }
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(bottomButton2Container);
 
         return fragmentView;
     }
@@ -6058,7 +6055,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         sharedMediaLayout.sendTabsOrder();
         sharedMediaLayout.updateTabs(true);
         bottomButton2Container.animate()
-            .translationY(dp(69))
+            .translationY(dp(69) + systemBarsBottomInset)
             .setDuration(180)
             .setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT)
             .withEndAction(() -> bottomButton2Container.setVisibility(View.GONE))
@@ -6104,75 +6101,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         return getHeaderOnlyExtraHeight() + getActionsExtraHeight();
     }
 
-    private void hideBottomButtonsContainer() {
-        if (bottomButtonsContainer == null) return;
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) bottomButtonsContainer.getLayoutParams();
-        int h = params != null && params.height > 0 ? params.height : bottomButtonsContainer.getHeight();
-        if (h <= 0) {
-            h = AndroidUtilities.dp(72) + (int) (1 / AndroidUtilities.density) + systemBarsBottomInset;
-        }
-        bottomButtonsContainer.setTranslationY(h);
-    }
-
     private void updateBottomButtonY() {
         if (bottomButtonsContainer == null) {
             return;
         }
-        if (sharedMediaLayout != null) {
-            int type = sharedMediaLayout.getSelectedTab();
-            boolean isStoriesTab = SharedMediaLayout.isStoryAlbumPageType(type) || type == SharedMediaLayout.TAB_STORIES;
-            if (!isStoriesTab) {
-                hideBottomButtonsContainer();
-                final Bulletin bulletin = Bulletin.getVisibleBulletin();
-                if (bulletin != null) {
-                    bulletin.updatePosition();
-                }
-                return;
-            }
-        }
-        bottomButtonsContainer.setTranslationY(sharedMediaLayout != null && sharedMediaLayout.isAttachedToWindow() ? Math.max(0, dp(72 + 64 + 48) + systemBarsBottomInset - (listView.getMeasuredHeight() - sharedMediaLayout.getY())) : dp(72));
+        bottomButtonsContainer.setTranslationY(sharedMediaLayout != null && sharedMediaLayout.isAttachedToWindow() ? Math.max(0, dp(72 + 64 + 48) + systemBarsBottomInset - (listView.getMeasuredHeight() - sharedMediaLayout.getY())) : dp(72) + systemBarsBottomInset);
         final Bulletin bulletin = Bulletin.getVisibleBulletin();
         if (bulletin != null) {
             bulletin.updatePosition();
         }
     }
 
-    private void updateBottomButtonsInset() {
+    private void updateBottomButtonsBackground() {
         if (bottomButtonsContainer == null) {
             return;
         }
-        int inset = systemBarsBottomInset;
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) bottomButtonsContainer.getLayoutParams();
-        int newH = AndroidUtilities.dp(72) + (int) (1 / AndroidUtilities.density) + inset;
-        if (lp != null && lp.height != newH) {
-            lp.height = newH;
-            bottomButtonsContainer.setLayoutParams(lp);
-        }
-        if (bottomButtonInsetSpacer != null) {
-            for (int i = 0; i < bottomButtonInsetSpacer.length; i++) {
-                View v = bottomButtonInsetSpacer[i];
-                if (v != null) {
-                    FrameLayout.LayoutParams slp = (FrameLayout.LayoutParams) v.getLayoutParams();
-                    if (slp.height != inset) {
-                        slp.height = inset;
-                        v.setLayoutParams(slp);
-                    }
-                }
-            }
-        }
-        if (bottomButton != null) {
-            for (int i = 0; i < bottomButton.length; i++) {
-                ButtonWithCounterView b = bottomButton[i];
-                if (b != null) {
-                    FrameLayout.LayoutParams blp = (FrameLayout.LayoutParams) b.getLayoutParams();
-                    int newBottomMargin = AndroidUtilities.dp(12) + inset;
-                    if (blp.bottomMargin != newBottomMargin) {
-                        blp.bottomMargin = newBottomMargin;
-                        b.setLayoutParams(blp);
-                    }
-                }
-            }
-        }
+        boolean isStories = sharedMediaLayout != null && sharedMediaLayout.getClosestTab() == SharedMediaLayout.TAB_STORIES;
+        bottomButtonsContainer.setBackgroundColor(isStories ? getThemedColor(Theme.key_windowBackgroundWhite) : Color.TRANSPARENT);
     }
 
     FrameLayout floatingButtonContainer;
