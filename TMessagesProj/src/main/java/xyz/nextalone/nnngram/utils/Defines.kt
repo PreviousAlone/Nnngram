@@ -94,6 +94,7 @@ object Defines {
     @BooleanConfig const val markdownDisabled = "markdownEnable"
     @BooleanConfig(true) const val markdownParseLinks = "markdownParseLinks"
     @BooleanConfig(true) const val newMarkdownParser = "newMarkdownParser"
+    @BooleanConfig(true)  const val photoViewerEdgeToEdge = "photoViewerEdgeToEdge"
     @BooleanConfig const val showRPCError = "showRPCError"
     @BooleanConfig const val showFragmentSwitchToast = "showFragmentSwitchToast"
     @BooleanConfig const val enablePanguOnSending = "enablePanguOnSending"

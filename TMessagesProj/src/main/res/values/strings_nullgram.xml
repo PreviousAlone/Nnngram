@@ -247,7 +247,7 @@
     <string name="WsProvider">Provider</string>
     <string name="PublicProxy">Built-in Public Proxy</string>
     <string name="SwitchBackend">Switch Backend</string>
-    <string name="UpdateInstalling">Installing update...</string>
+    <string name="UpdateInstalling">Installing update…</string>
     <string name="UpdateInstallingRelaunch">The app will relaunch when the update completes.</string>
     <string name="UpdateInstallingNotification">A notification will be shown when the update completes.</string>
     <string name="NoUpdateAvailablePlay">Please check for update in Play Store.</string>
@@ -330,7 +330,7 @@
     <string name="OneMoreThing">One More Thing</string>
     <string name="NotOriginalNullgramInfo">It seems that you\'re using a fork of Nullgram.\nDo you also want to follow Nullgram\'s Channel?</string>
     <string name="Official">Official</string>
-    <string name="Before">Before...</string>
+    <string name="Before">Before…</string>
     <string name="Custom">Custom</string>
     <string name="MonoCode">Code</string>
     <string name="CreateCode">Create Code</string>
@@ -414,4 +414,5 @@
     <string name="PlayerDecoderHardware">Only device decoders</string>
     <string name="PlayerDecoderPerferHW">Prefer device decoders</string>
     <string name="showIdAndDc">Show ID and DC</string>
+    <string name="PhotoViewerEdgeToEdge">Enable PhotoViewer edgeToEdge</string>
 </resources>
