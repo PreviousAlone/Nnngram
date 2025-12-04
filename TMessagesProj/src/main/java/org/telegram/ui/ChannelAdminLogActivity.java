@@ -1366,13 +1366,6 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         chatScrollHelper.setScrollListener(this::updateMessagesVisiblePart);
         chatScrollHelper.setAnimationCallback(chatScrollHelperCallback);
         contentView.addView(chatListView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        ViewCompat.setOnApplyWindowInsetsListener(chatListView, (v, insets) -> {
-            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bottom);
-            return insets;
-        });
-        ViewCompat.requestApplyInsets(chatListView);
-
         chatListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
             private float totalDy = 0;
