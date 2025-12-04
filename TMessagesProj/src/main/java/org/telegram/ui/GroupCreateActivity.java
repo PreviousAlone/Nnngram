@@ -675,7 +675,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
 
                 if (floatingButton != null) {
                     int l = LocaleController.isRTL ? AndroidUtilities.dp(14) : (right - left) - AndroidUtilities.dp(14) - floatingButton.getMeasuredWidth();
-                    int t = bottom - top - AndroidUtilities.dp(14) - floatingButton.getMeasuredHeight();
+                    int t = bottom - top - AndroidUtilities.dp(14) - systemBarsBottomInset - floatingButton.getMeasuredHeight();
                     floatingButton.layout(l, t, l + floatingButton.getMeasuredWidth(), t + floatingButton.getMeasuredHeight());
                 }
             }
