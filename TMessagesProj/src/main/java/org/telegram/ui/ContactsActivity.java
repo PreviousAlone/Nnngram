@@ -488,6 +488,14 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
             if (systemBarsBottomInset != bottom) {
                 systemBarsBottomInset = bottom;
                 listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
+                if (floatingButtonContainer != null) {
+                    ViewGroup.LayoutParams lp = floatingButtonContainer.getLayoutParams();
+                    if (lp instanceof FrameLayout.LayoutParams) {
+                        ((FrameLayout.LayoutParams) lp).bottomMargin = systemBarsBottomInset;
+                        floatingButtonContainer.setLayoutParams(lp);
+                        floatingButtonContainer.requestLayout();
+                    }
+                }
             }
             return insets;
         });
@@ -1415,7 +1423,7 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
         });
         if (floatingButtonContainer != null) {
             ((ViewGroup) fragmentView).removeView(floatingButtonContainer);
-            parentLayout.getOverlayContainerView().addView(floatingButtonContainer, makeLayoutParamsForFloatingContainer(AndroidUtilities.navigationBarHeight));
+            parentLayout.getOverlayContainerView().addView(floatingButtonContainer, makeLayoutParamsForFloatingContainer(systemBarsBottomInset));
         }
         valueAnimator.setDuration(150);
         valueAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
@@ -1430,7 +1438,7 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
                         viewParent = (ViewGroup) floatingButtonContainer.getParent();
                         viewParent.removeView(floatingButtonContainer);
                     }
-                    ((ViewGroup) fragmentView).addView(floatingButtonContainer, makeLayoutParamsForFloatingContainer(0));
+                    ((ViewGroup) fragmentView).addView(floatingButtonContainer, makeLayoutParamsForFloatingContainer(systemBarsBottomInset));
 
                     previousFabContainer.setVisibility(View.VISIBLE);
                     if (!isOpen) {

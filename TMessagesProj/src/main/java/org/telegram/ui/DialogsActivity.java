@@ -4704,6 +4704,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         });
 
+        ViewCompat.setOnApplyWindowInsetsListener(contentView, (v, insets) -> {
+            WindowInsetsCompat root = ViewCompat.getRootWindowInsets(v);
+            int bottom = 0;
+            if (root != null) {
+                bottom = root.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + root.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
+            }
+            if (floatingButtonContainer != null) {
+                ViewGroup.LayoutParams lp = floatingButtonContainer.getLayoutParams();
+                if (lp instanceof FrameLayout.LayoutParams) {
+                    int target = dp(14) + bottom;
+                    if (((FrameLayout.LayoutParams) lp).bottomMargin != target) {
+                        ((FrameLayout.LayoutParams) lp).bottomMargin = target;
+                        floatingButtonContainer.setLayoutParams(lp);
+                    }
+                }
+            }
+            if (floatingButton2Container != null) {
+                ViewGroup.LayoutParams lp2 = floatingButton2Container.getLayoutParams();
+                if (lp2 instanceof FrameLayout.LayoutParams) {
+                    int target2 = dp(14) + dp(60) + dp(8) + bottom;
+                    if (((FrameLayout.LayoutParams) lp2).bottomMargin != target2) {
+                        ((FrameLayout.LayoutParams) lp2).bottomMargin = target2;
+                        floatingButton2Container.setLayoutParams(lp2);
+                    }
+                }
+            }
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(contentView);
+
         if (!isArchive() && initialDialogsType == DIALOGS_TYPE_DEFAULT) {
             if (MessagesController.getInstance(currentAccount).getMainSettings().getBoolean("storyhint", true)) {
                 storyHint = new HintView2(context, HintView2.DIRECTION_RIGHT)
