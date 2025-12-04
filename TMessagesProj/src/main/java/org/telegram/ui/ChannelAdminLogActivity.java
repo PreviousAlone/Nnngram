@@ -81,8 +81,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.collection.LongSparseArray;
 import androidx.core.content.FileProvider;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
@@ -265,7 +263,6 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
     private HashMap<String, Object> invitesCache = new HashMap<>();
     private HashMap<Long, TLRPC.User> usersMap;
     private boolean linviteLoading;
-    private int systemBarsBottomInset;
 
     private PhotoViewer.PhotoViewerProvider provider = new PhotoViewer.EmptyPhotoViewerProvider() {
 
@@ -328,6 +325,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
     }
 
     @Override
+    public int getNavigationBarColor() {
+        return Theme.getColor(Theme.key_chat_messagePanelBackground, getResourceProvider());
+    }
+
+    @Override
     public boolean onFragmentCreate() {
         super.onFragmentCreate();
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
@@ -336,6 +338,8 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.messagePlayingDidReset);
         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.messagePlayingProgressDidChanged);
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.didSetNewWallpapper);
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.didSetNewTheme);
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.needCheckSystemBarColors);
         loadMessages(true);
         loadAdmins();
 
@@ -358,6 +362,8 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.messagePlayingDidReset);
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.messagePlayingProgressDidChanged);
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.didSetNewWallpapper);
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.didSetNewTheme);
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.needCheckSystemBarColors);
         notificationsLocker.unlock();
     }
 
@@ -841,6 +847,8 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                 }
                 chatListView.invalidateViews();
             }
+        } else if (id == NotificationCenter.didSetNewTheme || id == NotificationCenter.needCheckSystemBarColors) {
+            setNavigationBarColor(getNavigationBarColor());
         }
     }
 
@@ -1490,21 +1498,6 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
             builder.setTitle(getString("EventLogInfoTitle", R.string.EventLogInfoTitle));
             showDialog(builder.create());
         });
-        ViewCompat.setOnApplyWindowInsetsListener(bottomOverlayChat, (v, insets) -> {
-            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-            if (systemBarsBottomInset != bottom) {
-                systemBarsBottomInset = bottom;
-                v.setPadding(v.getPaddingLeft(), dp(3), v.getPaddingRight(), bottom);
-                ViewGroup.LayoutParams lp0 = v.getLayoutParams();
-                if (lp0 instanceof FrameLayout.LayoutParams) {
-                    FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
-                    lp.height = dp(51) + bottom;
-                    v.setLayoutParams(lp);
-                }
-            }
-            return insets;
-        });
-        ViewCompat.requestApplyInsets(bottomOverlayChat);
 
         searchContainer = new FrameLayout(context) {
             @Override
@@ -1522,18 +1515,6 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         searchContainer.setClickable(true);
         searchContainer.setPadding(0, dp(3), 0, 0);
         contentView.addView(searchContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 51, Gravity.BOTTOM));
-        ViewCompat.setOnApplyWindowInsetsListener(searchContainer, (v, insets) -> {
-            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-            v.setPadding(v.getPaddingLeft(), dp(3), v.getPaddingRight(), bottom);
-            ViewGroup.LayoutParams lp0 = v.getLayoutParams();
-            if (lp0 instanceof FrameLayout.LayoutParams) {
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) lp0;
-                lp.height = dp(51) + bottom;
-                v.setLayoutParams(lp);
-            }
-            return insets;
-        });
-        ViewCompat.requestApplyInsets(searchContainer);
 
         /*searchUpButton = new ImageView(context);
         searchUpButton.setScaleType(ImageView.ScaleType.CENTER);
@@ -1593,6 +1574,8 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         contentView.addView(undoView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 8, 0, 8, 8));
 
         updateEmptyPlaceholder();
+
+        setNavigationBarColor(getNavigationBarColor());
 
         return fragmentView;
     }
@@ -3887,6 +3870,8 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         themeDescriptions.add(new ThemeDescription(chatListView, 0, new Class[]{ChatMessageCell.class}, null, new Drawable[]{Theme.chat_locationDrawable[1]}, null, Theme.key_chat_outLocationIcon));
 
         themeDescriptions.add(new ThemeDescription(bottomOverlayChat, 0, null, Theme.chat_composeBackgroundPaint, null, null, Theme.key_chat_messagePanelBackground));
+        ThemeDescription.ThemeDescriptionDelegate navDelegate = () -> setNavigationBarColor(getNavigationBarColor());
+        themeDescriptions.add(org.telegram.ui.Components.SimpleThemeDescription.createThemeDescription(navDelegate, Theme.key_chat_messagePanelBackground));
         themeDescriptions.add(new ThemeDescription(bottomOverlayChat, 0, null, null, new Drawable[]{Theme.chat_composeShadowDrawable}, null, Theme.key_chat_messagePanelShadow));
 
         themeDescriptions.add(new ThemeDescription(bottomOverlayChatText, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_chat_fieldOverlayText));
@@ -4343,10 +4328,5 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
             savedScrollPosition = -1;
             savedScrollEventId = 0;
         }
-    }
-
-    @Override
-    public boolean isSupportEdgeToEdge() {
-        return true;
     }
 }
