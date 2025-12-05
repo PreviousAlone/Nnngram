@@ -70,7 +70,7 @@
     <string name="allowScreenshotOnNoForwardChat">绕过屏幕截图限制</string>
     <string name="allowScreenshotOnNoForwardChatWarning">它还将绕过私密聊天的截图限制！</string>
     <string name="labelChannelUser">标记 Channel 用户</string>
-    <string name="labelChannelUserDetails">如果消息发件人是 Channel，它会将其标为 \"Channel\"</string>
+    <string name="labelChannelUserDetails">如果消息发件人是 Channel，它会将其标为「Channel」</string>
     <string name="displaySpoilerDirectly">直接显示黑幕消息</string>
     <string name="StorageResetInfo">此应用程序的所有数据将被永久删除（并尝试先从所有帐户中注销）。</string>
     <string name="SendLogsNoSuchThings">请使用 Logcat 手动捕捉日志</string>
@@ -82,7 +82,7 @@
     <string name="CreateMention">创建提及</string>
     <string name="Name">名称</string>
     <string name="channelAlias">频道别名</string>
-    <string name="channelAliasDetails">要求 \"标记 Channel 用户\" 启用</string>
+    <string name="channelAliasDetails">要求「标记 Channel 用户」启用</string>
     <string name="setChannelAliasName">设置别名</string>
     <string name="AutoCheckUpdateOFF">关闭</string>
     <string name="AutoCheckUpdateSwitch">自动更新</string>
@@ -101,9 +101,9 @@
     <string name="PrivacyNotice2fa">检测到您没有设置密码，这可能会使政府控制的黑客找到您的真实身份，请务必设置！</string>
     <string name="PrivacyNotice">警告</string>
     <string name="ApplySuggestion">好，应用</string>
-    <string name="PrivacyNoticeP2p">检测到您没有禁止 \"P2P 通话\"，这可能会使政府控制的黑客找到您的真实身份，请务必设置！</string>
+    <string name="PrivacyNoticeP2p">检测到您没有禁止「P2P 通话」，这可能会使政府控制的黑客找到您的真实身份，请务必设置！</string>
     <string name="PrivacyNoticePhoneVisible">检测到您的手机号码对任何人都可见。这可能会导致政府控制的黑客找到您的真实身份，请关闭它！</string>
-    <string name="PrivacyNoticeAddByPhone">检测到您没有被关闭“允许通过电话号码找到我”设置，这可能会导致政府控制的黑客找到您的真实身份，请关闭它！</string>
+    <string name="PrivacyNoticeAddByPhone">检测到您没有被关闭「允许通过电话号码找到我」设置，这可能会导致政府控制的黑客找到您的真实身份，请关闭它！</string>
     <string name="hidePhone">隐藏手机号码</string>
     <string name="AppLinkNotVerifiedMessage">对于 Android 12 及更高版本，您需要手动添加链接到验证链接以打开 Nullgram 的 t.me 链接</string>
     <string name="AppLinkNotVerifiedTitle">应用链接未验证</string>
@@ -115,7 +115,7 @@
     <string name="OpenSource">开源软件许可协议</string>
     <string name="disableCustomAPI">不使用自定义 API</string>
     <string name="customAPI">自定义 API</string>
-    <string name="useCustomApiNotice">使用自定义api登录，如果您不能注册或登录，这可能会有所帮助。\n\n注意：fcm 将无法工作。</string>
+    <string name="useCustomApiNotice">使用自定义 API 登录，如果您不能注册或登录，这可能会有所帮助。\n\n注意：fcm 将无法工作。</string>
     <string name="useCustomAPI">手动输入</string>
     <string name="TestBackendOn">使用测试服务器登录账号</string>
     <string name="TestBackendOff">使用生产服务器登录账号</string>
@@ -227,7 +227,7 @@
     <string name="SwitchToAnonymously">切换到匿名模式</string>
     <string name="SwitchToPersonalAccount">切换到个人账户</string>
     <string name="openArchiveOnPull">下拉打开已归档对话</string>
-    <string name="hideAllTab">隐藏 \"全部对话\" 栏</string>
+    <string name="hideAllTab">隐藏「全部对话」栏</string>
     <string name="ignoreMutedCount">忽略标签中的静音计数</string>
     <string name="disableSharePhoneWithContactByDefault">添加联系人时不分享手机号码</string>
     <string name="disableStickersAutoReorder">禁用贴纸自动重新排列</string>
@@ -361,14 +361,14 @@
     <string name="showOnlineStatus">显示在线状态</string>
     <string name="disablePhotoSideAction">禁用点按切换图片</string>
     <string name="MergeMessage">合并消息</string>
-    <string name="filterZalgo">过滤 \"Zalgo\" 符号</string>
+    <string name="filterZalgo">过滤「Zalgo」符号</string>
     <string name="ignoreFolderUnreadCount">忽略文件夹标签上的未读计数</string>
     <string name="customTitle">自定义标题</string>
     <string name="setCustomTitle">设置自定义标题</string>
     <string name="drawerList">侧边栏列表</string>
     <string name="TextStyleSettings">文本样式</string>
     <string name="hideSendAsButton">隐藏发送者按钮</string>
-    <string name="hideFilterMuteAll">隐藏文件夹中的 \"全部取消静音\"</string>
+    <string name="hideFilterMuteAll">隐藏文件夹中的「全部取消静音」</string>
     <string name="hideKeyboardWhenScrolling">滑动时隐藏键盘</string>
     <string name="searchInPlace">从当前位置中开始搜索</string>
     <string name="gifSize">GIF 大小</string>
@@ -400,4 +400,5 @@
     <string name="PlayerDecoderHardware">仅限设备解码器</string>
     <string name="PlayerDecoderPerferHW">设备解码器优先</string>
     <string name="showIdAndDc">显示用户 ID 和数据中心</string>
+    <string name="PhotoViewerEdgeToEdge">启用 PhotoViewer 边到边</string>
 </resources>
