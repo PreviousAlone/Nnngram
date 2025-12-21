@@ -98,6 +98,9 @@ dependencies {
     implementation(libs.mediarouter)
     implementation(libs.recaptcha)
     implementation(libs.multidex)
+    implementation(libs.cbor)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
 
     implementation(libs.kotlin.stdlib.common)
     implementation(libs.kotlin.stdlib)

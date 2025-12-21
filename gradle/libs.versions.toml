@@ -39,6 +39,8 @@ paletteKtx = "1.0.0"
 rust = "0.9.6"
 nanohttpd = "2.3.1"
 mediarouter = "1.8.1"
+cbor = "0.8"
+credentials = "1.6.0-rc01"
 
 [libraries]
 checker-compat-qual = { module = "org.checkerframework:checker-compat-qual", version.ref = "checkerCompatQual" }
@@ -84,6 +86,9 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jv
 nanohttpd = { module = "org.nanohttpd:nanohttpd", version.ref = "nanohttpd" }
 mediarouter = { module = "androidx.mediarouter:mediarouter", version.ref = "mediarouter" }
 recaptcha = { module = "com.google.android.recaptcha:recaptcha", version.ref = "recaptcha" }
+cbor = { module = "co.nstant.in:cbor", version.ref = "cbor" }
+credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 
 [plugins]
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }

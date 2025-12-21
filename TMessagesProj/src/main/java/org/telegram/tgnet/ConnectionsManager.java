@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 2 of the License.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package org.telegram.tgnet;
 
 import android.annotation.SuppressLint;
@@ -320,6 +303,10 @@ public class ConnectionsManager extends BaseController {
         return native_getCurrentDatacenterId(currentAccount);
     }
 
+    public long getCurrentAuthKeyId() {
+        return native_getCurrentAuthKeyId(currentAccount);
+    }
+
     public int getTimeDifference() {
         return native_getTimeDifference(currentAccount);
     }
@@ -327,18 +314,22 @@ public class ConnectionsManager extends BaseController {
     public <T extends TLObject> int sendRequestTyped(TLMethod<T> method, Utilities.Callback2<T, TLRPC.TL_error> completionBlock) {
         return sendRequestTyped(method, null, completionBlock);
     }
-
     public <T extends TLObject> int sendRequestTyped(TLMethod<T> method, Executor executor, Utilities.Callback2<T, TLRPC.TL_error> completionBlock) {
+        return sendRequestTyped(method, executor, completionBlock, DEFAULT_DATACENTER_ID, 0);
+    }
+    public <T extends TLObject> int sendRequestTyped(TLMethod<T> method, Executor executor, Utilities.Callback2<T, TLRPC.TL_error> completionBlock, int requestFlags) {
+        return sendRequestTyped(method, executor, completionBlock, DEFAULT_DATACENTER_ID, requestFlags);
+    }
+    public <T extends TLObject> int sendRequestTyped(TLMethod<T> method, Executor executor, Utilities.Callback2<T, TLRPC.TL_error> completionBlock, int dcId, int requestFlags) {
         return sendRequest(method, (res, err) -> {
             //noinspection unchecked
             T result = (T) res;
-
             if (executor != null) {
                 executor.execute(() -> completionBlock.run(result, err));
             } else {
                 completionBlock.run(result, err);
             }
-        });
+        }, null, null, null, requestFlags, dcId, ConnectionTypeGeneric, true);
     }
 
     public int sendRequest(TLObject object, RequestDelegate completionBlock) {
@@ -740,6 +731,10 @@ public class ConnectionsManager extends BaseController {
         native_updateDcSettings(currentAccount);
     }
 
+    public void setDefaultDatacenterId(int dcId) {
+        native_moveDatacenter(currentAccount, dcId);
+    }
+
     public long getPauseTime() {
         return lastPauseTime;
     }
@@ -1012,58 +1007,37 @@ public class ConnectionsManager extends BaseController {
     }
 
     public static native void native_switchBackend(int currentAccount, boolean restart);
-
     public static native int native_isTestBackend(int currentAccount);
-
     public static native void native_pauseNetwork(int currentAccount);
-
     public static native void native_setIpStrategy(int currentAccount, byte value);
-
     public static native void native_updateDcSettings(int currentAccount);
-
+    public static native void native_moveDatacenter(int currentAccount, int datacenterId);
     public static native void native_setNetworkAvailable(int currentAccount, boolean value, int networkType, boolean slow);
-
     public static native void native_resumeNetwork(int currentAccount, boolean partial);
-
     public static native long native_getCurrentTimeMillis(int currentAccount);
-
     public static native int native_getCurrentTime(int currentAccount);
     public static native int native_getCurrentPingTime(int currentAccount);
     public static native int native_getCurrentDatacenterId(int currentAccount);
-
+    public static native long native_getCurrentAuthKeyId(int currentAccount);
     public static native int native_getTimeDifference(int currentAccount);
     public static native void native_sendRequest(int currentAccount, long object, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken);
     public static native void native_cancelRequest(int currentAccount, int token, boolean notifyServer);
-
     public static native void native_cleanUp(int currentAccount, boolean resetKeys);
-
     public static native void native_cancelRequestsForGuid(int currentAccount, int guid);
-
     public static native void native_bindRequestToGuid(int currentAccount, int requestToken, int guid);
-
     public static native void native_applyDatacenterAddress(int currentAccount, int datacenterId, String ipAddress, int port);
-
     public static native int native_getConnectionState(int currentAccount);
-
     public static native void native_setUserId(int currentAccount, long id);
     public static native void native_init(int currentAccount, int version, int layer, int apiId, String deviceModel, String systemVersion, String appVersion, String langCode, String systemLangCode, String configPath, String logPath, String regId, String cFingerprint, String installer, String packageId, int timezoneOffset, long userId, boolean userPremium, boolean enablePushConnection, boolean hasNetwork, int networkType, int performanceClass);
     public static native void native_setProxySettings(int currentAccount, String address, int port, String username, String password, String secret);
-
     public static native void native_setLangCode(int currentAccount, String langCode);
-
     public static native void native_moveToDatacenter(int currentAccount, int datacenterId);
-
     public static native void native_setRegId(int currentAccount, String regId);
-
     public static native void native_setSystemLangCode(int currentAccount, String langCode);
     public static native void native_setJava(boolean useJavaByteBuffers);
-
     public static native void native_setPushConnectionEnabled(int currentAccount, boolean value);
-
     public static native void native_applyDnsConfig(int currentAccount, long address, String phone, int date);
-
     public static native long native_checkProxy(int currentAccount, String address, int port, String username, String password, String secret, RequestTimeDelegate requestTimeDelegate);
-
     public static native void native_onHostNameResolved(String host, long address, String ip);
     public static native void native_discardConnection(int currentAccount, int datacenterId, int connectionType);
     public static native void native_failNotRunningRequest(int currentAccount, int token);
