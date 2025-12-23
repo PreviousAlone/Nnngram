@@ -22,8 +22,10 @@
 import com.android.build.api.variant.FilterConfiguration
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -45,6 +47,12 @@ configurations {
 }
 
 val abiName = mapOf("arm64-v8a" to "arm64")
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+val nnngramBuildArgs: String = localProperties.getProperty("NNNGRAM_BUILD_ARGS") ?: System.getenv("NNNGRAM_BUILD_ARGS") ?: ""
 
 //fun setupPlay(stable: Boolean) {
 //    val targetTrace = if (stable) "production" else "beta"
@@ -148,6 +156,7 @@ android {
 
     packaging {
         resources.excludes += "**"
+        jniLibs.pickFirsts.add("lib/arm64-v8a/libtmessages.*.so")
     }
 
     kotlin {
@@ -220,6 +229,14 @@ android {
 //            variant.buildConfigFields!!.put("isPlay", BuildConfigField("boolean", variant.name.lowercase() == "play", null))
 //        }
 //    }
+
+    tasks.configureEach {
+        when {
+            (name.contains("configureCMakeDebug") || name.contains("buildCMakeDebug")) && nnngramBuildArgs.contains("skipBuildCMakeDebug") -> {
+                enabled = false
+            }
+        }
+    }
 
     applicationVariants.all {
         outputs.all {
