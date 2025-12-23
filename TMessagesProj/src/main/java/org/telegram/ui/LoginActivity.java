@@ -208,6 +208,7 @@ import kotlin.Unit;
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.InlinesKt;
 import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.ConnectionsHelper;
 import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 import xyz.nextalone.nnngram.ui.BackButtonRecentMenu;
 import xyz.nextalone.nnngram.ui.BottomBuilder;
@@ -3384,23 +3385,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             ConnectionsManager.getInstance(currentAccount).cleanup(false);
             final TLRPC.TL_auth_sendCode req = new TLRPC.TL_auth_sendCode();
-            String appHash = BuildVars.APP_HASH;
-            int appId = BuildVars.APP_ID;
-            switch(Config.getCustomAPI()){
-                case Defines.disableCustomAPI:
-                    appId = BuildVars.APP_ID;
-                    appHash = BuildVars.APP_HASH;
-                    break;
-                case Defines.useTelegramAPI:
-                    appId = Defines.telegramID;
-                    appHash = Defines.telegramHash;
-                    break;
-                case Defines.useCustomAPI:
-                    appId = Config.getCustomAppId();
-                    appHash = Config.getCustomAppHash();
-                    break;
-
-            }
+            String appHash = ConnectionsHelper.getCurrentApiHash();
+            int appId = ConnectionsHelper.getCurrentApiId();
             Log.i("customAPI:" + ConfigManager.getIntOrDefault(Defines.customAPI, Defines.disableCustomAPI));
             Log.i("appID:" + appId);
             Log.i("appHash:" + appHash);
@@ -3489,8 +3475,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 ConnectionsManager.getInstance(currentAccount).cleanup(false);
 
                 TLRPC.TL_auth_sendCode sendCode = new TLRPC.TL_auth_sendCode();
-                sendCode.api_hash = BuildVars.APP_HASH;
-                sendCode.api_id = BuildVars.APP_ID;
+                sendCode.api_hash = ConnectionsHelper.getCurrentApiHash();
+                sendCode.api_id = ConnectionsHelper.getCurrentApiId();
                 sendCode.phone_number = phone;
                 sendCode.settings = req.settings;
                 req1 = sendCode;
@@ -8630,8 +8616,8 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
 
             TLRPC.TL_auth_exportLoginToken req = new TLRPC.TL_auth_exportLoginToken();
-            req.api_hash = BuildVars.APP_HASH;
-            req.api_id = BuildVars.APP_ID;
+            req.api_hash = ConnectionsHelper.getCurrentApiHash();
+            req.api_id = ConnectionsHelper.getCurrentApiId();
             for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
                 UserConfig userConfig = UserConfig.getInstance(a);
                 if (userConfig.isClientActivated()) {

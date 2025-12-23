@@ -22,9 +22,12 @@ package xyz.nextalone.nnngram.helpers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.telegram.messenger.AccountInstance
+import org.telegram.messenger.BuildVars
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
+import xyz.nextalone.gen.Config
+import xyz.nextalone.nnngram.utils.Defines
 import java.util.concurrent.CountDownLatch
 
 class ConnectionsHelper(instance: Int) : AccountInstance(instance) {
@@ -38,6 +41,26 @@ class ConnectionsHelper(instance: Int) : AccountInstance(instance) {
         @JvmStatic
         fun getInstance(num: Int): ConnectionsHelper {
             return Instance[num]
+        }
+
+        @JvmStatic
+        fun getCurrentApiId(): Int {
+            return when (Config.customAPI) {
+                Defines.disableCustomAPI -> BuildVars.APP_ID
+                Defines.useTelegramAPI -> Defines.telegramID
+                Defines.useCustomAPI -> Config.customAppId
+                else -> BuildVars.APP_ID
+            }
+        }
+
+        @JvmStatic
+        fun getCurrentApiHash(): String {
+            return when (Config.customAPI) {
+                Defines.disableCustomAPI -> BuildVars.APP_HASH
+                Defines.useTelegramAPI -> Defines.telegramHash
+                Defines.useCustomAPI -> Config.customAppHash
+                else -> BuildVars.APP_HASH
+            }
         }
     }
 

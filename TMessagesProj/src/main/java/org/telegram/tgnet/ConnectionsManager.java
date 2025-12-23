@@ -73,6 +73,7 @@ import javax.net.ssl.SSLException;
 
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.InlinesKt;
+import xyz.nextalone.nnngram.helpers.ConnectionsHelper;
 import xyz.nextalone.nnngram.helpers.WebSocketHelper;
 import xyz.nextalone.nnngram.utils.DatabaseUtils;
 import xyz.nextalone.nnngram.utils.Log;
@@ -264,7 +265,7 @@ public class ConnectionsManager extends BaseController {
         if (getUserConfig().getCurrentUser() != null) {
             userPremium = getUserConfig().getCurrentUser().premium;
         }
-        init(SharedConfig.buildVersion(), TLRPC.LAYER, BuildVars.APP_ID, deviceModel, systemVersion, appVersion, langCode, systemLangCode, configPath, FileLog.getNetworkLogPath(), pushString, fingerprint, timezoneOffset, getUserConfig().getClientUserId(), userPremium, enablePushConnection);
+        init(SharedConfig.buildVersion(), TLRPC.LAYER, ConnectionsHelper.getCurrentApiId(), deviceModel, systemVersion, appVersion, langCode, systemLangCode, configPath, FileLog.getNetworkLogPath(), pushString, fingerprint, timezoneOffset, getUserConfig().getClientUserId(), userPremium, enablePushConnection);
     }
 
     private String getRegId() {
