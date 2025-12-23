@@ -173,6 +173,16 @@ public class ChatSettingActivity extends BaseActivity {
     }
 
     @Override
+    public int getBaseGuid() {
+        return 11000;
+    }
+
+    @Override
+    public int getDrawable() {
+        return R.drawable.menu_chats;
+    }
+
+    @Override
     protected String getActionBarTitle() {
         return LocaleController.getString("Chat", R.string.Chat);
     }
