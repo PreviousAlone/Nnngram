@@ -9370,6 +9370,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     private int currentConnectionState;
 
     private void updateProxyButton(boolean animated, boolean force) {
+        if (true) return;
         if (proxyDrawable == null) {
             return;
         }
