@@ -1381,7 +1381,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         final File cacheFile = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), md5);
                         Utilities.globalQueue.postRunnable(() -> {
                             final TLRPC.Document document = message.obj.getDocument();
-                            if (document.thumbs.isEmpty() || document.thumbs.get(0).location instanceof TLRPC.TL_fileLocationUnavailable) {
+                            if (document.thumbs == null || document.thumbs.isEmpty() || document.thumbs.get(0).location instanceof TLRPC.TL_fileLocationUnavailable) {
                                 try {
                                     Bitmap bitmap = ImageLoader.loadBitmap(cacheFile.getAbsolutePath(), null, 90, 90, true);
                                     if (bitmap != null) {
@@ -1397,7 +1397,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             AndroidUtilities.runOnUIThread(() -> {
                                 message.httpLocation = null;
                                 message.obj.messageOwner.attachPath = cacheFile.toString();
-                                if (!document.thumbs.isEmpty()) {
+                                if (document.thumbs != null && !document.thumbs.isEmpty()) {
                                     final TLRPC.PhotoSize photoSize = document.thumbs.get(0);
                                     if (!(photoSize instanceof TLRPC.TL_photoStrippedSize)) {
                                         message.photoSize = photoSize;
@@ -1550,7 +1550,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             message.messageObjects.remove(index);
                             message.messages.remove(index);
                             message.originalPaths.remove(index);
-                            if (!message.parentObjects.isEmpty()) {
+                            if (message.parentObjects != null && !message.parentObjects.isEmpty()) {
                                 message.parentObjects.remove(index);
                             }
                             if (message.sendRequest instanceof TLRPC.TL_messages_sendMultiMedia) {
@@ -1570,7 +1570,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             if (keyToRemove != null) {
                                 keysToRemove.add(keyToRemove);
                             }
-                            if (message.messageObjects.isEmpty()) {
+                            if (message.messageObjects != null && message.messageObjects.isEmpty()) {
                                 message.sendDelayedRequests();
                             } else {
                                 if (message.finalGroupMessage == object.getId()) {
@@ -1620,7 +1620,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
             revertEditingMessageObject(objects.get(0));
         } else {
             int mode = 0;
-            if (!objects.isEmpty() && objects.get(0).isQuickReply()) {
+            if (objects != null && !objects.isEmpty() && objects.get(0).isQuickReply()) {
                 mode = ChatActivity.MODE_QUICK_REPLIES;
             } else if (scheduled) {
                 mode = ChatActivity.MODE_SCHEDULED;
@@ -1904,7 +1904,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                     }
                 }
             }
-            if (newDocument.thumbs.isEmpty()) {
+            if (newDocument.thumbs == null || newDocument.thumbs.isEmpty()) {
                 thumb = new TLRPC.TL_photoSizeEmpty();
                 thumb.type = "s";
                 newDocument.thumbs.add(thumb);
@@ -2211,7 +2211,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                 newMsg.params = new HashMap<>();
                 newMsg.params.put("fwd_id", "" + msgObj.getId());
                 newMsg.params.put("fwd_peer", "" + msgObj.getDialogId());
-                if (!msgObj.messageOwner.restriction_reason.isEmpty()) {
+                if (msgObj.messageOwner.restriction_reason != null && !msgObj.messageOwner.restriction_reason.isEmpty()) {
                     newMsg.restriction_reason = msgObj.messageOwner.restriction_reason;
                     newMsg.flags |= 4194304;
                 }
@@ -2296,7 +2296,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         newMsg.flags &=~ 64;
                     }
                 }
-                if (!newMsg.entities.isEmpty()) {
+                if (newMsg.entities != null && !newMsg.entities.isEmpty()) {
                     newMsg.flags |= TLRPC.MESSAGE_FLAG_HAS_ENTITIES;
                 }
                 if (newMsg.attachPath == null) {
@@ -2604,7 +2604,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                         }
                                     }
                                 }
-                                if (!updates.updates.isEmpty()) {
+                                if (updates.updates != null && !updates.updates.isEmpty()) {
                                     getMessagesController().processUpdates(updates, false);
                                 }
                                 getStatsController().incrementSentItemsCount(ApplicationLoader.getCurrentNetworkType(), StatsController.TYPE_MESSAGES, sentCount);
@@ -3030,7 +3030,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                     delayedMessage.originalPath = originalPath;
                     delayedMessage.parentObject = parentObject;
                     delayedMessage.inputUploadMedia = uploadedDocument;
-                    if (!document.thumbs.isEmpty()) {
+                    if (document.thumbs != null && !document.thumbs.isEmpty()) {
                         TLRPC.PhotoSize photoSize = document.thumbs.get(0);
                         if (!(photoSize instanceof TLRPC.TL_photoStrippedSize)) {
                             delayedMessage.photoSize = photoSize;
@@ -3079,7 +3079,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         delayedMessage.originalPath = originalPath;
                         delayedMessage.type = 2;
                         delayedMessage.obj = messageObject;
-                        if (!document.thumbs.isEmpty() && (videoEditedInfo == null || !videoEditedInfo.isSticker)) {
+                        if (document.thumbs != null && !document.thumbs.isEmpty() && (videoEditedInfo == null || !videoEditedInfo.isSticker)) {
                             TLRPC.PhotoSize photoSize = document.thumbs.get(0);
                             if (!(photoSize instanceof TLRPC.TL_photoStrippedSize)) {
                                 delayedMessage.photoSize = photoSize;
@@ -4998,7 +4998,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             delayedMessage.scheduled = scheduleDate != 0;
                         }
                         delayedMessage.inputUploadMedia = uploadedDocument;
-                        if (!document.thumbs.isEmpty()) {
+                        if (document.thumbs != null && !document.thumbs.isEmpty()) {
                             TLRPC.PhotoSize photoSize = document.thumbs.get(0);
                             if (!(photoSize instanceof TLRPC.TL_photoStrippedSize)) {
                                 delayedMessage.photoSize = photoSize;
@@ -5079,7 +5079,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             }
                             delayedMessage.inputUploadMedia = uploadedMedia;
                             delayedMessage.performMediaUpload = performMediaUpload;
-                            if (!document.thumbs.isEmpty()) {
+                            if (document.thumbs != null && !document.thumbs.isEmpty()) {
                                 TLRPC.PhotoSize photoSize = document.thumbs.get(0);
                                 if (!(photoSize instanceof TLRPC.TL_photoStrippedSize)) {
                                     delayedMessage.photoSize = photoSize;
@@ -6249,7 +6249,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                 message.coverFile = null;
                 message.performMediaUpload = false;
                 message.performCoverUpload = false;
-            } else if (!message.messageObjects.isEmpty()) {
+            } else if (message.messageObjects != null && !message.messageObjects.isEmpty()) {
                 putToSendingMessages(message.messageObjects.get(message.messageObjects.size() - 1).messageOwner, message.finalGroupMessage != 0);
             }
             sendReadyToSendGroup(message, add, true);
@@ -6386,7 +6386,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
     }
 
     private void sendReadyToSendGroup(DelayedMessage message, boolean add, boolean check) {
-        if (message.messageObjects.isEmpty()) {
+        if (message.messageObjects == null || message.messageObjects.isEmpty()) {
             message.markAsError();
             return;
         }
@@ -7112,7 +7112,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             if ((res.media instanceof TLRPC.TL_messageMediaGame || res.media instanceof TLRPC.TL_messageMediaInvoice) && !TextUtils.isEmpty(res.message)) {
                                 newMsgObj.message = res.message;
                             }
-                            if (!newMsgObj.entities.isEmpty()) {
+                            if (newMsgObj.entities != null && !newMsgObj.entities.isEmpty()) {
                                 newMsgObj.flags |= TLRPC.MESSAGE_FLAG_HAS_ENTITIES;
                             }
                             currentSchedule = false;
@@ -7444,7 +7444,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
             } else if (newMsg.media instanceof TLRPC.TL_messageMediaPaidMedia && sentMedia instanceof TLRPC.TL_messageMediaPaidMedia) {
                 TLRPC.TL_messageMediaPaidMedia paidMedia = (TLRPC.TL_messageMediaPaidMedia) newMsg.media;
                 TLRPC.TL_messageMediaPaidMedia sentPaidMedia = (TLRPC.TL_messageMediaPaidMedia) sentMedia;
-                if (paidMedia.extended_media.isEmpty() || sentPaidMedia.extended_media.isEmpty()) {
+                if (paidMedia.extended_media == null || paidMedia.extended_media.isEmpty() || sentPaidMedia.extended_media == null || sentPaidMedia.extended_media.isEmpty()) {
                     return;
                 }
                 if (index == -1) {
@@ -8847,7 +8847,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                             if (document.mime_type == null) {
                                 document.mime_type = "application/octet-stream";
                             }
-                            if (document.thumbs.isEmpty()) {
+                            if (document.thumbs == null || document.thumbs.isEmpty()) {
                                 TLRPC.PhotoSize thumb = new TLRPC.TL_photoSize();
                                 int wh[] = MessageObject.getInlineResultWidthAndHeight(result);
                                 thumb.w = wh[0];
@@ -9234,7 +9234,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
 
     @UiThread
     public static void prepareSendingMedia(AccountInstance accountInstance, ArrayList<SendingMediaInfo> media, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, boolean forceDocument, boolean groupMedia, MessageObject editingMessageObject, boolean notify, int scheduleDate, int scheduleRepeatPeriod, int mode, boolean updateStikcersOrder, InputContentInfoCompat inputContent, String quickReplyShortcut, int quickReplyShortcutId, long effectId, boolean invertMedia, long payStars, long monoForumPeerId, MessageSuggestionParams suggestionParams) {
-        if (media.isEmpty()) {
+        if (media == null || media.isEmpty()) {
             return;
         }
         for (int a = 0, N = media.size(); a < N; a++) {
@@ -9421,7 +9421,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                     FileLog.e(e);
                                 }
                             }
-                            if (document.thumbs.isEmpty()) {
+                            if (document.thumbs == null || document.thumbs.isEmpty()) {
                                 TLRPC.TL_photoSize thumb = new TLRPC.TL_photoSize();
                                 thumb.w = info.searchImage.width;
                                 thumb.h = info.searchImage.height;
@@ -9679,7 +9679,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                     }
                                     fillVideoAttribute(info.path, attributeVideo, null);
                                 }
-                            } else if (!document.thumbs.isEmpty()) {
+                            } else if (document.thumbs != null && !document.thumbs.isEmpty()) {
                                 if (info.thumbPath != null) {
                                     thumb = BitmapFactory.decodeFile(info.thumbPath);
                                 }
@@ -10426,7 +10426,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         }
                         fillVideoAttribute(videoPath, attributeVideo, null);
                     }
-                } else if (document.thumbs.isEmpty()) {
+                } else if (document.thumbs == null || document.thumbs.isEmpty()) {
                     if (videoEditedInfo != null && videoEditedInfo.notReadyYet) {
                         thumb = videoEditedInfo.thumb;
                     }
