@@ -379,6 +379,8 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
 
     private final String BOTTOM_SHEET_VIEW_TAG = "bottomSheet";
 
+    private static final boolean photoHighQuality = true;
+
     @SuppressLint("StaticFieldLeak")
     private static volatile ArticleViewer Instance = null;
     private Drawable chat_redLocationIcon;
@@ -5770,7 +5772,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             if (block instanceof TLRPC.TL_pageBlockPhoto) {
                 TLRPC.Photo photo = getPhotoWithId(page, ((TLRPC.TL_pageBlockPhoto) block).photo_id);
                 if (photo != null) {
-                    TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize());
+                    TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize(photoHighQuality));
                     if (sizeFull != null) {
                         return FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(sizeFull, true);
                     }
@@ -9060,7 +9062,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                         if (photo == null) {
                             continue;
                         }
-                        photoSize = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize());
+                        photoSize = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize(photoHighQuality));
                     } else if (object instanceof TLRPC.TL_pageBlockVideo) {
                         TLRPC.TL_pageBlockVideo pageBlockVideo = (TLRPC.TL_pageBlockVideo) object;
                         TLRPC.Document document = parentAdapter.getDocumentWithId(pageBlockVideo.video_id);
@@ -10562,7 +10564,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             TLRPC.Photo photo = item.photo_id != 0 ? parentAdapter.getPhotoWithId(item.photo_id) : null;
             if (photo != null) {
                 drawImage = true;
-                TLRPC.PhotoSize image = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize());
+                TLRPC.PhotoSize image = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize(photoHighQuality));
                 TLRPC.PhotoSize thumb = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, 80, true);
                 if (image == thumb) {
                     thumb = null;
@@ -11114,7 +11116,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             if (currentBlock != null) {
                 TLRPC.Photo photo = parentAdapter.getPhotoWithId(currentBlock.photo_id);
                 if (photo != null) {
-                    currentPhotoObject = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize());
+                    currentPhotoObject = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize(photoHighQuality));
                 } else {
                     currentPhotoObject = null;
                 }
@@ -12552,7 +12554,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         public String getFileName(int index) {
             TLObject media = getMedia(index);
             if (media instanceof TLRPC.Photo) {
-                media = FileLoader.getClosestPhotoSizeWithSize(((TLRPC.Photo) media).sizes, AndroidUtilities.getPhotoSize());
+                media = FileLoader.getClosestPhotoSizeWithSize(((TLRPC.Photo) media).sizes, AndroidUtilities.getPhotoSize(photoHighQuality));
             }
             return FileLoader.getAttachFileName(media);
         }
@@ -12601,7 +12603,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         public TLRPC.PhotoSize getFileLocation(TLObject media, int[] size) {
             if (media instanceof TLRPC.Photo) {
                 TLRPC.Photo photo = (TLRPC.Photo) media;
-                TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize());
+                TLRPC.PhotoSize sizeFull = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize(photoHighQuality));
                 if (sizeFull != null) {
                     size[0] = sizeFull.size;
                     if (size[0] == 0) {
