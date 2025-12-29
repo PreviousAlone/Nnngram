@@ -719,18 +719,18 @@ void ConnectionsManager::onConnectionClosed(Connection *connection, int reason) 
                     maxTimeout = 20;
                 }
                 if (disconnectTimeoutAmount >= maxTimeout) {
-                    if (!connection->hasUsefullData()) {
-                        if (LOGS_ENABLED) DEBUG_D("start requesting new address and port due to timeout reach");
-                        requestingSecondAddressByTlsHashMismatch = connection->hasTlsHashMismatch();
-                        if (requestingSecondAddressByTlsHashMismatch) {
-                            requestingSecondAddress = 1;
-                        } else {
-                            requestingSecondAddress = 0;
-                        }
-                        delegate->onRequestNewServerIpAndPort(requestingSecondAddress, instanceNum);
-                    } else {
-                        if (LOGS_ENABLED) DEBUG_D("connection has usefull data, don't request anything");
-                    }
+                    // if (!connection->hasUsefullData()) {
+                    //     if (LOGS_ENABLED) DEBUG_D("start requesting new address and port due to timeout reach");
+                    //     requestingSecondAddressByTlsHashMismatch = connection->hasTlsHashMismatch();
+                    //     if (requestingSecondAddressByTlsHashMismatch) {
+                    //         requestingSecondAddress = 1;
+                    //     } else {
+                    //         requestingSecondAddress = 0;
+                    //     }
+                    //     delegate->onRequestNewServerIpAndPort(requestingSecondAddress, instanceNum);
+                    // } else {
+                    //     if (LOGS_ENABLED) DEBUG_D("connection has usefull data, don't request anything");
+                    // }
                     disconnectTimeoutAmount = 0;
                 }
             }
