@@ -72,6 +72,19 @@ jobs:
           sed '/google.services/d' build.gradle.kts > build.gradle.kts.tmp
           cp build.gradle.kts.tmp build.gradle.kts
           ./gradlew TMessagesProj:assembleDebug
+          echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*.apk')" >> $GITHUB_ENV
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-debug-apk
+          path: ${{ env.APK_FILE }}
+
+      - name: Upload Debug Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-debug-output
+          path: TMessagesProj/build/outputs/apk/
         
 
   
