@@ -194,6 +194,7 @@
     <string name="PasscodePanicCodeSet">设置紧急代码</string>
     <string name="PasscodePanicCodeEdit">更改紧急代码</string>
     <string name="disableSendTyping">禁用发送状态信息</string>
+    <string name="disableSecondAddress">禁用请求备用服务器地址</string>
     <string name="PasscodePanicCodeRemove">关闭紧急代码</string>
     <string name="PasscodePanicCodeRemoveConfirmMessage">您确定要关闭紧急代码吗？</string>
     <string name="PasscodeRemoveConfirmMessage">您确定要移除此账户的密码锁吗？</string>

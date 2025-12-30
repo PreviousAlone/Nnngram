@@ -71,6 +71,7 @@ public class ExperimentSettingActivity extends BaseActivity {
     private int showRPCErrorRow;
     private int showFragmentSwitchToastRow;
     private int enableXiaomiHyperAiRow;
+    private int disableSecondAddressRow;
 
     private int specialRow;
     private int special2Row;
@@ -246,6 +247,11 @@ public class ExperimentSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.enableXiaomiHyperAi);
             }
+        } else if (position == disableSecondAddressRow) {
+            Config.toggleDisableSecondAddress();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.disableSecondAddress);
+            }
         } else if (position == playerDecoderRow) {
             ArrayList<String> arrayList = new ArrayList<>();
             ArrayList<Integer> types = new ArrayList<>();
@@ -298,6 +304,7 @@ public class ExperimentSettingActivity extends BaseActivity {
         if (getSystemProperty("ro.mi.os.version.name") != null) {
             enableXiaomiHyperAiRow = addRow("enableXiaomiHyperAi");
         }
+        disableSecondAddressRow = addRow("disableSecondAddress");
         experiment2Row = addRow();
 
         if (Config.showHiddenSettings) {
@@ -453,6 +460,8 @@ public class ExperimentSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck("", Config.ignoreChatStrict, true);
                     } else if (position == enableXiaomiHyperAiRow) {
                         textCell.setTextAndCheck(LocaleController.getString(R.string.enableXiaomiHyperAi), Config.enableXiaomiHyperAi, true);
+                    } else if (position == disableSecondAddressRow) {
+                        textCell.setTextAndCheck(LocaleController.getString(R.string.disableSecondAddress), Config.disableSecondAddress, true);
                     } else if (position == playerDecoderRow) {
                         String value = switch (Config.getPlayerDecoder()) {
                             case Defines.playerDecoderHardware -> LocaleController.getString(R.string.PlayerDecoderHardware);

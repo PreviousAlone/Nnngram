@@ -91,6 +91,7 @@ object Defines {
     @BooleanConfig const val hideAllTab = "hideAllTab"
     @BooleanConfig const val ignoreMutedCount = "ignoreMutedCount"
     @BooleanConfig const val alwaysSendWithoutSound = "alwaysSendWithoutSound"
+    @BooleanConfig(true) const val disableSecondAddress = "disableSecondAddress"
     @BooleanConfig const val markdownDisabled = "markdownEnable"
     @BooleanConfig(true) const val markdownParseLinks = "markdownParseLinks"
     @BooleanConfig(true) const val newMarkdownParser = "newMarkdownParser"
