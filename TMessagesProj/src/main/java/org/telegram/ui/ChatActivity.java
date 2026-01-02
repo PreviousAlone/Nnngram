@@ -10188,7 +10188,7 @@ public class ChatActivity extends BaseFragment implements
 
     private boolean isBottomOverlayHidden() {
         // na: DisableChannelMuteButton
-        return Config.disableChannelMuteButton && chatMode == MODE_DEFAULT && !isReport() && currentChat != null && ChatObject.isChannel(currentChat) && currentChat.broadcast && !ChatObject.canWriteToChat(currentChat);
+        return Config.disableChannelMuteButton && chatMode == MODE_DEFAULT && !isReport() && currentChat != null && ChatObject.isChannel(currentChat) && ChatObject.isInChat(currentChat) && currentChat.broadcast && !ChatObject.canWriteToChat(currentChat);
     }
 
     @Override
