@@ -8729,6 +8729,19 @@ public class MessageObject {
             return isOutOwnerCached;
         }
         long selfUserId = UserConfig.getInstance(currentAccount).getClientUserId();
+
+        // 检查是否是匿名管理员消息
+        // 如果 from_id 是频道/群组 ID（负数），这表示是匿名发送
+        if (messageOwner.from_id != null) {
+            long fromDialogId = getPeerId(messageOwner.from_id);
+            if (fromDialogId < 0) {
+                // from_id 是频道/群组 ID，表示匿名发送
+                // 检查是否是当前用户发送的匿名消息
+                isOutOwnerCached = messageOwner.out && fromDialogId == -getDialogId();
+                return isOutOwnerCached;
+            }
+        }
+
         if (isSaved || getDialogId() == selfUserId) {
             if (messageOwner.fwd_from != null) {
                 return isOutOwnerCached = messageOwner.fwd_from.from_id != null && messageOwner.fwd_from.from_id.user_id == selfUserId || messageOwner.fwd_from.saved_out;
