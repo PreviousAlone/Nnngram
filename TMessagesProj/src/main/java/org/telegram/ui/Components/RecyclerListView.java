@@ -1027,12 +1027,14 @@ public class RecyclerListView extends RecyclerView {
         public RecyclerListViewItemClickListener(Context context) {
             gestureDetector = new GestureDetectorFixDoubleTap(context, new GestureDetectorFixDoubleTap.OnGestureListener() {
                 private View doubleTapView;
+                private boolean isDoubleTapping;
 
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
                     if (currentChildView != null) {
                         if (onItemClickListenerExtended != null && onItemClickListenerExtended.hasDoubleTap(currentChildView, currentChildPosition)) {
                             doubleTapView = currentChildView;
+                            isDoubleTapping = true;
                         } else {
                             onPressItem(currentChildView, e);
                             return false;
@@ -1047,6 +1049,7 @@ public class RecyclerListView extends RecyclerView {
                         if (onItemClickListenerExtended.hasDoubleTap(doubleTapView, currentChildPosition)) {
                             onPressItem(doubleTapView, e);
                             doubleTapView = null;
+                            isDoubleTapping = false;
                             return true;
                         }
                     }
@@ -1058,6 +1061,7 @@ public class RecyclerListView extends RecyclerView {
                     if (doubleTapView != null && onItemClickListenerExtended != null && onItemClickListenerExtended.hasDoubleTap(doubleTapView, currentChildPosition)) {
                         onItemClickListenerExtended.onDoubleTap(doubleTapView, currentChildPosition, e.getX(), e.getY());
                         doubleTapView = null;
+                        isDoubleTapping = false;
                         return true;
                     }
                     return false;
@@ -1119,6 +1123,10 @@ public class RecyclerListView extends RecyclerView {
                 @Override
                 public void onLongPress(MotionEvent event) {
                     if (currentChildView == null || currentChildPosition == -1 || onItemLongClickListener == null && onItemLongClickListenerExtended == null) {
+                        return;
+                    }
+                    // 防止双击后立即触发长按
+                    if (isDoubleTapping) {
                         return;
                     }
                     View child = currentChildView;
