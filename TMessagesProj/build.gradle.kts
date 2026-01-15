@@ -214,6 +214,10 @@ android {
         buildConfigField("String", "BUILD_TIME", "\"${SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())}\"")
     }
 
+    tasks.withType<JavaCompile> {
+        options.forkOptions.jvmArgs = listOf("-Xmx4g")
+    }
+
     splits {
         abi {
             isEnable = true
