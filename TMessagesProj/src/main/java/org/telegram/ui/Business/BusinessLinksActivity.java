@@ -255,9 +255,9 @@ public class BusinessLinksActivity extends UniversalFragment implements Notifica
         editText.setSelection(editText.getText().length());
     }
 
-    public static boolean closeRenameAlert() {
+    public static boolean closeRenameAlert(boolean invoked) {
         if (currentDialog != null && currentDialog.isShowing()) {
-            currentDialog.dismiss();
+            if (invoked) currentDialog.dismiss();
             return true;
         }
         return false;
@@ -285,11 +285,12 @@ public class BusinessLinksActivity extends UniversalFragment implements Notifica
     }
 
     @Override
-    public boolean onBackPressed() {
-        if (closeRenameAlert()) {
+    public boolean onBackPressed(boolean invoked) {
+        if (currentDialog != null && currentDialog.isShowing()) {
+            if (invoked) currentDialog.dismiss();
             return false;
         }
-        return super.onBackPressed();
+        return super.onBackPressed(invoked);
     }
 
     @Override

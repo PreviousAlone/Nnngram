@@ -1247,7 +1247,7 @@ public class DocumentSelectActivity extends BaseFragment {
     }
 
     @Override
-    public boolean onBackPressed() {
+    public boolean onBackPressed(boolean invoked) {
         if (commentTextView != null && commentTextView.isPopupShowing()) {
             commentTextView.hidePopup(true);
             return false;
@@ -1255,7 +1255,7 @@ public class DocumentSelectActivity extends BaseFragment {
         if (!canClosePicker()) {
             return false;
         }
-        return super.onBackPressed();
+        return super.onBackPressed(true);
     }
 
     public void setDelegate(DocumentSelectActivityDelegate delegate) {

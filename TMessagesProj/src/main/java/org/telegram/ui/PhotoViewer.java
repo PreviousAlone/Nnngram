@@ -119,6 +119,8 @@ import android.widget.Scroller;
 import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -317,6 +319,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
+import xyz.nextalone.gen.Config;
 
 import kotlin.Unit;
 import xyz.nextalone.gen.Config;
@@ -5219,7 +5223,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         fragment.forwardContext = () -> fmessages;
                         var forwardParams = fragment.forwardContext.getForwardParams();
                         forwardParams.noQuote = id == gallery_menu_send;
-                        fragment.setDelegate((fragment1, dids, message, param, notify, scheduleDate, topicsFragment) -> {
+                        fragment.setDelegate((fragment1, dids, message, param, notify, scheduleDate, scheduleRepeatPeriod, topicsFragment) -> {
                             if (dids.size() > 1 || dids.get(0).dialogId == UserConfig.getInstance(currentAccount).getClientUserId() || message != null) {
                                 for (int a = 0; a < dids.size(); a++) {
                                     long did = dids.get(a).dialogId;
@@ -17036,9 +17040,9 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             windowLayoutParams.type = WindowManager.LayoutParams.LAST_APPLICATION_WINDOW;
             windowLayoutParams.flags =
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                        WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                        WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM |
-                        WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM |
+                WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
             if (!Config.allowScreenshotOnNoForwardChat && (chatActivity != null && chatActivity.getCurrentEncryptedChat() != null ||
                 avatarsDialogId != 0 && MessagesController.getInstance(currentAccount).isChatNoForwards(-avatarsDialogId) ||
                 messageObject != null && (MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId()) ||
@@ -17055,6 +17059,24 @@ accountInstance.getUserConfig().getClientUserId(), false, false, true, 0, 0);
             containerView.setFocusable(false);
             wm.addView(windowView, windowLayoutParams);
             onShowView();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                final OnBackInvokedDispatcher dispatcher = windowView.findOnBackInvokedDispatcher();
+                if (dispatcher != null) {
+                    dispatcher.registerOnBackInvokedCallback(
+                        OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                        () -> {
+                            if (parentActivity instanceof LaunchActivity) {
+                                ((LaunchActivity) parentActivity).onBackPressed();
+                            } else {
+                                if (isVisible()) {
+                                    closePhoto(true, false);
+                                }
+                            }
+                        }
+                    );
+                }
+            }
         } catch (Exception e) {
             FileLog.e(e);
             return false;

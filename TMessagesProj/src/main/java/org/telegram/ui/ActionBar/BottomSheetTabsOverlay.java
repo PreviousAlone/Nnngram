@@ -669,7 +669,7 @@ public class BottomSheetTabsOverlay extends View {
         scrollAnimator.start();
     }
 
-    private boolean isOpen;
+    public boolean isOpen;
     private float openProgress;
     private ValueAnimator openAnimator;
     private void animateOpen(boolean open) {

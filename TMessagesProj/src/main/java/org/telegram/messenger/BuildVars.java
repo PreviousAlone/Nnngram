@@ -1,18 +1,9 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
+ * This is the source code of Telegram for Android v. 7.x.x.
+ * It is licensed under GNU GPL v. 2 or later.
+ * You should have received a copy of the license in this archive (see LICENSE).
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 2 of the License.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * Copyright Nikolai Kudashov, 2013-2020.
  */
 
 package org.telegram.messenger;
@@ -29,8 +20,8 @@ public class BuildVars {
     public static boolean LOGS_ENABLED = true;
     public static boolean USE_CLOUD_STRINGS = true;
     public static boolean NO_SCOPED_STORAGE = Build.VERSION.SDK_INT <= 29;
-    public static final int BUILD_VERSION = 6341;
-    public static final String BUILD_VERSION_STRING = "12.2.10";
+    public static final int BUILD_VERSION = 6385;
+    public static final String BUILD_VERSION_STRING = "12.3.1";
     public static final int APP_ID = 25184524;
     public static final String APP_HASH = "0cda2e05621028b7d3836504dad86b9c";
     public static final String APPCENTER_HASH = "PLACEHOLDER";
@@ -39,14 +30,16 @@ public class BuildVars {
     public static String SMS_HASH = "O2P2z+/jBpJ";
     public static final  String PLAYSTORE_APP_URL = "";
     public static String HUAWEI_STORE_URL = "";
-    // works only on official app ids, maybe on forks
-    public static boolean SUPPORTS_PASSKEYS = true;
 
     public static String GOOGLE_AUTH_CLIENT_ID = "760348033671-81kmi3pi84p11ub8hp9a1funsv0rn2p9.apps.googleusercontent.com";
 
+    public static String HUAWEI_APP_ID = "";
 
     // You can use this flag to disable Google Play Billing (If you're making fork and want it to be in Google Play)
     public static boolean IS_BILLING_UNAVAILABLE = false;
+
+    // works only on official app ids, disable on your forks
+    public static boolean SUPPORTS_PASSKEYS = true;
 
     static {
         if (ApplicationLoader.applicationContext != null) {
