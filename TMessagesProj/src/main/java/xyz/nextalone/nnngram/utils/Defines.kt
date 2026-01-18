@@ -212,6 +212,7 @@ object Defines {
         457896977,   // Queally rw
         625965913,   // YuKongA
         676660002,   // Xtao
+        5382987111,  // miaoqiqi
     )
 
     @BooleanConfig const val doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe"
