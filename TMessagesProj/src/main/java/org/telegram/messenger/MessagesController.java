@@ -14027,9 +14027,6 @@ public class MessagesController extends BaseController implements NotificationCe
                             dialog.unread_count = 0;
                         } else {
                             dialog.unread_count = Math.max(dialog.unread_count - countDiff, 0);
-                            if (maxPositiveId != Integer.MIN_VALUE && dialog.unread_count > dialog.top_message - maxPositiveId) {
-                                dialog.unread_count = dialog.top_message - maxPositiveId;
-                            }
                         }
 
                         boolean wasUnread;
