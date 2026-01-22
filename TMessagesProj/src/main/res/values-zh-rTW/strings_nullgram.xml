@@ -383,4 +383,23 @@
     <string name="hideSavedAndArchivedMessagesInList">在列表裡隱藏收藏夾和已歸檔消息</string>
     <string name="messagePlaceholderInSaved">這裡是您收藏的消息</string>
     <string name="messagePlaceholderInArchived">這裡是您已歸檔的消息</string>
+    <string name="ProviderLLMTranslate">大模型翻譯</string>
+    <string name="LLMTranslatorSettings">大模型翻譯設定</string>
+    <string name="LLMProvider">大模型提供者</string>
+    <string name="LLMProviderCustom">自訂</string>
+    <string name="LLMProviderOpenAI">OpenAI</string>
+    <string name="LLMProviderGemini">Google Gemini</string>
+    <string name="LLMProviderGroq">Groq</string>
+    <string name="LLMProviderDeepSeek">DeepSeek</string>
+    <string name="LLMProviderXAI">xAI</string>
+    <string name="LLMProviderZhipuAI">智譜AI</string>
+    <string name="LLMApiUrl">API 位址</string>
+    <string name="LLMApiKey">API 金鑰</string>
+    <string name="LLMModelName">模型名稱</string>
+    <string name="LLMSystemPrompt">系統提示詞</string>
+    <string name="LLMTemperature">溫度參數</string>
+    <string name="LLMApiKeyNotice">輸入您的 API 金鑰。可以用逗號分隔多個金鑰以實現輪換。</string>
+    <string name="LLMApiUrlNotice">輸入 API 基礎位址（例如：https://api.openai.com/v1）</string>
+    <string name="LLMModelNameNotice">輸入模型名稱（例如：gpt-4o-mini）</string>
+    <string name="LLMSystemPromptNotice">自訂翻譯系統提示詞。留空則使用預設提示詞。</string>
 </resources>

@@ -50,6 +50,7 @@ import xyz.nextalone.nnngram.translate.providers.DeepLTranslator
 import xyz.nextalone.nnngram.translate.providers.DeepLxTranslator
 import xyz.nextalone.nnngram.translate.providers.GoogleTranslator
 import xyz.nextalone.nnngram.translate.providers.LingoTranslator
+import xyz.nextalone.nnngram.translate.providers.LLMTranslator
 import xyz.nextalone.nnngram.translate.providers.MicrosoftTranslator
 import xyz.nextalone.nnngram.translate.providers.TelegramTranslator
 import xyz.nextalone.nnngram.translate.providers.TranSmartTranslator
@@ -110,6 +111,7 @@ object TranslateHelper {
         DeepLTranslator(7),
         TranSmartTranslator(8),
         DeepLxTranslator(9),
+        LLMTranslator(10),
     }
 
     @JvmStatic
@@ -123,6 +125,7 @@ object TranslateHelper {
         ProviderType.LingoTranslator.num -> ProviderType.LingoTranslator
         ProviderType.BaiduTranslator.num -> ProviderType.BaiduTranslator
         ProviderType.TranSmartTranslator.num -> ProviderType.TranSmartTranslator
+        ProviderType.LLMTranslator.num -> ProviderType.LLMTranslator
         else -> ProviderType.GoogleTranslator
     }
         set(value) {
@@ -141,6 +144,7 @@ object TranslateHelper {
         ProviderType.BaiduTranslator -> BaiduTranslator
         ProviderType.TranSmartTranslator -> TranSmartTranslator
         ProviderType.DeepLxTranslator -> DeepLxTranslator
+        ProviderType.LLMTranslator -> LLMTranslator
     }
 
     @JvmStatic
@@ -154,6 +158,7 @@ object TranslateHelper {
         ProviderType.BaiduTranslator -> BaiduTranslator
         ProviderType.TranSmartTranslator -> TranSmartTranslator
         ProviderType.DeepLxTranslator -> DeepLxTranslator
+        ProviderType.LLMTranslator -> LLMTranslator
     }
 
     @JvmStatic
@@ -266,6 +271,8 @@ object TranslateHelper {
         types.add(ProviderType.TranSmartTranslator)
         names.add(LocaleController.getString("ProviderDeepLxTranslate", R.string.ProviderDeepLXTranslate))
         types.add(ProviderType.DeepLxTranslator)
+        names.add(LocaleController.getString("ProviderLLMTranslate", R.string.ProviderLLMTranslate))
+        types.add(ProviderType.LLMTranslator)
         return Pair(names, types)
     }
 
