@@ -2508,7 +2508,8 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             };
             giftsContainer.setBottomInset(lastBottomInset);
 
-            storiesContainer = new ProfileStoriesCollectionTabs(
+            if (!Config.hideStories) {
+                storiesContainer = new ProfileStoriesCollectionTabs(
                 context,
                 sizeNotifierFrameLayout,
                 getStoriesController().getStoryAlbumsList(dialog_id),
@@ -2612,6 +2613,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                 Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider),
                 Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider), 0.04f)
             ));
+            }
         }
 
         setWillNotDraw(false);
@@ -3573,7 +3575,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
     }
 
     protected boolean includeStories() {
-        return true;
+        return !Config.hideStories;
     }
 
     protected boolean includeSavedDialogs() {
