@@ -344,9 +344,8 @@ public class GeneralSettingActivity extends BaseActivity {
 
                     // Handle LLM settings removal
                     if (wasLLMTranslator && !isLLMTranslator) {
-                        int llmProvider = ConfigManager.getIntOrDefault(Defines.llmProvider, 0);
-                        int removeCount = llmProvider == 0 ? 6 : 4; // Custom has more fields
-                        for (int i = 0; i < removeCount; i++) {
+                        // All providers now have same number of fields: provider, key, model, prompt, temp + header/footer
+                        for (int i = 0; i < 7; i++) {
                             listAdapter.notifyItemRemoved(llmSettingsRow);
                         }
                     }
@@ -363,9 +362,8 @@ public class GeneralSettingActivity extends BaseActivity {
 
                     // Handle LLM settings insertion
                     if (isLLMTranslator && !wasLLMTranslator) {
-                        int llmProvider = ConfigManager.getIntOrDefault(Defines.llmProvider, 0);
-                        int insertCount = llmProvider == 0 ? 6 : 4; // Custom has more fields
-                        for (int i = 0; i < insertCount; i++) {
+                        // All providers now have same number of fields
+                        for (int i = 0; i < 7; i++) {
                             listAdapter.notifyItemInserted(llmSettingsRow + i);
                         }
                     }
@@ -509,7 +507,37 @@ public class GeneralSettingActivity extends BaseActivity {
             arrayList.add(LocaleController.getString("LLMProviderZhipuAI", R.string.LLMProviderZhipuAI));
             types.add(6);
             PopupBuilder.show(arrayList, LocaleController.getString("LLMProvider", R.string.LLMProvider), types.indexOf(ConfigManager.getIntOrDefault(Defines.llmProvider, 0)), getParentActivity(), view, i -> {
-                ConfigManager.putInt(Defines.llmProvider, types.get(i));
+                int newProvider = types.get(i);
+                int oldProvider = ConfigManager.getIntOrDefault(Defines.llmProvider, 0);
+                ConfigManager.putInt(Defines.llmProvider, newProvider);
+
+                // Set default model if not configured
+                String modelKey = switch (newProvider) {
+                    case 1 -> Defines.llmOpenAIModel;
+                    case 2 -> Defines.llmGeminiModel;
+                    case 3 -> Defines.llmGroqModel;
+                    case 4 -> Defines.llmDeepSeekModel;
+                    case 5 -> Defines.llmXAIModel;
+                    case 6 -> Defines.llmZhipuAIModel;
+                    default -> null;
+                };
+
+                if (modelKey != null) {
+                    String currentModel = ConfigManager.getStringOrDefault(modelKey, "");
+                    if (currentModel == null || currentModel.isEmpty()) {
+                        String defaultModel = switch (newProvider) {
+                            case 1 -> "gpt-4o-mini";
+                            case 2 -> "gemini-2.0-flash";
+                            case 3 -> "llama-3.3-70b-versatile";
+                            case 4 -> "deepseek-chat";
+                            case 5 -> "grok-2-latest";
+                            case 6 -> "GLM-4-Flash";
+                            default -> "";
+                        };
+                        ConfigManager.putString(modelKey, defaultModel);
+                    }
+                }
+
                 updateRows();
                 listAdapter.notifyDataSetChanged();
             });
@@ -581,18 +609,16 @@ public class GeneralSettingActivity extends BaseActivity {
         if (TranslateHelper.getCurrentProviderType().equals(ProviderType.LLMTranslator)) {
             llmSettingsRow = addRow();
             llmProviderRow = addRow("llmProvider");
+            llmApiKeyRow = addRow("llmApiKey");
             int llmProvider = ConfigManager.getIntOrDefault(Defines.llmProvider, 0);
             if (llmProvider == 0) {
-                // Custom provider - show all fields
-                llmApiKeyRow = addRow("llmApiKey");
+                // Custom provider - show API URL
                 llmApiUrlRow = addRow("llmApiUrl");
-                llmModelNameRow = addRow("llmModelName");
             } else {
-                // Preset provider - only show API key
-                llmApiKeyRow = addRow("llmApiKey");
                 llmApiUrlRow = -1;
-                llmModelNameRow = -1;
             }
+            // All providers can configure model name
+            llmModelNameRow = addRow("llmModelName");
             llmSystemPromptRow = addRow("llmSystemPrompt");
             llmTemperatureRow = addRow("llmTemperature");
             llmSettings2Row = addRow();
@@ -821,7 +847,17 @@ public class GeneralSettingActivity extends BaseActivity {
                         }
                         textCell.setTextAndValue(LocaleController.getString("LLMApiUrl", R.string.LLMApiUrl), value != null ? value : "", payload, true);
                     } else if (position == llmModelNameRow) {
-                        String value = ConfigManager.getStringOrDefault(Defines.llmModelName, "");
+                        int llmProvider = ConfigManager.getIntOrDefault(Defines.llmProvider, 0);
+                        String modelKey = switch (llmProvider) {
+                            case 1 -> Defines.llmOpenAIModel;
+                            case 2 -> Defines.llmGeminiModel;
+                            case 3 -> Defines.llmGroqModel;
+                            case 4 -> Defines.llmDeepSeekModel;
+                            case 5 -> Defines.llmXAIModel;
+                            case 6 -> Defines.llmZhipuAIModel;
+                            default -> Defines.llmModelName;
+                        };
+                        String value = ConfigManager.getStringOrDefault(modelKey, "");
                         textCell.setTextAndValue(LocaleController.getString("LLMModelName", R.string.LLMModelName), value != null ? value : "", payload, true);
                     } else if (position == llmSystemPromptRow) {
                         String value = ConfigManager.getStringOrDefault(Defines.llmSystemPrompt, "");
@@ -1160,6 +1196,8 @@ public class GeneralSettingActivity extends BaseActivity {
     private void showLLMInputDialog(String key, int titleRes, int noticeRes) {
         int llmProvider = ConfigManager.getIntOrDefault(Defines.llmProvider, 0);
         String actualKey = key;
+
+        // Handle API key mapping
         if (key.equals(Defines.llmApiKey) && llmProvider != 0) {
             actualKey = switch (llmProvider) {
                 case 1 -> Defines.llmOpenAIKey;
@@ -1171,6 +1209,20 @@ public class GeneralSettingActivity extends BaseActivity {
                 default -> Defines.llmApiKey;
             };
         }
+
+        // Handle model name mapping
+        if (key.equals(Defines.llmModelName)) {
+            actualKey = switch (llmProvider) {
+                case 1 -> Defines.llmOpenAIModel;
+                case 2 -> Defines.llmGeminiModel;
+                case 3 -> Defines.llmGroqModel;
+                case 4 -> Defines.llmDeepSeekModel;
+                case 5 -> Defines.llmXAIModel;
+                case 6 -> Defines.llmZhipuAIModel;
+                default -> Defines.llmModelName;
+            };
+        }
+
         final String finalKey = actualKey;
 
         EditTextBoldCursor editText = new EditTextBoldCursor(getParentActivity());

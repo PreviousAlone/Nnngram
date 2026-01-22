@@ -155,11 +155,23 @@ object LLMTranslator : BaseTranslator() {
                 ?.ifEmpty { "https://api.openai.com/v1" } ?: "https://api.openai.com/v1"
         ).removeSuffix("/").removeSuffix("/chat/completions")
 
-        val model = providerModels.getOrDefault(
-            llmProvider,
-            ConfigManager.getStringOrDefault(Defines.llmModelName, "gpt-4o-mini")
+        // Get model from provider-specific config, fallback to default
+        val model = when (llmProvider) {
+            1 -> ConfigManager.getStringOrDefault(Defines.llmOpenAIModel, "")
+                ?.ifEmpty { providerModels[1] } ?: providerModels[1]!!
+            2 -> ConfigManager.getStringOrDefault(Defines.llmGeminiModel, "")
+                ?.ifEmpty { providerModels[2] } ?: providerModels[2]!!
+            3 -> ConfigManager.getStringOrDefault(Defines.llmGroqModel, "")
+                ?.ifEmpty { providerModels[3] } ?: providerModels[3]!!
+            4 -> ConfigManager.getStringOrDefault(Defines.llmDeepSeekModel, "")
+                ?.ifEmpty { providerModels[4] } ?: providerModels[4]!!
+            5 -> ConfigManager.getStringOrDefault(Defines.llmXAIModel, "")
+                ?.ifEmpty { providerModels[5] } ?: providerModels[5]!!
+            6 -> ConfigManager.getStringOrDefault(Defines.llmZhipuAIModel, "")
+                ?.ifEmpty { providerModels[6] } ?: providerModels[6]!!
+            else -> ConfigManager.getStringOrDefault(Defines.llmModelName, "gpt-4o-mini")
                 ?.ifEmpty { "gpt-4o-mini" } ?: "gpt-4o-mini"
-        )
+        }
 
         val customSystemPrompt = ConfigManager.getStringOrDefault(Defines.llmSystemPrompt, "")
         val systemPrompt = if (customSystemPrompt.isNullOrBlank()) generateSystemPrompt() else customSystemPrompt

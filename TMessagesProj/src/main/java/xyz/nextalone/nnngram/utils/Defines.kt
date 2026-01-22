@@ -205,11 +205,17 @@ object Defines {
     @StringConfig("") const val llmModelName = "llmModelName"
     @StringConfig("") const val llmSystemPrompt = "llmSystemPrompt"
     @StringConfig("") const val llmOpenAIKey = "llmOpenAIKey"
+    @StringConfig("") const val llmOpenAIModel = "llmOpenAIModel"
     @StringConfig("") const val llmGeminiKey = "llmGeminiKey"
+    @StringConfig("") const val llmGeminiModel = "llmGeminiModel"
     @StringConfig("") const val llmGroqKey = "llmGroqKey"
+    @StringConfig("") const val llmGroqModel = "llmGroqModel"
     @StringConfig("") const val llmDeepSeekKey = "llmDeepSeekKey"
+    @StringConfig("") const val llmDeepSeekModel = "llmDeepSeekModel"
     @StringConfig("") const val llmXAIKey = "llmXAIKey"
+    @StringConfig("") const val llmXAIModel = "llmXAIModel"
     @StringConfig("") const val llmZhipuAIKey = "llmZhipuAIKey"
+    @StringConfig("") const val llmZhipuAIModel = "llmZhipuAIModel"
     const val llmTemperature = "llmTemperature"
 
     // Misc
