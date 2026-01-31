@@ -5068,8 +5068,8 @@ public class NotificationsController extends BaseController {
 
             if (chat != null) {
                 Person.Builder personBuilder = new Person.Builder().setName(name);
-                if (avatarFile != null && avatarFile.exists() && Build.VERSION.SDK_INT >= 28) {
-                    loadRoundAvatar(avatarFile, personBuilder);
+                if (Build.VERSION.SDK_INT >= 28) {
+                    loadRoundAvatar(avatarFile, personBuilder, -chat.id, chat.title, null);
                 }
                 personCache.put(-chat.id, personBuilder.build());
             }
@@ -5122,10 +5122,13 @@ public class NotificationsController extends BaseController {
                     sender = getUserConfig().getCurrentUser();
                 }
                 try {
-                    if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+                    if (sender != null) {
                         Person.Builder personBuilder = new Person.Builder().setName(LocaleController.getString(R.string.FromYou));
-                        File avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
-                        loadRoundAvatar(avatar, personBuilder);
+                        File avatar = null;
+                        if (sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+                            avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                        }
+                        loadRoundAvatar(avatar, personBuilder, sender.id, sender.first_name, sender.last_name);
                         selfPerson = personBuilder.build();
                         personCache.put(selfUserId, selfPerson);
                     }
@@ -5265,8 +5268,12 @@ public class NotificationsController extends BaseController {
                         Person.Builder personBuilder = new Person.Builder().setName(personName);
                         if (preview[0] && !DialogObject.isEncryptedDialog(dialogId) && Build.VERSION.SDK_INT >= 28) {
                             File avatar = null;
+                            TLRPC.User senderUser = null;
+                            TLRPC.Chat senderChat = null;
                             if (DialogObject.isUserDialog(dialogId) || isChannel) {
                                 avatar = avatarFile;
+                                senderUser = user;
+                                senderChat = chat;
                             } else {
                                 long fromId = messageObject.getSenderId();
                                 TLRPC.User sender = getMessagesController().getUser(fromId);
@@ -5276,24 +5283,39 @@ public class NotificationsController extends BaseController {
                                         getMessagesController().putUser(sender, true);
                                     }
                                 }
-                                if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
-                                    avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                                if (sender != null) {
+                                    senderUser = sender;
+                                    if (sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+                                        avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                                    }
                                 }
                             }
                             if (avatar == null && dialogId == UserObject.VERIFY && messageObject.getForwardedFromId() != null) {
                                 if (uid >= 0) {
                                     TLRPC.User sender = getMessagesController().getUser(uid);
-                                    if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
-                                        avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                                    if (sender != null) {
+                                        senderUser = sender;
+                                        if (sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+                                            avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                                        }
                                     }
                                 } else {
                                     TLRPC.Chat sender = getMessagesController().getChat(-uid);
-                                    if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
-                                        avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                                    if (sender != null) {
+                                        senderChat = sender;
+                                        if (sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+                                            avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                                        }
                                     }
                                 }
                             }
-                            loadRoundAvatar(avatar, personBuilder);
+                            if (senderUser != null) {
+                                loadRoundAvatar(avatar, personBuilder, senderUser.id, senderUser.first_name, senderUser.last_name);
+                            } else if (senderChat != null) {
+                                loadRoundAvatar(avatar, personBuilder, -senderChat.id, senderChat.title, null);
+                            } else {
+                                loadRoundAvatar(avatar, personBuilder);
+                            }
                         }
                         person = personBuilder.build();
                         personCache.put(uid, person);
@@ -5731,25 +5753,62 @@ public class NotificationsController extends BaseController {
     }
 
     public static Person.Builder loadRoundAvatar(File avatar, Person.Builder personBuilder) {
-        if (avatar != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        return loadRoundAvatar(avatar, personBuilder, 0, null, null);
+    }
+
+    public static Person.Builder loadRoundAvatar(File avatar, Person.Builder personBuilder, long id, String firstName, String lastName) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             try {
-                Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(avatar), (decoder, info, src) -> {
-                    decoder.setPostProcessor((canvas) -> {
-                        Path path = new Path();
-                        path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
-                        int width = canvas.getWidth();
-                        int height = canvas.getHeight();
-                        path.addRoundRect(0, 0, width, height, width / 2, width / 2, Path.Direction.CW);
-                        Paint paint = new Paint();
-                        paint.setAntiAlias(true);
-                        paint.setColor(Color.TRANSPARENT);
-                        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
-                        canvas.drawPath(path, paint);
-                        return PixelFormat.TRANSLUCENT;
+                Bitmap bitmap = null;
+                if (avatar != null && avatar.exists()) {
+                    bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(avatar), (decoder, info, src) -> {
+                        decoder.setPostProcessor((canvas) -> {
+                            Path path = new Path();
+                            path.setFillType(Path.FillType.INVERSE_EVEN_ODD);
+                            int width = canvas.getWidth();
+                            int height = canvas.getHeight();
+                            path.addRoundRect(0, 0, width, height, width / 2, width / 2, Path.Direction.CW);
+                            Paint paint = new Paint();
+                            paint.setAntiAlias(true);
+                            paint.setColor(Color.TRANSPARENT);
+                            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+                            canvas.drawPath(path, paint);
+                            return PixelFormat.TRANSLUCENT;
+                        });
                     });
-                });
-                IconCompat icon = IconCompat.createWithBitmap(bitmap);
-                personBuilder.setIcon(icon);
+                } else if (firstName != null || lastName != null) {
+                    int sz = AndroidUtilities.dp(64);
+                    bitmap = Bitmap.createBitmap(sz, sz, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+
+                    int colorIndex = AvatarDrawable.getColorIndex(id);
+                    int[] colors = new int[] {
+                        Theme.getColor(Theme.keys_avatar_background[colorIndex]),
+                        Theme.getColor(Theme.keys_avatar_background2[colorIndex])
+                    };
+                    LinearGradient shader = new LinearGradient(0, 0, 0, sz, colors, new float[] {0, 1}, Shader.TileMode.CLAMP);
+                    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                    paint.setShader(shader);
+                    canvas.drawCircle(sz / 2f, sz / 2f, sz / 2f, paint);
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    AvatarDrawable.getAvatarSymbols(firstName, lastName, null, stringBuilder);
+                    String text = stringBuilder.toString();
+
+                    if (!text.isEmpty()) {
+                        TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                        textPaint.setTypeface(AndroidUtilities.bold());
+                        textPaint.setTextSize(sz * 0.4f);
+                        textPaint.setColor(0xFFFFFFFF);
+                        Rect rect = new Rect();
+                        textPaint.getTextBounds(text, 0, text.length(), rect);
+                        canvas.drawText(text, sz / 2f - rect.width() / 2f - rect.left, sz / 2f - rect.height() / 2f - rect.top, textPaint);
+                    }
+                }
+                if (bitmap != null) {
+                    IconCompat icon = IconCompat.createWithBitmap(bitmap);
+                    personBuilder.setIcon(icon);
+                }
             } catch (Throwable ignore) {
 
             }
