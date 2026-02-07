@@ -133,6 +133,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int doNotUnarchiveBySwipeRow;
     private int hideInputFieldBotButtonRow;
     private int hideMessageSeenTooltipRow;
+    private int mentionReadIndicatorRow;
     private int disableNotificationBubbleRow;
     private int showOnlineStatusRow;
     private int disablePhotoSideActionRow;
@@ -438,6 +439,11 @@ public class ChatSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.hideMessageSeenTooltip);
             }
+        } else if (position == mentionReadIndicatorRow) {
+            Config.toggleMentionReadIndicator();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.mentionReadIndicator);
+            }
         } else if (position == disableNotificationBubbleRow) {
             Config.toggleDisableNotificationBubble();
             if (view instanceof TextCheckCell) {
@@ -577,6 +583,7 @@ public class ChatSettingActivity extends BaseActivity {
         doNotUnarchiveBySwipeRow = addRow("doNotUnarchiveBySwipe");
         hideInputFieldBotButtonRow = addRow("hideInputFieldBotButton");
         hideMessageSeenTooltipRow = addRow("hideMessageSeenTooltip");
+        mentionReadIndicatorRow = addRow("mentionReadIndicator");
         disableNotificationBubbleRow = addRow("disableNotificationBubble");
         showOnlineStatusRow = addRow("showOnlineStatus");
         disablePhotoSideActionRow = addRow("disablePhotoSideAction");
@@ -754,6 +761,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("hideInputFieldBotButton", R.string.hideInputFieldBotButton), Config.hideInputFieldBotButton, true);
                     } else if (position == hideMessageSeenTooltipRow) {
                         textCell.setTextAndCheck(LocaleController.getString("hideMessageSeenTooltip", R.string.hideMessageSeenTooltip), Config.hideMessageSeenTooltip, true);
+                    } else if (position == mentionReadIndicatorRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("mentionReadIndicator", R.string.mentionReadIndicator), Config.mentionReadIndicator, true);
                     } else if (position == disableNotificationBubbleRow) {
                         textCell.setTextAndCheck(LocaleController.getString("disableNotificationBubble", R.string.disableNotificationBubble), Config.disableNotificationBubble, true);
                     } else if (position == showOnlineStatusRow) {

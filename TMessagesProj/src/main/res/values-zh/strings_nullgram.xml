@@ -421,4 +421,5 @@
     <string name="LLMApiUrlNotice">输入 API 基础地址（例如：https://api.openai.com/v1）</string>
     <string name="LLMModelNameNotice">输入模型名称（例如：gpt-4o-mini）</string>
     <string name="LLMSystemPromptNotice">自定义翻译系统提示词。留空则使用默认提示词。</string>
+    <string name="mentionReadIndicator">提及已读指示器</string>
 </resources>

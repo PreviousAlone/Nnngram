@@ -216,6 +216,7 @@ import org.telegram.ui.Components.URLSpanBotCommand;
 import org.telegram.ui.Components.URLSpanBrowser;
 import org.telegram.ui.Components.URLSpanMono;
 import org.telegram.ui.Components.URLSpanNoUnderline;
+import org.telegram.ui.Components.URLSpanUserMention;
 import org.telegram.ui.Components.VectorAvatarThumbDrawable;
 import org.telegram.ui.Components.VideoForwardDrawable;
 import org.telegram.ui.Components.spoilers.SpoilerEffect;
@@ -252,6 +253,7 @@ import me.vkryl.android.animator.FactorAnimator;
 
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.nnngram.helpers.MentionReadHelper;
 import xyz.nextalone.nnngram.utils.Defines;
 import xyz.nextalone.nnngram.utils.NeteaseEmbed;
 import xyz.nextalone.nnngram.utils.StringUtils;
@@ -263,6 +265,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     private final static int TIME_APPEAR_MS = 200;
     private final static int UPLOADING_ALLOWABLE_ERROR = 1024 * 1024;
     private final static int STICKER_STATUS_OFFSET = 6;
+
+    private static final Paint mentionReadDotPaint;
+    static {
+        mentionReadDotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mentionReadDotPaint.setColor(0xFF4CAF50);
+        mentionReadDotPaint.setStyle(Paint.Style.STROKE);
+        mentionReadDotPaint.setStrokeWidth(AndroidUtilities.dp(1));
+    }
 
     public boolean clipToGroupBounds;
     public boolean drawForBlur;
@@ -16109,6 +16119,47 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     if (needDrawTextDefault) {
                         SpoilerEffect.renderWithRipple(this, invalidateSpoilersParent, blockSpoilersColor, 0, block.spoilersPatchedTextLayout, 0, block.textLayout, block.spoilers, canvas, currentPosition != null);
                     }
+                    if (Config.mentionReadIndicator && currentMessageObject != null && currentMessageObject.isOutOwner()
+                            && !currentMessageObject.isUnread() && block.textLayout != null) {
+                        if (!currentMessageObject.mentionReadParticipantsFetched
+                                && !currentMessageObject.mentionReadParticipantsLoading
+                                && !currentMessageObject.getMentionedUserIds().isEmpty()) {
+                            MentionReadHelper.fetchReadParticipantsFromCell(currentMessageObject, currentAccount);
+                        }
+                        if (currentMessageObject.mentionReadParticipants != null
+                                && !currentMessageObject.mentionReadParticipants.isEmpty()) {
+                            CharSequence layoutText = block.textLayout.getText();
+                            if (layoutText instanceof android.text.Spanned) {
+                                android.text.Spanned spanned = (android.text.Spanned) layoutText;
+                                HashSet<Long> mentionReadParticipants = currentMessageObject.mentionReadParticipants;
+                                URLSpanUserMention[] mentionNameSpans = spanned.getSpans(0, spanned.length(), URLSpanUserMention.class);
+                                if (mentionNameSpans != null) {
+                                    for (URLSpanUserMention span : mentionNameSpans) {
+                                        try {
+                                            long userId = Long.parseLong(span.getURL());
+                                            if (mentionReadParticipants.contains(userId)) {
+                                                drawMentionReadDot(canvas, spanned, span, block);
+                                            }
+                                        } catch (NumberFormatException ignored) {
+                                        }
+                                    }
+                                }
+                                URLSpanNoUnderline[] noUnderlineSpans = spanned.getSpans(0, spanned.length(), URLSpanNoUnderline.class);
+                                if (noUnderlineSpans != null) {
+                                    for (URLSpanNoUnderline span : noUnderlineSpans) {
+                                        String url = span.getURL();
+                                        if (url != null && url.startsWith("@")) {
+                                            String username = url.substring(1);
+                                            TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(username);
+                                            if (user != null && mentionReadParticipants.contains(user.id)) {
+                                                drawMentionReadDot(canvas, spanned, span, block);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     Emoji.emojiDrawingYOffset = 0;
                 } catch (Exception e) {
                     FileLog.e(e);
@@ -16132,6 +16183,19 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             if (restore != Integer.MIN_VALUE) {
                 canvas.restoreToCount(restore);
             }
+        }
+    }
+
+    private void drawMentionReadDot(Canvas canvas, android.text.Spanned spanned, Object span, MessageObject.TextLayoutBlock block) {
+        int spanStart = spanned.getSpanStart(span);
+        int spanEnd = spanned.getSpanEnd(span);
+        int lineStart = block.textLayout.getLineForOffset(spanStart);
+        int lineEnd = block.textLayout.getLineForOffset(spanEnd);
+        for (int line = lineStart; line <= lineEnd; line++) {
+            float left = line == lineStart ? block.textLayout.getPrimaryHorizontal(spanStart) : block.textLayout.getLineLeft(line);
+            float right = line == lineEnd ? block.textLayout.getPrimaryHorizontal(spanEnd) : block.textLayout.getLineRight(line);
+            float baseline = block.textLayout.getLineBaseline(line);
+            canvas.drawLine(left, baseline + dp(2), right, baseline + dp(2), mentionReadDotPaint);
         }
     }
 

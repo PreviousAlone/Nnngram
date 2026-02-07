@@ -238,6 +238,7 @@ object Defines {
     @BooleanConfig const val doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe"
     @BooleanConfig const val hideInputFieldBotButton = "hideInputFieldBotButton"
     @BooleanConfig const val hideMessageSeenTooltip = "hideMessageSeenTooltip"
+    @BooleanConfig const val mentionReadIndicator = "mentionReadIndicator"
     @BooleanConfig const val disableNotificationBubble = "disableNotificationBubble"
     @BooleanConfig const val showOnlineStatus = "showOnlineStatus"
     @BooleanConfig const val disablePhotoSideAction = "disablePhotoSideAction"

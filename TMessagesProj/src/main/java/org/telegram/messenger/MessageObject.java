@@ -246,6 +246,10 @@ public class MessageObject {
     public long actionDeleteGroupEventId = -1;
     public HashSet<Integer> expandedQuotes;
 
+    public HashSet<Long> mentionReadParticipants;
+    public boolean mentionReadParticipantsFetched;
+    public boolean mentionReadParticipantsLoading;
+
     public AtomicReference<WeakReference<View>> viewRef = new AtomicReference<>(null);
 
     public boolean isSpoilersRevealed = Config.displaySpoilerMsgDirectly;
@@ -8803,6 +8807,43 @@ public class MessageObject {
             return isOutOwnerCached = true;
         }
         return isOutOwnerCached = messageOwner.fwd_from.saved_from_peer == null || messageOwner.fwd_from.saved_from_peer.user_id == selfUserId;
+    }
+
+    public boolean isMentionReadByUser(long userId) {
+        return mentionReadParticipants != null && mentionReadParticipants.contains(userId);
+    }
+
+    public HashSet<Long> getMentionedUserIds() {
+        HashSet<Long> result = new HashSet<>();
+        if (messageOwner == null || messageOwner.entities == null) {
+            return result;
+        }
+        for (TLRPC.MessageEntity entity : messageOwner.entities) {
+            if (entity instanceof TLRPC.TL_messageEntityMentionName) {
+                result.add(((TLRPC.TL_messageEntityMentionName) entity).user_id);
+            } else if (entity instanceof TLRPC.TL_inputMessageEntityMentionName) {
+                TLRPC.InputUser inputUser = ((TLRPC.TL_inputMessageEntityMentionName) entity).user_id;
+                if (inputUser != null) {
+                    result.add(inputUser.user_id);
+                }
+            } else if (entity instanceof TLRPC.TL_messageEntityMention) {
+                if (messageOwner.message != null) {
+                    int start = entity.offset;
+                    int end = entity.offset + entity.length;
+                    if (start >= 0 && end <= messageOwner.message.length()) {
+                        String username = messageOwner.message.substring(start, end);
+                        if (username.startsWith("@")) {
+                            username = username.substring(1);
+                        }
+                        TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(username);
+                        if (user != null) {
+                            result.add(user.id);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public boolean needDrawAvatar() {
