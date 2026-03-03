@@ -21,6 +21,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLObject;
 
 import org.telegram.messenger.MediaDataController;

@@ -18,6 +18,7 @@
 package org.telegram.ui.Components;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
+import static org.telegram.messenger.AndroidUtilities.lerp;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -66,7 +67,7 @@ import org.telegram.ui.ChatBackgroundDrawable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class SizeNotifierFrameLayout extends FrameLayout {
+public class SizeNotifierFrameLayout extends FrameLayout implements Theme.Colorable {
 
     public boolean DRAW_USING_RENDERNODE() {
         return Build.VERSION.SDK_INT >= 31 && SharedConfig.useNewBlur;
@@ -356,6 +357,16 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                 backgroundView.invalidate();
             }
         }
+
+        @Override
+        public void invalidate() {
+            super.invalidate();
+            onBackgroundViewInvalidate();
+        }
+    }
+
+    protected void onBackgroundViewInvalidate() {
+
     }
 
     public void onUpdateBackgroundDrawable(Drawable drawable) {
@@ -582,6 +593,7 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         if (backgroundView != null && Theme.canStartHolidayAnimation() && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
             if (snowflakesEffect == null) {
                 snowflakesEffect = new SnowflakesEffect(1);
+                snowflakesEffect.setForcedColor(0xFFFFFFFF);
             }
             snowflakesEffect.onDraw(backgroundView, canvas);
         }
@@ -978,8 +990,21 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         }
     }
 
+    protected float getBlurRadiusInternal() {
+        return getBlurRadius();
+    }
+
     public void drawBlurRect(Canvas canvas, float y, Rect rectTmp, Paint blurScrimPaint, boolean top) {
         int blurAlpha = Color.alpha(Theme.getColor(DRAW_USING_RENDERNODE() && SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_HIGH ? Theme.key_chat_BlurAlpha : Theme.key_chat_BlurAlphaSlow, getResourceProvider()));
+        drawBlurRect(canvas, y, rectTmp, blurScrimPaint, top, blurAlpha);
+    }
+
+    public void drawBlurRect(Canvas canvas, float y, Rect rectTmp, Paint blurScrimPaint, boolean top, float alpha) {
+        int blurAlpha = Color.alpha(Theme.getColor(DRAW_USING_RENDERNODE() && SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_HIGH ? Theme.key_chat_BlurAlpha : Theme.key_chat_BlurAlphaSlow, getResourceProvider()));
+        drawBlurRect(canvas, y, rectTmp, blurScrimPaint, top, lerp(0xFF, blurAlpha, alpha));
+    }
+
+    public void drawBlurRect(Canvas canvas, float y, Rect rectTmp, Paint blurScrimPaint, boolean top, int blurAlpha) {
         if (!SharedConfig.chatBlurEnabled()) {
             canvas.drawRect(rectTmp, blurScrimPaint);
             return;
@@ -1004,7 +1029,7 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                     ColorMatrix colorMatrix = new ColorMatrix();
                     colorMatrix.setSaturation(2f);
                     blurNodes[a].setRenderEffect(RenderEffect.createChainEffect(
-                            RenderEffect.createBlurEffect(getBlurRadius(), getBlurRadius(), Shader.TileMode.DECAL),
+                            RenderEffect.createBlurEffect(getBlurRadiusInternal(), getBlurRadiusInternal(), Shader.TileMode.DECAL),
                             RenderEffect.createColorFilterEffect(new ColorMatrixColorFilter(colorMatrix))
                     ));
                 }
@@ -1234,4 +1259,8 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         }
     }
 
+    @Override
+    public void updateColors() {
+
+    }
 }

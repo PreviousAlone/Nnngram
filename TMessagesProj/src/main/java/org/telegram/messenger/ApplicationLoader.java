@@ -41,18 +41,15 @@ import org.telegram.messenger.voip.VideoCapturerDevice;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.Adapters.DrawerLayoutAdapter;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.ForegroundDetector;
+import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.UpdateAppAlertDialog;
-import org.telegram.ui.Components.UpdateButton;
 import org.telegram.ui.Components.UpdateLayout;
-import org.telegram.ui.IUpdateButton;
 import org.telegram.ui.IUpdateLayout;
 import org.telegram.ui.LauncherIconController;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import xyz.nextalone.nnngram.CrashListener;
@@ -675,12 +672,8 @@ public class ApplicationLoader extends Application {
         return false;
     }
 
-    public IUpdateLayout takeUpdateLayout(Activity activity, ViewGroup sideMenu, ViewGroup sideMenuContainer) {
-        return new UpdateLayout(activity, sideMenu, sideMenuContainer);
-    }
-
-    public IUpdateButton takeUpdateButton(Context context) {
-        return new UpdateButton(context);
+    public IUpdateLayout takeUpdateLayout(Activity activity, ViewGroup sideMenuContainer) {
+        return new UpdateLayout(activity, sideMenuContainer);
     }
 
     public TLRPC.Update parseTLUpdate(int constructor) {
@@ -699,8 +692,8 @@ public class ApplicationLoader extends Application {
         return false;
     }
 
-    public boolean extendDrawer(ArrayList<DrawerLayoutAdapter.Item> items) {
-        return false;
+    public void addItemOptions(ItemOptions itemOptions) {
+
     }
 
     public boolean checkRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {

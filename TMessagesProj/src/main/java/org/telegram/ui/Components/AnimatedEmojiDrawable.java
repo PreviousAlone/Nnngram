@@ -893,6 +893,17 @@ public class AnimatedEmojiDrawable extends Drawable {
         updateAttachState();
     }
 
+    public void clear() {
+        if (holders != null) {
+            holders.clear();
+        }
+        if (views != null) {
+            views.clear();
+        }
+        preloading = false;
+        updateAttachState();
+    }
+
     public static int attachedCount = 0;
     public static ArrayList<AnimatedEmojiDrawable> attachedDrawable;
 
@@ -1126,6 +1137,11 @@ public class AnimatedEmojiDrawable extends Drawable {
             this.invalidateParent = invalidateParent;
         }
 
+        private Integer account;
+        public void setCurrentAccount(int account) {
+            this.account = account;
+        }
+
         public void setParentView(View parentView) {
             changeProgress.setParent(parentView);
             particlesAlpha.setParent(parentView);
@@ -1313,7 +1329,7 @@ public class AnimatedEmojiDrawable extends Drawable {
                     drawables[1] = null;
                 }
                 drawables[1] = drawables[0];
-                drawables[0] = AnimatedEmojiDrawable.make(UserConfig.selectedAccount, cacheType, documentId);
+                drawables[0] = AnimatedEmojiDrawable.make(account != null ? account : UserConfig.selectedAccount, cacheType, documentId);
                 if (attached) {
                     ((AnimatedEmojiDrawable) drawables[0]).addView(this);
                 }
@@ -1323,7 +1339,7 @@ public class AnimatedEmojiDrawable extends Drawable {
                 if (attachedLocal) {
                     detach();
                 }
-                drawables[0] = AnimatedEmojiDrawable.make(UserConfig.selectedAccount, cacheType, documentId);
+                drawables[0] = AnimatedEmojiDrawable.make(account != null ? account : UserConfig.selectedAccount, cacheType, documentId);
                 if (attachedLocal) {
                     attach();
                 }
@@ -1363,7 +1379,7 @@ public class AnimatedEmojiDrawable extends Drawable {
                 }
                 drawables[1] = drawables[0];
                 if (document != null) {
-                    drawables[0] = AnimatedEmojiDrawable.make(UserConfig.selectedAccount, cacheType, document);
+                    drawables[0] = AnimatedEmojiDrawable.make(account != null ? account : UserConfig.selectedAccount, cacheType, document);
                     if (attached) {
                         ((AnimatedEmojiDrawable) drawables[0]).addView(this);
                     }
@@ -1377,7 +1393,7 @@ public class AnimatedEmojiDrawable extends Drawable {
                     detach();
                 }
                 if (document != null) {
-                    drawables[0] = AnimatedEmojiDrawable.make(UserConfig.selectedAccount, cacheType, document);
+                    drawables[0] = AnimatedEmojiDrawable.make(account != null ? account : UserConfig.selectedAccount, cacheType, document);
                 } else {
                     drawables[0] = null;
                 }

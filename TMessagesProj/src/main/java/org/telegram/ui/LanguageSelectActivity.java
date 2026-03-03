@@ -10,7 +10,6 @@ package org.telegram.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Canvas;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -115,7 +115,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         });
 
         ActionBarMenu menu = actionBar.createMenu();
-        searchItem = menu.addItem(0, R.drawable.ic_ab_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
+        searchItem = menu.addItem(0, R.drawable.outline_header_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
             @Override
             public void onSearchExpand() {
                 searching = true;
@@ -166,18 +166,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         emptyView.setShowAtCenter(true);
         frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
-        listView = new RecyclerListView(context) {
-            @Override
-            protected void dispatchDraw(Canvas canvas) {
-                if (getAdapter() == listAdapter && getItemAnimator() != null && getItemAnimator().isRunning()) {
-                    int backgroundColor = Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider);
-                    drawItemBackground(canvas, 0, translateSettingsBackgroundHeight, backgroundColor);
-//                    drawItemBackground(canvas, 1, Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
-                    drawSectionBackground(canvas, 1, 2, backgroundColor);
-                }
-                super.dispatchDraw(canvas);
-            }
-        };
+        listView = new RecyclerListView(context);
+        listView.setSections();
+        actionBar.setAdaptiveBackground(listView);
         listView.setEmptyView(emptyView);
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
@@ -365,16 +356,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
             }
         });
 
-        listView.setClipToPadding(false);
-        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
-            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-            if (systemBarsBottomInset != bottom) {
-                systemBarsBottomInset = bottom;
-                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
-            }
-            return insets;
-        });
-
         return fragmentView;
     }
 
@@ -525,6 +506,17 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
     public static final int VIEW_TYPE_SETTINGS = 4;
     public static final int VIEW_TYPE_INFO = 5;
 
+    private int settingsFromPosition = -1;
+    private int settingsToPosition = -1;
+    @Keep
+    private int manualTranslationPosition = -1;
+    @Keep
+    private int autoTranslationPosition = -1;
+    @Keep
+    private int doNotTranslatePosition = -1;
+    private int infoPosition1;
+    private int languagesStartsPosition;
+
     private class ListAdapter extends RecyclerListView.SelectionAdapter {
 
         private Context mContext;
@@ -563,9 +555,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                         count++;
                     }
                     count++;
-                    if (!("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled))) {
-                        count++;
-                    }
+                    //if (!("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled))) {
+                    //    count++;
+                    //}
                 }
                 count++;
                 count += sortedLanguages.size();
@@ -582,22 +574,18 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
             switch (viewType) {
                 case VIEW_TYPE_LANGUAGE: {
                     view = new TextRadioCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 }
                 case VIEW_TYPE_SWITCH:
                     TextCheckCell switchCell = new TextCheckCell(mContext);
-                    switchCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     view = switchCell;
                     break;
                 case VIEW_TYPE_SETTINGS:
                     TextSettingsCell settingsCell = new TextSettingsCell(mContext);
-                    settingsCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     view = settingsCell;
                     break;
                 case VIEW_TYPE_HEADER:
                     HeaderCell header = new HeaderCell(mContext);
-                    header.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     view = header;
                     break;
                 case VIEW_TYPE_INFO:
@@ -726,14 +714,11 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                     infoCell.updateRTL();
                     if (position == (!getMessagesController().premiumFeaturesBlocked() && (getContextValue() || getChatValue()) ? 4 : 3)) {
                         infoCell.setText(LocaleController.getString(R.string.TranslateMessagesInfo1));
-                        infoCell.setBackground(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                         infoCell.setTopPadding(11);
                         infoCell.setBottomPadding(16);
                     } else {
                         infoCell.setTopPadding(0);
                         infoCell.setBottomPadding(16);
-                        infoCell.setText(LocaleController.getString(R.string.TranslateMessagesInfo2));
-                        infoCell.setBackground(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_top, Theme.key_windowBackgroundGrayShadow));
                     }
                     break;
                 }
@@ -778,7 +763,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CELLBACKGROUNDCOLOR, new Class[]{LanguageCell.class}, null, null, null, Theme.key_windowBackgroundWhite));
         themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_windowBackgroundGray));
 
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
+//        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_ITEMSCOLOR, null, null, null, null, Theme.key_actionBarDefaultIcon));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, null, null, Theme.key_actionBarDefaultTitle));
@@ -804,5 +789,10 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
     @Override
     public boolean isSupportEdgeToEdge() {
         return true;
+    }
+    @Override
+    public void onInsets(int left, int top, int right, int bottom) {
+        listView.setPadding(0, 0, 0, bottom);
+        listView.setClipToPadding(false);
     }
 }

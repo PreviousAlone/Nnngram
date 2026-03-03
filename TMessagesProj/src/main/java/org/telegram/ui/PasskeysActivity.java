@@ -4,17 +4,11 @@ import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.LocaleController.getString;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -22,20 +16,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.google.android.exoplayer2.extractor.mkv.MatroskaExtractor;
-import com.google.android.exoplayer2.util.Util;
-
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.PasskeysController;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SvgHelper;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
@@ -45,7 +34,6 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Adapters.MessagesSearchAdapter;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.Bulletin;
@@ -53,12 +41,12 @@ import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RLottieImageView;
+import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.TextHelper;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalRecyclerView;
 import org.telegram.ui.Stars.ExplainStarsSheet;
-import org.telegram.ui.Stories.StoriesController;
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 
 import java.util.ArrayList;
@@ -92,25 +80,31 @@ public class PasskeysActivity extends BaseFragment {
         contentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
 
         listView = new UniversalRecyclerView(this, this::fillItems, this::onItemClick, null);
+        listView.setSections();
+        listView.adapter.setApplyBackground(false);
         contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        actionBar.setAdaptiveBackground(listView);
 
         return fragmentView = contentView;
     }
 
+    @Keep
+    public int addPasskeyRow;
+
     private void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
+        addPasskeyRow = -1;
         items.add(UItem.asTopView(getString(R.string.PasskeyTopInfo), R.raw.passkey));
         for (int i = 0; i < passkeys.size(); ++i) {
             final TL_account.Passkey passkey = passkeys.get(i);
             items.add(PasskeyCell.Factory.of(passkey, this::openMenu));
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            if (passkeys.size() + 1 <= getMessagesController().config.passkeysAccountPasskeysMax.get()) {
-                items.add(UItem.asButton(-1, R.drawable.menu_passkey_add, getString(R.string.PasskeyAdd)).accent());
-            }
-            items.add(UItem.asButton(-2, R.drawable.msg_settings, getString(R.string.Settings)).accent());
+        if (passkeys.size() + 1 <= getMessagesController().config.passkeysAccountPasskeysMax.get()) {
+            addPasskeyRow = items.size();
+            items.add(UItem.asButton(-1, R.drawable.menu_passkey_add, getString(R.string.PasskeyAdd)).accent());
         }
+        items.add(UItem.asButton(-2, R.drawable.msg_settings, getString(R.string.Settings)).accent());
         items.add(UItem.asShadow(AndroidUtilities.replaceArrows(AndroidUtilities.replaceSingleTag(getString(R.string.PasskeyInfo), () -> {
-            showLearnSheet(getContext(), currentAccount, resourceProvider, Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && passkeys.size() + 1 <= getMessagesController().config.passkeysAccountPasskeysMax.get());
+            showLearnSheet(getContext(), currentAccount, resourceProvider, passkeys.size() + 1 <= getMessagesController().config.passkeysAccountPasskeysMax.get());
         }), true)));
     }
 
@@ -154,6 +148,7 @@ public class PasskeysActivity extends BaseFragment {
                     .makeRed(AlertDialog.BUTTON_POSITIVE)
                     .show();
             })
+            .setScrimViewBackground(listView.getClipBackground(cell))
             .show();
     }
 
@@ -292,7 +287,7 @@ public class PasskeysActivity extends BaseFragment {
             static { setup(new Factory()); }
 
             @Override
-            public PasskeyCell createView(Context context, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
+            public PasskeyCell createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
                 return new PasskeyCell(context, currentAccount, resourcesProvider);
             }
 
@@ -310,7 +305,6 @@ public class PasskeysActivity extends BaseFragment {
         }
     }
 
-    @RequiresApi(api = 28)
     public static void showLearnSheet(Context context, int currentAccount, Theme.ResourcesProvider resourcesProvider, boolean withCreateButton) {
         BottomSheet.Builder b = new BottomSheet.Builder(context, false, resourcesProvider);
 
@@ -348,7 +342,7 @@ public class PasskeysActivity extends BaseFragment {
 
         BottomSheet sheet = b.create();
 
-        ButtonWithCounterView button = new ButtonWithCounterView(context, resourcesProvider);
+        ButtonWithCounterView button = new ButtonWithCounterView(context, resourcesProvider).setRound();
         button.setText(getString(R.string.PasskeyFeatureButton), false);
         button.setOnClickListener(v -> {
             if (button.isLoading()) return;
@@ -418,4 +412,13 @@ public class PasskeysActivity extends BaseFragment {
         sheet.show();
     }
 
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
+    @Override
+    public void onInsets(int left, int top, int right, int bottom) {
+        listView.setPadding(0, 0, 0, bottom);
+        listView.setClipToPadding(false);
+    }
 }

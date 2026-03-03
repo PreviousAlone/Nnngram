@@ -84,6 +84,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
@@ -245,6 +246,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 
     private boolean dismissed;
     private boolean fullscreen;
+    private boolean fullscreenBlur;
     private float fullscreenProgress;
     private float fullscreenTransitionProgress;
     private boolean fullscreenInProgress;
@@ -323,6 +325,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         tab.lastUrl = webViewContainer != null ? webViewContainer.getUrlLoaded() : null;
         tab.expanded = swipeContainer != null && swipeContainer.getSwipeOffsetY() < 0 || forceExpnaded || isFullSize() || fullscreen;
         tab.fullscreen = fullscreen;
+        tab.fullscreenBlur = fullscreenBlur;
         tab.fullsize = (fullsize == null ? defaultFullsize : fullsize);
         tab.expandedOffset = swipeContainer != null ? swipeContainer.getOffsetY() : Float.MAX_VALUE;
         tab.needsContext = needsContext;
@@ -391,7 +394,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 //            setMainButton(tab.main);
             botButtons.setState(tab.buttons, false);
         }
-        setFullscreen( tab.fullscreen, false);
+        setFullscreen(tab.fullscreen, false, tab.fullscreenBlur);
         currentAccount = tab.props != null ? tab.props.currentAccount : UserConfig.selectedAccount;
         if (tab.webView != null) {
 //            tab.webView.resumeTimers();
@@ -632,7 +635,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                 final TLRPC.User bot = MessagesController.getInstance(currentAccount).getUser(botId);
                 if (granted) {
                     BulletinFactory.UndoObject undo = new BulletinFactory.UndoObject();
-                    undo.undoText = LocaleController.getString(R.string.Undo);
+                    undo.undoText = LocaleController.getString(R.string.UndoNoCaps);
                     undo.onUndo = () -> {
                         BotLocation.get(getContext(), currentAccount, botId).setGranted(false, null);
                     };
@@ -848,13 +851,13 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             }
 
             @Override
-            public String onFullscreenRequested(boolean fullscreen) {
+            public String onFullscreenRequested(boolean fullscreen, boolean blur) {
                 if (BotWebViewSheet.this.fullscreen == fullscreen) {
                     if (BotWebViewSheet.this.fullscreen)
                         return "ALREADY_FULLSCREEN";
                     return null;
                 }
-                setFullscreen(fullscreen, true);
+                setFullscreen(fullscreen, true, blur);
                 return null;
             }
 
@@ -915,9 +918,8 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         fullscreenButtons = new BotFullscreenButtons(getContext());
         fullscreenButtons.setAlpha(0f);
         fullscreenButtons.setVisibility(View.GONE);
-        if (!MessagesController.getInstance(currentAccount).disableBotFullscreenBlur) {
-            fullscreenButtons.setParentRenderNode(swipeContainer.getRenderNode());
-        }
+        fullscreenBlur = !MessagesController.getInstance(currentAccount).disableBotFullscreenBlur && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH;
+        fullscreenButtons.setParentRenderNode(fullscreenBlur ? swipeContainer.getRenderNode() : null);
         windowView.addView(fullscreenButtons, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
         fullscreenButtons.setOnCloseClickListener(() -> {
             if (!webViewContainer.onBackPressed()) {
@@ -2080,6 +2082,10 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         activeSheets.remove(this);
     }
 
+    public BulletinFactory getBulletinFactory() {
+        return BulletinFactory.of(bulletinContainer, resourcesProvider);
+    }
+
     public void release() {
         if (superDismissed) return;
         try {
@@ -2196,13 +2202,18 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
     private boolean resetOffsetY = true;
     private ValueAnimator fullscreenAnimator;
     public void setFullscreen(boolean fullscreen, boolean animated) {
+        setFullscreen(fullscreen, animated, fullscreenBlur);
+    }
+    public void setFullscreen(boolean fullscreen, boolean animated, boolean blur) {
         if (this.fullscreen == fullscreen) return;
         this.fullscreen = fullscreen;
+        this.fullscreenBlur = blur && !MessagesController.getInstance(currentAccount).disableBotFullscreenBlur && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH;
         if (fullscreenAnimator != null) {
             fullscreenAnimator.cancel();
         }
         if (fullscreenButtons != null) {
             fullscreenButtons.setPreview(fullscreen, animated);
+            fullscreenButtons.setParentRenderNode(fullscreenBlur ? swipeContainer.getRenderNode() : null);
         }
         swipeContainerFromWidth = swipeContainer.getWidth();
         swipeContainerFromHeight = swipeContainer.getHeight();

@@ -19,6 +19,8 @@
 
 package org.telegram.ui;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
@@ -70,6 +72,7 @@ public class SessionBottomSheet extends BottomSheet {
 
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(dp(4), 0, dp(4), 0);
 
         imageView = new RLottieImageView(context);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -251,14 +254,14 @@ public class SessionBottomSheet extends BottomSheet {
 
         if (!isCurrentSession) {
             TextView buttonTextView = new TextView(context);
-            buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
+            buttonTextView.setPadding(dp(34), 0, dp(34), 0);
             buttonTextView.setGravity(Gravity.CENTER);
             buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             buttonTextView.setTypeface(AndroidUtilities.bold());
             buttonTextView.setText(LocaleController.getString(R.string.TerminateSession));
 
             buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-            buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_chat_attachAudioBackground), ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhite), 120)));
+            buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(24), Theme.getColor(Theme.key_chat_attachAudioBackground), ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhite), 120)));
 
             linearLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
 
@@ -397,7 +400,7 @@ public class SessionBottomSheet extends BottomSheet {
             }
         }
 
-        imageView.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(42), Theme.getColor(colorKey)));
+        imageView.setBackground(Theme.createCircleDrawable(dp(42), Theme.getColor(colorKey)));
 //        imageView.setBackground(new SessionCell.CircleGradientDrawable(AndroidUtilities.dp(42), Theme.getColor(colorKey), Theme.getColor(colorKey2)));
         if (animation) {
             int[] colors = new int[]{0x000000, Theme.getColor(colorKey)};
@@ -436,7 +439,7 @@ public class SessionBottomSheet extends BottomSheet {
             descriptionText.setGravity(Gravity.LEFT);
             descriptionText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
             linearLayout.addView(descriptionText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 4, needSwitch ? 64 : 0, 0));
-            setPadding(0, AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4));
+            setPadding(0, dp(4), 0, dp(4));
 
             if (needSwitch) {
                 switchView = new Switch(context);
@@ -449,7 +452,7 @@ public class SessionBottomSheet extends BottomSheet {
         protected void dispatchDraw(Canvas canvas) {
             super.dispatchDraw(canvas);
             if (needDivider) {
-                canvas.drawRect(AndroidUtilities.dp(64), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
+                canvas.drawRect(dp(64), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
             }
         }
 

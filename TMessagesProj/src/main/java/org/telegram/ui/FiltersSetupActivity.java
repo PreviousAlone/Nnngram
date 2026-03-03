@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this software.
- *  If not, see
- * <https://www.gnu.org/licenses/>
- */
-
 package org.telegram.ui;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
@@ -41,10 +22,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,11 +44,11 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
+import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Cells.HeaderCell;
-import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
@@ -98,7 +78,6 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
     private ListAdapter adapter;
     private ItemTouchHelper itemTouchHelper;
     private UndoView undoView;
-    private int systemBarsBottomInset;
 
     private boolean orderChanged;
 
@@ -565,11 +544,15 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
     private ArrayList<ItemInner> oldItems = new ArrayList<>();
     private ArrayList<ItemInner> items = new ArrayList<>();
 
+    @Keep
+    private int showTagsRow;
     private int filtersStartPosition;
     private int filtersSectionStart = -1, filtersSectionEnd = -1;
     private int folderTagsPosition;
 
     private void updateRows(boolean animated) {
+        showTagsRow = -1;
+
         oldItems.clear();
         oldItems.addAll(items);
         items.clear();
@@ -603,6 +586,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
         }
         items.add(ItemInner.asShadow(null));
         folderTagsPosition = items.size();
+        showTagsRow = items.size();
         items.add(ItemInner.asCheck(LocaleController.getString(R.string.FolderShowTags)));
         items.add(ItemInner.asShadow(!getUserConfig().isPremium() ? AndroidUtilities.replaceSingleTag(LocaleController.getString(R.string.FolderShowTagsInfoPremium), Theme.key_windowBackgroundWhiteBlueHeader, AndroidUtilities.REPLACING_TAG_TYPE_LINKBOLD, () -> {
             presentFragment(new PremiumPreviewFragment("settings"));
@@ -665,13 +649,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                 }
                 return super.onTouchEvent(e);
             }
-
-            @Override
-            protected void dispatchDraw(Canvas canvas) {
-                drawSectionBackground(canvas, filtersSectionStart, filtersSectionEnd, Theme.getColor(Theme.key_windowBackgroundWhite));
-                super.dispatchDraw(canvas);
-            }
         };
+        listView.setSections();
+        actionBar.setAdaptiveBackground(listView);
         DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
         itemAnimator.setDurations(350);
         itemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
@@ -721,15 +701,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                     presentFragment(new FilterCreateActivity(filter));
                 }
             } else if (item.viewType == VIEW_TYPE_BUTTON) {
-                final int count = getMessagesController().getDialogFilters().size();
-                if (
-                    count - 1 >= getMessagesController().dialogFiltersLimitDefault && !getUserConfig().isPremium() ||
-                    count >= getMessagesController().dialogFiltersLimitPremium
-                ) {
-                    showDialog(new LimitReachedBottomSheet(this, context, LimitReachedBottomSheet.TYPE_FOLDERS, currentAccount, null));
-                } else {
-                    presentFragment(new FilterCreateActivity());
-                }
+                createFolder(getParentLayout());
             }
         });
 
@@ -742,17 +714,19 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
             }, 200);
         }
 
-        listView.setClipToPadding(false);
-        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
-            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-            if (systemBarsBottomInset != bottom) {
-                systemBarsBottomInset = bottom;
-                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
-            }
-            return insets;
-        });
-
         return fragmentView;
+    }
+
+    public void createFolder(INavigationLayout navigationLayout) {
+        final int count = getMessagesController().getDialogFilters().size();
+        if (
+            count - 1 >= getMessagesController().dialogFiltersLimitDefault && !getUserConfig().isPremium() ||
+            count >= getMessagesController().dialogFiltersLimitPremium
+        ) {
+            showDialog(new LimitReachedBottomSheet(this, getContext(), LimitReachedBottomSheet.TYPE_FOLDERS, currentAccount, null));
+        } else if (navigationLayout != null) {
+            navigationLayout.presentFragment(new FilterCreateActivity());
+        }
     }
 
     public UndoView getUndoView() {
@@ -761,6 +735,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
         }
         if (undoView == null) {
             ((FrameLayout) fragmentView).addView(undoView = new UndoView(getContext()), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 8, 0, 8, 8));
+            undoView.setTranslationY(-getBottomInset());
         }
         return undoView;
     }
@@ -905,11 +880,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
             switch (viewType) {
                 case VIEW_TYPE_HEADER:
                     view = new HeaderCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case VIEW_TYPE_HINT:
-                    view = new HintInnerCell(mContext, R.raw.filters, AndroidUtilities.replaceTags(LocaleController.formatString("CreateNewFilterInfo", R.string.CreateNewFilterInfo)));
-                    view.setBackgroundDrawable(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_top, Theme.key_windowBackgroundGrayShadow));
+                    view = new HintInnerCell(mContext, R.raw.filters, AndroidUtilities.replaceTags(LocaleController.formatString(R.string.CreateNewFilterInfo)));
                     break;
                 case VIEW_TYPE_FILTER:
                     FilterCell filterCell = new FilterCell(mContext);
@@ -975,6 +948,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                         if (LocaleController.isRTL) {
                             options.setGravity(Gravity.LEFT);
                         }
+                        options.setScrimViewBackground(listView.getClipBackground(cell));
                         options.show();
                     });
                     view = filterCell;
@@ -984,16 +958,13 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                     break;
                 case VIEW_TYPE_BUTTON:
                     view = new TextCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case VIEW_TYPE_CHECK:
                     view = new TextCheckCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case VIEW_TYPE_FILTER_SUGGESTION:
                 default:
                     SuggestedFilterCell suggestedFilterCell = new SuggestedFilterCell(mContext);
-                    suggestedFilterCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     suggestedFilterCell.setAddOnClickListener(v -> {
                         TLRPC.TL_dialogFilterSuggested suggested = suggestedFilterCell.getSuggestedFilter();
                         MessagesController.DialogFilter filter = new MessagesController.DialogFilter();
@@ -1086,7 +1057,6 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                         cell.setText(item.text);
                     }
                     cell.setBottomPadding(last ? 32 : 17);
-                    cell.setBackground(Theme.getThemedDrawableByKey(mContext, divider ? R.drawable.greydivider : R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     break;
                 }
                 case VIEW_TYPE_BUTTON: {
@@ -1246,7 +1216,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CELLBACKGROUNDCOLOR, new Class[]{HeaderCell.class, TextCell.class, FilterCell.class, SuggestedFilterCell.class}, null, null, null, Theme.key_windowBackgroundWhite));
         themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_windowBackgroundGray));
 
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
+//        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_ITEMSCOLOR, null, null, null, null, Theme.key_actionBarDefaultIcon));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, null, null, Theme.key_actionBarDefaultTitle));
@@ -1268,13 +1238,19 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_BACKGROUNDFILTER, new Class[]{TextCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_switchTrackChecked));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_checkboxCheck));
 
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_BACKGROUNDFILTER, new Class[]{ShadowSectionCell.class}, null, null, null, Theme.key_windowBackgroundGrayShadow));
-
         return themeDescriptions;
     }
 
     @Override
     public boolean isSupportEdgeToEdge() {
         return true;
+    }
+    @Override
+    public void onInsets(int left, int top, int right, int bottom) {
+        listView.setPadding(0, 0, 0, bottom);
+        listView.setClipToPadding(false);
+        if (undoView != null) {
+            undoView.setTranslationY(-bottom);
+        }
     }
 }

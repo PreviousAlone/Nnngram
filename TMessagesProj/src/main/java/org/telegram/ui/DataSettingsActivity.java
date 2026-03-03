@@ -1,20 +1,9 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
+ * This is the source code of Telegram for Android v. 5.x.x.
+ * It is licensed under GNU GPL v. 2 or later.
+ * You should have received a copy of the license in this archive (see LICENSE).
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this software.
- *  If not, see
- * <https://www.gnu.org/licenses/>
+ * Copyright Nikolai Kudashov, 2013-2018.
  */
 
 package org.telegram.ui;
@@ -23,7 +12,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -33,11 +21,10 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -79,7 +66,6 @@ public class DataSettingsActivity extends BaseFragment {
     private RecyclerListView listView;
     @SuppressWarnings("FieldCanBeLocal")
     private LinearLayoutManager layoutManager;
-    private int systemBarsBottomInset;
 
     private ArrayList<File> storageDirs;
 
@@ -88,6 +74,7 @@ public class DataSettingsActivity extends BaseFragment {
     private int roamingRow;
     private int wifiRow;
     private int storageNumRow;
+    @Keep
     private int resetDownloadRow = -1;
     private int mediaDownloadSection2Row;
     private int usageSectionRow;
@@ -105,17 +92,23 @@ public class DataSettingsActivity extends BaseFragment {
     private int autoplayVideoRow = -1;
     private int autoplaySectionRow = -1;
     private int callsSectionRow;
+    @Keep
     private int useLessDataForCallsRow;
     private int quickRepliesRow = -1;
     private int callsSection2Row;
     private int proxySectionRow;
+    @Keep
     private int proxyRow;
     private int proxySection2Row;
+    @Keep
     private int clearDraftsRow;
     private int clearDraftsSectionRow;
     private int saveToGallerySectionRow;
+    @Keep
     private int saveToGalleryPeerRow;
+    @Keep
     private int saveToGalleryChannelsRow;
+    @Keep
     private int saveToGalleryGroupsRow;
     private int saveToGalleryDividerRow;
 
@@ -144,11 +137,9 @@ public class DataSettingsActivity extends BaseFragment {
         storageUsageRow = rowCount++;
         dataUsageRow = rowCount++;
         storageNumRow = -1;
-        if (Build.VERSION.SDK_INT >= 19) {
-            storageDirs = AndroidUtilities.getRootDirs();
-            if (storageDirs.size() > 1) {
-                storageNumRow = rowCount++;
-            }
+        storageDirs = AndroidUtilities.getRootDirs();
+        if (storageDirs.size() > 1) {
+            storageNumRow = rowCount++;
         }
         usageSection2Row = rowCount++;
         mediaDownloadSectionRow = rowCount++;
@@ -300,6 +291,8 @@ public class DataSettingsActivity extends BaseFragment {
                 return getThemedColor(Theme.key_listSelector);
             }
         };
+        listView.setSections();
+        actionBar.setAdaptiveBackground(listView);
         listView.setVerticalScrollBarEnabled(false);
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
@@ -608,16 +601,6 @@ public class DataSettingsActivity extends BaseFragment {
         itemAnimator.setSupportsChangeAnimations(false);
         listView.setItemAnimator(itemAnimator);
 
-        listView.setClipToPadding(false);
-        ViewCompat.setOnApplyWindowInsetsListener(listView, (v, insets) -> {
-            int bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom + insets.getInsets(WindowInsetsCompat.Type.captionBar()).bottom;
-            if (systemBarsBottomInset != bottom) {
-                systemBarsBottomInset = bottom;
-                listView.setPadding(listView.getPaddingLeft(), listView.getPaddingTop(), listView.getPaddingRight(), listView.getPaddingBottom() + systemBarsBottomInset);
-            }
-            return insets;
-        });
-
         return fragmentView;
     }
 
@@ -664,21 +647,16 @@ public class DataSettingsActivity extends BaseFragment {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             switch (holder.getItemViewType()) {
                 case 0: {
-                    if (position == clearDraftsSectionRow) {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
-                    } else {
-                        holder.itemView.setBackgroundDrawable(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
-                    }
                     break;
                 }
                 case 6: {
                     TextCell textCell = (TextCell) holder.itemView;
                     if (position == storageUsageRow) {
                         if (storageUsageLoading) {
-                            textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.StorageUsage), "", false, R.drawable.msg_filled_storageusage, getThemedColor(Theme.key_color_lightblue), true);
+                            textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.StorageUsage), "", false, R.drawable.msg_filled_storageusage, 0xFF4F85F6, 0xFF3568E8, true);
                             textCell.setDrawLoading(true, 45, updateStorageUsageAnimated);
                         } else {
-                            textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.StorageUsage), storageUsageSize <= 0 ? "" : AndroidUtilities.formatFileSize(storageUsageSize), true, R.drawable.msg_filled_storageusage, getThemedColor(Theme.key_color_lightblue), true);
+                            textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.StorageUsage), storageUsageSize <= 0 ? "" : AndroidUtilities.formatFileSize(storageUsageSize), true, R.drawable.msg_filled_storageusage, 0xFF4F85F6, 0xFF3568E8, true);
                             textCell.setDrawLoading(false, 45, updateStorageUsageAnimated);
                         }
                         updateStorageUsageAnimated = false;
@@ -692,7 +670,7 @@ public class DataSettingsActivity extends BaseFragment {
                             statsController.getSentBytesCount(1, StatsController.TYPE_TOTAL) +
                             statsController.getSentBytesCount(2, StatsController.TYPE_TOTAL)
                         );
-                        textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.NetworkUsage), AndroidUtilities.formatFileSize(size), true, R.drawable.msg_filled_datausage, getThemedColor(Theme.key_color_green), storageNumRow != -1);
+                        textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.NetworkUsage), AndroidUtilities.formatFileSize(size), true, R.drawable.msg_filled_datausage, 0xFF55CA47, 0xFF27B434, storageNumRow != -1);
                     } else if (position == storageNumRow) {
                         String dir = storageDirs.get(0).getAbsolutePath();
                         if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
@@ -705,7 +683,7 @@ public class DataSettingsActivity extends BaseFragment {
                             }
                         }
                         final String value = dir == null || dir.contains("/storage/emulated/") ? LocaleController.getString(R.string.InternalStorage) : LocaleController.getString(R.string.SdCard);
-                        textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.StoragePath), value, true, R.drawable.msg_filled_sdcard, getThemedColor(Theme.key_color_yellow), false);
+                        textCell.setTextAndValueAndColorfulIcon(LocaleController.getString(R.string.StoragePath), value, true, R.drawable.msg_filled_sdcard, 0xFFF09F1B, 0xFFE18A11, false);
                     }
                     break;
                 }
@@ -923,28 +901,22 @@ public class DataSettingsActivity extends BaseFragment {
                     break;
                 case 1:
                     view = new TextSettingsCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 2:
                     view = new HeaderCell(mContext, 22);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 3:
                     view = new TextCheckCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 4:
                     view = new TextInfoPrivacyCell(mContext);
-                    view.setBackgroundDrawable(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 5:
                     view = new NotificationsCheckCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 6:
                 default:
                     view = new TextCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
@@ -978,7 +950,7 @@ public class DataSettingsActivity extends BaseFragment {
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CELLBACKGROUNDCOLOR, new Class[]{TextSettingsCell.class, TextCheckCell.class, HeaderCell.class, NotificationsCheckCell.class}, null, null, null, Theme.key_windowBackgroundWhite));
         themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_windowBackgroundGray));
 
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
+//        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefault));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_ITEMSCOLOR, null, null, null, null, Theme.key_actionBarDefaultIcon));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, null, null, Theme.key_actionBarDefaultTitle));
@@ -993,8 +965,6 @@ public class DataSettingsActivity extends BaseFragment {
 
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{View.class}, Theme.dividerPaint, null, null, Theme.key_divider));
 
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_BACKGROUNDFILTER, new Class[]{ShadowSectionCell.class}, null, null, null, Theme.key_windowBackgroundGrayShadow));
-
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextSettingsCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextSettingsCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteValueText));
 
@@ -1005,7 +975,6 @@ public class DataSettingsActivity extends BaseFragment {
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextCheckCell.class}, new String[]{"checkBox"}, null, null, null, Theme.key_switchTrack));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextCheckCell.class}, new String[]{"checkBox"}, null, null, null, Theme.key_switchTrackChecked));
 
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_BACKGROUNDFILTER, new Class[]{TextInfoPrivacyCell.class}, null, null, null, Theme.key_windowBackgroundGrayShadow));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextInfoPrivacyCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText4));
 
         return themeDescriptions;
@@ -1014,5 +983,10 @@ public class DataSettingsActivity extends BaseFragment {
     @Override
     public boolean isSupportEdgeToEdge() {
         return true;
+    }
+    @Override
+    public void onInsets(int left, int top, int right, int bottom) {
+        listView.setPadding(0, 0, 0, bottom);
+        listView.setClipToPadding(false);
     }
 }

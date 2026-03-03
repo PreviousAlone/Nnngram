@@ -1,18 +1,9 @@
 /*
- * Copyright (C) 2019-2025 qwq233 <qwq233@qwq2333.top>
- * https://github.com/qwq233/Nullgram
+ * This is the source code of Telegram for Android v. 5.x.x.
+ * It is licensed under GNU GPL v. 2 or later.
+ * You should have received a copy of the license in this archive (see LICENSE).
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, version 2 of the License.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * Copyright Nikolai Kudashov, 2013-2018.
  */
 
 package org.telegram.messenger;
@@ -383,6 +374,7 @@ public class NotificationCenter {
     public static final int botForumDraftUpdate = totalEvents++;
     public static final int botForumDraftDelete = totalEvents++;
     public static final int tlSchemeParseException = totalEvents++;
+    public static final int callTabsVisibleToggled = totalEvents++;
     public static final int mentionReadParticipantsLoaded = totalEvents++;
 
     public static boolean alreadyLogged;
@@ -696,6 +688,14 @@ public class NotificationCenter {
                 }
                 addAfterBroadcast.clear();
             }
+        }
+    }
+
+    public void updateObserver(boolean add, NotificationCenterDelegate observer, int id) {
+        if (add) {
+            addObserver(observer, id);
+        } else {
+            removeObserver(observer, id);
         }
     }
 
