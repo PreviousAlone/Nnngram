@@ -282,7 +282,6 @@ import xyz.nextalone.nnngram.config.ForwardContext;
 import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 import xyz.nextalone.nnngram.helpers.QrHelper;
 import xyz.nextalone.nnngram.ui.AppLinkVerifyBottomSheet;
-import xyz.nextalone.nnngram.ui.BackButtonRecentMenu;
 import xyz.nextalone.nnngram.ui.SendOptionsMenuLayout;
 import xyz.nextalone.nnngram.utils.APKUtils;
 import xyz.nextalone.nnngram.utils.Defines;
@@ -5424,14 +5423,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         } else {
             showSearch(false, false, false);
-        }
-        if (!onlySelect && folderId == 0) {
-            View backButton = actionBar.getBackButton();
-            if (backButton != null) backButton.setOnLongClickListener(e -> {
-                if (searching || filterTabsView != null && filterTabsView.isEditing() || actionBar.isActionModeShowed()) return false;
-                BackButtonRecentMenu.show(currentAccount, this, backButton);
-                return true;
-            });
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

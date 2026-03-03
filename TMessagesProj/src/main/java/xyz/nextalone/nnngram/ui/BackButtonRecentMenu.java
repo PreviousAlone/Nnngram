@@ -246,13 +246,10 @@ public class BackButtonRecentMenu {
         scrimPopupWindow.getContentView().setFocusableInTouchMode(true);
         layout.setFitItems(true);
         
-        int popupX = AndroidUtilities.dp(8) - backgroundPaddings.left;
-        if (AndroidUtilities.isTablet()) {
-            int[] location = new int[2];
-            fragmentView.getLocationInWindow(location);
-            popupX += location[0];
-        }
-        int popupY = backButton.getBottom() - backgroundPaddings.top - AndroidUtilities.dp(8);
+        int[] anchorLocation = new int[2];
+        backButton.getLocationInWindow(anchorLocation);
+        int popupX = anchorLocation[0] - backgroundPaddings.left;
+        int popupY = anchorLocation[1] - layout.getMeasuredHeight() - backgroundPaddings.bottom + AndroidUtilities.dp(8);
         scrimPopupWindow.showAtLocation(fragmentView, Gravity.LEFT | Gravity.TOP, popupX, popupY);
         scrimPopupWindow.dimBehind();
     }
