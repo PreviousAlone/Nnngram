@@ -887,7 +887,9 @@ public class GeneralSettingActivity extends BaseActivity {
                 }
                 case 4: {
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
-                    if (position == generalRow) {
+                    if (position == drawerRow) {
+                        headerCell.setText(LocaleController.getString(R.string.Chat));
+                    } else if (position == generalRow) {
                         headerCell.setText(LocaleController.getString("General", R.string.General));
                     } else if (position == translatorRow) {
                         headerCell.setText(LocaleController.getString("Translator", R.string.Translator));
@@ -964,7 +966,7 @@ public class GeneralSettingActivity extends BaseActivity {
                 return 1;
             } else if (position == tabsTitleTypeRow || position == translationProviderRow || position == deepLFormalityRow || position == translationTargetRow ||
                 position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow ||
-                position == drawerListRow || position == deepLxApiRow || position == editTextTranslationTargetRow ||
+                position == deepLxApiRow || position == editTextTranslationTargetRow ||
                 position == llmProviderRow || position == llmApiKeyRow || position == llmApiUrlRow || position == llmModelNameRow ||
                 position == llmSystemPromptRow || position == llmTemperatureRow) {
                 return 2;
