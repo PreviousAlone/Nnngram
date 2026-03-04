@@ -131,10 +131,10 @@ object FolderIconHelper {
     }
 
     @JvmStatic
-    fun getPaddingTab(): Int = if (ConfigManager.getIntOrDefault(Defines.tabMenu, Defines.tabMenuMix) != Defines.tabMenuIcon) {
-        AndroidUtilities.dp(32f)  // fixme: 12.4.1 -> 24
+    fun getPaddingTab(): Float = if (ConfigManager.getIntOrDefault(Defines.tabMenu, Defines.tabMenuMix) != Defines.tabMenuIcon) {
+        24f
     } else {
-        AndroidUtilities.dp(16f)
+        16f
     }
 
 
