@@ -363,6 +363,11 @@ public abstract class BaseActivity extends BaseFragment {
         return true;
     }
 
+    @Override
+    public void onInsets(int left, int top, int right, int bottom) {
+        listView.setPadding(0, 0, 0, bottom);
+    }
+
     class BlurContentView extends SizeNotifierFrameLayout {
 
         public BlurContentView(Context context) {
