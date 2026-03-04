@@ -199,11 +199,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         super.onResume();
         blur3_updateColors();
         if (tabsView != null && tabs[INDEX_CONTACTS] != null) {
-            if (Build.VERSION.SDK_INT >= 23 && UserConfig.getInstance(currentAccount).syncContacts && !ContactsController.hasContactsPermission()) {
-                tabs[INDEX_CONTACTS].setCounter("!", true, true);
-            } else {
-                tabs[INDEX_CONTACTS].setCounter(null, true, true);
-            }
+            tabs[INDEX_CONTACTS].setCounter(null, true, true);
         }
         checkUnreadCount(true);
 
