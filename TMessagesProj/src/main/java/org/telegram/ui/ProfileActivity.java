@@ -344,6 +344,7 @@ import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.InlinesKt;
 import xyz.nextalone.nnngram.activity.MainSettingActivity;
 import xyz.nextalone.nnngram.config.ConfigManager;
+import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.helpers.SettingsHelper;
 import xyz.nextalone.nnngram.helpers.SettingsSearchResult;
 import xyz.nextalone.nnngram.helpers.TranslateHelper;
@@ -3486,7 +3487,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        if (myProfile) {
+        if (myProfile && !Config.hideStories) {
             bottomButtonsContainer = new FrameLayout(context);
             bottomButtonsContainer.setBackgroundColor(Color.TRANSPARENT);
 
@@ -3762,7 +3763,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     return;
                 }
 
-                if (myProfile) {
+                if (myProfile && bottomButtonContainer != null) {
                     if (bottomButtonContainer[0] != null) {
                         final float x = sharedMediaLayout.getTabTranslationX(SharedMediaLayout.TAB_STORIES, true);
                         bottomButtonContainer[0].setTranslationX(x);
@@ -3779,7 +3780,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             @Override
             protected void onBottomButtonVisibilityChange() {
                 super.onBottomButtonVisibilityChange();
-                if (myProfile && bottomButtonContainer[0] != null && sharedMediaLayout != null) {
+                if (myProfile && bottomButtonContainer != null && bottomButtonContainer[0] != null && sharedMediaLayout != null) {
                     bottomButtonContainer[0].setTranslationY(dp(72) * (1f - sharedMediaLayout.getBottomButtonStoriesVisibility()));
                 }
             }
@@ -3795,7 +3796,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             @Override
             protected void onActionModeSelectedUpdate(SparseArray<MessageObject> messageObjects) {
                 super.onActionModeSelectedUpdate(messageObjects);
-                if (myProfile) {
+if (myProfile && bottomButton != null) {
                     final int count = messageObjects.size();
 
                     int type = getSelectedTab();
@@ -5985,7 +5986,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         contentView.addView(blurredView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         createBirthdayEffect();
-        if (myProfile) {
+        if (myProfile && bottomButtonsContainer != null) {
             contentView.addView(bottomButtonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 60, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
         }
 
@@ -16872,6 +16873,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int lastStoriesSelectedCount;
     private boolean lastStoriesIsInAlbum;
     private void checkStoriesButtonText(int count, boolean animated) {
+        if (bottomButton == null) return;
         final boolean inAlbum = SharedMediaLayout.isStoryAlbumPageType(sharedMediaLayout.getClosestTab());
         if (count == lastStoriesSelectedCount && inAlbum == lastStoriesIsInAlbum) {
             return;
