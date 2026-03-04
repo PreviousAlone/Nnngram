@@ -3303,6 +3303,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             AndroidUtilities.removeFromParent(qrItem);
             qrItem.setOnClickListener(v -> QrHelper.openCameraScanActivity(DialogsActivity.this));
 
+            qrItem.setVisibility(View.GONE);
             fragmentSearchField.addAdditionalIcon(qrItem);
             fragmentSearchField.updateColors();
         }
@@ -7390,6 +7391,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 searchTabsView = null;
             }
             if (qrItem != null) {
+                qrItem.setVisibility(View.VISIBLE);
                 if (whiteActionBar) {
                     qrItem.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
                     qrItem.setIconColor(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon));
@@ -7516,6 +7518,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         if (searchViewPager != null) {
                             searchViewPager.clear();
                         }
+                        if (qrItem != null) {
+                            qrItem.setVisibility(View.GONE);
+                        }
                         viewPages[0].listView.show();
                         searchWasFullyShowed = false;
                         if (rightSlidingDialogContainer != null) {
@@ -7576,6 +7581,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     searchViewPager.setScaleY(1);
                 }
                 searchViewPager.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+            if (qrItem != null) {
+                qrItem.setVisibility(show ? View.VISIBLE : View.GONE);
             }
             if (fragmentSearchField != null) {
                 fragmentSearchField.setTranslationY((show ? -dp(FILTER_TABS_HEIGHT) : 0) + getSearchFieldAdditionOffset());
