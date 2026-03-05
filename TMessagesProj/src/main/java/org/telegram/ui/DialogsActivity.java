@@ -13620,7 +13620,105 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public void onParentScrollToTop() {
-        scrollToTop(true, true);
+        if (Config.scrollToNextUnreadWhenAtTop && isAtTop()) {
+            scrollToNextUnread();
+        } else {
+            scrollToTop(true, true);
+        }
+    }
+
+    private boolean isAtTop() {
+        if (viewPages == null || viewPages[0] == null || viewPages[0].layoutManager == null) {
+            return true;
+        }
+        int firstPos = viewPages[0].layoutManager.findFirstCompletelyVisibleItemPosition();
+        int topPos = viewPages[0].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[0].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0;
+        return firstPos <= topPos;
+    }
+
+    private void scrollToNextUnread() {
+        if (viewPages == null || viewPages.length == 0) {
+            return;
+        }
+
+        ViewPage currentPage = viewPages[0];
+        for (int i = 0; i < viewPages.length; i++) {
+            if (viewPages[i] != null && viewPages[i].getVisibility() == View.VISIBLE && viewPages[i].getAlpha() > 0f) {
+                currentPage = viewPages[i];
+                break;
+            }
+        }
+
+        if (currentPage == null || currentPage.dialogsAdapter == null || currentPage.listView == null || currentPage.layoutManager == null) {
+            return;
+        }
+
+        ArrayList<TLRPC.Dialog> dialogs = getDialogsArray(currentAccount, currentPage.dialogsType, folderId, false);
+        if (dialogs == null || dialogs.isEmpty()) {
+            return;
+        }
+
+        int firstVisibleAdapterPos = currentPage.layoutManager.findFirstVisibleItemPosition();
+        int fixedPos = currentPage.dialogsAdapter.fixPosition(firstVisibleAdapterPos);
+        int headerOffset = firstVisibleAdapterPos - fixedPos;
+        int firstVisibleDialogIndex = firstVisibleAdapterPos - headerOffset;
+
+        int startIndex = Math.max(0, firstVisibleDialogIndex + 1);
+        int foundIndex = -1;
+
+        for (int i = startIndex; i < dialogs.size(); i++) {
+            TLRPC.Dialog dialog = dialogs.get(i);
+            boolean hasUnread = dialog.unread_count > 0 || dialog.unread_mark;
+            boolean muted = getMessagesController().isDialogMuted(dialog.id, 0);
+            boolean hasMentions = dialog.unread_mentions_count > 0;
+            if (hasUnread && (!muted || hasMentions)) {
+                foundIndex = i;
+                break;
+            }
+        }
+
+        if (foundIndex == -1) {
+            for (int i = 0; i < startIndex && i < dialogs.size(); i++) {
+                TLRPC.Dialog dialog = dialogs.get(i);
+                boolean hasUnread = dialog.unread_count > 0 || dialog.unread_mark;
+                boolean muted = getMessagesController().isDialogMuted(dialog.id, 0);
+                boolean hasMentions = dialog.unread_mentions_count > 0;
+                if (hasUnread && (!muted || hasMentions)) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (foundIndex == -1) {
+            if (BulletinFactory.canShowBulletin(this)) {
+                BulletinFactory.of(this).createSimpleBulletin(R.raw.done, LocaleController.getString(R.string.NoUnreadChats)).show();
+            }
+            return;
+        }
+
+        int targetAdapterPos = -1;
+        int adapterCount = currentPage.dialogsAdapter.getItemCount();
+        for (int adapterPos = 0; adapterPos < adapterCount; adapterPos++) {
+            if (currentPage.dialogsAdapter.fixPosition(adapterPos) == foundIndex) {
+                targetAdapterPos = adapterPos;
+                break;
+            }
+        }
+        if (targetAdapterPos < 0) {
+            targetAdapterPos = foundIndex + headerOffset;
+        }
+
+        final int finalTargetAdapterPos = targetAdapterPos;
+        final ViewPage finalPage = currentPage;
+        currentPage.listView.post(() -> {
+            if (finalPage.layoutManager == null || finalPage.listView == null) {
+                return;
+            }
+            finalPage.layoutManager.scrollToPositionWithOffset(finalTargetAdapterPos, 0);
+            finalPage.listView.scrollToPosition(finalTargetAdapterPos);
+            finalPage.listView.stopScroll();
+        });
     }
 
     private void switchTheme(Theme.ThemeInfo themeInfo, boolean toDark) {

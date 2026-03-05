@@ -266,6 +266,7 @@ object Defines {
     @BooleanConfig const val cancelLoadingVideoWhenClose = "cancelLoadingVideoWhenClose"
     @BooleanConfig const val hideSavedAndArchivedMessagesInList = "hideSavedAndArchivedMessagesInList"
     @BooleanConfig(true) const val showIdAndDc = "showIdAndDc"
+    @BooleanConfig const val scrollToNextUnreadWhenAtTop = "scrollToNextUnreadWhenAtTop"
 
     // Drawer List
     @BooleanConfig(true) const val showNewGroup = "showNewGroup"

@@ -426,6 +426,8 @@
     <string name="ClearRecentChatAlert">Do you want to clear your recent chats?</string>
     <string name="showProxyEntryInDrawer">Show proxy entry in drawer</string>
     <string name="hideSavedAndArchivedMessagesInList">Hide saved and archived messages in list</string>
+    <string name="scrollToNextUnreadWhenAtTop">Scroll to next unread when chat tab is at top</string>
+    <string name="NoUnreadChats">No unread chats</string>
     <string name="messagePlaceholderInSaved">Here are your saved messages</string>
     <string name="messagePlaceholderInArchived">Here are your archived messages</string>
     <string name="retryAfterFileDownloaded">Please retry after the file is downloaded</string>

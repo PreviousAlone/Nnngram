@@ -381,6 +381,8 @@
     <string name="ClearRecentChatAlert">您確定要清除您的最近對話嗎？</string>
     <string name="showProxyEntryInDrawer">在側邊欄中顯示代理條目</string>
     <string name="hideSavedAndArchivedMessagesInList">在列表裡隱藏收藏夾和已歸檔消息</string>
+    <string name="scrollToNextUnreadWhenAtTop">在列表頂部時點擊聊天標籤跳轉到下一條未讀</string>
+    <string name="NoUnreadChats">沒有未讀會話</string>
     <string name="messagePlaceholderInSaved">這裡是您收藏的消息</string>
     <string name="messagePlaceholderInArchived">這裡是您已歸檔的消息</string>
     <string name="ProviderLLMTranslate">大模型翻譯</string>
