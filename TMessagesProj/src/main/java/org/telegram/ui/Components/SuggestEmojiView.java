@@ -1104,7 +1104,11 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
 
         @Override
         public long getItemId(int position) {
-            return suggestEmojiView.keywordResults == null ? 0 : suggestEmojiView.keywordResults.get(position).emoji.hashCode();
+            ArrayList<MediaDataController.KeywordResult> results = suggestEmojiView.keywordResults;
+            if (results == null || position < 0 || position >= results.size()) {
+                return 0;
+            }
+            return results.get(position).emoji.hashCode();
         }
 
         @Override
@@ -1120,12 +1124,15 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ((EmojiImageView) holder.itemView).setEmoji(suggestEmojiView.keywordResults == null ? null : suggestEmojiView.keywordResults.get(position).emoji, suggestEmojiView.getDirection());
+            ArrayList<MediaDataController.KeywordResult> results = suggestEmojiView.keywordResults;
+            String emoji = (results == null || position < 0 || position >= results.size()) ? null : results.get(position).emoji;
+            ((EmojiImageView) holder.itemView).setEmoji(emoji, suggestEmojiView.getDirection());
         }
 
         @Override
         public int getItemCount() {
-            return suggestEmojiView.keywordResults == null ? 0 : suggestEmojiView.keywordResults.size();
+            ArrayList<MediaDataController.KeywordResult> results = suggestEmojiView.keywordResults;
+            return results == null ? 0 : results.size();
         }
     }
 }
