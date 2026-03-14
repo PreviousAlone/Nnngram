@@ -13,8 +13,10 @@ abstract class SortListItems {
         val savedOrder = ConfigManager.getStringOrDefault(TextStyleItems.define, "")
         if (savedOrder?.isNotEmpty() == true) {
             val savedOrderList = savedOrder.split(",").map { it.toInt() }
-            for (i in 0 until TextStyleItems.itemDefines.size) {
-                originToAdjusted[i] = savedOrderList[i]
+            if (savedOrderList.size == TextStyleItems.itemDefines.size) {
+                for (i in 0 until TextStyleItems.itemDefines.size) {
+                    originToAdjusted[i] = savedOrderList[i]
+                }
             }
         }
         return originToAdjusted
