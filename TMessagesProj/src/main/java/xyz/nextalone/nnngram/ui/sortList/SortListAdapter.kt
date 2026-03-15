@@ -22,8 +22,10 @@ abstract class SortListAdapter(
         val savedOrder = ConfigManager.getStringOrDefault(define, "")
         if (savedOrder?.isNotEmpty() == true) {
             val savedOrderList = savedOrder.split(",").map { it.toInt() }
-            for (i in itemDefines.indices) {
-                originToAdjusted[i] = savedOrderList[i]
+            if (savedOrderList.size == itemDefines.size) {
+                for (i in itemDefines.indices) {
+                    originToAdjusted[i] = savedOrderList[i]
+                }
             }
         }
     }
