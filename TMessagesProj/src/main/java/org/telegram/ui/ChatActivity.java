@@ -2986,6 +2986,7 @@ public class ChatActivity extends BaseFragment implements
         getNotificationCenter().addObserver(this, NotificationCenter.loadingMessagesFailed);
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.invalidateMotionBackground);
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.messageFilterRulesChanged);
         getNotificationCenter().addObserver(this, NotificationCenter.didUpdateConnectionState);
         getNotificationCenter().addObserver(this, NotificationCenter.updateInterfaces);
         getNotificationCenter().addObserver(this, NotificationCenter.updateDefaultSendAsPeer);
@@ -3463,6 +3464,7 @@ public class ChatActivity extends BaseFragment implements
         getNotificationCenter().removeObserver(this, NotificationCenter.updatedChatRanks);
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.invalidateMotionBackground);
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.messageFilterRulesChanged);
         getNotificationCenter().removeObserver(this, NotificationCenter.didUpdateConnectionState);
         getNotificationCenter().removeObserver(this, NotificationCenter.updateInterfaces);
         getNotificationCenter().removeObserver(this, NotificationCenter.updateDefaultSendAsPeer);
@@ -20534,6 +20536,17 @@ public class ChatActivity extends BaseFragment implements
 
     @Override
     public void didReceivedNotification(int id, int account, final Object... args) {
+        if (id == NotificationCenter.messageFilterRulesChanged) {
+            for (MessageObject m : messages) m.reapplyFilterAction();
+            if (chatAdapter != null && chatAdapter.filteredMessages != null) {
+                for (MessageObject m : chatAdapter.filteredMessages) m.reapplyFilterAction();
+            }
+            if (chatAdapter != null && chatAdapter.frozenMessages != null) {
+                for (MessageObject m : chatAdapter.frozenMessages) m.reapplyFilterAction();
+            }
+            if (chatAdapter != null) chatAdapter.notifyDataSetChanged();
+            return;
+        }
         if (id == NotificationCenter.messagesDidLoad) {
             int guid = (Integer) args[10];
             if (guid != classGuid) {

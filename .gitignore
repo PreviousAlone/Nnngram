@@ -16,3 +16,5 @@ History.md
 apks
 dprint.json
 libtmessages.*.so
+.DS_Store
+**/.DS_Store

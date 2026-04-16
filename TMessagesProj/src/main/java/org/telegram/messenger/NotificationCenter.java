@@ -380,6 +380,7 @@ public class NotificationCenter {
     public static final int callTabsVisibleToggled = totalEvents++;
     public static final int contactsPermissionBadgeCheck = totalEvents++;
     public static final int mentionReadParticipantsLoaded = totalEvents++;
+    public static final int messageFilterRulesChanged = totalEvents++;
 
     public static boolean alreadyLogged;
 

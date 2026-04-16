@@ -3107,12 +3107,12 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                         groupMessages = MessagesController.getInstance(currentAccount).dialogMessage.get(dialog.id);
                         message = groupMessages != null && groupMessages.size() > 0 ? groupMessages.get(0) : null;
 
-                        if (message != null && Config.ignoreBlockedUser
-                            && MessagesController.getInstance(currentAccount).blockePeers.indexOfKey(message.getSenderId()) >= 0) {
-                            if (MessagesController.getInstance(currentAccount).dialogMessageFromUnblocked.get(dialog.id) != null) {
-                                message = MessagesController.getInstance(currentAccount).dialogMessageFromUnblocked.get(dialog.id);
+                        if (message != null && message.isBlockedMessage()) {
+                            MessageObject cached = MessagesController.getInstance(currentAccount).dialogMessageFromUnblocked.get(dialog.id);
+                            if (cached != null && !cached.isBlockedMessage()) {
+                                message = cached;
                             } else {
-                                message = MessageUtils.getInstance(currentAccount).getLastMessageFromUnblockUser(dialog.id);
+                                message = MessageUtils.getInstance(currentAccount).getLastVisibleMessage(dialog.id);
                                 MessagesController.getInstance(currentAccount).dialogMessageFromUnblocked.put(dialog.id, message);
                             }
                         }

@@ -109,6 +109,7 @@ object Defines {
     @BooleanConfig const val hideTitle = "hideTitle"
     @BooleanConfig const val showHideTitle = "showHideTitle"
     @StringConfig("") const val messageFilter = "messageFilter1"
+    @StringConfig("[]") const val filterRules = "filterRules"
     @BooleanConfig const val sendLargePhoto = "sendLargePhoto"
 
     /**

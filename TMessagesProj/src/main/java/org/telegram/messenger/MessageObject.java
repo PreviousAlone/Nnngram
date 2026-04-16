@@ -123,6 +123,7 @@ import java.util.regex.Pattern;
 import me.vkryl.core.BitwiseUtils;
 
 import xyz.nextalone.gen.Config;
+import xyz.nextalone.nnngram.helpers.MessageFilterRules;
 import xyz.nextalone.nnngram.utils.StringUtils;
 
 public class MessageObject {
@@ -264,6 +265,12 @@ public class MessageObject {
 
     public boolean isSpoilersRevealed = Config.displaySpoilerMsgDirectly;
     public boolean isMediaSpoilersRevealed;
+    /** 消息过滤动作, -1 表示未计算. 见 MessageFilterRules.ACTION_*. */
+    public int filterAction = -1;
+    /** 规则变更时需要移除, 保存已注入的 spoiler entity 引用. */
+    public TLRPC.MessageEntity filterSpoilerEntity = null;
+    /** 标记 COLLAPSE 占位替换是否已应用, 用于 reapplyFilterAction 幂等处理. */
+    public boolean filterCollapsedApplied = false;
     public boolean isMediaSpoilersRevealedInSharedMedia;
     public boolean revealingMediaSpoilers;
     public byte[] sponsoredId;
@@ -645,6 +652,7 @@ public class MessageObject {
     }
 
     public boolean hasMediaSpoilers() {
+        if (filterAction == MessageFilterRules.ACTION_SPOILER && !isMediaSpoilersRevealed) return true;
         return !Config.displaySpoilerMsgDirectly && !isRepostPreview && (messageOwner.media != null && messageOwner.media.spoiler || needDrawBluredPreview()) || isHiddenSensitive();
     }
 
@@ -1917,6 +1925,35 @@ public class MessageObject {
         }
 
         updateMessageText(users, chats, sUsers, sChats);
+        // 重置并重新计算过滤动作 — 此刻 messageText/caption 已就绪, 规则引擎的文本匹配才能准确生效.
+        // HIDE 已在上方 isBlockedMessage() 处被 generateLayout=false 处理过; 此处处理 SPOILER/COLLAPSE.
+        filterAction = -1;
+        int __filterAct = getFilterAction();
+        if (__filterAct == MessageFilterRules.ACTION_SPOILER
+            && filterSpoilerEntity == null && !isRestrictedMessage) {
+            // 遮罩: 追加覆盖全文的 TL_messageEntitySpoiler, 复用原生 spoiler 渲染 (点击 reveal).
+            // 同一 entities 同时作用于 messageText 和 caption. 媒体也走 media spoiler.
+            int len = messageOwner.message != null ? messageOwner.message.length() : 0;
+            if (len > 0 && messageOwner.entities != null) {
+                TLRPC.TL_messageEntitySpoiler spoiler = new TLRPC.TL_messageEntitySpoiler();
+                spoiler.offset = 0;
+                spoiler.length = len;
+                messageOwner.entities.add(spoiler);
+                filterSpoilerEntity = spoiler;
+            }
+            isSpoilersRevealed = false;
+            isMediaSpoilersRevealed = false;
+        } else if (__filterAct != MessageFilterRules.ACTION_SPOILER && filterSpoilerEntity != null) {
+            if (messageOwner.entities != null) messageOwner.entities.remove(filterSpoilerEntity);
+            filterSpoilerEntity = null;
+        }
+        if (__filterAct == MessageFilterRules.ACTION_COLLAPSE && !isRestrictedMessage) {
+            messageText = getString(R.string.filterActionCollapsePlaceholder);
+            isRestrictedMessage = true;
+            filterCollapsedApplied = true;
+            // caption 在下方 generateCaption() 之后才清空 (那里会基于 messageOwner.message 重建,
+            // 若先清再调 generateCaption 会把 caption 从原文重新生成, 清空失效).
+        }
         setType();
         if (generateLayout) {
             updateTranslation(false);
@@ -1934,6 +1971,9 @@ public class MessageObject {
 
         createMessageSendInfo();
         generateCaption();
+        if (filterCollapsedApplied) {
+            caption = null;
+        }
         if (generateLayout) {
             TextPaint paint;
             if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaGame) {
@@ -6455,6 +6495,51 @@ public class MessageObject {
         layoutCreated = false;
     }
 
+    /**
+     * 规则变更后被调用: 重算 filterAction, 对 SPOILER 增删 entity, 重跑文本/caption layout 让更改可见.
+     * 对 COLLAPSE 动作因 messageText 已被替换, 不做恢复 (v1 限制, 需重开聊天).
+     */
+    public void reapplyFilterAction() {
+        filterAction = -1;
+        int act = getFilterAction();
+        // SPOILER entity 增/删
+        if (act == MessageFilterRules.ACTION_SPOILER && filterSpoilerEntity == null && !isRestrictedMessage) {
+            int len = messageOwner != null && messageOwner.message != null ? messageOwner.message.length() : 0;
+            if (len > 0 && messageOwner.entities != null) {
+                TLRPC.TL_messageEntitySpoiler spoiler = new TLRPC.TL_messageEntitySpoiler();
+                spoiler.offset = 0;
+                spoiler.length = len;
+                messageOwner.entities.add(spoiler);
+                filterSpoilerEntity = spoiler;
+            }
+            isSpoilersRevealed = false;
+            isMediaSpoilersRevealed = false;
+        } else if (act != MessageFilterRules.ACTION_SPOILER && filterSpoilerEntity != null) {
+            if (messageOwner != null && messageOwner.entities != null) messageOwner.entities.remove(filterSpoilerEntity);
+            filterSpoilerEntity = null;
+        }
+        // COLLAPSE 占位 应用 / 撤销
+        if (act == MessageFilterRules.ACTION_COLLAPSE && !filterCollapsedApplied) {
+            messageText = getString(R.string.filterActionCollapsePlaceholder);
+            caption = null;
+            isRestrictedMessage = true;
+            filterCollapsedApplied = true;
+            forceUpdate = true;
+        } else if (act != MessageFilterRules.ACTION_COLLAPSE && filterCollapsedApplied) {
+            // 规则不再命中 COLLAPSE — 恢复原文 (updateMessageText 从 messageOwner 重建).
+            filterCollapsedApplied = false;
+            isRestrictedMessage = false;
+            updateMessageText();
+            forceUpdate = true;
+        }
+        generateLayout(null);
+        if (caption != null) {
+            caption = null;
+            generateCaption();
+        }
+    }
+
+
     public String getMimeType() {
         TLRPC.Document document = getDocument();
         if (document != null) {
@@ -7558,6 +7643,12 @@ public class MessageObject {
 
     public ArrayList<TLRPC.MessageEntity> getEntities() {
         if (messageOwner == null) return null;
+        if (filterCollapsedApplied) {
+            // COLLAPSE 占位文本的长度/字符与原 messageOwner.message 不对齐, 若继承原
+            // entities, replaceAnimatedEmoji/addEntitiesToText 会按错误偏移应用 custom emoji
+            // 等 span, 污染占位文本. 返回空列表避免.
+            return new ArrayList<>();
+        }
         if (summarized) {
             if (translated && messageOwner.translatedSummaryText != null) {
                 return messageOwner.translatedSummaryText.entities;
@@ -11973,31 +12064,45 @@ public class MessageObject {
     }
 
     public boolean isBlockedMessage() {
+        return getFilterAction() == MessageFilterRules.ACTION_HIDE;
+    }
+
+    /**
+     * 返回此消息应执行的过滤动作 (见 {@link MessageFilterRules}).
+     * 首次调用时计算并缓存到 {@link #filterAction}. 规则或订阅的 Config 变化后调用方需重置为 -1 重新计算.
+     */
+    public int getFilterAction() {
+        if (filterAction != -1) return filterAction;
+        int result = MessageFilterRules.ACTION_NONE;
         var messagesController = MessagesController.getInstance(UserConfig.selectedAccount);
-        if (isSponsored() && Config.blockSponsorAds)
-            return true;
-        if (Config.ignoreBlockedUser) {
+        if (isSponsored() && Config.blockSponsorAds) {
+            result = MessageFilterRules.ACTION_HIDE;
+        }
+        if (result != MessageFilterRules.ACTION_HIDE && Config.ignoreBlockedUser) {
             var chatFull = messagesController.getChatFull(getFromChatId());
-            if (chatFull != null && chatFull.blocked) {
-                return true;
+            boolean blocked = chatFull != null && chatFull.blocked;
+            if (!blocked) blocked = messagesController.blockePeers.indexOfKey(getFromChatId()) >= 0;
+            if (!blocked && messageOwner.fwd_from != null && messageOwner.fwd_from.from_id != null) {
+                blocked = messagesController.blockePeers.indexOfKey(
+                    MessageObject.getPeerId(messageOwner.fwd_from.from_id)) >= 0;
             }
-            if (messagesController.blockePeers.indexOfKey(getFromChatId()) >= 0) {
-                return true;
-            }
-            if (messageOwner.fwd_from != null && messageOwner.fwd_from.from_id != null
-                && messagesController.blockePeers.indexOfKey(MessageObject.getPeerId(messageOwner.fwd_from.from_id)) >= 0) {
-                return true;
-            }
+            if (blocked) result = MessageFilterRules.ACTION_HIDE;
         }
-        if (!TextUtils.isEmpty(Config.getMessageFilter())) {
+        if (result != MessageFilterRules.ACTION_HIDE && !TextUtils.isEmpty(Config.getMessageFilter())) {
             var pattern = Pattern.compile(Config.getMessageFilter());
-            if (messageText != null && pattern.matcher(messageText).find()) {
-                return true;
-            } else if (caption != null && pattern.matcher(caption).find()) {
-                return true;
+            if ((messageText != null && pattern.matcher(messageText).find())
+                || (caption != null && pattern.matcher(caption).find())) {
+                result = MessageFilterRules.ACTION_HIDE;
             }
         }
-        return false;
+        if (result != MessageFilterRules.ACTION_HIDE) {
+            long viaBotId = messageOwner != null ? messageOwner.via_bot_id : 0L;
+            String viaBotName = messageOwner != null ? messageOwner.via_bot_name : null;
+            int fromRules = MessageFilterRules.match(messageText, caption, getSenderId(), viaBotId, viaBotName);
+            if (fromRules > result) result = fromRules;
+        }
+        filterAction = result;
+        return result;
     }
 
     public boolean probablyRingtone() {

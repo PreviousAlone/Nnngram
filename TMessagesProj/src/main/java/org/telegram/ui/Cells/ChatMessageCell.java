@@ -19399,7 +19399,25 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     if (name == null) {
                         name = getString("Loading", R.string.Loading);
                     }
-                    if (messageObject.messageOwner.reply_to != null && (messageObject.messageOwner.reply_to.flags & 2048) != 0 && messageObject.replyMessageObject != null && MessageObject.getMedia(messageObject.replyMessageObject) instanceof TLRPC.TL_messageMediaToDo) {
+                    if (messageObject.replyMessageObject != null && messageObject.replyMessageObject.filterCollapsedApplied) {
+                        // 被回复的消息命中 COLLAPSE 规则: reply preview 用 spoiler 样式 (原文 + 全文覆盖 TL_messageEntitySpoiler)
+                        // 而非正文那套占位, 这样 reply 预览更像 "模糊预览" 而不是占位条.
+                        String replyMess = messageObject.replyMessageObject.messageOwner != null ? messageObject.replyMessageObject.messageOwner.message : null;
+                        if (TextUtils.isEmpty(replyMess)) {
+                            stringFinalText = getString(R.string.filterActionCollapsePlaceholder);
+                        } else {
+                            if (replyMess.length() > 150) replyMess = replyMess.substring(0, 150);
+                            replyMess = replyMess.replace('\n', ' ');
+                            SpannableStringBuilder sb = new SpannableStringBuilder(Emoji.replaceEmoji(replyMess, textPaint.getFontMetricsInt(), false));
+                            ArrayList<TLRPC.MessageEntity> spoilerOnly = new ArrayList<>();
+                            TLRPC.TL_messageEntitySpoiler spoilerEntity = new TLRPC.TL_messageEntitySpoiler();
+                            spoilerEntity.offset = 0;
+                            spoilerEntity.length = sb.length();
+                            spoilerOnly.add(spoilerEntity);
+                            MessageObject.addEntitiesToText(sb, spoilerOnly, messageObject.isOutOwner(), false, false, false);
+                            stringFinalText = TextUtils.ellipsize(sb, textPaint, maxWidth, TextUtils.TruncateAt.END);
+                        }
+                    } else if (messageObject.messageOwner.reply_to != null && (messageObject.messageOwner.reply_to.flags & 2048) != 0 && messageObject.replyMessageObject != null && MessageObject.getMedia(messageObject.replyMessageObject) instanceof TLRPC.TL_messageMediaToDo) {
                         TLRPC.TodoItem task = MessageObject.findTodoItem(messageObject.replyMessageObject, messageObject.messageOwner.reply_to.todo_item_id);
                         if (task != null) {
                             isReplyTaskOrPollOption = true;

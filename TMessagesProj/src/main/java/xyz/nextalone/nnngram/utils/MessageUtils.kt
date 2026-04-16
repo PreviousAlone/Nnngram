@@ -780,6 +780,48 @@ class MessageUtils(num: Int) : BaseController(num) {
         }
     }
 
+    /**
+     * 对 dialog 最近 10 条候选消息逐一构造 MessageObject 检查 isBlockedMessage (HIDE 命中即跳过).
+     * 取代旧 getLastMessageFromUnblockUser, 让新规则引擎 (regex/contains/sender_id/via_bot) 的 HIDE 动作
+     * 也在 dialog list 预览里生效.
+     */
+    fun getLastVisibleMessage(dialogId: Long): MessageObject? {
+        val cursor: SQLiteCursor
+        var resp: MessageObject? = null
+        try {
+            cursor = messagesStorage.database.queryFinalized(
+                String.format(
+                    Locale.US,
+                    "SELECT data,send_state,mid,date FROM messages WHERE uid = %d ORDER BY date DESC LIMIT %d,%d",
+                    dialogId, 0, 10
+                )
+            )
+            while (cursor.next()) {
+                val data = cursor.byteBufferValue(0) ?: continue
+                val message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false)
+                data.reuse()
+                val mo = MessageObject(currentAccount, message, true, true)
+                message.send_state = cursor.intValue(1)
+                message.id = cursor.intValue(2)
+                message.date = cursor.intValue(3)
+                message.dialog_id = dialogId
+                if (!mo.isBlockedMessage) {
+                    resp = mo
+                    if (messagesController.getUser(resp.senderId) == null) {
+                        val user = messagesStorage.getUser(resp.senderId)
+                        if (user != null) messagesController.putUser(user, true)
+                    }
+                    break
+                }
+            }
+            cursor.dispose()
+        } catch (sqLiteException: SQLiteException) {
+            Log.e("SQLiteException when read last visible message", sqLiteException)
+            return null
+        }
+        return resp
+    }
+
     fun getLastMessageFromUnblockUser(dialogId: Long): MessageObject? {
         val cursor: SQLiteCursor
         var resp: MessageObject? = null

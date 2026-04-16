@@ -129,6 +129,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int disableStickersAutoReorderRow;
     private int hideTitleRow;
     private int messageFiltersRow;
+    private int filterRulesRow;
     private int sendLargePhotoRow;
     private int doNotUnarchiveBySwipeRow;
     private int hideInputFieldBotButtonRow;
@@ -420,6 +421,8 @@ public class ChatSettingActivity extends BaseActivity {
             }
         } else if (position == messageFiltersRow) {
             createMessageFilterSetter(this, getContext(), resourcesProvider);
+        } else if (position == filterRulesRow) {
+            presentFragment(new FilterRulesActivity());
         } else if (position == sendLargePhotoRow) {
             Config.toggleSendLargePhoto();
             if (view instanceof TextCheckCell) {
@@ -585,6 +588,7 @@ public class ChatSettingActivity extends BaseActivity {
         disableStickersAutoReorderRow = addRow("disableStickersAutoReorder");
         hideTitleRow = addRow("showHideTitle");
         messageFiltersRow = addRow("messageFilters");
+        filterRulesRow = addRow("filterRules");
         sendLargePhotoRow = addRow("sendLargePhoto");
         doNotUnarchiveBySwipeRow = addRow("doNotUnarchiveBySwipe");
         hideInputFieldBotButtonRow = addRow("hideInputFieldBotButton");
@@ -699,6 +703,8 @@ public class ChatSettingActivity extends BaseActivity {
                             position + 1 != markdown2Row);
                     } else if (position == messageFiltersRow) {
                         textCell.setText(LocaleController.getString("MessageFilter", R.string.MessageFilter), payload);
+                    } else if (position == filterRulesRow) {
+                        textCell.setText(LocaleController.getString("FilterRulesTitle", R.string.FilterRulesTitle), payload);
                     }
                     break;
                 }
@@ -894,7 +900,7 @@ public class ChatSettingActivity extends BaseActivity {
             if (position == chat2Row || position == stickerSize2Row) {
                 return TYPE_SHADOW;
             } else if (position == messageMenuRow || position == customDoubleClickTapRow || position == maxRecentStickerRow || position == customQuickMessageRow || position == markdownParserRow
-                || position == messageFiltersRow || position == textStyleSettingsRow) {
+                || position == messageFiltersRow || position == filterRulesRow || position == textStyleSettingsRow) {
                 return TYPE_SETTINGS;
             } else if (position == chatRow || position == stickerSizeHeaderRow || position == markdownRow || position == gifSizeHeaderRow) {
                 return TYPE_HEADER;
