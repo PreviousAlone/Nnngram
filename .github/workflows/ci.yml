@@ -24,7 +24,7 @@ jobs:
       CCACHE_MAXSIZE: "10G"
       CCACHE_HARDLINK: "true"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check out submodules
@@ -104,14 +104,14 @@ jobs:
           find TMessagesProj/build/outputs/apk -name '*arm64*.apk' -exec mv {} TMessagesProj/build/outputs/apk/Nnngram-arm64-v8a-${{ env.SHA7 }}-Telegram.apk \;
           echo "APK_FILE=$(find TMessagesProj/build/outputs/apk -name '*arm64*.apk')" >> $GITHUB_ENV
 
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v4
         name: Upload apk (arm64-v8a) (Telegram)
         with:
           name: Nnngram-arm64-v8a-${{ env.SHA7 }}-Telegram
           path: ${{ env.APK_FILE }}
 
       - name: Upload mapping
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: mapping-Telegram
           path: TMessagesProj/build/outputs/mapping
@@ -144,9 +144,19 @@ jobs:
             echo "APK_FILE_UPLOAD=$(find apks -name '*arm64*.apk')" >> $GITHUB_ENV
       - name: Get Apk Info
         id: apk
-        uses: JantHsueh/get-apk-info-action@master
-        with:
-          apkPath: ${{ env.APK_FILE_UPLOAD }}
+        run: |
+          AAPT2=$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -name aapt2 -type f 2>/dev/null | sort -V | tail -n 1)
+          if [ -z "$AAPT2" ]; then
+            echo "aapt2 not found under ANDROID_HOME; installing Android SDK build-tools" >&2
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends aapt
+            AAPT2=aapt
+          fi
+          APK_INFO=$("$AAPT2" dump badging "${APK_FILE_UPLOAD}")
+          VERSION_CODE=$(printf '%s\n' "$APK_INFO" | grep -oP "versionCode='\K[0-9]+" | head -n 1)
+          VERSION_NAME=$(printf '%s\n' "$APK_INFO" | grep -oP "versionName='\K[^']+" | head -n 1)
+          echo "versionCode=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "versionNum=$VERSION_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Release
         run: |
@@ -192,7 +202,7 @@ jobs:
           ls -l telegram-bot-api/bin/telegram-bot-api*
           cp telegram-bot-api/bin/telegram-bot-api telegram-bot-api-binary
       - name: Upload Binary
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4
         with:
           name: telegram-bot-api-binary
           path: telegram-bot-api-binary
