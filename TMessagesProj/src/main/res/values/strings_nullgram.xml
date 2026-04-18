@@ -380,6 +380,11 @@
     <string name="MergeMessage">Merge message</string>
     <string name="filterZalgo">Filter \"Zalgo\" symbols</string>
     <string name="ignoreFolderUnreadCount">Ignore folder unread count</string>
+    <string name="unreadDialogRetention">Keep read chats in unread folder</string>
+    <string name="unreadDialogRetentionOff">Off</string>
+    <string name="unreadDialogRetention5Min">5 minutes</string>
+    <string name="unreadDialogRetention30Min">30 minutes</string>
+    <string name="unreadDialogRetention2Hour">2 hours</string>
     <string name="customTitle">Custom title</string>
     <string name="setCustomTitle">Set custom title</string>
     <string name="drawerList">Drawer list</string>

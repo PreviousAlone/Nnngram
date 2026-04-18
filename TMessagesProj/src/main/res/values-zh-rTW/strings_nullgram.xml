@@ -363,6 +363,11 @@
     <string name="MergeMessage">合併訊息</string>
     <string name="filterZalgo">過濾 \"Zalgo\" 符號</string>
     <string name="ignoreFolderUnreadCount">忽略資料夾標籤上的未讀計數</string>
+    <string name="unreadDialogRetention">已讀會話在未讀資料夾中保留</string>
+    <string name="unreadDialogRetentionOff">關閉</string>
+    <string name="unreadDialogRetention5Min">5 分鐘</string>
+    <string name="unreadDialogRetention30Min">30 分鐘</string>
+    <string name="unreadDialogRetention2Hour">2 小時</string>
     <string name="customTitle">自定义标题</string>
     <string name="setCustomTitle">设置自定义标题</string>
     <string name="drawerList">側邊欄列表</string>

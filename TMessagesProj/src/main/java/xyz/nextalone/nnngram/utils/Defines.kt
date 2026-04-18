@@ -259,6 +259,20 @@ object Defines {
     @BooleanConfig const val mergeMessage = "mergeMessage"
     @BooleanConfig const val filterZalgo = "filterZalgo"
     @BooleanConfig const val ignoreFolderUnreadCount = "ignoreFolderUnreadCount"
+
+    /**
+     * Retention duration (in seconds) for read dialogs that should still be displayed
+     * inside the "Unread" dialog filter / folder.
+     * 0 = off (default, original behavior: read dialog disappears immediately)
+     * 300 = 5 minutes
+     * 1800 = 30 minutes
+     * 7200 = 2 hours
+     */
+    @IntConfig(0) const val unreadDialogRetention = "unreadDialogRetention"
+    const val unreadDialogRetentionOff = 0
+    const val unreadDialogRetention5Min = 300
+    const val unreadDialogRetention30Min = 1800
+    const val unreadDialogRetention2Hour = 7200
     @BooleanConfig const val ignoreChatStrict = "ignoreChatStrict"
     @StringConfig("Nnngram") const val customTitle = "customTitle"
     @StringConfig("") const val textStyleSettings = "textStyleSettings"
