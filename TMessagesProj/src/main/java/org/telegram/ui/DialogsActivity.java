@@ -8051,7 +8051,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         currentFilter = getMessagesController().selectedDialogFilter[viewPages[0].dialogsType == 8 ? 1 : 0];
                     }
                     if (currentFilter != null && (currentFilter.flags & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_READ) != 0) {
-                        UnreadDialogRetention.onDialogOpened(dialogId);
+                        UnreadDialogRetention.onDialogOpened(currentAccount, dialogId);
                     }
                 }
                 if (getMessagesController().checkCanOpenChat(args, DialogsActivity.this)) {

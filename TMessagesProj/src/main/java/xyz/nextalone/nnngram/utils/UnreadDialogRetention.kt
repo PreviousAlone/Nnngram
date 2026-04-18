@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 object UnreadDialogRetention {
 
-    private val expireAtById = ConcurrentHashMap<Long, Long>()
+    private val expireAtByAccount = ConcurrentHashMap<Int, ConcurrentHashMap<Long, Long>>()
 
     private var pendingExpireRunnable: Runnable? = null
 
@@ -37,44 +37,56 @@ object UnreadDialogRetention {
     fun getRetentionMillis(): Long = Config.getUnreadDialogRetention() * 1000L
 
     @JvmStatic
-    fun onDialogOpened(dialogId: Long) {
+    fun onDialogOpened(account: Int, dialogId: Long) {
         val retentionMillis = getRetentionMillis()
         if (retentionMillis <= 0) {
             return
         }
-        expireAtById[dialogId] = System.currentTimeMillis() + retentionMillis
+        mapFor(account)[dialogId] = System.currentTimeMillis() + retentionMillis
         scheduleNextExpiration()
     }
 
     @JvmStatic
-    fun shouldRetain(dialogId: Long): Boolean {
+    fun shouldRetain(account: Int, dialogId: Long): Boolean {
         if (!isEnabled()) {
             return false
         }
-        val expireAt = expireAtById[dialogId] ?: return false
+        val map = expireAtByAccount[account] ?: return false
+        val expireAt = map[dialogId] ?: return false
         if (System.currentTimeMillis() >= expireAt) {
-            expireAtById.remove(dialogId)
+            map.remove(dialogId)
             return false
         }
         return true
     }
 
     @JvmStatic
-    fun clear() {
-        expireAtById.clear()
+    fun clearAndReload() {
+        val accounts = expireAtByAccount.keys.toList()
+        expireAtByAccount.clear()
         cancelPending()
+        for (account in accounts) {
+            notifyDialogsReload(account)
+        }
     }
+
+    private fun mapFor(account: Int): ConcurrentHashMap<Long, Long> =
+        expireAtByAccount.getOrPut(account) { ConcurrentHashMap() }
 
     private fun scheduleNextExpiration() {
         AndroidUtilities.runOnUIThread {
             cancelPending()
             val now = System.currentTimeMillis()
             var earliest = Long.MAX_VALUE
-            for ((id, expireAt) in expireAtById) {
-                if (expireAt <= now) {
-                    expireAtById.remove(id)
-                } else if (expireAt < earliest) {
-                    earliest = expireAt
+            for ((_, map) in expireAtByAccount) {
+                val it = map.entries.iterator()
+                while (it.hasNext()) {
+                    val entry = it.next()
+                    if (entry.value <= now) {
+                        it.remove()
+                    } else if (entry.value < earliest) {
+                        earliest = entry.value
+                    }
                 }
             }
             if (earliest == Long.MAX_VALUE) {
@@ -83,11 +95,32 @@ object UnreadDialogRetention {
             val delay = (earliest - now).coerceAtLeast(50L)
             val runnable = Runnable {
                 pendingExpireRunnable = null
-                notifyDialogsReload()
+                fireExpiredAndReload()
                 scheduleNextExpiration()
             }
             pendingExpireRunnable = runnable
             AndroidUtilities.runOnUIThread(runnable, delay)
+        }
+    }
+
+    private fun fireExpiredAndReload() {
+        val now = System.currentTimeMillis()
+        val accountsToReload = mutableSetOf<Int>()
+        for ((account, map) in expireAtByAccount) {
+            val it = map.entries.iterator()
+            var changed = false
+            while (it.hasNext()) {
+                if (it.next().value <= now) {
+                    it.remove()
+                    changed = true
+                }
+            }
+            if (changed) {
+                accountsToReload.add(account)
+            }
+        }
+        for (account in accountsToReload) {
+            notifyDialogsReload(account)
         }
     }
 
@@ -96,13 +129,14 @@ object UnreadDialogRetention {
         pendingExpireRunnable = null
     }
 
-    private fun notifyDialogsReload() {
-        for (account in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
-            if (!UserConfig.getInstance(account).isClientActivated) {
-                continue
-            }
-            NotificationCenter.getInstance(account)
-                .postNotificationName(NotificationCenter.dialogsNeedReload)
+    private fun notifyDialogsReload(account: Int) {
+        if (account < 0 || account >= UserConfig.MAX_ACCOUNT_COUNT) {
+            return
         }
+        if (!UserConfig.getInstance(account).isClientActivated) {
+            return
+        }
+        NotificationCenter.getInstance(account)
+            .postNotificationName(NotificationCenter.dialogsNeedReload)
     }
 }

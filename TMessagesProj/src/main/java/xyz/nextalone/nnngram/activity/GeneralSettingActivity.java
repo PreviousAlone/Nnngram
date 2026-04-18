@@ -68,6 +68,7 @@ import xyz.nextalone.nnngram.helpers.TranslateHelper.ProviderType;
 import xyz.nextalone.nnngram.translate.providers.DeepLTranslator;
 import xyz.nextalone.nnngram.ui.PopupBuilder;
 import xyz.nextalone.nnngram.utils.Defines;
+import xyz.nextalone.nnngram.utils.UnreadDialogRetention;
 
 @SuppressLint("NotifyDataSetChanged")
 public class GeneralSettingActivity extends BaseActivity {
@@ -289,6 +290,7 @@ public class GeneralSettingActivity extends BaseActivity {
             }
             PopupBuilder.show(arrayList, LocaleController.getString(R.string.unreadDialogRetention), currentIndex, getParentActivity(), view, i -> {
                 Config.setUnreadDialogRetention(types.get(i));
+                UnreadDialogRetention.clearAndReload();
                 listAdapter.notifyItemChanged(unreadDialogRetentionRow, PARTIAL);
             });
         } else if (position == autoDisableBuiltInProxyRow) {
