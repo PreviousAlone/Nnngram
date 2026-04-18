@@ -286,7 +286,6 @@ import xyz.nextalone.nnngram.ui.SendOptionsMenuLayout;
 import xyz.nextalone.nnngram.utils.APKUtils;
 import xyz.nextalone.nnngram.utils.Defines;
 import xyz.nextalone.nnngram.utils.PrivacyUtils;
-import xyz.nextalone.nnngram.utils.UnreadDialogRetention;
 import xyz.nextalone.nnngram.utils.UpdateUtils;
 
 import me.vkryl.android.animator.BoolAnimator;
@@ -8045,15 +8044,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             } else {
                 slowedReloadAfterDialogClick = true;
-                if (UnreadDialogRetention.isEnabled() && viewPages != null && viewPages.length > 0) {
-                    MessagesController.DialogFilter currentFilter = null;
-                    if (viewPages[0].dialogsType == 7 || viewPages[0].dialogsType == 8) {
-                        currentFilter = getMessagesController().selectedDialogFilter[viewPages[0].dialogsType == 8 ? 1 : 0];
-                    }
-                    if (currentFilter != null && (currentFilter.flags & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_READ) != 0) {
-                        UnreadDialogRetention.onDialogOpened(currentAccount, dialogId);
-                    }
-                }
                 if (getMessagesController().checkCanOpenChat(args, DialogsActivity.this)) {
                     TLRPC.Chat chat = getMessagesController().getChat(-dialogId);
                     TLRPC.Dialog dialog = getMessagesController().getDialog(dialogId);

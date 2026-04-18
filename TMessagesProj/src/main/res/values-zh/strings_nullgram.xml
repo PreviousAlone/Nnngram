@@ -367,7 +367,7 @@
     <string name="MergeMessage">合并消息</string>
     <string name="filterZalgo">过滤「Zalgo」符号</string>
     <string name="ignoreFolderUnreadCount">忽略文件夹标签上的未读计数</string>
-    <string name="unreadDialogRetention">已读会话在未读文件夹中保留</string>
+    <string name="unreadDialogRetention">在「未读」中保留最近会话</string>
     <string name="unreadDialogRetentionOff">关闭</string>
     <string name="unreadDialogRetention5Min">5 分钟</string>
     <string name="unreadDialogRetention30Min">30 分钟</string>

@@ -290,7 +290,7 @@ public class GeneralSettingActivity extends BaseActivity {
             }
             PopupBuilder.show(arrayList, LocaleController.getString(R.string.unreadDialogRetention), currentIndex, getParentActivity(), view, i -> {
                 Config.setUnreadDialogRetention(types.get(i));
-                UnreadDialogRetention.clearAndReload();
+                UnreadDialogRetention.onSettingChanged();
                 listAdapter.notifyItemChanged(unreadDialogRetentionRow, PARTIAL);
             });
         } else if (position == autoDisableBuiltInProxyRow) {
