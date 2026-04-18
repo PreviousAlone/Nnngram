@@ -31,10 +31,10 @@ object UnreadDialogRetention {
     private var pendingExpireRunnable: Runnable? = null
 
     @JvmStatic
-    fun isEnabled(): Boolean = Config.getUnreadDialogRetention() > 0
+    fun isEnabled(): Boolean = Config.unreadDialogRetention > 0
 
     @JvmStatic
-    fun getRetentionMillis(): Long = Config.getUnreadDialogRetention() * 1000L
+    fun getRetentionMillis(): Long = Config.unreadDialogRetention * 1000L
 
     @JvmStatic
     fun onDialogOpened(account: Int, dialogId: Long) {
