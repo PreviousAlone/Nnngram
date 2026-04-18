@@ -1305,7 +1305,7 @@ public class MessagesController extends BaseController implements NotificationCe
                 return false;
             }
             if ((flags & DIALOG_FILTER_FLAG_EXCLUDE_READ) != 0 && messagesController.getDialogUnreadCount(d) == 0 && !d.unread_mark && d.unread_mentions_count == 0) {
-                if (!UnreadDialogRetention.isRecent(d)) {
+                if (!UnreadDialogRetention.isRecent(accountInstance.getCurrentAccount(), d)) {
                     return false;
                 }
             }

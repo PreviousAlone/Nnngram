@@ -19,24 +19,34 @@
 package xyz.nextalone.nnngram.utils
 
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.UserConfig
+import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import xyz.nextalone.gen.Config
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Keeps "recently conversed" chats visible inside dialog filters that
  * exclude read messages. A dialog is considered recent if its
- * `last_message_date` is within the configured retention window.
+ * `last_message_date` is within the configured retention window
+ * (measured against the server-synced time, not device wall clock).
  *
- * When enabled, a periodic UI-thread runnable fires `dialogsNeedReload`
- * so that dialogs drop out of the list once their window elapses, even
- * in the absence of any other activity.
+ * Scheduling is event-driven: each `isRecent` hit reports its earliest
+ * expiration; a single pending UI-thread runnable fires exactly at that
+ * point so expired dialogs drop even without any other activity. The
+ * scheduler quiesces when no dialogs are retained and pauses work while
+ * the main interface is backgrounded.
  */
 object UnreadDialogRetention {
 
+    private val earliestExpireAt = AtomicLong(Long.MAX_VALUE)
+
+    @Volatile private var reconcileQueued = false
+    @Volatile private var pendingExpireAt = Long.MAX_VALUE
+
     private var pendingRunnable: Runnable? = null
-    @Volatile private var schedulerArmed = false
 
     @JvmStatic
     fun isEnabled(): Boolean = Config.unreadDialogRetention > 0
@@ -45,77 +55,70 @@ object UnreadDialogRetention {
     fun getRetentionMillis(): Long = Config.unreadDialogRetention * 1000L
 
     @JvmStatic
-    fun isRecent(dialog: TLRPC.Dialog?): Boolean {
+    fun isRecent(account: Int, dialog: TLRPC.Dialog?): Boolean {
         if (dialog == null) return false
         val retention = getRetentionMillis()
         if (retention <= 0) return false
         val lastSec = dialog.last_message_date
         if (lastSec <= 0) return false
-        val ageMillis = System.currentTimeMillis() - lastSec * 1000L
-        if (ageMillis !in 0..retention) return false
-        ensureSchedulerArmed()
+        val nowSec = ConnectionsManager.getInstance(account).currentTime
+        val ageSec = (nowSec - lastSec).toLong()
+        if (ageSec < 0) return true // clock skew: treat future timestamps as just now
+        val ageMillis = ageSec * 1000L
+        if (ageMillis > retention) return false
+        val expireAt = System.currentTimeMillis() + (retention - ageMillis)
+        atomicMin(earliestExpireAt, expireAt)
+        requestReconcile()
         return true
     }
 
-    private fun ensureSchedulerArmed() {
-        if (schedulerArmed) return
-        AndroidUtilities.runOnUIThread {
-            if (!schedulerArmed && isEnabled()) {
-                schedulerArmed = true
-                schedule()
-            }
-        }
-    }
-
     /**
-     * Re-schedule the periodic reload based on the current setting, and
-     * fire a reload immediately so that the new setting takes effect.
+     * Re-evaluate scheduling after a setting change: cancel any pending
+     * work and fire one reload so the new duration takes effect.
      */
     @JvmStatic
     fun onSettingChanged() {
-        cancelPending()
-        schedulerArmed = false
-        reloadAllAccounts()
-        if (isEnabled()) {
-            schedulerArmed = true
-            schedule()
+        AndroidUtilities.runOnUIThread {
+            cancelPending()
+            earliestExpireAt.set(Long.MAX_VALUE)
+            pendingExpireAt = Long.MAX_VALUE
+            reloadAllAccounts()
         }
     }
 
-    private fun schedule() {
-        cancelPending()
-        if (!isEnabled()) {
-            schedulerArmed = false
-            return
+    private fun requestReconcile() {
+        if (reconcileQueued) return
+        reconcileQueued = true
+        AndroidUtilities.runOnUIThread {
+            reconcileQueued = false
+            reconcile()
         }
-        val delay = pollIntervalMillis()
+    }
+
+    private fun reconcile() {
+        val candidate = earliestExpireAt.getAndSet(Long.MAX_VALUE)
+        if (candidate == Long.MAX_VALUE) return
+        if (!isEnabled()) return
+        if (ApplicationLoader.mainInterfacePaused) return
+        if (candidate >= pendingExpireAt) return
+        cancelPending()
+        pendingExpireAt = candidate
+        val delay = (candidate - System.currentTimeMillis()).coerceAtLeast(50L)
         val runnable = Runnable {
             pendingRunnable = null
-            if (!isEnabled()) {
-                schedulerArmed = false
-                return@Runnable
-            }
+            pendingExpireAt = Long.MAX_VALUE
+            if (!isEnabled()) return@Runnable
+            if (ApplicationLoader.mainInterfacePaused) return@Runnable
             reloadAllAccounts()
-            schedule()
         }
         pendingRunnable = runnable
         AndroidUtilities.runOnUIThread(runnable, delay)
     }
 
-    /**
-     * Poll interval: refresh often enough that expiring dialogs disappear
-     * in reasonable time, but sparsely for longer retention windows.
-     * retention / 10, clamped to [15s, 60s].
-     */
-    private fun pollIntervalMillis(): Long {
-        val retention = getRetentionMillis()
-        val scaled = retention / 10
-        return scaled.coerceIn(15_000L, 60_000L)
-    }
-
     private fun cancelPending() {
         pendingRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
         pendingRunnable = null
+        pendingExpireAt = Long.MAX_VALUE
     }
 
     private fun reloadAllAccounts() {
@@ -123,6 +126,14 @@ object UnreadDialogRetention {
             if (!UserConfig.getInstance(account).isClientActivated) continue
             NotificationCenter.getInstance(account)
                 .postNotificationName(NotificationCenter.dialogsNeedReload)
+        }
+    }
+
+    private fun atomicMin(ref: AtomicLong, candidate: Long) {
+        while (true) {
+            val cur = ref.get()
+            if (candidate >= cur) return
+            if (ref.compareAndSet(cur, candidate)) return
         }
     }
 }
