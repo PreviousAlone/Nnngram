@@ -71,7 +71,7 @@ object UnreadDialogRetention {
     }
 
     private fun mapFor(account: Int): ConcurrentHashMap<Long, Long> =
-        expireAtByAccount.getOrPut(account) { ConcurrentHashMap() }
+        expireAtByAccount.computeIfAbsent(account) { ConcurrentHashMap() }
 
     private fun scheduleNextExpiration() {
         AndroidUtilities.runOnUIThread {
