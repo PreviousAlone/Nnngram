@@ -7358,7 +7358,10 @@ public class ChatActivity extends BaseFragment implements
         contentView.addView(sideControlsButtonsLayout, LayoutHelper.createFrame(57, 300, Gravity.RIGHT | Gravity.BOTTOM));
 
         quickSendMediaPopup = new QuickSendMediaPopup(context);
-        contentView.addView(quickSendMediaPopup, LayoutHelper.createFrame(72, 72, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 110));
+        // Placed just above the input bar (small bottomMargin so it reads as a
+        // bottom-right affordance) and shifted left of sideControlsButtonsLayout
+        // (57dp wide) so the popup and scroll-to-bottom button don't overlap.
+        contentView.addView(quickSendMediaPopup, LayoutHelper.createFrame(72, 72, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 64, 6));
 
         contentView.addView(topPanelLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP));
 
