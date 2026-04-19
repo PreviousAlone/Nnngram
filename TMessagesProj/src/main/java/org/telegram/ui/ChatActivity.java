@@ -7358,10 +7358,10 @@ public class ChatActivity extends BaseFragment implements
         contentView.addView(sideControlsButtonsLayout, LayoutHelper.createFrame(57, 300, Gravity.RIGHT | Gravity.BOTTOM));
 
         quickSendMediaPopup = new QuickSendMediaPopup(context);
-        // Placed just above the input bar (small bottomMargin so it reads as a
-        // bottom-right affordance) and shifted left of sideControlsButtonsLayout
-        // (57dp wide) so the popup and scroll-to-bottom button don't overlap.
-        contentView.addView(quickSendMediaPopup, LayoutHelper.createFrame(72, 72, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 64, 6));
+        // Sits at the bottom-right of the chat, right-aligned with the
+        // scroll-to-bottom button and just above it, so it reads as a
+        // proper bottom-right affordance above the input bar.
+        contentView.addView(quickSendMediaPopup, LayoutHelper.createFrame(72, 72, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 60));
 
         contentView.addView(topPanelLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP));
 
@@ -29829,18 +29829,21 @@ public class ChatActivity extends BaseFragment implements
             if (quickSendMediaPopup.isShowingFor(entry.id)) {
                 return;
             }
+            // The photo is about to be surfaced once; persist the dismissal
+            // watermark immediately so that *any* exit path (send, cancel
+            // from the preview, 10s timeout, leaving the chat, process
+            // restart) counts as "already seen" and the same image is not
+            // surfaced a second time.
+            rememberQuickSendDismissed(entry);
             quickSendMediaPopup.show(entry, new QuickSendMediaPopup.Delegate() {
                 @Override
                 public void onSend(QuickSendMediaPopup.QuickSendMediaEntry e) {
-                    quickSendDismissedIds.add(e.id);
                     openQuickSendPreview(e);
                 }
 
                 @Override
                 public void onUserDismiss(QuickSendMediaPopup.QuickSendMediaEntry e) {
-                    // User explicitly closed the popup with ×: never re-surface this image,
-                    // even after finishing and re-entering the fragment.
-                    rememberQuickSendDismissed(e);
+                    // Already persisted on show(); nothing extra to do.
                 }
             });
         });
