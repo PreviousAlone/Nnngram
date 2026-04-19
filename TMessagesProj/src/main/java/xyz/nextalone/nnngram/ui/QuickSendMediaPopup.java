@@ -54,6 +54,9 @@ public class QuickSendMediaPopup extends FrameLayout {
 
     public interface Delegate {
         void onSend(QuickSendMediaEntry entry);
+
+        /** Called when the user explicitly taps the × to dismiss. Not called on auto-dismiss. */
+        default void onUserDismiss(QuickSendMediaEntry entry) {}
     }
 
     public static class QuickSendMediaEntry {
@@ -132,7 +135,12 @@ public class QuickSendMediaPopup extends FrameLayout {
             delegate.onSend(entry);
             dismiss(true);
         });
-        closeButton.setOnClickListener(v -> dismiss(true));
+        closeButton.setOnClickListener(v -> {
+            if (entry != null && delegate != null) {
+                delegate.onUserDismiss(entry);
+            }
+            dismiss(true);
+        });
 
         setAlpha(0f);
         setScaleX(0.6f);

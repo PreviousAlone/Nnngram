@@ -29819,9 +29819,23 @@ public class ChatActivity extends BaseFragment implements
             if (quickSendMediaPopup.isShowingFor(entry.id)) {
                 return;
             }
-            quickSendMediaPopup.show(entry, e -> {
-                quickSendDismissedIds.add(e.id);
-                showQuickSendConfirmation(e);
+            quickSendMediaPopup.show(entry, new QuickSendMediaPopup.Delegate() {
+                @Override
+                public void onSend(QuickSendMediaPopup.QuickSendMediaEntry e) {
+                    quickSendDismissedIds.add(e.id);
+                    showQuickSendConfirmation(e);
+                }
+
+                @Override
+                public void onUserDismiss(QuickSendMediaPopup.QuickSendMediaEntry e) {
+                    // User explicitly closed the popup with ×: never re-surface this image
+                    // for this ChatActivity instance (and nudge the "since" watermark past it
+                    // so it is excluded on subsequent resume queries too).
+                    quickSendDismissedIds.add(e.id);
+                    if (e.dateAdded > 0) {
+                        quickSendPauseTimeSec = Math.max(quickSendPauseTimeSec, e.dateAdded);
+                    }
+                }
             });
         });
     }
