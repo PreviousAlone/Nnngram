@@ -29809,8 +29809,15 @@ public class ChatActivity extends BaseFragment implements
             // First time entering: look back 3 minutes for a freshly taken shot.
             sinceSec = System.currentTimeMillis() / 1000L - 180L;
         }
+        final long persistedDismissedId = xyz.nextalone.nnngram.config.ConfigManager
+            .getLongOrDefault(xyz.nextalone.nnngram.utils.Defines.quickSendMediaLastDismissedId, 0L);
         QuickSendMediaPopup.queryLatestImage(sinceSec, entry -> {
             if (entry == null || quickSendMediaPopup == null || paused) {
+                return;
+            }
+            if (entry.id <= persistedDismissedId) {
+                // Previously dismissed across sessions - MediaStore imageIds increase
+                // monotonically, so anything at or below the watermark is old news.
                 return;
             }
             if (quickSendDismissedIds.contains(entry.id)) {
@@ -29823,33 +29830,75 @@ public class ChatActivity extends BaseFragment implements
                 @Override
                 public void onSend(QuickSendMediaPopup.QuickSendMediaEntry e) {
                     quickSendDismissedIds.add(e.id);
-                    showQuickSendConfirmation(e);
+                    openQuickSendPreview(e);
                 }
 
                 @Override
                 public void onUserDismiss(QuickSendMediaPopup.QuickSendMediaEntry e) {
-                    // User explicitly closed the popup with ×: never re-surface this image
-                    // for this ChatActivity instance (and nudge the "since" watermark past it
-                    // so it is excluded on subsequent resume queries too).
-                    quickSendDismissedIds.add(e.id);
-                    if (e.dateAdded > 0) {
-                        quickSendPauseTimeSec = Math.max(quickSendPauseTimeSec, e.dateAdded);
-                    }
+                    // User explicitly closed the popup with ×: never re-surface this image,
+                    // even after finishing and re-entering the fragment.
+                    rememberQuickSendDismissed(e);
                 }
             });
         });
     }
 
-    private void showQuickSendConfirmation(QuickSendMediaPopup.QuickSendMediaEntry e) {
+    private void rememberQuickSendDismissed(QuickSendMediaPopup.QuickSendMediaEntry e) {
+        if (e == null) return;
+        quickSendDismissedIds.add(e.id);
+        if (e.dateAdded > 0) {
+            quickSendPauseTimeSec = Math.max(quickSendPauseTimeSec, e.dateAdded);
+        }
+        long prev = xyz.nextalone.nnngram.config.ConfigManager
+            .getLongOrDefault(xyz.nextalone.nnngram.utils.Defines.quickSendMediaLastDismissedId, 0L);
+        if (e.id > prev) {
+            xyz.nextalone.nnngram.config.ConfigManager
+                .putLong(xyz.nextalone.nnngram.utils.Defines.quickSendMediaLastDismissedId, e.id);
+        }
+    }
+
+    private void openQuickSendPreview(QuickSendMediaPopup.QuickSendMediaEntry e) {
         if (e == null || getParentActivity() == null) {
             return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), themeDelegate);
-        builder.setTitle(LocaleController.getString("quickSendMediaPopupTitle", R.string.quickSendMediaPopupTitle));
-        builder.setMessage(LocaleController.getString("quickSendMediaPopupConfirm", R.string.quickSendMediaPopupConfirm));
-        builder.setPositiveButton(LocaleController.getString("Send", R.string.Send), (dialog, which) -> sendQuickMediaEntry(e));
-        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-        showDialog(builder.create());
+        if (!checkSlowModeAlert()) {
+            return;
+        }
+        final String path = e.path;
+        if (path == null) {
+            // No file path (rare, scoped-storage edge case) - fall back to direct send via URI.
+            sendQuickMediaEntry(e);
+            return;
+        }
+        Pair<Integer, Integer> orientation = AndroidUtilities.getImageOrientation(path);
+        final MediaController.PhotoEntry photoEntry =
+            new MediaController.PhotoEntry(0, 0, 0, path, orientation.first, false, 0, 0, 0)
+                .setOrientation(orientation);
+        final ArrayList<Object> list = new ArrayList<>();
+        list.add(photoEntry);
+
+        PhotoViewer.getInstance().setParentActivity(this, themeDelegate);
+        if (PhotoViewer.getInstance().isVisible()) {
+            PhotoViewer.getInstance().closePhoto(false, false);
+        }
+        PhotoViewer.getInstance().openPhotoForSelect(list, 0, 0, false, new PhotoViewer.EmptyPhotoViewerProvider() {
+            @Override
+            public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean forceDocument) {
+                // User confirmed from the preview: persist dismissal and send.
+                rememberQuickSendDismissed(e);
+                sendMedia(photoEntry, videoEditedInfo, notify, scheduleDate, scheduleRepeatPeriod, forceDocument, 0);
+            }
+
+            @Override
+            public boolean canScrollAway() {
+                return false;
+            }
+
+            @Override
+            public boolean canCaptureMorePhotos() {
+                return false;
+            }
+        }, this);
     }
 
     private void sendQuickMediaEntry(QuickSendMediaPopup.QuickSendMediaEntry e) {
@@ -29859,6 +29908,7 @@ public class ChatActivity extends BaseFragment implements
         if (!checkSlowModeAlert()) {
             return;
         }
+        rememberQuickSendDismissed(e);
         SendMessagesHelper.prepareSendingPhoto(
             getAccountInstance(),
             e.path,
