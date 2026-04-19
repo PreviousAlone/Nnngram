@@ -300,6 +300,7 @@
     <string name="quickSendMediaPopup">新增图片快捷发送悬浮窗</string>
     <string name="quickSendMediaPopupInfo">在聊天界面右下角显示一个悬浮按钮，用于快速发送刚刚拍摄的照片或截图。仅在打开聊天或从后台恢复时检测。</string>
     <string name="quickSendMediaPopupTitle">发送新照片？</string>
+    <string name="quickSendMediaPopupConfirm">这张照片将被发送到当前对话。</string>
     <string name="quickSendMediaPopupSending">发送中…</string>
     <string name="ProviderBaiduTranslate">百度翻译</string>
     <string name="ProviderTranSmartTranslate">腾讯交互翻译</string>

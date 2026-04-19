@@ -2560,11 +2560,12 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
     }
 
     public void loadGalleryPhotos() {
-        // Always request a MediaStore refresh so newly added photos/screenshots
-        // appear without waiting for the ContentObserver's 2s debounce. The load
-        // runs on a background thread and updates the UI via NotificationCenter
-        // (albumsDidLoad) while the cached album (if any) keeps rendering.
-        MediaController.loadGalleryPhotosAlbums(0);
+        // Fast path: if we already have a cached album, prepend just-taken photos
+        // into it (~100ms) so the grid shows them immediately instead of waiting
+        // for the full rescan. The full rescan still runs right after at normal
+        // priority so bucket counts and album lists stay accurate.
+        MediaController.quickRefreshLatestPhotos(0, 30);
+        MediaController.loadGalleryPhotosAlbums(0, true);
     }
 
     private boolean shouldLoadAllMedia() {

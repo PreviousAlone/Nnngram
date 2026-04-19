@@ -5825,8 +5825,25 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         return null;
     }
 
+    private static final java.util.concurrent.atomic.AtomicBoolean galleryScanInFlight = new java.util.concurrent.atomic.AtomicBoolean(false);
+    private static volatile boolean galleryScanQueued = false;
+    private static volatile int galleryScanQueuedGuid = 0;
+    private static volatile boolean galleryScanQueuedUrgent = false;
+
     public static void loadGalleryPhotosAlbums(final int guid) {
+        loadGalleryPhotosAlbums(guid, false);
+    }
+
+    public static void loadGalleryPhotosAlbums(final int guid, final boolean urgent) {
+        if (!galleryScanInFlight.compareAndSet(false, true)) {
+            // Coalesce: a scan is running; remember that another refresh was requested.
+            galleryScanQueued = true;
+            galleryScanQueuedGuid = guid;
+            galleryScanQueuedUrgent = galleryScanQueuedUrgent || urgent;
+            return;
+        }
         Thread thread = new Thread(() -> {
+          try {
             final ArrayList<AlbumEntry> mediaAlbumsSorted = new ArrayList<>();
             final ArrayList<AlbumEntry> photoAlbumsSorted = new ArrayList<>();
             SparseArray<AlbumEntry> mediaAlbums = new SparseArray<>();
@@ -6070,9 +6087,117 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 });
             }
             broadcastNewPhotos(guid, mediaAlbumsSorted, photoAlbumsSorted, mediaCameraAlbumId, allMediaAlbum, allPhotosAlbum, allVideosAlbum, 0);
+          } finally {
+            galleryScanInFlight.set(false);
+            if (galleryScanQueued) {
+                galleryScanQueued = false;
+                final int queuedGuid = galleryScanQueuedGuid;
+                final boolean queuedUrgent = galleryScanQueuedUrgent;
+                galleryScanQueuedUrgent = false;
+                AndroidUtilities.runOnUIThread(() -> loadGalleryPhotosAlbums(queuedGuid, queuedUrgent));
+            }
+          }
         });
-        thread.setPriority(Thread.MIN_PRIORITY);
+        // Urgent scans (user opened the attach menu) run at normal priority so newly
+        // added photos/screenshots appear quickly; background observer refreshes stay low.
+        thread.setPriority(urgent ? Thread.NORM_PRIORITY : Thread.MIN_PRIORITY);
         thread.start();
+    }
+
+    /**
+     * Lightweight gallery refresh: queries only the top {@code limit} most-recent images
+     * from {@link MediaStore} and merges any entries that are new (by imageId) into the
+     * head of {@link #allMediaAlbumEntry} / {@link #allPhotosAlbumEntry}, then broadcasts
+     * {@link NotificationCenter#albumsDidLoad}. This is complementary to the full scan
+     * in {@link #loadGalleryPhotosAlbums(int, boolean)} - it lets newly taken photos
+     * surface in the attach grid in ~100ms instead of waiting for the full rescan.
+     */
+    public static void quickRefreshLatestPhotos(final int guid, final int limit) {
+        if (allMediaAlbumEntry == null && allPhotosAlbumEntry == null) {
+            // No cache to merge into - nothing useful to do; full scan will populate it.
+            return;
+        }
+        Thread thread = new Thread(() -> {
+            final Context context = ApplicationLoader.applicationContext;
+            if (Build.VERSION.SDK_INT >= 33
+                    ? context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+                    : context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            final ArrayList<PhotoEntry> headNewEntries = new ArrayList<>();
+            Cursor cursor = null;
+            try {
+                cursor = MediaStore.Images.Media.query(context.getContentResolver(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projectionPhotos, null, null, (Build.VERSION.SDK_INT > 28 ? MediaStore.Images.Media.DATE_MODIFIED : MediaStore.Images.Media.DATE_TAKEN) + " DESC");
+                if (cursor != null) {
+                    int imageIdColumn = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+                    int bucketIdColumn = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_ID);
+                    int dataColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                    int dateColumn = cursor.getColumnIndex(Build.VERSION.SDK_INT > 28 ? MediaStore.Images.Media.DATE_MODIFIED : MediaStore.Images.Media.DATE_TAKEN);
+                    int orientationColumn = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
+                    int widthColumn = cursor.getColumnIndex(MediaStore.Images.Media.WIDTH);
+                    int heightColumn = cursor.getColumnIndex(MediaStore.Images.Media.HEIGHT);
+                    int sizeColumn = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
+                    int count = 0;
+                    while (cursor.moveToNext() && count < limit) {
+                        count++;
+                        String path = cursor.getString(dataColumn);
+                        if (TextUtils.isEmpty(path)) continue;
+                        int imageId = cursor.getInt(imageIdColumn);
+                        int bucketId = cursor.getInt(bucketIdColumn);
+                        long dateTaken = cursor.getLong(dateColumn);
+                        int orientation = cursor.getInt(orientationColumn);
+                        int width = cursor.getInt(widthColumn);
+                        int height = cursor.getInt(heightColumn);
+                        long size = cursor.getLong(sizeColumn);
+                        headNewEntries.add(new PhotoEntry(bucketId, imageId, dateTaken, path, orientation, 0, false, width, height, size));
+                    }
+                }
+            } catch (Throwable e) {
+                FileLog.e(e);
+            } finally {
+                if (cursor != null) {
+                    try { cursor.close(); } catch (Exception e) { FileLog.e(e); }
+                }
+            }
+            if (headNewEntries.isEmpty()) {
+                return;
+            }
+            AndroidUtilities.runOnUIThread(() -> mergeHeadEntriesIntoCache(guid, headNewEntries));
+        });
+        thread.setPriority(Thread.NORM_PRIORITY);
+        thread.start();
+    }
+
+    private static void mergeHeadEntriesIntoCache(int guid, ArrayList<PhotoEntry> headEntries) {
+        AlbumEntry mediaAlbum = allMediaAlbumEntry;
+        AlbumEntry photosAlbum = allPhotosAlbumEntry;
+        if (mediaAlbum == null && photosAlbum == null) {
+            return;
+        }
+        AlbumEntry referenceAlbum = mediaAlbum != null ? mediaAlbum : photosAlbum;
+        ArrayList<PhotoEntry> newOnes = new ArrayList<>();
+        for (PhotoEntry e : headEntries) {
+            if (referenceAlbum.photosByIds.get(e.imageId) == null) {
+                newOnes.add(e);
+            }
+        }
+        if (newOnes.isEmpty()) {
+            return;
+        }
+        // Prepend to existing albums (on UI thread, so safe w.r.t. adapter iteration
+        // as long as we notify right after).
+        for (int i = newOnes.size() - 1; i >= 0; i--) {
+            PhotoEntry e = newOnes.get(i);
+            if (mediaAlbum != null && mediaAlbum.photosByIds.get(e.imageId) == null) {
+                mediaAlbum.photos.add(0, e);
+                mediaAlbum.photosByIds.put(e.imageId, e);
+            }
+            if (photosAlbum != null && photosAlbum.photosByIds.get(e.imageId) == null) {
+                photosAlbum.photos.add(0, e);
+                photosAlbum.photosByIds.put(e.imageId, e);
+            }
+        }
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.albumsDidLoad, guid, allMediaAlbums, allPhotoAlbums, null);
     }
 
     public static boolean forceBroadcastNewPhotos;

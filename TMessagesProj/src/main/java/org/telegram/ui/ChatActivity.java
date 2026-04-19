@@ -29821,9 +29821,21 @@ public class ChatActivity extends BaseFragment implements
             }
             quickSendMediaPopup.show(entry, e -> {
                 quickSendDismissedIds.add(e.id);
-                sendQuickMediaEntry(e);
+                showQuickSendConfirmation(e);
             });
         });
+    }
+
+    private void showQuickSendConfirmation(QuickSendMediaPopup.QuickSendMediaEntry e) {
+        if (e == null || getParentActivity() == null) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), themeDelegate);
+        builder.setTitle(LocaleController.getString("quickSendMediaPopupTitle", R.string.quickSendMediaPopupTitle));
+        builder.setMessage(LocaleController.getString("quickSendMediaPopupConfirm", R.string.quickSendMediaPopupConfirm));
+        builder.setPositiveButton(LocaleController.getString("Send", R.string.Send), (dialog, which) -> sendQuickMediaEntry(e));
+        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+        showDialog(builder.create());
     }
 
     private void sendQuickMediaEntry(QuickSendMediaPopup.QuickSendMediaEntry e) {

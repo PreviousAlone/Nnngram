@@ -297,6 +297,7 @@
     <string name="quickSendMediaPopup">新圖片快捷傳送懸浮視窗</string>
     <string name="quickSendMediaPopupInfo">在聊天介面右下角顯示一個懸浮按鈕，用來快速傳送剛剛拍攝的照片或螢幕截圖。僅在開啟聊天或從背景恢復時偵測。</string>
     <string name="quickSendMediaPopupTitle">傳送新照片？</string>
+    <string name="quickSendMediaPopupConfirm">這張照片將被傳送到目前對話。</string>
     <string name="quickSendMediaPopupSending">傳送中…</string>
     <string name="ProviderBaiduTranslate">百度翻譯</string>
     <string name="ProviderTranSmartTranslate">TranSmart 翻譯器</string>
