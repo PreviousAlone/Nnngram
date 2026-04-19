@@ -294,6 +294,10 @@
     <string name="OverrideDevicePerformanceDesc">覆蓋 TELEOFFICIAL 的裝置效能偵測器。\n低模式將盡量減少動畫效果和其他內容，有助於節省前景中的電力。\n高模式可能會大幅增加能源消耗和效能負擔，並導致卡頓現象。</string>
     <string name="JumpToBeginning">跳至開始</string>
     <string name="DisableQuickSendMediaBottom">停用快速傳送媒體底部</string>
+    <string name="quickSendMediaPopup">新圖片快捷傳送懸浮視窗</string>
+    <string name="quickSendMediaPopupInfo">在聊天介面右下角顯示一個懸浮按鈕，用來快速傳送剛剛拍攝的照片或螢幕截圖。僅在開啟聊天或從背景恢復時偵測。</string>
+    <string name="quickSendMediaPopupTitle">傳送新照片？</string>
+    <string name="quickSendMediaPopupSending">傳送中…</string>
     <string name="ProviderBaiduTranslate">百度翻譯</string>
     <string name="ProviderTranSmartTranslate">TranSmart 翻譯器</string>
     <string name="alwaysSendWithoutSound">總是無聲傳送</string>

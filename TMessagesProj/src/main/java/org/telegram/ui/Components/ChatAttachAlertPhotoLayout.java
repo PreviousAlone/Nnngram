@@ -2560,15 +2560,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
     }
 
     public void loadGalleryPhotos() {
-        MediaController.AlbumEntry albumEntry;
-        if (shouldLoadAllMedia()) {
-            albumEntry = MediaController.allMediaAlbumEntry;
-        } else {
-            albumEntry = MediaController.allPhotosAlbumEntry;
-        }
-        if (albumEntry == null) {
-            MediaController.loadGalleryPhotosAlbums(0);
-        }
+        // Always request a MediaStore refresh so newly added photos/screenshots
+        // appear without waiting for the ContentObserver's 2s debounce. The load
+        // runs on a background thread and updates the UI via NotificationCenter
+        // (albumsDidLoad) while the cached album (if any) keeps rendering.
+        MediaController.loadGalleryPhotosAlbums(0);
     }
 
     private boolean shouldLoadAllMedia() {

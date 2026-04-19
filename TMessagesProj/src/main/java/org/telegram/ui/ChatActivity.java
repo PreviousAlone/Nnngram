@@ -360,6 +360,7 @@ import xyz.nextalone.nnngram.helpers.TranslateHelper;
 import xyz.nextalone.nnngram.helpers.TranslateHelper.Status;
 import xyz.nextalone.nnngram.translate.LanguageDetectorTimeout;
 import xyz.nextalone.nnngram.ui.BackButtonRecentMenu;
+import xyz.nextalone.nnngram.ui.QuickSendMediaPopup;
 import xyz.nextalone.nnngram.ui.TranslatorSettingsPopupWrapper;
 import xyz.nextalone.nnngram.ui.sortList.items.TextStyleItems;
 import xyz.nextalone.nnngram.utils.Defines;
@@ -507,6 +508,9 @@ public class ChatActivity extends BaseFragment implements
     private ChatNotificationsPopupWrapper chatNotificationsPopupWrapper;
     // private ChatActivitySideControlsButtonsLayout topButtonsLayout;
     private ChatActivitySideControlsButtonsLayout sideControlsButtonsLayout;
+    private QuickSendMediaPopup quickSendMediaPopup;
+    private long quickSendPauseTimeSec;
+    private final java.util.HashSet<Long> quickSendDismissedIds = new java.util.HashSet<>();
     private ActionBarMenuItem.Item hideTitleItem;
     /* private float pagedownButtonEnterProgress;
     private float searchUpDownEnterProgress;
@@ -7353,6 +7357,9 @@ public class ChatActivity extends BaseFragment implements
         sideControlsButtonsLayout.setOnLongClickListener(this::onSideControlButtonOnLongClick);
         contentView.addView(sideControlsButtonsLayout, LayoutHelper.createFrame(57, 300, Gravity.RIGHT | Gravity.BOTTOM));
 
+        quickSendMediaPopup = new QuickSendMediaPopup(context);
+        contentView.addView(quickSendMediaPopup, LayoutHelper.createFrame(72, 72, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 110));
+
         contentView.addView(topPanelLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP));
 
         updateMessageListAccessibilityVisibility();
@@ -11109,6 +11116,9 @@ public class ChatActivity extends BaseFragment implements
                 - getTopicTabsSideSize(TopicsTabsView.Position.BOTTOM)
                 - dp(ChatInputViewsContainer.INPUT_BUBBLE_BOTTOM + 4);
             sideControlsButtonsLayout.setTranslationY(baseTranslationY2);
+            if (quickSendMediaPopup != null) {
+                quickSendMediaPopup.setTranslationY(baseTranslationY2);
+            }
         }
 
         if (suggestEmojiPanel != null) {
@@ -29757,6 +29767,8 @@ public class ChatActivity extends BaseFragment implements
         if (starReactionsOverlay != null) {
             starReactionsOverlay.bringToFront();
         }
+
+        checkQuickSendMediaPopup();
     }
 
     public float getPullingDownOffset() {
@@ -29770,6 +29782,78 @@ public class ChatActivity extends BaseFragment implements
         } else {
             AndroidUtilities.requestAdjustResize(getParentActivity(), classGuid);
         }
+    }
+
+    private void checkQuickSendMediaPopup() {
+        if (!Config.quickSendMediaPopup || quickSendMediaPopup == null) {
+            return;
+        }
+        if (chatMode != 0 || inPreviewMode || inBubbleMode || isReport() || isInsideContainer) {
+            return;
+        }
+        if (getParentActivity() == null || currentEncryptedChat != null) {
+            // Skip secret chats to avoid surprising users with a separate send path.
+            return;
+        }
+        if (currentChat != null && !ChatObject.canSendPhoto(currentChat)) {
+            return;
+        }
+        if (!xyz.nextalone.nnngram.utils.PermissionUtils.isImagesPermissionGranted()) {
+            return;
+        }
+        final long sinceSec;
+        if (quickSendPauseTimeSec > 0) {
+            // Only show photos added while we were away from this chat.
+            sinceSec = quickSendPauseTimeSec;
+        } else {
+            // First time entering: look back 3 minutes for a freshly taken shot.
+            sinceSec = System.currentTimeMillis() / 1000L - 180L;
+        }
+        QuickSendMediaPopup.queryLatestImage(sinceSec, entry -> {
+            if (entry == null || quickSendMediaPopup == null || paused) {
+                return;
+            }
+            if (quickSendDismissedIds.contains(entry.id)) {
+                return;
+            }
+            if (quickSendMediaPopup.isShowingFor(entry.id)) {
+                return;
+            }
+            quickSendMediaPopup.show(entry, e -> {
+                quickSendDismissedIds.add(e.id);
+                sendQuickMediaEntry(e);
+            });
+        });
+    }
+
+    private void sendQuickMediaEntry(QuickSendMediaPopup.QuickSendMediaEntry e) {
+        if (e == null || (e.path == null && e.uri == null)) {
+            return;
+        }
+        if (!checkSlowModeAlert()) {
+            return;
+        }
+        SendMessagesHelper.prepareSendingPhoto(
+            getAccountInstance(),
+            e.path,
+            e.uri,
+            dialog_id,
+            replyingMessageObject,
+            getThreadMessage(),
+            replyingQuote,
+            null,
+            null,
+            null,
+            null,
+            0,
+            null,
+            true,
+            0,
+            chatMode,
+            quickReplyShortcut,
+            getQuickReplyId()
+        );
+        afterMessageSend();
     }
 
     @Override
@@ -29840,6 +29924,10 @@ public class ChatActivity extends BaseFragment implements
         if (contentView != null) {
             contentView.onPause();
         }
+        if (quickSendMediaPopup != null) {
+            quickSendMediaPopup.dismiss(false);
+        }
+        quickSendPauseTimeSec = System.currentTimeMillis() / 1000L;
         if (chatMode == 0 || chatMode == MODE_SAVED && getUserConfig().getClientUserId() == getSavedDialogId() || chatMode == MODE_SUGGESTIONS && ChatObject.isMonoForum(currentChat)) {
             saveDraft();
             getMessagesController().cancelTyping(0, dialog_id, threadMessageId);

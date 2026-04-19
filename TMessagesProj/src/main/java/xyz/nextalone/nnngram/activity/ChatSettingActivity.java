@@ -123,6 +123,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int hideTimeForStickerRow;
     private int showMessageIDRow;
     private int hideQuickSendMediaBottomRow;
+    private int quickSendMediaPopupRow;
     private int customQuickMessageRow;
     private int scrollableChatPreviewRow;
     private int showTabsOnForwardRow;
@@ -342,6 +343,11 @@ public class ChatSettingActivity extends BaseActivity {
             Config.toggleHideQuickSendMediaBottom();
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.hideQuickSendMediaBottom);
+            }
+        } else if (position == quickSendMediaPopupRow) {
+            Config.toggleQuickSendMediaPopup();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.quickSendMediaPopup);
             }
         } else if (position == customQuickMessageRow) {
             setCustomQuickMessage();
@@ -582,6 +588,7 @@ public class ChatSettingActivity extends BaseActivity {
         quickToggleAnonymous = addRow("quickToggleAnonymous");
         hideSendAsButtonRow = addRow("hideSendAsButton");
         hideQuickSendMediaBottomRow = addRow("hideQuickSendMediaBottom");
+        quickSendMediaPopupRow = addRow("quickSendMediaPopup");
         customQuickMessageRow = addRow("customQuickMessage");
         scrollableChatPreviewRow = addRow("scrollableChatPreview");
         showTabsOnForwardRow = addRow("showTabsOnForward");
@@ -747,6 +754,11 @@ public class ChatSettingActivity extends BaseActivity {
                     } else if (position == hideQuickSendMediaBottomRow) {
                         textCell.setTextAndCheck(LocaleController.getString("DisableQuickSendMediaBottom", R.string.DisableQuickSendMediaBottom),
                             Config.hideQuickSendMediaBottom, true);
+                    } else if (position == quickSendMediaPopupRow) {
+                        textCell.setTextAndValueAndCheck(
+                            LocaleController.getString("quickSendMediaPopup", R.string.quickSendMediaPopup),
+                            LocaleController.getString("quickSendMediaPopupInfo", R.string.quickSendMediaPopupInfo),
+                            Config.quickSendMediaPopup, true, true);
                     } else if (position == scrollableChatPreviewRow) {
                         textCell.setTextAndCheck(LocaleController.getString("scrollableChatPreview", R.string.scrollableChatPreview), Config.scrollableChatPreview, true);
                     } else if (position == showTabsOnForwardRow) {

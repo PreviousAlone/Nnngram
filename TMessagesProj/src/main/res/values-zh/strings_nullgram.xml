@@ -297,6 +297,10 @@
     <string name="OverrideDevicePerformanceDesc">覆盖 TELEOFFICIAL 的设备性能检测。\n低模式将尽可能减少动画效果和其他东西，这可能有助于节省前台运行时的耗电。\n高模式可能会大幅增加功耗和性能负担并导致卡顿。</string>
     <string name="JumpToBeginning">回到顶部</string>
     <string name="DisableQuickSendMediaBottom">禁用快速发送媒体按钮</string>
+    <string name="quickSendMediaPopup">新增图片快捷发送悬浮窗</string>
+    <string name="quickSendMediaPopupInfo">在聊天界面右下角显示一个悬浮按钮，用于快速发送刚刚拍摄的照片或截图。仅在打开聊天或从后台恢复时检测。</string>
+    <string name="quickSendMediaPopupTitle">发送新照片？</string>
+    <string name="quickSendMediaPopupSending">发送中…</string>
     <string name="ProviderBaiduTranslate">百度翻译</string>
     <string name="ProviderTranSmartTranslate">腾讯交互翻译</string>
     <string name="alwaysSendWithoutSound">总是静音发送</string>

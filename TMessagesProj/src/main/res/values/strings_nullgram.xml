@@ -301,6 +301,10 @@
     <string name="OverrideDevicePerformanceDesc">Override TELEOFFICIAL\'s device performance detector.\nLow mode will reduce animation effects and other stuff as much as possible, which may help to save power in the foreground.\nHigh mode may greatly increase power consumption and performance burden and cause stuttering.</string>
     <string name="JumpToBeginning">Jump To Beginning</string>
     <string name="DisableQuickSendMediaBottom">Disable Quick Send Media Bottom</string>
+    <string name="quickSendMediaPopup">Quick send popup for new photos</string>
+    <string name="quickSendMediaPopupInfo">Show a floating button in the bottom right corner of the chat to quickly send a photo or screenshot taken just now. Detection runs when you open or resume the chat.</string>
+    <string name="quickSendMediaPopupTitle">Send new photo?</string>
+    <string name="quickSendMediaPopupSending">Sending…</string>
     <string name="ProviderBaiduTranslate">Baidu Translator</string>
     <string name="ProviderTranSmartTranslate">TranSmart Translator</string>
     <string name="alwaysSendWithoutSound">Always Send Without Sound</string>
