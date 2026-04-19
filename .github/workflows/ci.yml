@@ -153,11 +153,22 @@ jobs:
           chmod +x telegram-bot-api-binary
           ./telegram-bot-api-binary --api-id=21724 --api-hash=3e0cb5efcd52300aec5994fdfc5bdc16 --local 2>&1 > /dev/null &
           curl https://raw.githubusercontent.com/PreviousAlone/ActionScript/main/uploadCI.py -o uploadCI.py
-          # Legacy Telegram Markdown (used by uploadCI.py) fails with
-          # "can't parse entities" when the commit body contains backticks —
-          # they clash with the ``` fence the template wraps the message in.
-          # Strip them (and any CR) before passing to the uploader.
-          sanitized=$(printf '%s' "$COMMIT_MESSAGE" | tr -d '`\r')
+          # Normalise COMMIT_MESSAGE for the Telegram uploader:
+          # 1. Strip backticks — legacy Markdown parse_mode trips on
+          #    "can't parse entities" when the commit body contains them
+          #    because they collide with the ``` fence in the template.
+          # 2. Cap length — sendDocument caption limit is 1024 chars;
+          #    template + version adds ~120, so truncate the body to 800
+          #    to leave headroom and avoid HTTP 400.
+          sanitized=$(python3 <<'PY'
+          import os
+          s = os.environ["COMMIT_MESSAGE"].replace("`", "").replace("\r", "")
+          MAX = 800
+          if len(s) > MAX:
+              s = s[:MAX].rstrip() + "\n…(truncated)"
+          print(s)
+          PY
+          )
           COMMIT_MESSAGE="$sanitized" python uploadCI.py
         env:
             CHAT_ID: ${{ secrets.TELEGRAM_CHATID }}
