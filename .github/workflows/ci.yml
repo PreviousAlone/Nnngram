@@ -153,7 +153,12 @@ jobs:
           chmod +x telegram-bot-api-binary
           ./telegram-bot-api-binary --api-id=21724 --api-hash=3e0cb5efcd52300aec5994fdfc5bdc16 --local 2>&1 > /dev/null &
           curl https://raw.githubusercontent.com/PreviousAlone/ActionScript/main/uploadCI.py -o uploadCI.py
-          python uploadCI.py
+          # Legacy Telegram Markdown (used by uploadCI.py) fails with
+          # "can't parse entities" when the commit body contains backticks —
+          # they clash with the ``` fence the template wraps the message in.
+          # Strip them (and any CR) before passing to the uploader.
+          sanitized=$(printf '%s' "$COMMIT_MESSAGE" | tr -d '`\r')
+          COMMIT_MESSAGE="$sanitized" python uploadCI.py
         env:
             CHAT_ID: ${{ secrets.TELEGRAM_CHATID }}
             TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
