@@ -4848,7 +4848,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                                             voipLastFragment = lastFragment;
                                                         } else {
                                                             ChatActivity fragment = new ChatActivity(args);
-                                                            getActionBarLayout().presentFragment(fragment);
+                                                            (AndroidUtilities.isTablet() ? rightActionBarLayout : getActionBarLayout()).presentFragment(fragment);
                                                             voipLastFragment = fragment;
                                                         }
                                                     } else {
