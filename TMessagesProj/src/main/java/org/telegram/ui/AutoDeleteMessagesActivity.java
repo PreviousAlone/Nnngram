@@ -149,7 +149,7 @@ public class AutoDeleteMessagesActivity extends BaseFragment implements Notifica
             public void run() {
                 UsersSelectActivity usersSelectActivity = new UsersSelectActivity(UsersSelectActivity.TYPE_AUTO_DELETE_EXISTING_CHATS);
                 usersSelectActivity.setTtlPeriod(getSelectedTime());
-                usersSelectActivity.setDelegate((ids, flags) -> {
+                usersSelectActivity.setDelegate((ids, flags, includeRecent) -> {
                     AndroidUtilities.runOnUIThread(() -> {
                         if (!ids.isEmpty()) {
                             for (int i = 0; i < ids.size(); i++) {

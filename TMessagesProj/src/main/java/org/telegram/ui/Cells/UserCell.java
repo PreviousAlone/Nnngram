@@ -61,6 +61,8 @@ import org.telegram.ui.NotificationsSettingsActivity;
 import org.telegram.ui.Stories.StoriesListPlaceProvider;
 import org.telegram.ui.Stories.StoriesUtilities;
 
+import xyz.nextalone.nnngram.utils.RecentChats;
+
 public class UserCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     public BackupImageView avatarImageView;
@@ -604,6 +606,9 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_MUTED);
                     break;
                 case "read":
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_READ);
+                    break;
+                case RecentChats.CHAT_TYPE:
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_READ);
                     break;
                 case "archived":

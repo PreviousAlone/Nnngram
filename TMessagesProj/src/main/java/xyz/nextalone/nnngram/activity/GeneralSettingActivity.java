@@ -68,7 +68,6 @@ import xyz.nextalone.nnngram.helpers.TranslateHelper.ProviderType;
 import xyz.nextalone.nnngram.translate.providers.DeepLTranslator;
 import xyz.nextalone.nnngram.ui.PopupBuilder;
 import xyz.nextalone.nnngram.utils.Defines;
-import xyz.nextalone.nnngram.utils.UnreadDialogRetention;
 
 @SuppressLint("NotifyDataSetChanged")
 public class GeneralSettingActivity extends BaseActivity {
@@ -117,7 +116,6 @@ public class GeneralSettingActivity extends BaseActivity {
     private int keepContactNicknameRow;
     private int ignoreUserSpecifiedReplyColorRow;
     private int ignoreFolderUnreadCountRow;
-    private int unreadDialogRetentionRow;
     private int hideProxyEntryInTitleRow;
     private int showProxyEntryInDrawerRow;
     private int hideFilterMuteAllRow;
@@ -273,26 +271,6 @@ public class GeneralSettingActivity extends BaseActivity {
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.ignoreFolderUnreadCount);
             }
-        } else if (position == unreadDialogRetentionRow) {
-            ArrayList<String> arrayList = new ArrayList<>();
-            ArrayList<Integer> types = new ArrayList<>();
-            arrayList.add(LocaleController.getString(R.string.unreadDialogRetentionOff));
-            types.add(Defines.unreadDialogRetentionOff);
-            arrayList.add(LocaleController.getString(R.string.unreadDialogRetention5Min));
-            types.add(Defines.unreadDialogRetention5Min);
-            arrayList.add(LocaleController.getString(R.string.unreadDialogRetention30Min));
-            types.add(Defines.unreadDialogRetention30Min);
-            arrayList.add(LocaleController.getString(R.string.unreadDialogRetention2Hour));
-            types.add(Defines.unreadDialogRetention2Hour);
-            int currentIndex = types.indexOf(Config.getUnreadDialogRetention());
-            if (currentIndex < 0) {
-                currentIndex = 0;
-            }
-            PopupBuilder.show(arrayList, LocaleController.getString(R.string.unreadDialogRetention), currentIndex, getParentActivity(), view, i -> {
-                Config.setUnreadDialogRetention(types.get(i));
-                UnreadDialogRetention.onSettingChanged();
-                listAdapter.notifyItemChanged(unreadDialogRetentionRow, PARTIAL);
-            });
         } else if (position == autoDisableBuiltInProxyRow) {
             Config.toggleAutoDisableBuiltInProxy();
             if (view instanceof TextCheckCell) {
@@ -545,7 +523,6 @@ public class GeneralSettingActivity extends BaseActivity {
         ignoreUserSpecifiedReplyColorRow = addRow("ignoreUserSpecifiedReplyColor");
         tabsTitleTypeRow = addRow("tabsTitleType");
         ignoreFolderUnreadCountRow = addRow("ignoreFolderUnreadCount");
-        unreadDialogRetentionRow = addRow("unreadDialogRetention");
         hideFilterMuteAllRow = addRow("hideFilterMuteAll");
         hideProxyEntryInTitleRow = addRow();
         showProxyEntryInDrawerRow = addRow("showProxyEntryInDrawer");
@@ -605,14 +582,6 @@ public class GeneralSettingActivity extends BaseActivity {
                             default -> LocaleController.getString("TabTitleTypeMix", R.string.TabTitleTypeMix);
                         };
                         textCell.setTextAndValue(LocaleController.getString("TabTitleType", R.string.TabTitleType), value, payload, false);
-                    } else if (position == unreadDialogRetentionRow) {
-                        String value = switch (Config.getUnreadDialogRetention()) {
-                            case Defines.unreadDialogRetention5Min -> LocaleController.getString(R.string.unreadDialogRetention5Min);
-                            case Defines.unreadDialogRetention30Min -> LocaleController.getString(R.string.unreadDialogRetention30Min);
-                            case Defines.unreadDialogRetention2Hour -> LocaleController.getString(R.string.unreadDialogRetention2Hour);
-                            default -> LocaleController.getString(R.string.unreadDialogRetentionOff);
-                        };
-                        textCell.setTextAndValue(LocaleController.getString(R.string.unreadDialogRetention), value, payload, true);
                     } else if (position == overrideDevicePerformanceRow) {
                         String value = switch (Config.getDevicePerformance()) {
                             case Defines.devicePerformanceLow -> LocaleController.getString("DevicePerformanceLow", R.string.DevicePerformanceLow);
@@ -895,7 +864,7 @@ public class GeneralSettingActivity extends BaseActivity {
             } else if (position == tabsTitleTypeRow || position == translationProviderRow || position == deepLFormalityRow || position == translationTargetRow ||
                 position == translatorTypeRow || position == doNotTranslateRow || position == overrideDevicePerformanceRow || position == customTitleRow ||
                 position == deepLxApiRow || position == editTextTranslationTargetRow ||
-                position == llmConfigRow || position == unreadDialogRetentionRow) {
+                position == llmConfigRow) {
                 return 2;
             } else if (position == drawerRow || position == generalRow || position == translatorRow || position == devicesRow || position == storiesRow || position == llmSettingsRow) {
                 return 4;
@@ -1071,4 +1040,3 @@ public class GeneralSettingActivity extends BaseActivity {
     }
 
 }
-

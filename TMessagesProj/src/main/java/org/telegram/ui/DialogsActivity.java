@@ -293,6 +293,7 @@ import xyz.nextalone.nnngram.ui.SendOptionsMenuLayout;
 import xyz.nextalone.nnngram.utils.APKUtils;
 import xyz.nextalone.nnngram.utils.Defines;
 import xyz.nextalone.nnngram.utils.PrivacyUtils;
+import xyz.nextalone.nnngram.utils.RecentChats;
 import xyz.nextalone.nnngram.utils.UpdateUtils;
 
 import me.vkryl.android.animator.BoolAnimator;
@@ -4011,18 +4012,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     });
                     showDialog(sheet);
                 } else if (id == remove_from_folder) {
-                    MessagesController.DialogFilter filter = getMessagesController().getDialogFilters().get(viewPages[0].selectedType);
-                    ArrayList<Long> neverShow = FiltersListBottomSheet.getDialogsCount(DialogsActivity.this, filter, selectedDialogs, false, false);
-
-                    int currentCount;
-                    if (filter != null) {
-                        currentCount = filter.neverShow.size();
-                    } else {
-                        currentCount = 0;
+                    MessagesController.DialogFilter filter = getCurrentSelectedDialogFilter();
+                    if (filter == null) {
+                        return;
                     }
+                    ArrayList<Long> recentOnly = getRecentOnlySelectedDialogs(filter, selectedDialogs);
+                    ArrayList<Long> filterSelectedDialogs = new ArrayList<>(selectedDialogs);
+                    filterSelectedDialogs.removeAll(recentOnly);
+                    ArrayList<Long> neverShow = FiltersListBottomSheet.getDialogsCount(DialogsActivity.this, filter, filterSelectedDialogs, false, false);
+
+                    int currentCount = filter.neverShow.size();
                     if (currentCount + neverShow.size() > 100) {
                         showDialog(AlertsCreator.createSimpleAlert(getParentActivity(), LocaleController.getString(R.string.FilterAddToAlertFullTitle), LocaleController.getString(R.string.FilterAddToAlertFullText)).create());
                         return;
+                    }
+                    if (!recentOnly.isEmpty()) {
+                        RecentChats.removeRecentDialogs(currentAccount, recentOnly);
                     }
                     if (!neverShow.isEmpty()) {
                         filter.neverShow.addAll(neverShow);
@@ -4037,14 +4042,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.emoticon, filter.name, filter.entities, filter.title_noanimate, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, false, false, DialogsActivity.this, null);
                     }
                     long did;
-                    if (neverShow.size() == 1) {
+                    int removedCount = recentOnly.size() + neverShow.size();
+                    if (removedCount == 1 && !neverShow.isEmpty()) {
                         did = neverShow.get(0);
+                    } else if (removedCount == 1) {
+                        did = recentOnly.get(0);
                     } else {
                         did = 0;
                     }
                     final UndoView undoView = getUndoView();
                     if (undoView != null) {
-                        undoView.showWithAction(did, UndoView.ACTION_REMOVED_FROM_FOLDER, neverShow.size(), filter, null, null);
+                        undoView.showWithAction(did, UndoView.ACTION_REMOVED_FROM_FOLDER, removedCount, filter, null, null);
                     }
                     hideActionMode(false);
                 } else if (id == pin || id == read || id == delete || id == clear || id == mute || id == archive || id == block || id == archive2 || id == pin2) {
@@ -9784,6 +9792,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     cantRemoveFromFolder = count >= dialogsCount;
                 } catch (Exception ignore) {
                 }
+                if (cantRemoveFromFolder) {
+                    MessagesController.DialogFilter filter = getCurrentSelectedDialogFilter();
+                    cantRemoveFromFolder = filter == null || getRecentOnlySelectedDialogs(filter, selectedDialogs).isEmpty();
+                }
             }
             if (cantRemoveFromFolder) {
                 removeFromFolderItem.setVisibility(View.GONE);
@@ -10358,6 +10370,37 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     public void setPanTranslationOffset(float y) {
         floatingButtonPanOffset = y;
         updateFloatingButtonOffset();
+    }
+
+    private MessagesController.DialogFilter getCurrentSelectedDialogFilter() {
+        if (viewPages == null || viewPages[0] == null) {
+            return null;
+        }
+        int selectedType = viewPages[0].selectedType;
+        ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
+        if (selectedType < 0 || selectedType >= filters.size()) {
+            return null;
+        }
+        return filters.get(selectedType);
+    }
+
+    private ArrayList<Long> getRecentOnlySelectedDialogs(MessagesController.DialogFilter filter, ArrayList<Long> dialogs) {
+        ArrayList<Long> recentOnly = new ArrayList<>();
+        if (filter == null || !RecentChats.isRecentFolderEnabled(currentAccount, filter.id)) {
+            return recentOnly;
+        }
+        AccountInstance accountInstance = AccountInstance.getInstance(currentAccount);
+        for (int a = 0, N = dialogs.size(); a < N; a++) {
+            long did = dialogs.get(a);
+            if (!RecentChats.isRecentDialog(currentAccount, did)) {
+                continue;
+            }
+            TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(did);
+            if (dialog == null || !filter.includesDialogWithoutRecent(accountInstance, did, dialog)) {
+                recentOnly.add(did);
+            }
+        }
+        return recentOnly;
     }
 
     @SuppressWarnings("unchecked")

@@ -139,7 +139,7 @@ import java.util.stream.Collectors;
 import me.vkryl.core.BitwiseUtils;
 
 import xyz.nextalone.gen.Config;
-import xyz.nextalone.nnngram.utils.UnreadDialogRetention;
+import xyz.nextalone.nnngram.utils.RecentChats;
 
 public class MessagesController extends BaseController implements NotificationCenter.NotificationCenterDelegate {
 
@@ -1295,6 +1295,14 @@ public class MessagesController extends BaseController implements NotificationCe
         }
 
         public boolean includesDialog(AccountInstance accountInstance, long dialogId, TLRPC.Dialog d) {
+            return includesDialog(accountInstance, dialogId, d, true);
+        }
+
+        public boolean includesDialogWithoutRecent(AccountInstance accountInstance, long dialogId, TLRPC.Dialog d) {
+            return includesDialog(accountInstance, dialogId, d, false);
+        }
+
+        private boolean includesDialog(AccountInstance accountInstance, long dialogId, TLRPC.Dialog d, boolean includeRecent) {
             if (neverShow.contains(dialogId)) {
                 return false;
             }
@@ -1311,10 +1319,11 @@ public class MessagesController extends BaseController implements NotificationCe
             if ((flags & DIALOG_FILTER_FLAG_EXCLUDE_MUTED) != 0 && messagesController.isDialogMuted(d.id, 0) && d.unread_mentions_count == 0) {
                 return false;
             }
+            if (includeRecent && d.folder_id == 0 && RecentChats.isRecentFolderEnabled(accountInstance.getCurrentAccount(), id) && RecentChats.isRecentDialog(accountInstance.getCurrentAccount(), dialogId)) {
+                return true;
+            }
             if ((flags & DIALOG_FILTER_FLAG_EXCLUDE_READ) != 0 && messagesController.getDialogUnreadCount(d) == 0 && !d.unread_mark && d.unread_mentions_count == 0) {
-                if (!UnreadDialogRetention.isRecent(accountInstance.getCurrentAccount(), d)) {
-                    return false;
-                }
+                return false;
             }
             if (dialogId > 0) {
                 TLRPC.User user = messagesController.getUser(dialogId);
@@ -2608,6 +2617,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public void removeFilter(DialogFilter filter) {
+        RecentChats.setRecentFolderEnabled(currentAccount, filter.id, false);
         dialogFilters.remove(filter);
         dialogFiltersById.remove(filter.id);
         getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);

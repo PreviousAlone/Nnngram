@@ -20,15 +20,12 @@
 package xyz.nextalone.nnngram.ui;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Base64;
-import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -38,14 +35,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserObject;
-import org.telegram.messenger.Utilities;
-import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.AlertDialog;
@@ -58,28 +52,25 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.TopicsFragment;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import xyz.nextalone.nnngram.utils.RecentChats;
+
 public class BackButtonRecentMenu {
-    
-    private static final int MAX_RECENT_DIALOGS = 25;
-    
-    private static final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("nekorecentdialogs", Context.MODE_PRIVATE);
-    private static final SparseArray<LinkedList<Long>> recentDialogs = new SparseArray<>();
-    
-    public static void show(int currentAccount, BaseFragment fragment, View backButton) {
+
+    public static boolean show(int currentAccount, BaseFragment fragment, View backButton) {
         if (fragment == null) {
-            return;
+            return false;
         }
         final Context context = fragment.getParentActivity();
         final View fragmentView = fragment.getFragmentView();
         if (context == null || fragmentView == null) {
-            return;
+            return false;
         }
-        LinkedList<Long> dialogs = getRecentDialogs(fragment.getCurrentAccount());
+        List<Long> dialogs = RecentChats.getRecentDialogs(currentAccount);
         if (dialogs.isEmpty()) {
-            return;
+            return false;
         }
         
         ActionBarPopupWindow.ActionBarPopupWindowLayout layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(context) {
@@ -137,7 +128,12 @@ public class BackButtonRecentMenu {
         headerView.setPadding(AndroidUtilities.dp(9), AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8));
         layout.addView(headerView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 4, 4, 4, 4));
         
+        int visibleDialogs = 0;
         for (Long dialogId : dialogs) {
+            TLRPC.Dialog dialog = MessagesController.getInstance(currentAccount).dialogs_dict.get(dialogId);
+            if (dialog == null || dialog.folder_id != 0) {
+                continue;
+            }
             final TLRPC.Chat chat;
             final TLRPC.User user;
             if (dialogId < 0) {
@@ -229,6 +225,10 @@ public class BackButtonRecentMenu {
                 return true;
             });
             layout.addView(cell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+            visibleDialogs++;
+        }
+        if (visibleDialogs == 0) {
+            return false;
         }
         
         ActionBarPopupWindow scrimPopupWindow = new ActionBarPopupWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
@@ -252,57 +252,14 @@ public class BackButtonRecentMenu {
         int popupY = anchorLocation[1] - layout.getMeasuredHeight() - backgroundPaddings.bottom + AndroidUtilities.dp(8);
         scrimPopupWindow.showAtLocation(fragmentView, Gravity.LEFT | Gravity.TOP, popupX, popupY);
         scrimPopupWindow.dimBehind();
-    }
-    
-    private static LinkedList<Long> getRecentDialogs(int currentAccount) {
-        LinkedList<Long> recentDialog = recentDialogs.get(currentAccount);
-        if (recentDialog == null) {
-            recentDialog = new LinkedList<>();
-            String list = preferences.getString("recents_" + currentAccount, null);
-            if (!TextUtils.isEmpty(list)) {
-                byte[] bytes = Base64.decode(list, Base64.NO_WRAP | Base64.NO_PADDING);
-                SerializedData data = new SerializedData(bytes);
-                int count = data.readInt32(false);
-                for (int a = 0; a < count; a++) {
-                    recentDialog.add(data.readInt64(false));
-                }
-                data.cleanup();
-            }
-            recentDialogs.put(currentAccount, recentDialog);
-        }
-        return recentDialog;
+        return true;
     }
     
     public static void addToRecentDialogs(int currentAccount, long dialogId) {
-        LinkedList<Long> recentDialog = getRecentDialogs(currentAccount);
-        for (int i = 0; i < recentDialog.size(); i++) {
-            if (recentDialog.get(i) == dialogId) {
-                recentDialog.remove(i);
-                break;
-            }
-        }
-        
-        if (recentDialog.size() > MAX_RECENT_DIALOGS) {
-            recentDialog.removeLast();
-        }
-        recentDialog.addFirst(dialogId);
-        LinkedList<Long> finalRecentDialog = new LinkedList<>(recentDialog);
-        Utilities.globalQueue.postRunnable(() -> saveRecentDialogs(currentAccount, finalRecentDialog));
-    }
-    
-    private static void saveRecentDialogs(int currentAccount, LinkedList<Long> recentDialog) {
-        SerializedData serializedData = new SerializedData();
-        int count = recentDialog.size();
-        serializedData.writeInt32(count);
-        for (Long dialog : recentDialog) {
-            serializedData.writeInt64(dialog);
-        }
-        preferences.edit().putString("recents_" + currentAccount, Base64.encodeToString(serializedData.toByteArray(), Base64.NO_WRAP | Base64.NO_PADDING)).apply();
-        serializedData.cleanup();
+        RecentChats.addRecentDialog(currentAccount, dialogId);
     }
     
     public static void clearRecentDialogs(int currentAccount) {
-        getRecentDialogs(currentAccount).clear();
-        preferences.edit().putString("recents_" + currentAccount, "").apply();
+        RecentChats.clearRecentDialogs(currentAccount);
     }
 }

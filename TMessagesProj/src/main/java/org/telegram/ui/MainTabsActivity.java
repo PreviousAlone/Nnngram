@@ -300,8 +300,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                 if (fragment == null) {
                     fragment = this;
                 }
-                BackButtonRecentMenu.show(currentAccount, fragment, v);
-                return true;
+                if (BackButtonRecentMenu.show(currentAccount, fragment, v)) {
+                    return true;
+                }
             }
             return openFoldersSelector(v);
         });

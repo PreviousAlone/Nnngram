@@ -53,6 +53,8 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.GroupCreateUserCell;
 
+import xyz.nextalone.nnngram.utils.RecentChats;
+
 public class GroupCreateSpan extends View {
 
     private String countryIso2;
@@ -150,6 +152,11 @@ public class GroupCreateSpan extends View {
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_READ);
                     uid = Long.MIN_VALUE + 6;
                     firstName = LocaleController.getString(R.string.FilterRead);
+                    break;
+                case RecentChats.CHAT_TYPE:
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_READ);
+                    uid = RecentChats.VIRTUAL_UID;
+                    firstName = LocaleController.getString(R.string.RecentChats);
                     break;
                 case "existing_chats":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_EXISTING_CHATS);

@@ -110,6 +110,7 @@ import java.util.Collections;
 
 import xyz.nextalone.nnngram.helpers.FolderIconHelper;
 import xyz.nextalone.nnngram.ui.IconSelector;
+import xyz.nextalone.nnngram.utils.RecentChats;
 
 public class FilterCreateActivity extends BaseFragment {
 
@@ -133,6 +134,7 @@ public class FilterCreateActivity extends BaseFragment {
     private String newFilterEmoticon;
     private boolean newFilterAnimations = true;
     private int newFilterFlags;
+    private boolean newIncludeRecent;
     private int newFilterColor;
     private ArrayList<Long> newAlwaysShow;
     private ArrayList<Long> newNeverShow;
@@ -148,7 +150,8 @@ public class FilterCreateActivity extends BaseFragment {
             (!TextUtils.isEmpty(newFilterName) || !TextUtils.isEmpty(filter.name)) &&
                 (newFilterFlags & ~(MessagesController.DIALOG_FILTER_FLAG_CHATLIST | MessagesController.DIALOG_FILTER_FLAG_CHATLIST_ADMIN)) == 0 &&
                 newNeverShow.isEmpty() &&
-                !newAlwaysShow.isEmpty()
+                !newAlwaysShow.isEmpty() &&
+                !newIncludeRecent
         );
     }
 
@@ -215,6 +218,7 @@ public class FilterCreateActivity extends BaseFragment {
         newFilterAnimations = !filter.title_noanimate;
         AnimatedEmojiDrawable.toggleAnimations(currentAccount, newFilterAnimations);
         newFilterFlags = filter.flags;
+        newIncludeRecent = !filter.isChatlist() && RecentChats.isRecentFolderEnabled(currentAccount, filter.id);
         newFilterColor = filter.color;
         newAlwaysShow = new ArrayList<>(filter.alwaysShow);
         if (alwaysShow != null) {
@@ -316,6 +320,9 @@ public class FilterCreateActivity extends BaseFragment {
         }
         if ((newFilterFlags & MessagesController.DIALOG_FILTER_FLAG_BOTS) != 0) {
             items.add(ItemInner.asChat(true, LocaleController.getString(R.string.FilterBots), "bots", MessagesController.DIALOG_FILTER_FLAG_BOTS));
+        }
+        if (newIncludeRecent) {
+            items.add(ItemInner.asRecent());
         }
 
         if (!newAlwaysShow.isEmpty()) {
@@ -875,10 +882,12 @@ public class FilterCreateActivity extends BaseFragment {
     private void selectChatsFor(boolean include) {
         ArrayList<Long> arrayList = include ? newAlwaysShow : newNeverShow;
         UsersSelectActivity fragment = new UsersSelectActivity(include, arrayList, newFilterFlags);
+        fragment.setIncludeRecent(include && newIncludeRecent);
         fragment.noChatTypes = filter.isChatlist();
-        fragment.setDelegate((ids, flags) -> {
+        fragment.setDelegate((ids, flags, includeRecent) -> {
             newFilterFlags = flags;
             if (include) {
+                newIncludeRecent = includeRecent;
                 onUpdate(true, newAlwaysShow, ids);
                 newAlwaysShow = ids;
                 for (int a = 0; a < newAlwaysShow.size(); a++) {
@@ -941,7 +950,10 @@ public class FilterCreateActivity extends BaseFragment {
         var result = FolderIconHelper.getEmoticonFromFlags(flags);
         String newName = result.first;
         String newEmoticon = result.second;
-        if ((flags & MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS) == MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS) {
+        if (newIncludeRecent && flags == 0 && newAlwaysShow.isEmpty()) {
+            newName = LocaleController.getString(R.string.RecentChats);
+            newEmoticon = null;
+        } else if ((flags & MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS) == MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS) {
             if ((newFilterFlags & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_READ) != 0) {
                 newName = LocaleController.getString(R.string.FilterNameUnread);
             } else if ((newFilterFlags & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_MUTED) != 0) {
@@ -1031,7 +1043,9 @@ public class FilterCreateActivity extends BaseFragment {
         }
         builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
         builder.setPositiveButton(LocaleController.getString(R.string.StickersRemove), (dialogInterface, i) -> {
-            if (item.flags > 0) {
+            if (item.isRecent) {
+                newIncludeRecent = false;
+            } else if (item.flags > 0) {
                 newFilterFlags &=~ item.flags;
             } else {
                 (include ? newAlwaysShow : newNeverShow).remove((Long) item.did);
@@ -1076,6 +1090,7 @@ public class FilterCreateActivity extends BaseFragment {
         final ArrayList<TLRPC.MessageEntity> entities = getMediaDataController().getEntities(parsedTitle, false);
         saveFilterToServer(filter, newFilterFlags, newFilterEmoticon, parsedTitle[0].toString(), entities, !newFilterAnimations, newFilterColor, newAlwaysShow, newNeverShow, newPinned, creatingNew, false, hasUserChanged, true, progress, this, () -> {
 
+            RecentChats.setRecentFolderEnabled(currentAccount, filter.id, newIncludeRecent);
             hasUserChanged = false;
             creatingNew = false;
             filter.flags = newFilterFlags;
@@ -1288,13 +1303,16 @@ public class FilterCreateActivity extends BaseFragment {
         if (filter.flags != newFilterFlags) {
             return true;
         }
+        if (RecentChats.isRecentFolderEnabled(currentAccount, filter.id) != newIncludeRecent) {
+            return true;
+        }
         return hasUserChanged;
     }
 
     private void checkDoneButton(boolean animated) {
         boolean enabled = !TextUtils.isEmpty(newFilterName) && newFilterName.length() <= MAX_NAME_LENGTH;
         if (enabled) {
-            enabled = (newFilterFlags & MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS) != 0 || !newAlwaysShow.isEmpty();
+            enabled = (newFilterFlags & MessagesController.DIALOG_FILTER_FLAG_ALL_CHATS) != 0 || !newAlwaysShow.isEmpty() || newIncludeRecent;
             if (enabled && !creatingNew) {
                 enabled = hasChanges();
             }
@@ -1337,6 +1355,7 @@ public class FilterCreateActivity extends BaseFragment {
         private long did;
         private String chatType;
         private int flags;
+        private boolean isRecent;
 
         private int iconResId;
         private boolean isRed;
@@ -1381,6 +1400,12 @@ public class FilterCreateActivity extends BaseFragment {
             item.text = name;
             item.chatType = chatType;
             item.flags = flags;
+            return item;
+        }
+
+        public static ItemInner asRecent() {
+            ItemInner item = asChat(true, LocaleController.getString(R.string.RecentChats), RecentChats.CHAT_TYPE, 0);
+            item.isRecent = true;
             return item;
         }
 

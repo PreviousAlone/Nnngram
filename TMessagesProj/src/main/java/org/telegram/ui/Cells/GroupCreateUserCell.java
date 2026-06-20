@@ -66,6 +66,8 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Premium.PremiumGradient;
 
+import xyz.nextalone.nnngram.utils.RecentChats;
+
 public class GroupCreateUserCell extends FrameLayout {
 
     private BackupImageView avatarImageView;
@@ -391,6 +393,9 @@ public class GroupCreateUserCell extends FrameLayout {
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_MUTED);
                     break;
                 case "read":
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_READ);
+                    break;
+                case RecentChats.CHAT_TYPE:
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_READ);
                     break;
                 case "archived":

@@ -479,7 +479,7 @@ public class BusinessRecipientsHelper {
         fragment.noChatTypes = bot && !exclude && !include;
         fragment.allowSelf = false;
         fragment.doNotNewChats = !include && doNotExcludeNewChats;
-        fragment.setDelegate((ids, flags) -> {
+        fragment.setDelegate((ids, flags, includeRecent) -> {
             if (include) {
                 includeFlags = flags;
                 alwaysShow.clear();

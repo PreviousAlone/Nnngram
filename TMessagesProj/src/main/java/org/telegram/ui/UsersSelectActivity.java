@@ -83,6 +83,8 @@ import org.telegram.ui.Components.StickerEmptyView;
 
 import java.util.ArrayList;
 
+import xyz.nextalone.nnngram.utils.RecentChats;
+
 public class UsersSelectActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, View.OnClickListener {
 
     public final static int TYPE_FILTER = 0;
@@ -113,6 +115,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
     public boolean doNotNewChats;
     private boolean isInclude;
     private int filterFlags;
+    private boolean includeRecent;
     private ArrayList<Long> initialIds;
 
     private boolean searchWas;
@@ -168,7 +171,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
     }
 
     public interface FilterUsersActivityDelegate {
-        void didSelectChats(ArrayList<Long> ids, int flags);
+        void didSelectChats(ArrayList<Long> ids, int flags, boolean includeRecent);
     }
 
     private class SpansContainer extends ViewGroup {
@@ -287,7 +290,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
         public void addSpan(final GroupCreateSpan span, boolean animated) {
             allSpans.add(span);
             long uid = span.getUid();
-            if (uid > Long.MIN_VALUE + 7) {
+            if (!isVirtualFilterUid(uid)) {
                 selectedCount++;
             }
             selectedContacts.put(uid, span);
@@ -322,7 +325,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
         public void removeSpan(final GroupCreateSpan span) {
             ignoreScrollEvent = true;
             long uid = span.getUid();
-            if (uid > Long.MIN_VALUE + 7) {
+            if (!isVirtualFilterUid(uid)) {
                 selectedCount--;
             }
             selectedContacts.remove(uid);
@@ -356,6 +359,10 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
             animators.add(ObjectAnimator.ofFloat(removingSpan, View.ALPHA, 1.0f, 0.0f));
             requestLayout();
         }
+    }
+
+    private static boolean isVirtualFilterUid(long uid) {
+        return uid >= Long.MIN_VALUE && uid <= RecentChats.VIRTUAL_UID;
     }
 
 
@@ -430,6 +437,8 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                     filterFlags &= ~MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_READ;
                 } else if (span.getUid() == Long.MIN_VALUE + 7) {
                     filterFlags &= ~MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED;
+                } else if (span.getUid() == RecentChats.VIRTUAL_UID) {
+                    includeRecent = false;
                 }
             }
             updateHint();
@@ -640,6 +649,8 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                                 filterFlags &= ~MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_READ;
                             } else if (span.getUid() == Long.MIN_VALUE + 7) {
                                 filterFlags &= ~MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED;
+                            } else if (span.getUid() == RecentChats.VIRTUAL_UID) {
+                                includeRecent = false;
                             }
                         }
                         updateHint();
@@ -745,9 +756,12 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                         } else if (position == 4) {
                             flag = MessagesController.DIALOG_FILTER_FLAG_CHANNELS;
                             id = Long.MIN_VALUE + 3;
-                        } else {
+                        } else if (position == 5) {
                             flag = MessagesController.DIALOG_FILTER_FLAG_BOTS;
                             id = Long.MIN_VALUE + 4;
+                        } else {
+                            flag = 0;
+                            id = RecentChats.VIRTUAL_UID;
                         }
                     } else {
                         if (position == 1) {
@@ -761,7 +775,9 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                             id = Long.MIN_VALUE + 7;
                         }
                     }
-                    if (cell.isChecked()) {
+                    if (id == RecentChats.VIRTUAL_UID) {
+                        includeRecent = !cell.isChecked();
+                    } else if (cell.isChecked()) {
                         filterFlags &=~ flag;
                     } else {
                         filterFlags |= flag;
@@ -880,6 +896,11 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                 spansContainer.addSpan(span, false);
                 span.setOnClickListener(UsersSelectActivity.this);
             }
+        }
+        if (includeRecent) {
+            GroupCreateSpan span = new GroupCreateSpan(editText.getContext(), RecentChats.CHAT_TYPE);
+            spansContainer.addSpan(span, false);
+            span.setOnClickListener(UsersSelectActivity.this);
         }
         if (initialIds != null && !initialIds.isEmpty()) {
             TLObject object;
@@ -1017,13 +1038,13 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
         ArrayList<Long> result = new ArrayList<>();
         for (int a = 0; a < selectedContacts.size(); a++) {
             long uid = selectedContacts.keyAt(a);
-            if (uid <= Long.MIN_VALUE + 9) {
+            if (isVirtualFilterUid(uid)) {
                 continue;
             }
             result.add(selectedContacts.keyAt(a));
         }
         if (delegate != null) {
-            delegate.didSelectChats(result, filterFlags);
+            delegate.didSelectChats(result, filterFlags, includeRecent);
         }
         finishFragment();
         return true;
@@ -1073,6 +1094,10 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
         delegate = filterUsersActivityDelegate;
     }
 
+    public void setIncludeRecent(boolean includeRecent) {
+        this.includeRecent = includeRecent;
+    }
+
     public class GroupCreateAdapter extends RecyclerListView.FastScrollAdapter {
 
         private Context context;
@@ -1093,7 +1118,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                 usersStartRow = 5 + (doNotNewChats ? 0 : 1);
             } else if (type == TYPE_FILTER) {
                 if (isInclude) {
-                    usersStartRow = 7;
+                    usersStartRow = 8;
                 } else {
                     usersStartRow = 5;
                 }
@@ -1177,7 +1202,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                     count = 3 + (doNotNewChats ? 0 : 1);
                 } else if (type == TYPE_FILTER) {
                     if (isInclude) {
-                        count = 7;
+                        count = 8;
                     } else {
                         count = 5;
                     }
@@ -1304,10 +1329,14 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                                     name = getString(R.string.FilterChannels);
                                     object = "channels";
                                     flag = MessagesController.DIALOG_FILTER_FLAG_CHANNELS;
-                                } else {
+                                } else if (position == 5) {
                                     name = getString(R.string.FilterBots);
                                     object = "bots";
                                     flag = MessagesController.DIALOG_FILTER_FLAG_BOTS;
+                                } else {
+                                    name = getString(R.string.RecentChats);
+                                    object = RecentChats.CHAT_TYPE;
+                                    flag = 0;
                                 }
                             } else {
                                 if (position == 1) {
@@ -1325,7 +1354,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                                 }
                             }
                             cell.setObject(object, name, null);
-                            cell.setChecked((filterFlags & flag) == flag, false);
+                            cell.setChecked(RecentChats.CHAT_TYPE.equals(object) ? includeRecent : (filterFlags & flag) == flag, false);
                             cell.setCheckBoxEnabled(true);
                             return;
                         }
@@ -1426,7 +1455,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                     }
                 } else if (type == TYPE_FILTER) {
                     if (isInclude) {
-                        if (position == 0 || position == 6) {
+                        if (position == 0 || position == 7) {
                             return 2;
                         }
                     } else {
