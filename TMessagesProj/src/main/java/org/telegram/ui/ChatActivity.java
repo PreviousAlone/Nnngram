@@ -12641,6 +12641,7 @@ public class ChatActivity extends BaseFragment implements
                 } else {
                     intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
                 }
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getParentActivity().startActivityForResult(Intent.createChooser(intent, LocaleController.getString(R.string.ShareFile)), 500);
             }
         }
@@ -34293,6 +34294,7 @@ public class ChatActivity extends BaseFragment implements
                 } else {
                     intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
                 }
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 try {
                     getParentActivity().startActivityForResult(Intent.createChooser(intent, LocaleController.getString("ShareFile", R.string.ShareFile)), 500);
                 } catch (Throwable ignore) {
