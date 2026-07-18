@@ -66,6 +66,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -718,13 +719,13 @@ public class ThemeEditorView {
                 }
 
                 @Override
-                protected void onDraw(Canvas canvas) {
+                protected void onDraw(@NonNull Canvas canvas) {
                     int y = scrollOffsetY - backgroundPaddingTop + AndroidUtilities.dp(6);
                     int top = scrollOffsetY - backgroundPaddingTop - AndroidUtilities.dp(13);
                     int height = getMeasuredHeight() + AndroidUtilities.dp(30) + backgroundPaddingTop;
                     int statusBarHeight = 0;
                     float radProgress = 1.0f;
-                    if (!isFullscreen && Build.VERSION.SDK_INT >= 21) {
+                    if (!isFullscreen) {
                         top += AndroidUtilities.statusBarHeight;
                         y += AndroidUtilities.statusBarHeight;
                         height -= AndroidUtilities.statusBarHeight;

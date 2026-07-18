@@ -1008,7 +1008,7 @@ public class EditTextBoldCursor extends EditTextEffects {
                 }
             }
         } else {
-            if (cursorDrawn) {
+            if (cursorDrawn && allowDrawCursor) {
                 try {
                     canvas.save();
                     int voffsetCursor = 0;

@@ -140,6 +140,7 @@ import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
+import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Cells.CheckBoxCell;
@@ -1753,7 +1754,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
     private void needFinishActivity(boolean afterSignup, boolean showSetPasswordConfirm, int otherwiseRelogin) {
         if (getParentActivity() != null) {
-            AndroidUtilities.setLightStatusBar(getParentActivity().getWindow(), false);
+            AndroidUtilities.setLightStatusBar(getParentActivity(), false);
         }
         clearCurrentState();
         if (getParentActivity() instanceof LaunchActivity) {
@@ -10315,7 +10316,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
             addView(new Space(context), LayoutHelper.createLinear(0, 0, 1, Gravity.FILL));
 
-            button = new ButtonWithCounterView(context, null);
+            button = new ButtonWithCounterView(context, null).setRound();
             button.setLoading(true);
             addView(button, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.FILL_HORIZONTAL, 0, 16, 0, 16));
         }
@@ -10486,6 +10487,23 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
         }
 
+        private void closeAllPaymentFormActivities() {
+            final INavigationLayout parentLayout = getParentLayout();
+            if (parentLayout == null || parentLayout.getFragmentStack() == null) {
+                return;
+            }
+            final List<BaseFragment> stack = parentLayout.getFragmentStack();
+            final BaseFragment topFragment = stack.isEmpty() ? null : stack.get(stack.size() - 1);
+            for (BaseFragment fragment : new ArrayList<>(stack)) {
+                if (fragment instanceof PaymentFormActivity && fragment != topFragment) {
+                    fragment.removeSelfFromStack();
+                }
+            }
+            if (topFragment instanceof PaymentFormActivity) {
+                parentLayout.closeLastFragment(true);
+            }
+        }
+
         private boolean polling;
         private String pollingPhoneNumber;
         private String pollingPhoneCodeHash;
@@ -10518,6 +10536,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                 if (res instanceof TLRPC.auth_SentCode) {
                     polling = false;
                     button.setLoading(false);
+                    closeAllPaymentFormActivities();
                     fillNextCodeParams(params, (TLRPC.auth_SentCode) res);
                 } else if (err != null) {
                     if (err.text != null && err.text.startsWith("FLOOD_WAIT_")) {

@@ -39,6 +39,8 @@ public class TlUtils {
             return ((TLRPC.TL_messages_sendMessage) request).peer;
         } else if (request instanceof TLRPC.TL_messages_sendMedia) {
             return ((TLRPC.TL_messages_sendMedia) request).peer;
+        } else if (request instanceof TLRPC.TL_ephemeral_sendMessage) {
+            return ((TLRPC.TL_ephemeral_sendMessage) request).peer;
         } else if (request instanceof TLRPC.TL_messages_sendInlineBotResult) {
             return ((TLRPC.TL_messages_sendInlineBotResult) request).peer;
         } else if (request instanceof TLRPC.TL_messages_forwardMessages) {
@@ -54,6 +56,8 @@ public class TlUtils {
             return ((TLRPC.TL_messages_sendMessage) request).reply_to;
         } else if (request instanceof TLRPC.TL_messages_sendMedia) {
             return ((TLRPC.TL_messages_sendMedia) request).reply_to;
+        } else if (request instanceof TLRPC.TL_ephemeral_sendMessage) {
+            return ((TLRPC.TL_ephemeral_sendMessage) request).reply_to;
         } else if (request instanceof TLRPC.TL_messages_sendInlineBotResult) {
             return ((TLRPC.TL_messages_sendInlineBotResult) request).reply_to;
         } else if (request instanceof TLRPC.TL_messages_forwardMessages) {
@@ -69,6 +73,8 @@ public class TlUtils {
             return ((TLRPC.TL_messages_sendMessage) request).message;
         } else if (request instanceof TLRPC.TL_messages_sendMedia) {
             return ((TLRPC.TL_messages_sendMedia) request).message;
+        } else if (request instanceof TLRPC.TL_ephemeral_sendMessage) {
+            return ((TLRPC.TL_ephemeral_sendMessage) request).message;
         } else if (request instanceof TLRPC.TL_messages_sendMultiMedia) {
             final TLRPC.TL_messages_sendMultiMedia messages = (TLRPC.TL_messages_sendMultiMedia) request;
             for (TLRPC.TL_inputSingleMedia m: messages.multi_media) {
@@ -88,6 +94,9 @@ public class TlUtils {
         } else if (request instanceof TLRPC.TL_messages_sendMedia) {
             ((TLRPC.TL_messages_sendMedia) request).reply_to = replyTo;
             ((TLRPC.TL_messages_sendMedia) request).flags |= 1;
+        } else if (request instanceof TLRPC.TL_ephemeral_sendMessage) {
+            ((TLRPC.TL_ephemeral_sendMessage) request).reply_to = replyTo;
+            ((TLRPC.TL_ephemeral_sendMessage) request).flags |= TLObject.FLAG_5;
         } else if (request instanceof TLRPC.TL_messages_sendInlineBotResult) {
             ((TLRPC.TL_messages_sendInlineBotResult) request).reply_to = replyTo;
             ((TLRPC.TL_messages_sendInlineBotResult) request).flags |= 1;
@@ -134,6 +143,8 @@ public class TlUtils {
             return ((TLRPC.TL_messages_sendMessage) request).random_id;
         } else if (request instanceof TLRPC.TL_messages_sendMedia) {
             return ((TLRPC.TL_messages_sendMedia) request).random_id;
+        } else if (request instanceof TLRPC.TL_ephemeral_sendMessage) {
+            return ((TLRPC.TL_ephemeral_sendMessage) request).random_id;
         } else if (request instanceof TLRPC.TL_messages_sendInlineBotResult) {
             return ((TLRPC.TL_messages_sendInlineBotResult) request).random_id;
         } else if (request instanceof TLRPC.TL_messages_forwardMessages) {

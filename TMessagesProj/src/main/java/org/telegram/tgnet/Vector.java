@@ -146,20 +146,6 @@ public class Vector<T extends TLObject> extends TLObject {
         return vector;
     }
 
-    public ArrayList<java.lang.Long> toLongArray() {
-        ArrayList<java.lang.Long> result = new ArrayList<>();
-        for (T item : objects) {
-            if (item instanceof Vector.Long) {
-                result.add(((Vector.Long) item).value);
-            }
-        }
-        return result;
-    }
-
-
-
-
-
     public static <T extends TLObject> void serialize(OutputSerializedData stream, final ArrayList<T> objects) {
         stream.writeInt32(constructor);
         stream.writeInt32(objects.size());
@@ -187,7 +173,7 @@ public class Vector<T extends TLObject> extends TLObject {
         serialize(stream, stream::writeByteArray, objects);
     }
 
-    public static boolean validateSize(int count, int bytesPerItem, int remaining) {
+    private static boolean validateSize(int count, int bytesPerItem, int remaining) {
         return (count >= 0) && (bytesPerItem > 0) && (((long) count) * bytesPerItem <= remaining);
     }
 
