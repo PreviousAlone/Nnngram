@@ -180,6 +180,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.helpers.PasscodeHelper;
 
 public class AlertsCreator {
@@ -1745,7 +1746,7 @@ public class AlertsCreator {
     public static void showOpenUrlAlert(Context context, String url, boolean punycode, boolean tryTelegraph, boolean ask, boolean forceNotInternalForApps, long inlineReturn, Browser.Progress progress, @Nullable TLRPC.WebPage webPage, Theme.ResourcesProvider resourcesProvider) {
         if (!AndroidUtilities.isContextSafe(context)) return;
         final String scheme = url == null ? null : Uri.parse(url).getScheme();
-        if (Browser.isInternalUrl(url, null) || !ask || "mailto".equalsIgnoreCase(scheme)) {
+        if (Browser.isInternalUrl(url, null) || !ask || "mailto".equalsIgnoreCase(scheme) || Config.skipOpenLinkConfirm) {
             Browser.openUrl(context, Uri.parse(url), inlineReturn == 0, tryTelegraph, forceNotInternalForApps && checkInternalBotApp(url), progress, null, false, true, false);
             return;
         }
@@ -1822,6 +1823,11 @@ public class AlertsCreator {
         Utilities.Callback2<Boolean, Boolean> whenDone
     ) {
         if (!AndroidUtilities.isContextSafe(context)) return;
+
+        if (Config.skipOpenLinkConfirm) {
+            whenDone.run(true, false);
+            return;
+        }
 
         final AlertDialog[] dialog = new AlertDialog[1];
 
