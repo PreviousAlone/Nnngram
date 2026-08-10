@@ -97,6 +97,8 @@ typedef struct AVVulkanDeviceContext {
      * each entry containing the specified Vulkan extension string to enable.
      * Duplicates are possible and accepted.
      * If no extensions are enabled, set these fields to NULL, and 0 respectively.
+     * av_vk_get_optional_instance_extensions() can be used to enumerate extensions
+     * that FFmpeg may use if enabled.
      */
     const char * const *enabled_inst_extensions;
     int nb_enabled_inst_extensions;
@@ -108,6 +110,8 @@ typedef struct AVVulkanDeviceContext {
      * If supplying your own device context, these fields takes the same format as
      * the above fields, with the same conditions that duplicates are possible
      * and accepted, and that NULL and 0 respectively means no extensions are enabled.
+     * av_vk_get_optional_device_extensions() can be used to enumerate extensions
+     * that FFmpeg may use if enabled.
      */
     const char * const *enabled_dev_extensions;
     int nb_enabled_dev_extensions;
@@ -115,7 +119,7 @@ typedef struct AVVulkanDeviceContext {
 #if FF_API_VULKAN_FIXED_QUEUES
     /**
      * Queue family index for graphics operations, and the number of queues
-     * enabled for it. If unavaiable, will be set to -1. Not required.
+     * enabled for it. If unavailable, will be set to -1. Not required.
      * av_hwdevice_create() will attempt to find a dedicated queue for each
      * queue family, or pick the one with the least unrelated flags set.
      * Queue indices here may overlap if a queue has to share capabilities.
@@ -164,18 +168,26 @@ typedef struct AVVulkanDeviceContext {
     int nb_decode_queues;
 #endif
 
+#if FF_API_VULKAN_SYNC_QUEUES
     /**
      * Locks a queue, preventing other threads from submitting any command
      * buffers to this queue.
      * If set to NULL, will be set to lavu-internal functions that utilize a
      * mutex.
+     *
+     * Deprecated: use VK_KHR_internally_synchronized_queues.
      */
+    attribute_deprecated
     void (*lock_queue)(struct AVHWDeviceContext *ctx, uint32_t queue_family, uint32_t index);
 
     /**
      * Similar to lock_queue(), unlocks a queue. Must only be called after locking.
+     *
+     * Deprecated: use VK_KHR_internally_synchronized_queues.
      */
+    attribute_deprecated
     void (*unlock_queue)(struct AVHWDeviceContext *ctx, uint32_t queue_family, uint32_t index);
+#endif
 
     /**
      * Queue families used. Must be preferentially ordered. List may contain
@@ -196,11 +208,6 @@ typedef enum AVVkFrameFlags {
     /* Unless this flag is set, autodetected flags will be OR'd based on the
      * device and tiling during av_hwframe_ctx_init(). */
     AV_VK_FRAME_FLAG_NONE              = (1ULL << 0),
-
-#if FF_API_VULKAN_CONTIGUOUS_MEMORY
-    /* DEPRECATED: does nothing. Replaced by multiplane images. */
-    AV_VK_FRAME_FLAG_CONTIGUOUS_MEMORY = (1ULL << 1),
-#endif
 
     /* Disables multiplane images.
      * This is required to export/import images from CUDA. */
@@ -223,7 +230,8 @@ typedef struct AVVulkanFramesContext {
 
     /**
      * Defines extra usage of output frames. If non-zero, all flags MUST be
-     * supported by the VkFormat. Otherwise, will use supported flags amongst:
+     * supported by the VkFormat. Regardless, frames will always have the
+     * following usage flags enabled, if supported by the format:
      * - VK_IMAGE_USAGE_SAMPLED_BIT
      * - VK_IMAGE_USAGE_STORAGE_BIT
      * - VK_IMAGE_USAGE_TRANSFER_SRC_BIT
@@ -378,5 +386,19 @@ AVVkFrame *av_vk_frame_alloc(void);
  * Returns NULL on unsupported formats.
  */
 const VkFormat *av_vkfmt_from_pixfmt(enum AVPixelFormat p);
+
+/**
+ * Returns an array of optional Vulkan instance extensions that FFmpeg
+ * may use if enabled.
+ * @note Must be freed via av_free()
+ */
+const char **av_vk_get_optional_instance_extensions(int *count);
+
+/**
+ * Returns an array of optional Vulkan device extensions that FFmpeg
+ * may use if enabled.
+ * @note Must be freed via av_free()
+ */
+const char **av_vk_get_optional_device_extensions(int *count);
 
 #endif /* AVUTIL_HWCONTEXT_VULKAN_H */

@@ -94,7 +94,6 @@ import androidx.core.content.FileProvider;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.util.Consumer;
 
-import org.checkerframework.common.subtyping.qual.Bottom;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -142,6 +141,7 @@ import org.telegram.ui.CameraScanActivity;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.AnimatedFileDrawable;
+import org.telegram.ui.Components.AnimatedFileNative;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
@@ -150,6 +150,7 @@ import org.telegram.ui.Components.EditTextCaption;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Paint.Views.LinkPreview;
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
+import org.telegram.ui.Components.voip.AnimatedFileInfo;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.LaunchActivity;
@@ -2328,13 +2329,13 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                             progressDialog.dismissUnless(500);
                             return;
                         }
-                        final int[] params = new int[AnimatedFileDrawable.PARAM_NUM_COUNT];
+                        final int[] params = new int[AnimatedFileInfo.PARAM_NUM_COUNT];
                         Runnable open = () -> {
                             StoryEntry entry;
-                            final boolean isVideo = params[AnimatedFileDrawable.PARAM_NUM_DURATION] > 0;
+                            final boolean isVideo = params[AnimatedFileInfo.PARAM_NUM_DURATION] > 0;
                             if (isVideo) {
-                                final int width = params[AnimatedFileDrawable.PARAM_NUM_WIDTH];
-                                final int height = params[AnimatedFileDrawable.PARAM_NUM_HEIGHT];
+                                final int width = params[AnimatedFileInfo.PARAM_NUM_WIDTH];
+                                final int height = params[AnimatedFileInfo.PARAM_NUM_HEIGHT];
                                 int twidth = width, theight = height;
                                 if (twidth > AndroidUtilities.getPhotoSize()) {
                                     twidth = AndroidUtilities.getPhotoSize();
@@ -2354,7 +2355,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                                         thumb = null;
                                     }
                                 }
-                                entry = StoryEntry.fromVideoShoot(file, thumb == null ? null : thumb.getAbsolutePath(), params[AnimatedFileDrawable.PARAM_NUM_DURATION]);
+                                entry = StoryEntry.fromVideoShoot(file, thumb == null ? null : thumb.getAbsolutePath(), params[AnimatedFileInfo.PARAM_NUM_DURATION]);
                                 entry.width = width;
                                 entry.height = height;
                                 entry.setupMatrix();
@@ -2388,7 +2389,8 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                             progressDialog.dismissUnless(500);
                         };
                         Utilities.globalQueue.postRunnable(() -> {
-                            AnimatedFileDrawable.getVideoInfo(file.getAbsolutePath(), params, 0);
+                            String src = file.getAbsolutePath();
+                            AnimatedFileNative.getVideoInfo(src, params, 0);
                             AndroidUtilities.runOnUIThread(open);
                         });
                     });

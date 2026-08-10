@@ -172,6 +172,12 @@ public class ItemOptions {
 
     private boolean blur;
     private boolean blurForMenu;
+    private boolean longPressSelectionEnabled = true;
+
+    public ItemOptions setLongPressSelectionEnabled(boolean enabled) {
+        longPressSelectionEnabled = enabled;
+        return this;
+    }
 
     public ItemOptions setBlur(boolean blur, boolean blurForMenu) {
         this.blur = blur;
@@ -463,7 +469,7 @@ public class ItemOptions {
         final int textColorKey = Theme.key_actionBarDefaultSubmenuItem;
         final int iconColorKey = Theme.key_actionBarDefaultSubmenuItemIcon;
 
-        ActionBarMenuSubItem subItem = new ActionBarMenuSubItem(context, iconResId != 0 ? 2 : 1, false, false, resourcesProvider);
+        ActionBarMenuSubItem subItem = new ActionBarMenuSubItem(context, iconResId != 0 || icon != null ? 2 : 1, false, false, resourcesProvider);
         subItem.setPadding(dp(18), 0, dp(18), 0);
         if (icon != null) {
             subItem.setTextAndIcon(text, 0, icon);
@@ -1487,12 +1493,14 @@ public class ItemOptions {
             }
         }
 
-//        // discard all scrolls/gestures
-//        if (fragment != null && fragment.getFragmentView() != null) {
-//            fragment.getFragmentView().getRootView().dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
-//        } else if (this.container != null) {
-//            container.dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
-//        }
+        if (!longPressSelectionEnabled) {
+            // End the gesture that opened the menu so its source view cannot keep scrolling.
+            if (fragment != null && fragment.getFragmentView() != null) {
+                fragment.getFragmentView().getRootView().dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
+            } else if (this.container != null) {
+                container.dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
+            }
+        }
 
         if (blurForMenu && scrimBlur3SourceBitmap != null) {
             setGapBackgroundColor(Theme.multAlpha(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), 0.06f));
@@ -1515,7 +1523,9 @@ public class ItemOptions {
             (int) (offsetY = (Y + this.translateY))
         );
 
-        installHoverReleaseListener();
+        if (longPressSelectionEnabled) {
+            installHoverReleaseListener();
+        }
 
         if (followScrim) {
             installFollowListeners();

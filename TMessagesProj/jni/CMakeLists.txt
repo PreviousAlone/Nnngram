@@ -21,6 +21,7 @@ ${CMAKE_HOME_DIRECTORY}/ffmpeg/${ANDROID_ABI}/libavcodec.a,
 ${CMAKE_HOME_DIRECTORY}/ffmpeg/${ANDROID_ABI}/libavutil.a,
 ${CMAKE_HOME_DIRECTORY}/ffmpeg/${ANDROID_ABI}/libswresample.a,
 ${CMAKE_HOME_DIRECTORY}/ffmpeg/${ANDROID_ABI}/libvpx.a,
+${CMAKE_HOME_DIRECTORY}/ffmpeg/${ANDROID_ABI}/libdav1d.a,
 ${CMAKE_HOME_DIRECTORY}/boringssl/lib/${ANDROID_ABI}/libssl.a,
 ${CMAKE_HOME_DIRECTORY}/boringssl/lib/${ANDROID_ABI}/libcrypto.a,
 ${CMAKE_HOME_DIRECTORY}/tde2e/${ANDROID_ABI}/libtde2e.a,
@@ -229,7 +230,6 @@ add_library(${NATIVE_LIB} SHARED
         webm_encoder.c
         webm_to_gif.cpp
         image.cpp
-        video.c
         intro/IntroRenderer.c
         SqliteWrapper.cpp
         utilities.cpp
@@ -516,6 +516,7 @@ target_link_libraries(${NATIVE_LIB}
         avcodec
         swresample
         libvpx
+        libdav1d
         tde2e
         tdutils
         avutil

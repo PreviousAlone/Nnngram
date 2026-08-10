@@ -30,7 +30,7 @@ extern "C" {
  * types, removing or reassigning enums, adding/removing/rearranging
  * fields to structures.
  */
-#define VPX_EXT_RATECTRL_ABI_VERSION (6 + VPX_TPL_ABI_VERSION)
+#define VPX_EXT_RATECTRL_ABI_VERSION (7 + VPX_TPL_ABI_VERSION)
 
 /*!\brief Corresponds to MAX_STATIC_GF_GROUP_LENGTH defined in vp9_ratectrl.h
  */
@@ -133,7 +133,7 @@ typedef void *vpx_rc_model_t;
 #define VPX_DEFAULT_RDMULT -1
 
 /*!\brief Superblock quantization parameters
- * Store the superblock quantiztaion parameters
+ * Store the superblock quantization parameters
  */
 typedef struct sb_parameters {
   int q_index; /**< Quantizer step index [0..255]*/

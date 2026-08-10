@@ -193,6 +193,7 @@ typedef struct vpx_codec_cx_pkt {
       unsigned int samples[4]; /**< Number of samples, total/y/u/v */
       uint64_t sse[4];         /**< sum squared error, total/y/u/v */
       double psnr[4];          /**< PSNR, total/y/u/v */
+      int spatial_layer_id;    /**< Spatial layer id */
     } psnr;                    /**< data for PSNR packet */
     vpx_fixed_buf_t raw;       /**< data for arbitrary packets */
 
@@ -266,6 +267,8 @@ enum vpx_kf_mode {
  */
 typedef long vpx_enc_frame_flags_t;
 #define VPX_EFLAG_FORCE_KF (1 << 0) /**< Force this frame to be a keyframe */
+/** Calculate PSNR on this frame, requires g_lag_in_frames to be 0 */
+#define VPX_EFLAG_CALCULATE_PSNR (1 << 1)
 
 /*!\brief Encoder configuration structure
  *

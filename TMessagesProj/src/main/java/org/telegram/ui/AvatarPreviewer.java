@@ -120,7 +120,7 @@ public class AvatarPreviewer {
                 }
             };
             ViewCompat.setOnApplyWindowInsetsListener(this.layout, (v, insets) -> {
-                final Insets r = insets.getInsets(WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.systemBars());
+                final Insets r = AndroidUtilities.getDefaultWindowInsets(insets, false);
                 if (layout == v && layout.container != null) {
                     layout.container.setPadding(r.left, r.top, r.right, r.bottom);
                 }
@@ -150,7 +150,7 @@ public class AvatarPreviewer {
                     | WindowManager.LayoutParams.FLAG_FULLSCREEN
                     | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
-
+            AndroidUtilities.applyEdgeToEdgeLayoutParams(params);
             AndroidUtilities.setPreferredMaxRefreshRate(windowManager, layout, params);
             windowManager.addView(layout, params);
             parentContainer.requestDisallowInterceptTouchEvent(true);

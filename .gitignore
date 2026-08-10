@@ -19,3 +19,4 @@ dprint.json
 libtmessages.*.so
 .DS_Store
 **/.DS_Store
+TMessagesProj/jni/ffmpeg/build_android

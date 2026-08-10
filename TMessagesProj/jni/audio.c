@@ -8,9 +8,7 @@
 #include <math.h>
 #include "c_utils.h"
 #include "libavformat/avformat.h"
-#include <libavcodec/avcodec.h>  
-#include <libavutil/channel_layout.h>
-#include <libavcodec/codec_par.h>
+#include "libavcodec/avcodec.h"
 
 typedef struct {
     int version;

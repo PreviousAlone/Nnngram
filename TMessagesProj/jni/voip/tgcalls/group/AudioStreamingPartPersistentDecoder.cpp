@@ -56,7 +56,6 @@ public:
     
     ~AudioStreamingPartPersistentDecoderState() {
         if (_codecContext) {
-            avcodec_close(_codecContext);
             avcodec_free_context(&_codecContext);
         }
     }

@@ -3993,6 +3993,7 @@ if (myProfile && bottomButton != null) {
                         TLRPC.User user = getUserConfig().getCurrentUser();
                         if (user == null) return;
                         ItemOptions itemOptions = ItemOptions.makeOptions(this, actionsView);
+                        itemOptions.setLongPressSelectionEnabled(false);
                         itemOptions.setGravity(Gravity.LEFT);
                         itemOptions.add(R.drawable.msg_qrcode, getString(R.string.QrCode), () -> {
                             Bundle args = new Bundle();
@@ -7331,6 +7332,7 @@ if (myProfile && bottomButton != null) {
 
             ItemOptions.makeOptions(this, view)
                     .setScrimViewBackground(bg)
+                    .setLongPressSelectionEnabled(false)
                     .addIf(!self, R.drawable.msg_discussion, getString(R.string.SendMessage), () -> {
                         presentFragment(ChatActivity.of(user.id));
                     })
@@ -7634,6 +7636,7 @@ if (myProfile && bottomButton != null) {
 
             final ItemOptions o = ItemOptions.makeOptions(this, view);
             o.setScrimViewBackground(listView.getClipBackground(view));
+            o.setLongPressSelectionEnabled(false);
             if (position == phoneRow) {
                 if (userInfo != null && userInfo.phone_calls_available) {
                     o.add(R.drawable.msg_calls, getString(R.string.CallViaTelegram), () -> {
@@ -7734,6 +7737,7 @@ if (myProfile && bottomButton != null) {
 
                 ItemOptions.makeOptions(this, view)
                     .setScrimViewBackground(listView.getClipBackground(view))
+                    .setLongPressSelectionEnabled(false)
                     .add(R.drawable.msg_copy, getString(R.string.Copy), () -> {
                         AndroidUtilities.addToClipboard(finalText);
                         if (position == bioRow) {
@@ -16898,6 +16902,7 @@ if (myProfile && bottomButton != null) {
     private boolean editNotes(View view, int position) {
         final ItemOptions o = ItemOptions.makeOptions(this, view);
         o.setScrimViewBackground(listView.getClipBackground(view));
+        o.setLongPressSelectionEnabled(false);
         o.addIf(userInfo != null, R.drawable.msg_copy, getString(R.string.Copy), () -> {
             if (userInfo == null) return;
             final CharSequence text = MessageObject.formatTextWithEntities(userInfo.note, false);
@@ -16975,6 +16980,7 @@ if (myProfile && bottomButton != null) {
 
         final ItemOptions itemOptions = ItemOptions.makeOptions(this, cell);
         itemOptions.setScrimViewBackground(listView.getClipBackground(cell));
+        itemOptions.setLongPressSelectionEnabled(false);
         itemOptions.setGravity(Gravity.LEFT);
 
         if (position == bizLocationRow && userFull.business_location != null) {

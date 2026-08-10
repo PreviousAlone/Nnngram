@@ -146,8 +146,8 @@
  * consumed). The calling program can handle such unrecognized options as it
  * wishes, e.g.
  * @code
- * AVDictionaryEntry *e;
- * if (e = av_dict_get(options, "", NULL, AV_DICT_IGNORE_SUFFIX)) {
+ * const AVDictionaryEntry *e;
+ * if ((e = av_dict_iterate(options, NULL))) {
  *     fprintf(stderr, "Option %s not recognized by the demuxer.\n", e->key);
  *     abort();
  * }
@@ -459,7 +459,7 @@ typedef struct AVProbeData {
 #define AVPROBE_SCORE_STREAM_RETRY (AVPROBE_SCORE_MAX/4-1)
 
 #define AVPROBE_SCORE_EXTENSION  50 ///< score for file extension
-#define AVPROBE_SCORE_MIME       75 ///< score for file mime type
+#define AVPROBE_SCORE_MIME_BONUS 30 ///< score added for matching mime type
 #define AVPROBE_SCORE_MAX       100 ///< maximum score
 
 #define AVPROBE_PADDING_SIZE 32             ///< extra allocated bytes at the end of the probe buffer
@@ -470,8 +470,7 @@ typedef struct AVProbeData {
 /**
  * The muxer/demuxer is experimental and should be used with caution.
  *
- * - demuxers: will not be selected automatically by probing, must be specified
- *             explicitly.
+ * It will not be selected automatically, and must be specified explicitly.
  */
 #define AVFMT_EXPERIMENTAL  0x0004
 #define AVFMT_SHOW_IDS      0x0008 /**< Show format stream IDs numbers. */
@@ -485,9 +484,6 @@ typedef struct AVProbeData {
 #define AVFMT_NOBINSEARCH   0x2000 /**< Format does not allow to fall back on binary search via read_timestamp */
 #define AVFMT_NOGENSEARCH   0x4000 /**< Format does not allow to fall back on generic search */
 #define AVFMT_NO_BYTE_SEEK  0x8000 /**< Format does not allow seeking by bytes */
-#if FF_API_ALLOW_FLUSH
-#define AVFMT_ALLOW_FLUSH  0x10000 /**< @deprecated: Just send a NULL packet if you want to flush a muxer. */
-#endif
 #define AVFMT_TS_NONSTRICT 0x20000 /**< Format does not require strictly
                                         increasing timestamps, but they must
                                         still be monotonic */
@@ -847,38 +843,6 @@ typedef struct AVStream {
      */
     AVPacket attached_pic;
 
-#if FF_API_AVSTREAM_SIDE_DATA
-    /**
-     * An array of side data that applies to the whole stream (i.e. the
-     * container does not allow it to change between packets).
-     *
-     * There may be no overlap between the side data in this array and side data
-     * in the packets. I.e. a given side data is either exported by the muxer
-     * (demuxing) / set by the caller (muxing) in this array, then it never
-     * appears in the packets, or the side data is exported / sent through
-     * the packets (always in the first packet where the value becomes known or
-     * changes), then it does not appear in this array.
-     *
-     * - demuxing: Set by libavformat when the stream is created.
-     * - muxing: May be set by the caller before avformat_write_header().
-     *
-     * Freed by libavformat in avformat_free_context().
-     *
-     * @deprecated use AVStream's @ref AVCodecParameters.coded_side_data
-     *             "codecpar side data".
-     */
-    attribute_deprecated
-    AVPacketSideData *side_data;
-    /**
-     * The number of elements in the AVStream.side_data array.
-     *
-     * @deprecated use AVStream's @ref AVCodecParameters.nb_coded_side_data
-     *             "codecpar side data".
-     */
-    attribute_deprecated
-    int            nb_side_data;
-#endif
-
     /**
      * Flags indicating events happening on the stream, a combination of
      * AVSTREAM_EVENT_FLAG_*.
@@ -962,7 +926,7 @@ typedef struct AVStream {
  * the sixth @ref AVStreamGroup.streams "stream" in the group is "512,512",
  * etc.
  *
- * The following is an example of a canvas with overlaping tiles:
+ * The following is an example of a canvas with overlapping tiles:
  *
  * +-----------+
  * |   %%%%%   |
@@ -1082,15 +1046,27 @@ typedef struct AVStreamGroupTileGrid {
      * final image before presentation.
      */
     int height;
+
+    /**
+     * Additional data associated with the grid.
+     *
+     * Should be allocated with av_packet_side_data_new() or
+     * av_packet_side_data_add(), and will be freed by avformat_free_context().
+     */
+    AVPacketSideData *coded_side_data;
+
+    /**
+     * Amount of entries in @ref coded_side_data.
+     */
+    int nb_coded_side_data;
 } AVStreamGroupTileGrid;
 
 /**
  * AVStreamGroupLCEVC is meant to define the relation between video streams
  * and a data stream containing LCEVC enhancement layer NALUs.
  *
- * No more than one stream of @ref AVCodecParameters.codec_type "codec_type"
- * AVMEDIA_TYPE_DATA shall be present, and it must be of
- * @ref AVCodecParameters.codec_id "codec_id" AV_CODEC_ID_LCEVC.
+ * No more than one stream of
+ * @ref AVCodecParameters.codec_id "codec_id" AV_CODEC_ID_LCEVC shall be present.
  */
 typedef struct AVStreamGroupLCEVC {
     const AVClass *av_class;
@@ -1443,7 +1419,7 @@ typedef struct AVFormatContext {
 #define AVFMT_FLAG_NONBLOCK     0x0004 ///< Do not block when reading packets from input.
 #define AVFMT_FLAG_IGNDTS       0x0008 ///< Ignore DTS on frames that contain both DTS & PTS
 #define AVFMT_FLAG_NOFILLIN     0x0010 ///< Do not infer any values from other values, just return what is stored in the container
-#define AVFMT_FLAG_NOPARSE      0x0020 ///< Do not use AVParsers, you also must set AVFMT_FLAG_NOFILLIN as the fillin code works on frames and no parsing -> no frames. Also seeking to frames can not work if parsing to find frame boundaries has been disabled
+#define AVFMT_FLAG_NOPARSE      0x0020 ///< Do not use AVParsers, you also must set AVFMT_FLAG_NOFILLIN as the filling code works on frames and no parsing -> no frames. Also seeking to frames can not work if parsing to find frame boundaries has been disabled
 #define AVFMT_FLAG_NOBUFFER     0x0040 ///< Do not buffer frames when possible
 #define AVFMT_FLAG_CUSTOM_IO    0x0080 ///< The caller has supplied a custom AVIOContext, don't avio_close() it.
 #define AVFMT_FLAG_DISCARD_CORRUPT  0x0100 ///< Discard frames marked corrupted
@@ -1457,9 +1433,6 @@ typedef struct AVFormatContext {
 #define AVFMT_FLAG_BITEXACT         0x0400
 #define AVFMT_FLAG_SORT_DTS    0x10000 ///< try to interleave outputted packets by dts (using this flag can slow demuxing down)
 #define AVFMT_FLAG_FAST_SEEK   0x80000 ///< Enable fast, but inaccurate seeks for some formats
-#if FF_API_LAVF_SHORTEST
-#define AVFMT_FLAG_SHORTEST   0x100000 ///< Stop muxing when the shortest stream stops.
-#endif
 #define AVFMT_FLAG_AUTO_BSF   0x200000 ///< Add bitstream filters as requested by the muxer
 
     /**
@@ -1696,7 +1669,7 @@ typedef struct AVFormatContext {
     int use_wallclock_as_timestamps;
 
     /**
-     * Skip duration calcuation in estimate_timings_from_pts.
+     * Skip duration calculation in estimate_timings_from_pts.
      * - encoding: unused
      * - decoding: set by user
      *
@@ -1799,7 +1772,7 @@ typedef struct AVFormatContext {
 
     /**
      * IO repositioned flag.
-     * This is set by avformat when the underlaying IO context read pointer
+     * This is set by avformat when the underlying IO context read pointer
      * is repositioned, for example when doing byte based seeking.
      * Demuxers can use the flag to detect such changes.
      */
@@ -1895,10 +1868,6 @@ typedef struct AVFormatContext {
     /**
      * A callback for closing the streams opened with AVFormatContext.io_open().
      *
-     * Using this is preferred over io_close, because this can return an error.
-     * Therefore this callback is used instead of io_close by the generic
-     * libavformat code if io_close is NULL or the default.
-     *
      * @param s the format context
      * @param pb IO context to be closed and freed
      * @return 0 on success, a negative AVERROR code on failure
@@ -1914,30 +1883,12 @@ typedef struct AVFormatContext {
      * @see skip_estimate_duration_from_pts
      */
     int64_t duration_probesize;
+
+    /**
+     * Name of this format context, only used for logging purposes.
+     */
+    char *name;
 } AVFormatContext;
-
-/**
- * This function will cause global side data to be injected in the next packet
- * of each stream as well as after any subsequent seek.
- *
- * @note global side data is always available in every AVStream's
- *       @ref AVCodecParameters.coded_side_data "codecpar side data" array, and
- *       in a @ref AVCodecContext.coded_side_data "decoder's side data" array if
- *       initialized with said stream's codecpar.
- * @see av_packet_side_data_get()
- */
-void av_format_inject_global_side_data(AVFormatContext *s);
-
-#if FF_API_GET_DUR_ESTIMATE_METHOD
-/**
- * Returns the method used to set ctx->duration.
- *
- * @return AVFMT_DURATION_FROM_PTS, AVFMT_DURATION_FROM_STREAM, or AVFMT_DURATION_FROM_BITRATE.
- * @deprecated duration_estimation_method is public and can be read directly.
- */
-attribute_deprecated
-enum AVDurationEstimationMethod av_fmt_ctx_get_duration_estimation_method(const AVFormatContext* ctx);
-#endif
 
 /**
  * @defgroup lavf_core Core functions
@@ -2116,57 +2067,6 @@ AVStream *avformat_new_stream(AVFormatContext *s, const struct AVCodec *c);
  */
 int avformat_stream_group_add_stream(AVStreamGroup *stg, AVStream *st);
 
-#if FF_API_AVSTREAM_SIDE_DATA
-/**
- * Wrap an existing array as stream side data.
- *
- * @param st   stream
- * @param type side information type
- * @param data the side data array. It must be allocated with the av_malloc()
- *             family of functions. The ownership of the data is transferred to
- *             st.
- * @param size side information size
- *
- * @return zero on success, a negative AVERROR code on failure. On failure,
- *         the stream is unchanged and the data remains owned by the caller.
- * @deprecated use av_packet_side_data_add() with the stream's
- *             @ref AVCodecParameters.coded_side_data "codecpar side data"
- */
-attribute_deprecated
-int av_stream_add_side_data(AVStream *st, enum AVPacketSideDataType type,
-                            uint8_t *data, size_t size);
-
-/**
- * Allocate new information from stream.
- *
- * @param stream stream
- * @param type   desired side information type
- * @param size   side information size
- *
- * @return pointer to fresh allocated data or NULL otherwise
- * @deprecated use av_packet_side_data_new() with the stream's
- *             @ref AVCodecParameters.coded_side_data "codecpar side data"
- */
-attribute_deprecated
-uint8_t *av_stream_new_side_data(AVStream *stream,
-                                 enum AVPacketSideDataType type, size_t size);
-/**
- * Get side information from stream.
- *
- * @param stream stream
- * @param type   desired side information type
- * @param size   If supplied, *size will be set to the size of the side data
- *               or to zero if the desired side data is not present.
- *
- * @return pointer to data if present or NULL otherwise
- * @deprecated use av_packet_side_data_get() with the stream's
- *             @ref AVCodecParameters.coded_side_data "codecpar side data"
- */
-attribute_deprecated
-uint8_t *av_stream_get_side_data(const AVStream *stream,
-                                 enum AVPacketSideDataType type, size_t *size);
-#endif
-
 AVProgram *av_new_program(AVFormatContext *s, int id);
 
 /**
@@ -2275,7 +2175,7 @@ int av_probe_input_buffer(AVIOContext *pb, const AVInputFormat **fmt,
  *                 which case an AVFormatContext is allocated by this
  *                 function and written into ps.
  *                 Note that a user-supplied AVFormatContext will be freed
- *                 on failure.
+ *                 on failure and its pointer set to NULL.
  * @param url      URL of the stream to open.
  * @param fmt      If non-NULL, this parameter forces a specific input format.
  *                 Otherwise the format is autodetected.
@@ -2284,7 +2184,8 @@ int av_probe_input_buffer(AVIOContext *pb, const AVInputFormat **fmt,
  *                 On return this parameter will be destroyed and replaced with
  *                 a dict containing options that were not found. May be NULL.
  *
- * @return 0 on success, a negative AVERROR on failure.
+ * @return 0 on success; on failure: frees ps, sets its pointer to NULL,
+ *         and returns a negative AVERROR.
  *
  * @note If you want to use custom IO, preallocate the format context and set its pb field.
  */
@@ -2466,6 +2367,101 @@ int av_read_play(AVFormatContext *s);
  * Use av_read_play() to resume it.
  */
 int av_read_pause(AVFormatContext *s);
+
+/**
+ * Command IDs that can be sent to the demuxer
+ *
+ * The following commands can be sent to a demuxer
+ * using ::avformat_send_command.
+ */
+enum AVFormatCommandID {
+    /**
+     * Send a RTSP `SET_PARAMETER` request to the server
+     *
+     * Sends an SET_PARAMETER RTSP command to the server,
+     * with a data payload of type ::AVRTSPCommandRequest,
+     * ownership of it and its data remains with the caller.
+     *
+     * A reply retrieved is of type ::AVRTSPResponse and it
+     * and its contents must be freed by the caller.
+     */
+    AVFORMAT_COMMAND_RTSP_SET_PARAMETER,
+};
+
+typedef struct AVRTSPCommandRequest {
+    /**
+     * Headers sent in the request to the server
+     */
+    AVDictionary *headers;
+
+    /**
+     * Body payload size
+     */
+    size_t body_len;
+
+    /**
+     * Body payload
+     */
+    char *body;
+} AVRTSPCommandRequest;
+
+typedef struct AVRTSPResponse {
+    /**
+     * Response status code from server
+     */
+    int status_code;
+
+    /**
+     * Reason phrase from the server, describing the
+     * status in a human-readable way.
+     */
+    char *reason;
+
+    /**
+     * Body payload size
+     */
+    size_t body_len;
+
+    /**
+     * Body payload
+     */
+    unsigned char *body;
+} AVRTSPResponse;
+
+/**
+ * Send a command to the demuxer
+ *
+ * Sends the specified command and (depending on the command)
+ * optionally a command-specific payload to the demuxer to handle.
+ *
+ * @param s     Format context, must be allocated with
+ *              ::avformat_alloc_context.
+ * @param id    Identifier of type ::AVFormatCommandID,
+ *              indicating the command to send.
+ * @param data  Command-specific data, allocated by the caller
+ *              and ownership remains with the caller.
+ *              For details what is expected here, consult the
+ *              documentation of the respective ::AVFormatCommandID.
+ */
+int avformat_send_command(AVFormatContext *s, enum AVFormatCommandID id, void *data);
+
+/**
+ * Receive a command reply from the demuxer
+ *
+ * Retrieves a reply for a previously sent command from the muxer.
+ *
+ * @param s         Format context, must be allocated with
+ *                  ::avformat_alloc_context.
+ * @param id        Identifier of type ::AVFormatCommandID,
+ *                  indicating the command for which to retrieve
+ *                  the reply.
+ * @param data_out  Pointee is set to the command reply, the actual
+ *                  type depends on the command. This is allocated by
+ *                  the muxer and must be freed with ::av_free.
+ *                  For details on the actual data set here, consult the
+ *                  documentation of the respective ::AVFormatCommandID.
+ */
+int avformat_receive_command_reply(AVFormatContext *s, enum AVFormatCommandID id, void **data_out);
 
 /**
  * Close an opened input AVFormatContext. Free it and all its contents
@@ -2922,7 +2918,8 @@ void av_dump_format(AVFormatContext *ic,
                     int is_output);
 
 
-#define AV_FRAME_FILENAME_FLAGS_MULTIPLE 1 ///< Allow multiple %d
+#define AV_FRAME_FILENAME_FLAGS_MULTIPLE          1  ///< Allow multiple %d
+#define AV_FRAME_FILENAME_FLAGS_IGNORE_TRUNCATION 2  ///< Ignore truncated output instead of returning an error
 
 /**
  * Return in 'buf' the path with '%d' replaced by a number.
@@ -2991,6 +2988,20 @@ int av_match_ext(const char *filename, const char *extensions);
  */
 int avformat_query_codec(const AVOutputFormat *ofmt, enum AVCodecID codec_id,
                          int std_compliance);
+
+struct AVBPrint;
+/**
+ * Make a RFC 4281/6381 like string describing a codec for MIME types.
+ *
+ * @param par pointer to an AVCodecParameters struct describing the codec
+ * @param frame_rate an AVRational for the frame rate, for deciding the
+ *                   right profile for video codecs. Pass an invalid
+ *                   AVRational (1/0) to indicate that it is unknown.
+ * @param out the AVBPrint to write the output to
+ * @return <0 on error
+ */
+int av_mime_codec_str(const AVCodecParameters *par,
+                      AVRational frame_rate, struct AVBPrint *out);
 
 /**
  * @defgroup riff_fourcc RIFF FourCCs
