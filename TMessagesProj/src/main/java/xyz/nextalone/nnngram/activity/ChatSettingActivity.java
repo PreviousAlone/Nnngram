@@ -123,6 +123,7 @@ public class ChatSettingActivity extends BaseActivity {
     private int showForwardDateRow;
     private int hideTimeForStickerRow;
     private int showMessageIDRow;
+    private int showVideoDurationRow;
     private int hideQuickSendMediaBottomRow;
     private int quickSendMediaPopupRow;
     private int customQuickMessageRow;
@@ -340,6 +341,11 @@ public class ChatSettingActivity extends BaseActivity {
             Config.toggleShowMessageID();
             if (view instanceof TextCheckCell) {
                 ((TextCheckCell) view).setChecked(Config.showMessageID);
+            }
+        } else if (position == showVideoDurationRow) {
+            Config.toggleShowVideoDuration();
+            if (view instanceof TextCheckCell) {
+                ((TextCheckCell) view).setChecked(Config.showVideoDuration);
             }
         } else if (position == hideQuickSendMediaBottomRow) {
             Config.toggleHideQuickSendMediaBottom();
@@ -592,6 +598,7 @@ public class ChatSettingActivity extends BaseActivity {
         showForwardDateRow = addRow("showForwardDate");
         hideTimeForStickerRow = addRow("hideTimeForSticker");
         showMessageIDRow = addRow("showMessageID");
+        showVideoDurationRow = addRow("showVideoDuration");
         quickToggleAnonymous = addRow("quickToggleAnonymous");
         hideSendAsButtonRow = addRow("hideSendAsButton");
         hideQuickSendMediaBottomRow = addRow("hideQuickSendMediaBottom");
@@ -759,6 +766,8 @@ public class ChatSettingActivity extends BaseActivity {
                         textCell.setTextAndCheck(LocaleController.getString("showForwardName", R.string.hideTimeForSticker), Config.hideTimeForSticker, true);
                     } else if (position == showMessageIDRow) {
                         textCell.setTextAndCheck(LocaleController.getString("showMessageID", R.string.showMessageID), Config.showMessageID, true);
+                    } else if (position == showVideoDurationRow) {
+                        textCell.setTextAndCheck(LocaleController.getString("showVideoDuration", R.string.showVideoDuration), Config.showVideoDuration, true);
                     } else if (position == hideQuickSendMediaBottomRow) {
                         textCell.setTextAndCheck(LocaleController.getString("DisableQuickSendMediaBottom", R.string.DisableQuickSendMediaBottom),
                             Config.hideQuickSendMediaBottom, true);
