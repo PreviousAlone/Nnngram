@@ -194,10 +194,7 @@ object TranslateHelper {
 
     @JvmStatic
     fun stripLanguageCode(language: String): String {
-
-        return if (language.contains("-")) {
-            language.substring(0, language.indexOf("-"))
-        } else language
+        return language.substringBefore('-').substringBefore('_')
     }
 
     @JvmStatic
@@ -231,22 +228,14 @@ object TranslateHelper {
         if (lang == null || lang == "und") {
             return false
         }
-        val toLang: String = stripLanguageCode(getCurrentProvider().getCurrentTargetLanguage())
-        lang = stripLanguageCode(lang)
+        val toLang: String = stripLanguageCode(getCurrentProvider().getCurrentTargetLanguage()).lowercase(Locale.ROOT)
+        lang = stripLanguageCode(lang).lowercase(Locale.ROOT)
         if (lang == toLang) {
             return true
         }
-        var restricted = false
-        restrictedLanguages.forEach {
-            val language = if (it.contains("-")) {
-                it.substring(0, it.indexOf("_"))
-            } else it
-            if (lang == language) {
-                restricted = true
-                return@forEach
-            }
+        return restrictedLanguages.any {
+            lang == stripLanguageCode(it).lowercase(Locale.ROOT)
         }
-        return restricted
     }
 
     @JvmStatic

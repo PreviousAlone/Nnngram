@@ -37,6 +37,12 @@ import org.telegram.messenger.R
 import org.telegram.tgnet.TLRPC
 import xyz.nextalone.nnngram.helpers.TranslateHelper
 import xyz.nextalone.nnngram.utils.Log
+import java.util.ArrayList
+
+data class FormattedText(
+    val text: String,
+    val entities: ArrayList<TLRPC.MessageEntity>
+)
 
 abstract class BaseTranslator {
     /**
@@ -155,11 +161,11 @@ abstract class BaseTranslator {
             is String -> {
                 val result = doTranslateText(source, from, to)
                 return if (result.error == null) {
-                    val translateResult = TranslateResult(from, result.result)
+                    val translateResult = TranslateResult(result.from, result.result)
                     cache.put(Pair(source, to), translateResult)
                     translateResult
                 } else {
-                    TranslateResult(from, null, result.error)
+                    TranslateResult(result.from, null, result.error)
                 }
             }
 
