@@ -70,6 +70,7 @@ public class MainSettingActivity extends BaseActivity {
     private int generalRow;
     private int chatRow;
     private int experimentRow;
+    private int debugRow;
     private int categories2Row;
 
     private int aboutRow;
@@ -108,6 +109,8 @@ public class MainSettingActivity extends BaseActivity {
             presentFragment(new GeneralSettingActivity());
         } else if (position == experimentRow) {
             presentFragment(new ExperimentSettingActivity(sensitiveEnabled, sensitiveCanChange));
+        } else if (position == debugRow) {
+            presentFragment(new DebugSettingActivity());
         } else if (position == channelRow) {
             MessagesController.getInstance(currentAccount).openByUserName(LocaleController.getString("OfficialChannelName", R.string.OfficialChannelName), this, 1);
         } else if (position == websiteRow) {
@@ -220,6 +223,7 @@ public class MainSettingActivity extends BaseActivity {
         generalRow = addRow("General");
         chatRow = addRow("Chat");
         experimentRow = addRow("Experiment");
+        debugRow = addRow("DebugMenu");
 
         if (!PasscodeHelper.isSettingsHidden()) {
             passcodeRow = addRow("Passcode");
@@ -267,6 +271,8 @@ public class MainSettingActivity extends BaseActivity {
                         textCell.setTextAndIcon(LocaleController.getString("General", R.string.General), R.drawable.msg_theme, true);
                     } else if (position == experimentRow) {
                         textCell.setTextAndIcon(LocaleController.getString("Experiment", R.string.Experiment), R.drawable.msg_fave, true);
+                    } else if (position == debugRow) {
+                        textCell.setTextAndIcon(LocaleController.getString(R.string.DebugMenu), R.drawable.msg_info, true);
                     } else if (position == passcodeRow) {
                         textCell.setTextAndIcon(LocaleController.getString("Passcode1", R.string.Passcode1), R.drawable.msg_permissions, true);
                     }

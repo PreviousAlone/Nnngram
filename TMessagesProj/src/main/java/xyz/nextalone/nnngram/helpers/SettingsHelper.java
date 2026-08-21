@@ -32,6 +32,7 @@ import java.util.Map;
 
 import xyz.nextalone.nnngram.activity.BaseActivity;
 import xyz.nextalone.nnngram.activity.ChatSettingActivity;
+import xyz.nextalone.nnngram.activity.DebugSettingActivity;
 import xyz.nextalone.nnngram.activity.ExperimentSettingActivity;
 import xyz.nextalone.nnngram.activity.GeneralSettingActivity;
 import xyz.nextalone.nnngram.activity.MainSettingActivity;
@@ -60,6 +61,10 @@ public class SettingsHelper {
                 case "chats":
                 case "c":
                     fragment = new ChatSettingActivity();
+                    break;
+                case "debug":
+                case "d":
+                    fragment = new DebugSettingActivity();
                     break;
                 case "experimental":
                 case "e":
@@ -96,6 +101,7 @@ public class SettingsHelper {
         fragments.add(new GeneralSettingActivity());
         fragments.add(new ChatSettingActivity());
         fragments.add(new ExperimentSettingActivity(false, false));
+        fragments.add(new DebugSettingActivity());
         String n_title = LocaleController.getString(R.string.NullSettings);
         for (BaseActivity fragment: fragments) {
             int uid = fragment.getBaseGuid();

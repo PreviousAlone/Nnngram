@@ -171,7 +171,7 @@ public abstract class BaseActivity extends BaseFragment {
             if (key != null && holder != null && listAdapter.isEnabled(holder) && rowMapReverse.containsKey(position)) {
                 showDialog(new AlertDialog.Builder(context).setItems(new CharSequence[]{LocaleController.getString("CopyLink", R.string.CopyLink)}, (dialogInterface, i) -> {
                     AndroidUtilities.addToClipboard(
-                        String.format(Locale.getDefault(), "https://%s/nnnsettings/%s?r=%s", getMessagesController().linkPrefix, getKey(), rowMapReverse.get(position)));
+                        String.format(Locale.getDefault(), "https://%s/nnnsettings/%s?p=and&r=%s", getMessagesController().linkPrefix, getKey(), rowMapReverse.get(position)));
                     BulletinFactory.of(BaseActivity.this).createCopyLinkBulletin().show();
                 }).create());
                 return true;
@@ -263,6 +263,7 @@ public abstract class BaseActivity extends BaseFragment {
     protected void updateRows() {
         rowCount = 0;
         rowMap.clear();
+        rowMapReverse.clear();
     }
 
     public int getBaseGuid() {
