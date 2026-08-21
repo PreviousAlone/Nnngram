@@ -147,8 +147,7 @@ public class DebugSettingActivity extends BaseActivity {
                     break;
                 case TYPE_CHECK:
                     TextCheckCell checkCell = (TextCheckCell) holder.itemView;
-                    checkCell.setTextAndCheck(LocaleController.getString(BuildVars.LOGS_ENABLED
-                            ? R.string.DebugMenuDisableLogs : R.string.DebugMenuEnableLogs), BuildVars.LOGS_ENABLED, false);
+                    checkCell.setTextAndCheck(LocaleController.getString(R.string.DebugMenuEnableLogs), BuildVars.LOGS_ENABLED, false);
                     break;
                 case TYPE_SETTINGS:
                     TextSettingsCell settingsCell = (TextSettingsCell) holder.itemView;
