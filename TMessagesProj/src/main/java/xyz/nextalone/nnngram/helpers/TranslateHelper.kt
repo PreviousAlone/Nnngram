@@ -30,6 +30,7 @@ import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.core.util.Pair
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -205,8 +206,15 @@ object TranslateHelper {
             onError(UnsupportedTargetLanguageException())
         } else {
             CoroutineScope(Dispatchers.Main).launch {
-                val result = withContext(Dispatchers.IO) {
-                    translator.translate(obj, from, to)
+                val result = try {
+                    withContext(Dispatchers.IO) {
+                        translator.translate(obj, from, to)
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    onError(e)
+                    return@launch
                 }
                 if (result.error != null) {
                     if (result.error == HttpStatusCode.TooManyRequests) {
