@@ -20,6 +20,26 @@ final class AutoTranslateConfigKey {
         return KEY_PREFIX + dialogId + topicSuffix(topicId);
     }
 
+    static String parentDialogKey(long dialogId, long topicId) {
+        return topicId != 0 ? forDialog(dialogId, 0) : null;
+    }
+
+    static boolean resolveEffectiveValue(
+            boolean hasExactValue,
+            boolean exactValue,
+            boolean hasParentDialogValue,
+            boolean parentDialogValue,
+            boolean globalValue
+    ) {
+        if (hasExactValue) {
+            return exactValue;
+        }
+        if (hasParentDialogValue) {
+            return parentDialogValue;
+        }
+        return globalValue;
+    }
+
     static String legacyPositiveChatKey(long dialogId, long topicId) {
         if (dialogId >= 0) {
             return null;

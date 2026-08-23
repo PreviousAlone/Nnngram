@@ -31,7 +31,26 @@ public class DialogConfig {
 
     public static boolean isAutoTranslateEnable(long dialogId, long topicId) {
         migrateLegacyPositiveChatKey(dialogId, topicId);
-        return preferences.getBoolean(AutoTranslateConfigKey.forDialog(dialogId, topicId), TranslateHelper.getAutoTranslate());
+        String exactKey = AutoTranslateConfigKey.forDialog(dialogId, topicId);
+        boolean hasExactValue = preferences.contains(exactKey);
+        boolean exactValue = preferences.getBoolean(exactKey, false);
+
+        String parentDialogKey = AutoTranslateConfigKey.parentDialogKey(dialogId, topicId);
+        boolean hasParentDialogValue = false;
+        boolean parentDialogValue = false;
+        if (parentDialogKey != null) {
+            migrateLegacyPositiveChatKey(dialogId, 0);
+            hasParentDialogValue = preferences.contains(parentDialogKey);
+            parentDialogValue = preferences.getBoolean(parentDialogKey, false);
+        }
+
+        return AutoTranslateConfigKey.resolveEffectiveValue(
+                hasExactValue,
+                exactValue,
+                hasParentDialogValue,
+                parentDialogValue,
+                TranslateHelper.getAutoTranslate()
+        );
     }
 
     public static boolean hasAutoTranslateConfig(long dialogId, long topicId) {
