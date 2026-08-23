@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0
       - name: Check out submodules
         run: |
-          git -c submodule."libs/rust".update=none submodule update --init --recursive
+          git submodule update --init --recursive
       - name: Get short SHA
         run: |
           echo "SHA7=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV

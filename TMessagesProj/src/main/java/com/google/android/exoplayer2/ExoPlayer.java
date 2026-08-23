@@ -455,7 +455,6 @@ public interface ExoPlayer extends Player {
   final class Builder {
 
     /* package */ final Context context;
-    public EGLContext eglContext;
 
     /* package */ Clock clock;
     /* package */ long foregroundModeTimeoutMs;

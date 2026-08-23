@@ -45,6 +45,7 @@ mediarouter = "1.8.1"
 cbor = "0.8"
 credentials = "1.6.0-rc01"
 markwon = "4.6.2"
+zxing = "3.5.4"
 
 [libraries]
 checker-compat-qual = { module = "org.checkerframework:checker-compat-qual", version.ref = "checkerCompatQual" }
@@ -101,6 +102,7 @@ markwon-ext-tables = { module = "io.noties.markwon:ext-tables", version.ref = "m
 markwon-html = { module = "io.noties.markwon:html", version.ref = "markwon" }
 markwon-inline-parser = { module = "io.noties.markwon:inline-parser", version.ref = "markwon" }
 markwon-ext-latex = { module = "io.noties.markwon:ext-latex", version.ref = "markwon" }
+zxingcore = { module = "com.google.zxing:core", version.ref = "zxing" }
 
 [plugins]
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }

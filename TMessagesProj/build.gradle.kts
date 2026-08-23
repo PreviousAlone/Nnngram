@@ -28,7 +28,7 @@ import java.util.Date
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
@@ -36,6 +36,7 @@ plugins {
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
+    id("org.telegram.lottie-meta")
     //alias(libs.plugins.rust)
 }
 
@@ -107,6 +108,7 @@ dependencies {
     implementation(libs.car.app.projected)
     implementation(libs.nanohttpd)
     implementation(libs.mediarouter)
+    implementation(libs.zxingcore)
     implementation(libs.recaptcha)
     implementation(libs.multidex)
     implementation(libs.credentials)
@@ -117,7 +119,9 @@ dependencies {
     implementation(libs.markwon.ext.tables)
     implementation(libs.markwon.html)
     implementation(libs.markwon.inline.parser)
-    implementation(libs.markwon.ext.latex)
+    implementation(libs.markwon.ext.latex) {
+        exclude("ru.noties", "jlatexmath-android")
+    }
 
     implementation(libs.kotlin.stdlib.common)
     implementation(libs.kotlin.stdlib)
@@ -133,12 +137,10 @@ dependencies {
 
     implementation(libs.lottie)
 
-    implementation(libs.mediarouter)
-    implementation(libs.nanohttpd)
-
     implementation(project(":libs:tcp2ws"))
     implementation(project(":libs:pangu"))
     ksp(project(":libs:ksp"))
+    api(project(":jlatexmath"))
 }
 
 android {

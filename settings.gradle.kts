@@ -27,7 +27,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
         google()
         mavenCentral()
@@ -54,7 +54,9 @@ develocity {
 rootProject.name = "Nnngram"
 include(
     ":TMessagesProj",
+    ":jlatexmath",
     ":libs:tcp2ws",
     ":libs:pangu",
-    ":libs:ksp"
+    ":libs:ksp",
 )
+project(":jlatexmath").projectDir = File("TMessagesProj/lib/jlatexmath/jlatexmath")

@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
       - name: Check out submodules
         run: |
-          git -c submodule."libs/rust".update=none submodule update --init --recursive
+          git submodule update --init --recursive
       - name: Setup Java
         uses: actions/setup-java@v4
         with:

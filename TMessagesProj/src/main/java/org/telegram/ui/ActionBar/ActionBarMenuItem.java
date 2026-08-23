@@ -88,11 +88,15 @@ import org.telegram.ui.Components.CloseProgressDrawable2;
 import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EditTextBoldCursor;
+import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LinkSpanDrawable;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
+import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
+import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundProvider;
+import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -423,6 +427,14 @@ public class ActionBarMenuItem extends FrameLayout {
         rect = new Rect();
         location = new int[2];
         popupLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getContext(), R.drawable.popup_fixed_alert4, resourcesProvider, ActionBarPopupWindow.ActionBarPopupWindowLayout.FLAG_USE_SWIPEBACK);
+
+        if (subMenuFactory != null) {
+            popupLayout.setBackground(subMenuFactory.create(popupLayout, true)
+                    .setColorProvider(subMenuProvider)
+                    .setRadius(dp(12))
+                    .setPadding(dp(8)));
+        }
+
         popupLayout.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 if (popupWindow != null && popupWindow.isShowing()) {
@@ -750,6 +762,20 @@ public class ActionBarMenuItem extends FrameLayout {
         xOffset = offset;
     }
 
+    private BlurredBackgroundDrawableViewFactory subMenuFactory;
+    private BlurredBackgroundProvider subMenuProvider;
+
+    public void setBlurredBackgroundFactory(BlurredBackgroundDrawableViewFactory subMenuFactory, BlurredBackgroundProvider subMenuProvider) {
+        this.subMenuFactory = subMenuFactory;
+        this.subMenuProvider = subMenuProvider;
+        if (popupLayout != null && subMenuFactory != null) {
+            popupLayout.setBackground(subMenuFactory.create(popupLayout, true)
+                    .setColorProvider(subMenuProvider)
+                    .setRadius(dp(12))
+                    .setPadding(dp(8)));
+        }
+    }
+
     public void toggleSubMenu(View topView, View fromView) {
         if (popupWindow == null || !popupWindow.isShowing()) {
             layoutLazyItems();
@@ -798,9 +824,17 @@ public class ActionBarMenuItem extends FrameLayout {
                 ((ViewGroup) topView.getParent()).removeView(topView);
             }
             if (topView instanceof ActionBarMenuSubItem || topView instanceof LinearLayout) {
-                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert2).mutate();
-                drawable.setColorFilter(new PorterDuffColorFilter(popupLayout.getBackgroundColor(), PorterDuff.Mode.MULTIPLY));
-                frameLayout.setBackground(drawable);
+                if (subMenuFactory != null) {
+                    frameLayout.setBackground(subMenuFactory.create(popupLayout, true)
+                        .setColorProvider(subMenuProvider)
+                        .setRadius(dp(12))
+                        .setPadding(dp(8))
+                        .setHasPadding(true));
+                } else {
+                    Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert2).mutate();
+                    drawable.setColorFilter(new PorterDuffColorFilter(popupLayout.getBackgroundColor(), PorterDuff.Mode.MULTIPLY));
+                    frameLayout.setBackground(drawable);
+                }
             }
             frameLayout.addView(topView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             linearLayout.addView(frameLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
@@ -810,6 +844,11 @@ public class ActionBarMenuItem extends FrameLayout {
         } else {
             popupLayout.setTopView(null);
         }
+
+        if (subMenuFactory != null) {
+            ItemOptions.setGapBackgroundColor(popupLayout, Theme.multAlpha(getThemedColor(Theme.key_actionBarDefaultSubmenuItem), 0.06f));
+        }
+
         popupWindow = new ActionBarPopupWindow(container, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
         if (animationEnabled) {
             popupWindow.setAnimationStyle(0);

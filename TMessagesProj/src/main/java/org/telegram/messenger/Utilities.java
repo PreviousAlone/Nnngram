@@ -79,7 +79,7 @@ public class Utilities {
     public native static void clearDir(String path, int docType, long time, boolean subdirs);
     private native static int pbkdf2(byte[] password, byte[] salt, byte[] dst, int iterations);
     public static native void stackBlurBitmap(Bitmap bitmap, int radius);
-    public static native void drawDitheredGradient(Bitmap bitmap, int[] colors, int startX, int startY, int endX, int endY);
+    public static native boolean drawDitheredGradient(Bitmap bitmap, int[] colors, int startX, int startY, int endX, int endY);
 //    public static native int saveProgressiveJpeg(Bitmap bitmap, int width, int height, int stride, int quality, String path);
     public static native void generateGradient(Bitmap bitmap, int phase, float progress, int[] colors);
     public static native boolean applySoftLight(Bitmap inputBitmap, Bitmap outputBitmap, int color);
@@ -88,6 +88,7 @@ public class Utilities {
     public static native boolean extractAlpha(Bitmap inputBitmap, Bitmap outputBitmap);
     public static native boolean copyBitmaps(Bitmap src, Bitmap dst);
     public static native int averageBitmapColor(Bitmap bitmap, int left, int top, int right, int bottom);
+    public static native boolean drawReplyLinePattern(Bitmap bitmap, int color1, int color2, int color3, int barHeight, boolean hasColor3);
     public static native void setupNativeCrashesListener(String path);
 
     public static Bitmap stackBlurBitmapMax(Bitmap bitmap) {
@@ -176,8 +177,7 @@ public class Utilities {
 //                val = parseInt(str);
                 val = Integer.parseInt(str);
             }
-        } catch (Exception ignore) {
-        }
+        } catch (Exception ignore) {}
         return val;
     }
 

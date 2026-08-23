@@ -93,13 +93,13 @@ public class TextSettingsCell extends FrameLayout {
         valueTextView.setTextSize(AndroidUtilities.dp(16));
         valueTextView.setGravity((LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL);
         valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText, resourcesProvider));
-        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, padding, 0, padding, 0));
+        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, padding - 4, 0, padding - 4, 0));
 
         imageView = new RLottieImageView(context);
         imageView.setScaleType(ImageView.ScaleType.CENTER);
         imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon, resourcesProvider), PorterDuff.Mode.MULTIPLY));
         imageView.setVisibility(GONE);
-        addView(imageView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, 21, 0, 21, 0));
+        addView(imageView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, 16, 0, 16, 0));
 
         valueImageView = new ImageView(context);
         valueImageView.setScaleType(ImageView.ScaleType.CENTER);
@@ -250,9 +250,9 @@ public class TextSettingsCell extends FrameLayout {
             imageView.setBackground(null);
             imageView.setVisibility(VISIBLE);
             if (LocaleController.isRTL) {
-                params.rightMargin = AndroidUtilities.dp(71);
+                params.rightMargin = AndroidUtilities.dp(58);
             } else {
-                params.leftMargin = AndroidUtilities.dp(71);
+                params.leftMargin = AndroidUtilities.dp(58);
             }
         }
     }
@@ -273,9 +273,9 @@ public class TextSettingsCell extends FrameLayout {
             imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
             imageView.setVisibility(VISIBLE);
             if (LocaleController.isRTL) {
-                params.rightMargin = AndroidUtilities.dp(71);
+                params.rightMargin = AndroidUtilities.dp(58);
             } else {
-                params.leftMargin = AndroidUtilities.dp(71);
+                params.leftMargin = AndroidUtilities.dp(58);
             }
         }
     }
@@ -391,7 +391,7 @@ public class TextSettingsCell extends FrameLayout {
     public BackupImageView getValueBackupImageView() {
         if (valueBackupImageView == null) {
             valueBackupImageView = new BackupImageView(getContext());
-            addView(valueBackupImageView, LayoutHelper.createFrame(24, 24, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, padding, 0, padding, 0));
+            addView(valueBackupImageView, LayoutHelper.createFrame(24, 24, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, padding - 4, 0, padding - 4, 0));
         }
         return valueBackupImageView;
     }

@@ -50,7 +50,6 @@ import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.airbnb.lottie.LottieResult
 import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -112,6 +111,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.min
 import androidx.core.graphics.createBitmap
+import org.telegram.messenger.TelegramQRCodeWriter
 
 class MessageUtils(num: Int) : BaseController(num) {
 
@@ -511,9 +511,10 @@ class MessageUtils(num: Int) : BaseController(num) {
         editText.setPadding(0, 0, 0, 0)
         builder.setView(editText)
         builder.setPositiveButton(LocaleController.getString("OK", R.string.OK)) { dialogInterface: DialogInterface?, i: Int ->
-            val button = TLRPC.TL_keyboardButtonCallback()
-            button.data = editText.getText().toString().toByteArray(StandardCharsets.UTF_8)
-            sendMessagesHelper.sendCallback(true, messageObject, button, fragment)
+            // # todo
+//            val button = TLRPC.TL_keyboardButtonCallback()
+//            button.data = editText.getText().toString().toByteArray(StandardCharsets.UTF_8)
+//            sendMessagesHelper.sendCallback(true, messageObject, button, fragment)
         }
         builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null)
         builder.show().setOnShowListener { dialog: DialogInterface? ->
@@ -544,7 +545,7 @@ class MessageUtils(num: Int) : BaseController(num) {
             val hints = HashMap<EncodeHintType, Any?>()
             hints[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.M
             hints[EncodeHintType.MARGIN] = 0
-            val writer = QRCodeWriter()
+            val writer = TelegramQRCodeWriter()
             return writer.encode(key, 768, 768, hints, null)
         }
         return null
