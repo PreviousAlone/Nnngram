@@ -59,4 +59,4 @@ include(
     ":libs:pangu",
     ":libs:ksp",
 )
-project(":jlatexmath").projectDir = File("TMessagesProj/lib/jlatexmath/jlatexmath")
+project(":jlatexmath").projectDir = file("TMessagesProj/lib/jlatexmath/jlatexmath")

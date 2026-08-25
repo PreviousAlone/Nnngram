@@ -38,7 +38,7 @@ If you experience a crash, you can use logcat to catch the log (TAG: `Nnngram` )
 
 ### Compilation Guide
 
-You will require Android NDK rev. 21 and Android SDK 14
+You will require Android Studio 2025.1.4, Android NDK 27.2.12479018 and Android SDK 36.
 
 1. Download the Telegram source code from https://github.com/PreviousAlone/Nnngram
 2. Download the ccache from [here](https://ccache.dev/) and make sure it is in your `PATH`.
