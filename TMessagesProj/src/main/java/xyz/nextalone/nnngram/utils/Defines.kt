@@ -247,12 +247,25 @@ object Defines {
         1645976613,  // Update Channel
         1714986438,  // CI Channel
         1477185964,  // Discussion Group
-        1068402676,  // Kitsune
-        784901712,   // NextAlone
-        457896977,   // Queally rw
+        1500637449, // Nagram
+        1645699549, // Nagram Updates
+        2001739482, // Nagram Tips
+        896711046, // nekohasekai
+        380570774, // Haruhi
+        784901712, // NextAlone
+        457896977, // Queally
+        782954985, // MaiTungTM
+        1711019015,  // Lagrio
+        554072292,  // NahidaBuer
+        5412523572, // blxueya
+        676660002, // xtao
+        1068402676, // Kitsune
+        6244360706, // Sevtinge
         625965913,   // YuKongA
-        676660002,   // Xtao
         5382987111,  // miaoqiqi
+        5555116287,  // Natu
+        387785790,    // waifucon
+        812417693,  // lutit
     )
 
     @BooleanConfig const val doNotUnarchiveBySwipe = "doNotUnarchiveBySwipe"
