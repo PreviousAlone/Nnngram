@@ -155,6 +155,7 @@
     <string name="DarkenAvatarBackground">暗色头像</string>
     <string name="hideTimeForSticker">隐藏贴纸发送时间</string>
     <string name="showMessageID">显示信息 ID</string>
+    <string name="showVideoDuration">预览时显示视频时长</string>
     <string name="hideQuickSendMediaBottom">隐藏快速发送媒体按钮</string>
     <string name="largeAvatarAsBackground">大头像为背景</string>
     <string name="useSystemEmoji">使用系统 Emoji 样式</string>

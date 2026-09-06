@@ -159,6 +159,7 @@
     <string name="DarkenAvatarBackground">Darken profile picture</string>
     <string name="hideTimeForSticker">Hide Time For Sticker</string>
     <string name="showMessageID">Show Message ID</string>
+    <string name="showVideoDuration">Show video duration in preview</string>
     <string name="hideQuickSendMediaBottom">Hide Quick Send Media Bottom</string>
     <string name="largeAvatarAsBackground">Large Avatar As Background</string>
     <string name="useSystemEmoji">Use System Emoji</string>

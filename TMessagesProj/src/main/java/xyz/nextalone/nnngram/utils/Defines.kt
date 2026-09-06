@@ -71,6 +71,7 @@ object Defines {
     @BooleanConfig const val avatarBackgroundDarken = "avatarBackgroundDarken"
     @BooleanConfig const val hideTimeForSticker = "hideTimeForSticker"
     @BooleanConfig const val showMessageID = "showMessageID"
+    @BooleanConfig const val showVideoDuration = "showVideoDuration"
     @BooleanConfig const val hideQuickSendMediaBottom = "hideQuickSendMediaButtom"
     @BooleanConfig(true) const val quickSendMediaPopup = "quickSendMediaPopup"
     const val quickSendMediaLastDismissedId = "quickSendMediaLastDismissedId"

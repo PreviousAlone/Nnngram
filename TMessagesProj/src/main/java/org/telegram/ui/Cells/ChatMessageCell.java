@@ -281,6 +281,7 @@ import me.vkryl.core.BitwiseUtils;
 import xyz.nextalone.gen.Config;
 import xyz.nextalone.nnngram.config.ConfigManager;
 import xyz.nextalone.nnngram.helpers.MentionReadHelper;
+import xyz.nextalone.nnngram.helpers.VideoDurationHelper;
 import xyz.nextalone.nnngram.utils.Defines;
 import xyz.nextalone.nnngram.utils.NeteaseEmbed;
 import xyz.nextalone.nnngram.utils.StringUtils;
@@ -5763,7 +5764,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
             }
             if (lastTime != duration) {
-                String str = AndroidUtilities.formatShortDuration((int) duration);
+                String str = VideoDurationHelper.enabled()
+                    ? VideoDurationHelper.format(duration)
+                    : AndroidUtilities.formatShortDuration((int) duration);
                 infoWidth = (int) Math.ceil(Theme.chat_infoPaint.measureText(str));
                 infoLayout = new StaticLayout(str, Theme.chat_infoPaint, infoWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
                 lastTime = duration;
@@ -5799,7 +5802,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             }
             if (lastTime != duration) {
                 lastTime = duration;
-                String timeString = AndroidUtilities.formatLongDuration((int) duration);
+                String timeString = VideoDurationHelper.enabled()
+                    ? VideoDurationHelper.format(duration, true)
+                    : AndroidUtilities.formatLongDuration((int) duration);
                 timeWidthAudio = (int) Math.ceil(Theme.chat_timePaint.measureText(timeString));
                 durationLayout = new StaticLayout(timeString, Theme.chat_timePaint, timeWidthAudio, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
             }
@@ -25281,19 +25286,25 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     fullWidth = (currentPosition.flags & mask) == mask;
                 }
                 if (((documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || documentAttachType == DOCUMENT_ATTACH_TYPE_GIF) && (buttonState == 1 || buttonState == 2 || buttonState == 0 || buttonState == 3 || buttonState == -1) || currentMessageObject.needDrawBluredPreview()) && !currentMessageObject.isRepostVideoPreview) {
-                    if (autoPlayingMedia) {
+                    if (autoPlayingMedia || (VideoDurationHelper.enabled() && documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO)) {
                         updatePlayingMessageProgress();
                     }
 
-                    if ((infoLayout != null || loadingProgressLayout != null) && (!forceNotDrawTime || autoPlayingMedia || drawVideoImageButton || animatingLoadingProgressProgress != 0 || (fullWidth && docTitleLayout != null) || (loadingProgressLayout != null && currentPosition != null && (buttonState == 1 || (buttonState == 3 && miniButtonState == 1)))) && (currentMessageObject != null && !currentMessageObject.sendPreview)) {
+                    if ((infoLayout != null || loadingProgressLayout != null) && (!forceNotDrawTime || autoPlayingMedia || drawVideoImageButton || animatingLoadingProgressProgress != 0 || (fullWidth && docTitleLayout != null) || (loadingProgressLayout != null && currentPosition != null && (buttonState == 1 || (buttonState == 3 && miniButtonState == 1))) || (VideoDurationHelper.enabled() && documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO)) && (currentMessageObject != null && !currentMessageObject.sendPreview)) {
                         boolean drawLoadingProgress;
                         float alpha = 0;
                         boolean drawDocTitleLayout;
                         float loadingProgressAlpha = 1f;
                         if (!fullWidth) {
-                            drawLoadingProgress = true;
-                            drawDocTitleLayout = false;
-                            loadingProgressAlpha = animatingLoadingProgressProgress;
+                            if (VideoDurationHelper.enabled() && documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO && infoLayout != null) {
+                                drawLoadingProgress = (buttonState == 1 || miniButtonState == 1 || animatingLoadingProgressProgress != 0) && loadingProgressLayout != null;
+                                drawDocTitleLayout = false;
+                                loadingProgressAlpha = drawLoadingProgress ? animatingLoadingProgressProgress : 1f;
+                            } else {
+                                drawLoadingProgress = true;
+                                drawDocTitleLayout = false;
+                                loadingProgressAlpha = animatingLoadingProgressProgress;
+                            }
                         } else {
                             drawLoadingProgress = (buttonState == 1 || miniButtonState == 1 || animatingLoadingProgressProgress != 0) && !currentMessageObject.isSecretMedia() &&
                                     (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || documentAttachType == DOCUMENT_ATTACH_TYPE_GIF || documentAttachType == DOCUMENT_ATTACH_TYPE_DOCUMENT);
