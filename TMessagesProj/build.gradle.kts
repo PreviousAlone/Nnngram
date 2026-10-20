@@ -113,6 +113,7 @@ dependencies {
     implementation(libs.nanohttpd)
     implementation(libs.mediarouter)
     implementation(libs.zxingcore)
+    implementation(libs.nv.websocket.client)
     implementation(libs.recaptcha)
     implementation(libs.multidex)
     implementation(libs.credentials)

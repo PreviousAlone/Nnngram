@@ -45,6 +45,10 @@
 # RichMessageTextProcessor walks TL_iv objects by class name and public fields via reflection
 -keepnames class org.telegram.tgnet.tl.TL_iv$* {}
 -keepclassmembers class org.telegram.tgnet.tl.TL_iv$* { public <fields>; }
+-keep class org.telegram.utils.code.highlight.PrismaHighlighter {
+    private static native <methods>;
+}
+
 # https://developers.google.com/ml-kit/known-issues#android_issues
 -keep class com.google.mlkit.nl.languageid.internal.ThickLanguageIdentifier { *; }
 -keep class com.google.mlkit.nl.languageid.internal.LanguageIdentificationJni { *; }
