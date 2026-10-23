@@ -22,6 +22,7 @@ int tgvoipOnJNILoad(JavaVM *vm, JNIEnv *env);
 int ffmpegOnJNILoad(JavaVM *vm, JNIEnv *env);
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    return JNI_ERR;
 	JNIEnv *env = 0;
     srand(time(NULL));
 
