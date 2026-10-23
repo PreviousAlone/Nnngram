@@ -30,8 +30,10 @@ A modified, forked, or third-party distribution must:
 2. use a clearly distinct application name and icon;
 3. remove Nnngram brand assets from launcher icon selectors, manifests, release
    packages, app-store listings, screenshots, repository avatars, and other
-   promotional material; and
-4. not imply affiliation with, endorsement by, or official status from the
+   promotional material;
+4. not use Nnngram's Telegram API credentials (APP ID and APP hash) and instead
+   obtain and use its own API keys, and
+5. not imply affiliation with, endorsement by, or official status from the
    Nnngram project.
 
 Accurate and non-confusing textual statements such as "based on Nnngram" are
@@ -43,9 +45,6 @@ the GPL must remain intact.
 This policy applies to the Nnngram-specific artwork represented by the
 following repository paths and path families:
 
-- `TMessagesProj/src/main/ic_launcher_nagram*-playstore.png`
-- `TMessagesProj/src/main/res/drawable*/nagram*.*`
-- `TMessagesProj/src/main/res/drawable*/ic_nagram*.xml`
 - `TMessagesProj/src/main/res/drawable*/ic_launcher_nagram*.xml`
 - `TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_nagram*.xml`
 - `TMessagesProj/src/main/res/mipmap-*/ic_launcher_nagram*.png`
@@ -54,9 +53,9 @@ following repository paths and path families:
 - `TMessagesProj/src/main/res/values/ic_launcher_nagram*_background.xml`
 
 The identified application icon families include Default Nnngram, Google,
-Colorful, Dark Green, Neon, Niello, Block Round, Round Blue, and Blue. The
-policy continues to apply if any of this artwork is copied, renamed, moved,
-recolored, adapted, or incorporated into another icon or resource file.
+Colorful, Dark Green, and Neon. The policy continues to apply if any of this
+artwork is copied, renamed, moved, recolored, adapted, or incorporated into
+another icon or resource file.
 
 The list identifies files used to implement Nnngram branding; it does not claim
 ownership of third-party trademarks or third-party artwork that may be present
